@@ -323,8 +323,7 @@
 * 기타
 	- 자주 사용하는 스프링 패키지 및 클래스 정리
 	
-	- 스프링부트 
-		- Spring Data JPA
+	- Spring Data JPA
 		- JPA 동작방식
 		- Entity 설계하기
 		- Repository 설계하기
