@@ -41,7 +41,7 @@ str -> str.length()
 ### 람다식 구현 방법
 1. 인터페이스를 만든다.
 2. 구현할 메서드를 선언한다.
-	````
+	```
 	package day18;
 
 	public interface MyCalculator {
