@@ -72,18 +72,18 @@ str -> str.length()
 	- 람다식은 이름이 없는 익명 함수로 구현하기 때문에 인터페이스에 메서드가 여러 개 있다면 어떤 메서드를 구현한 것인지 모호해 지므로 하나의 메서드만 허용
 	- 다만 구현체가 있는 default 메서드는 정의 할 수 있습니다(모호함이 없으므로)
 		
-#### @FunctionalInterface 애노테이션
-- 람다식은 하나의 메서드를 선언해야 하므로 실수하기 쉽다 
-- 이러한 실수를 방지하기 위해 @FunctionalInterface 애노테이션을 사용합니다.
-- @FunctionalInterface 애노테이션을 선언하고 메서드를 하나 이상 선언하면 오류가 발생하므로 실수를 방지할 수 있다.
-	```
-	package day18;
+	#### @FunctionalInterface 애노테이션
+	- 람다식은 하나의 메서드를 선언해야 하므로 실수하기 쉽다 
+	- 이러한 실수를 방지하기 위해 @FunctionalInterface 애노테이션을 사용합니다.
+	- @FunctionalInterface 애노테이션을 선언하고 메서드를 하나 이상 선언하면 오류가 발생하므로 실수를 방지할 수 있다.
+		```
+		package day18;
 
-	@FunctionalInterface
-	public interface MyCalculator {
-		int plus(int num1, int num2);
-	}
-	```
+		@FunctionalInterface
+		public interface MyCalculator {
+			int plus(int num1, int num2);
+		}
+		```
 
-	
+
 	
