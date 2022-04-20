@@ -9,11 +9,11 @@
 ### 매개변수 자료형과 괄호 생략하기
 - 매개변수 자료형 생략 가능, 단 매개변수 타입이 있으면 괄호를 생략할 수 없다.
 - 매개변수가 하나인 경우에는 괄호도 생략할 수 있음
-	```
-	str -> { System.out.println(str); }
-		
-	(String str) -> { System.out.println(str) }
-	```
+```
+str -> { System.out.println(str); }		
+
+(String str) -> { System.out.println(str) }
+```
 ### 중괄호 생략하기
 ### return 생략하기
 	
