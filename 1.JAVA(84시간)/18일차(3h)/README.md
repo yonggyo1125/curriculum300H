@@ -119,7 +119,7 @@ str -> str.length()
 				System.out.println(result);
 			}
 		}
-	```
+		```
 
 ### 함수형 인터페이스 타입의 매개변수와 반환 타입
 - 매개변수
