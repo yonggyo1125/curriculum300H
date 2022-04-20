@@ -41,25 +41,25 @@ str -> str.length()
 ### 람다식 구현 방법
 1. 인터페이스를 만든다.
 2. 구현할 메서드를 선언한다.
-````
-package day18;
+	````
+	package day18;
 
-public interface MyCalculator {
-	int plus(int num1, int num2);
-}
-```
+	public interface MyCalculator {
+		int plus(int num1, int num2);
+	}
+	```
 
 3. 이때 메서드는 한개만 정의한다.
-```
-package day18;
+	```
+	package day18;
 
-public class MyCalulatorTest {
-	public static void main(String[] args) {
-		MyCalculator calcu = (x, y) -> x + y;
-		int result = calcu.plus(20, 30);
-		
-		System.out.println(result);
+	public class MyCalulatorTest {
+		public static void main(String[] args) {
+			MyCalculator calcu = (x, y) -> x + y;
+			int result = calcu.plus(20, 30);
+			
+			System.out.println(result);
+		}
 	}
-}
-```
+	```
 4. 람다식을 구현할 때 되도록 생략할 수 있는 부분은 생략하여 구현
