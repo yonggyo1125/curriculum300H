@@ -35,6 +35,7 @@ str -> str.length(); // 올바른 형식
 (x,y) -> x+y
 str -> str.length()
 ```
+* * * 
 
 ## 람다식 사용하기
 
@@ -63,7 +64,7 @@ str -> str.length()
 	}
 	```
 4. 람다식을 구현할 때 되도록 생략할 수 있는 부분은 생략하여 구현
-* * * 
+
 
 ### 함수형 인터페이스(Functional Interface)
 - 람다식은 메서드 이름이 없고 메서드를 실행하는 데 필요한 매개변수와 매개변수를 활용한 실행코드를 구현하는 것
@@ -119,7 +120,63 @@ str -> str.length()
 			}
 		}
 	```
-	
-	
 
+### 함수형 인터페이스 타입의 매개변수와 반환 타입
+- 매개변수
+	```
+	package day18;
+
+	public class MyCalculatorParamTest {
+		public static void main(String[] args) {
+			calcuPlus((x, y) -> x + y);
+		}
+		
+		public static void calcuPlus(MyCalculator calcu) {
+			int result = calcu.plus(10, 20);
+			System.out.println(result);
+		}
+	}
+	```
 	
+- 반환타입
+```
+package day18;
+
+public class MyCalculatorReturnTest {
+	public static void main(String[] args) {
+		MyCalculator calcu1 = calcuPlus();
+		int result1 = calcu1.plus(10,20);
+		System.out.println(result1);
+		
+		MyCalculator calcu2 = calcuPlus2();
+		int result2 = calcu2.plus(10,20);
+		System.out.println(result2);
+	}
+	
+	public static MyCalculator calcuPlus() {
+		MyCalculator calcu = (x, y) -> x + y;
+		
+		return calcu;
+	}
+
+	public static MyCalculator calcuPlus2() {		
+		return (x, y) -> x + y;
+	}
+}
+```
+
+## java.util.function패키지
+- 대부분의 메서드는 타입이 비슷하다
+- 매개변수가 없거나 한 개, 두 개, 반환값이 없거나 한 개이다.
+- 제네릭 메서드로 정의하면 매개변수나 반환 타입이 달라도 문제가 되지 않는다. 
+- java.util.function 패키지에 일반적으로 자주 쓰는 형식의 메서드를 함수형 인터페이스로 미리 정의해 놓았다.
+- 매번 함수형 인터페이스를 정의하기 보다는 가능하면 이 패키지의 인터페이스를 활용하는 것이 좋다.
+
+	### java.util.function  패키지의 주효 함수형 인터페이스
+	|함수형 인터페이스|메서드|설명|
+	|----|-----|-----|
+	|java.lang.Runnable|void() run()|매개변수도 없고 반환값도 없음|
+	|Supplier<T>|T get()|매개변수는 없고 반환값만 있음|
+	|Consumer<T>|void accept(T t)|Supplier와 반대로 매개변수만 있고, 반환값이 없음|
+	|Function<T,R>|R apply(T t)|일반적인 함수. 하나의 매개변수를 받아서 결과를 반환|
+	|Predicate<T>|boolean test(T t)|조건식을 표현하는데 사용됨.   매개변수는 하나. 반환값은 boolean|
