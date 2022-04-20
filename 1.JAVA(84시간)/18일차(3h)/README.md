@@ -172,7 +172,7 @@ public class MyCalculatorReturnTest {
 - java.util.function 패키지에 일반적으로 자주 쓰는 형식의 메서드를 함수형 인터페이스로 미리 정의해 놓았다.
 - 매번 함수형 인터페이스를 정의하기 보다는 가능하면 이 패키지의 인터페이스를 활용하는 것이 좋다.
 
-	### java.util.function  패키지의 주효 함수형 인터페이스
+	#### java.util.function  패키지의 주효 함수형 인터페이스
 	|함수형 인터페이스|메서드|설명|
 	|----|-----|-----|
 	|java.lang.Runnable|void() run()|매개변수도 없고 반환값도 없음|
