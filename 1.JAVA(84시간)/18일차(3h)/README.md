@@ -182,7 +182,11 @@ public class MyCalculatorReturnTest {
 |Function<T,R>|R apply(T t)|일반적인 함수. 하나의 매개변수를 받아서 결과를 반환|
 |Predicate<T>|boolean test(T t)|조건식을 표현하는데 사용됨.   매개변수는 하나. 반환값은 boolean|
 ###### 참고) 타입문자 'T'는 'Type'을 'R'은 'Return Type'을 의미한다.
-	
+
+```
+예제...
+```
+
 #### 매개변수가 두 개인 함수형 인터페이스
 매개변수가 두 개인 함수형 인터페이스는 이름 앞에 접두사 'Bi'가 붙는다.
 |함수형 인터페이스|메서드|설명|
@@ -198,7 +202,10 @@ public class MyCalculatorReturnTest {
 		R apply(T t, U u, V v);
 	}
 ```
-	
+
+```
+예제...
+```
 	
 #### UnaryOperator와 BinaryOperator
 - Function의 변형이다
@@ -210,6 +217,9 @@ public class MyCalculatorReturnTest {
 |UnaryOperator<T>|T apply(T t)|Function의 자손, Function과 달리 매개변수와 결과의 타입이 같다.|
 |BinaryOperator<T>|T apply(T t, T t)|BiFunction의 자손, BiFunction과 달리 매개변수와 결과 타입이 같다.|
 
+```
+예제...
+```
 
 #### 컬렉션 프레임워크와 함수형 인터페이스
 컬렉션 프레임워크의 인터페이스에 다수의 디폴트 메서드가 추가 되었고 그 중 일부는 함수형 인터페이스를 사용한다.
@@ -226,6 +236,41 @@ public class MyCalculatorReturnTest {
 |Map|void forEach(BiConsumer<K,V> action)|모든 요소에 작업 action을 수행|
 |Map|void replaceAll(BiFunction(K,V,V) f)| 모든 요소에 치환작업 f를 수행|
 
+```
+package day18;
+
+import java.util.*;
+
+public class CollectionExam {
+	public static void main(String[] args) {
+		ArrayList<Integer> list = new ArrayList<>();
+		for(int i = 0; i < 10; i++) {
+			list.add(i);
+		}
+		
+		// list의 모든 요소를 출력
+		list.forEach(i->System.out.print(i + ","));
+		System.out.println();
+		
+		// list에서 2 또는 3의 배수를 제거한다.
+		list.removeIf(x -> x % 2 == 0 || x % 3 == 0);
+		System.out.println(list);
+		
+		list.replaceAll(i->i*10); // list의 각 요소에 10을 곱한다.
+		System.out.println(list);
+		
+		Map<String, String> map = new HashMap<>();
+		map.put("1",  "1");
+		map.put("2",  "2");
+		map.put("3",  "3");
+		map.put("4",  "4");
+		
+		// map의 모든 요소를 {k, v} 형식으로 출력
+		map.forEach((k, v) -> System.out.println("{" + k + "," + v + "},"));
+		System.out.println();
+	}
+}
+```
 
 #### 기본형 사용하는 함수형 인터페이스
 - 매개변수와 반환값의 타입이 모두 제네릭 타입이다. 기본형 값을 처리할 때도 래퍼(Wrapper)클래스를 사용해왔다.
@@ -243,6 +288,10 @@ public class MyCalculatorReturnTest {
 Function<Integer, Integer> f = a -> a*2;  // 매개변수 타입과 반환 타입이 Integer
 
 IntFunction<Integer> f = a -> a*2;  // 매개변수 타입과 반환타입이 Integer
+```
+
+```
+예제...
 ```
 
 ## Function의 합성과 Predicate의 결합
