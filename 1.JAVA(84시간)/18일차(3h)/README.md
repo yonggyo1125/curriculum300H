@@ -181,3 +181,22 @@ public class MyCalculatorReturnTest {
 	|Consumer<T>|void accept(T t)|Supplier와 반대로 매개변수만 있고, 반환값이 없음|
 	|Function<T,R>|R apply(T t)|일반적인 함수. 하나의 매개변수를 받아서 결과를 반환|
 	|Predicate<T>|boolean test(T t)|조건식을 표현하는데 사용됨.   매개변수는 하나. 반환값은 boolean|
+	###### 참고) 타입문자 'T'는 'Type'을 'R'은 'Return Type'을 의미한다.
+	
+	#### 매개변수가 두 개인 함수형 인터페이스
+	- 매개변수가 두 개인 함수형 인터페이스는 이름 앞에 접두사 'Bi'가 붙는다.
+	|함수형 인터페이스|메서드|설명|
+	|----|-----|-----|
+	|BiConsumer<T,U>| void accept(T t, U u)|두개의 매개변수만 있고 반환값이 없음|
+	|BiPredicate<T,U>|boolean test(T t, U u)|조건식을 표현하는데 사용됨.   매개변수는 둘, 반환값은 boolean|
+	|BiFunction<T,U,R>|R apply(T t, U u)|두 개의 매개변수를 받아서 하나의 결과를 반환|
+	###### 참고) Supplier는 매개변수는 없고 반환값만 존재하는데, 매서드는 두 개의 값을 반환할 수 없으므로 BiSupplier가 없다.
+	###### 두 개 이상의 매개변수를 갖는 함수형 인터페이스가 필요하면 직접 만들어 써야 한다.
+	```
+		@FunctionalInterface
+		interface TriFunction<T,U,V,R> {
+			R apply(T t, U u, V v);
+		}
+	```
+	
+	
