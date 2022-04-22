@@ -212,7 +212,7 @@ public class MyCalculatorReturnTest {
 
 
 #### 컬렉션 프레임워크와 함수형 인터페이스
-- 컬렉션 프레임워크의 인터페이스에 다수의 디폴트 메서드가 추가 되었고 그 중 일부는 함수형 인터페이스를 사용한다.
+컬렉션 프레임워크의 인터페이스에 다수의 디폴트 메서드가 추가 되었고 그 중 일부는 함수형 인터페이스를 사용한다.
 
 |인터페이스|메서드|설명|
 |----|-----|-----|
@@ -225,3 +225,13 @@ public class MyCalculatorReturnTest {
 |Map|V merge(K key, V value, BiFunction(V, V, V) f)|모든 요소에 병합작업 f를 수행|
 |Map|void forEach(BiConsumer<K,V> action)|모든 요소에 작업 action을 수행|
 |Map|void replaceAll(BiFunction(K,V,V) f)| 모든 요소에 치환작업 f를 수행|
+
+
+#### 기본형 사용하는 함수형 인터페이스
+- 매개변수와 반환값의 타입이 모두 제네릭 타입이다. 기본형 값을 처리할 때도 래퍼(Wrapper)클래스를 사용해왔다.
+- 기본형 대신 래퍼클래스를 사용하는 것은 비효율적이다.
+- 따라서 보다 효율적으로 처리할 수 있도록 기본형을 사용하는 함수형 인터페이스를 제공한다.
+
+|함수형 인터페이스|메서드|설명|
+|DoubleToIntFunction|int applyAsInt(double d)|**A***To**B**Function은 입력이 A타입, 출력이 B 타입|
+|ToIntFunction<T>|int applyAsInt(T value)|To**B**Function은 출력 타입이 B타입이다. 입력은 지네릭 타입|
