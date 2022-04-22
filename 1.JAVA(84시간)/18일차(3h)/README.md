@@ -234,5 +234,60 @@ public class MyCalculatorReturnTest {
 
 |함수형 인터페이스|메서드|설명|
 |----|-----|-----|
-|DoubleToIntFunction|int applyAsInt(double d)|**A***To**B**Function은 입력이 A타입, 출력이 B 타입|
+|DoubleToIntFunction|int applyAsInt(double d)|**A**To**B**Function은 입력이 A타입, 출력이 B 타입|
 |ToIntFunction<T>|int applyAsInt(T value)|To**B**Function은 출력 타입이 B타입이다. 입력은 지네릭 타입|
+|IntFunction<R>|R apply(T t, U u)|**A**Function은 입력이 A타입이고 출력은 지네릭 타입|
+|ObjIntConsumer<T>|int void accept(T t, U u)|Obj**A**Function은 입력이 T, A타입이고 출력은 없다.
+
+```
+Function<Integer, Integer> f = a -> a*2;  // 매개변수 타입과 반환 타입이 Integer
+
+IntFunction<Integer> f = a -> a*2;  // 매개변수 타입과 반환타입이 Integer
+```
+
+## Function의 합성과 Predicate의 결합
+
+### Function의 합성
+```
+default <V> Function<T, V> andThen(Function<? super R, ? extends V> after)
+default <V> Function<V, R> compose(Function<? super V, ? extends T> before)
+static <T> Function<T, T> identity() 
+```
+- 두 람다식을 합성해서 새로운 람다식을 만들 수 있다.
+- f.andThen(g) - 함수 f를 먼저 적용하고 그 다음에 함수 g를 적용한다.
+- f.compose(g) - g를 먼저 적용하고 f를 적용한다.
+- Function.identity() - 함수를 적용하기 이전과 동일한 항등함수, x -> x
+
+f.andThen(g)
+```
+Function<String, Integer> f = (s) -> Integer.parseInt(s, 16);
+Function<Integer, String> g = (i) -> Integer.toBinaryString(1);
+Function<String, String> h = f.andThen(g);
+
+System.out.println(h.apply("FF")); "FF" -> 255 -> "11111111"
+```
+
+f.compose(g)
+```
+Function<Integer, String> g = (i) -> Integer.toBinaryString(i);
+Function<String, Integer> f = (s) -> Integer.parseInt(s, 16); 
+Function<Integer, Integer> h = f.compose(g);
+
+System.out.println(h.apply(2)); // 2 -> "10" -> 16
+```
+
+Function.identity()
+```
+Function<String, String> f = x -> x;
+Function<String, String> f = Function.identity(); // 위 문장과 동일
+
+System.out.println(f.apply("Hello")); // Hello가 그대로 출력됨
+```
+
+### Predicate의 결합
+```
+default Predicate<T> and(Predicate<? super T> other)
+default Predicate<T> or(Predicate<? super T> other)
+default Predicate<T> negate()   // 조건식 전체가 부정이 된다.
+static <T> Predicate<T> isEqual(Object targetRef)
+```
