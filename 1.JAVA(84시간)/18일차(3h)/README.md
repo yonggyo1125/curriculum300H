@@ -201,5 +201,24 @@ public class MyCalculatorReturnTest {
 	
 	
 #### UnaryOperator와 BinaryOperator
-- 
+- Function의 변형이다
+- 매개변수의 타입과 반환타입의 타입이 모두 일치한다.
+- UnaryOperator와 BinaryOperator의 조상은 각각 Function, BiFunction이다.
+|함수형 인터페이스|메서드|설명|
+|----|-----|-----|
+|UnaryOperator<T>|T apply(T t)|Function의 자손, Function과 달리 매개변수와 결과의 타입이 같다.|
+|BinaryOperator<T>|T apply(T t, T t)|BiFunction의 자손, BiFunction과 달리 매개변수와 결과 타입이 같다.|
 	
+#### 컬렉션 프레임워크와 함수형 인터페이스
+- 컬렉션 프레임워크의 인터페이스에 다수의 디폴트 메서드가 추가 되었고 그 중 일부는 함수형 인터페이스를 사용한다.
+|인터페이스|메서드|설명|
+|----|-----|-----|
+|Collection|boolean removeIf(Predicate<E> filter)|조건에 맞는 요소를 삭제|
+|List|void replaceAll(UnaryOperator<E> operator)|모든 요소를 반환하여 대체|
+|Iterable|void forEach(Consumer<T> action)|모든 요소를 변환하여 대체|
+|Map|V compute(K key, BiFunction<K,V,V> f)|지정된 키의 값에 작업 f를 수행|
+|Map|V computeIfAbsent(K key, Function(K,V) f)|키가 없으면 작업 f 수행 후 추가|
+|Map|V computeIfPresent(K key, BiFunction(K,V,V) f)|지정된 키가 있을 때 작업 f수행|
+|Map|V merge(K key, V value, BiFunction(V, V, V) f)|모든 요소에 병합작업 f를 수행|
+|Map|void forEach(BiConsumer<K,V> action)|모든 요소에 작업 action을 수행|
+|Map|void replaceAll(BiFunction(K,V,V) f)| 모든 요소에 치환작업 f를 수행|
