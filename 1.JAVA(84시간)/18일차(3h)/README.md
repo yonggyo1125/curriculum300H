@@ -233,5 +233,6 @@ public class MyCalculatorReturnTest {
 - 따라서 보다 효율적으로 처리할 수 있도록 기본형을 사용하는 함수형 인터페이스를 제공한다.
 
 |함수형 인터페이스|메서드|설명|
+|----|-----|-----|
 |DoubleToIntFunction|int applyAsInt(double d)|**A***To**B**Function은 입력이 A타입, 출력이 B 타입|
 |ToIntFunction<T>|int applyAsInt(T value)|To**B**Function은 출력 타입이 B타입이다. 입력은 지네릭 타입|
