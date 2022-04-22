@@ -291,3 +291,6 @@ default Predicate<T> or(Predicate<? super T> other)
 default Predicate<T> negate()   // 조건식 전체가 부정이 된다.
 static <T> Predicate<T> isEqual(Object targetRef)
 ```
+- Predicate를 and(), or(), negate()로 연결해서 하나의 새로운 Predicate로 결합할 수 있다.
+- Predicate의 끝에 negate()를 붙이면 조건식 전체가 부정이 된다.
+- static 메서드인 isEqual()은 두 대상을 비교하는 Predicate를 만들때 사용한다. 
