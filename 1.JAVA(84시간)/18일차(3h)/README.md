@@ -237,7 +237,7 @@ public class MyCalculatorReturnTest {
 |DoubleToIntFunction|int applyAsInt(double d)|**A**To**B**Function은 입력이 A타입, 출력이 B 타입|
 |ToIntFunction<T>|int applyAsInt(T value)|To**B**Function은 출력 타입이 B타입이다. 입력은 지네릭 타입|
 |IntFunction<R>|R apply(T t, U u)|**A**Function은 입력이 A타입이고 출력은 지네릭 타입|
-|ObjIntConsumer<T>|int void accept(T t, U u)|Obj**A**Function은 입력이 T, A타입이고 출력은 없다.
+|ObjIntConsumer<T>|void accept(T t, U u)|Obj**A**Function은 입력이 T, A타입이고 출력은 없다.
 
 ```
 Function<Integer, Integer> f = a -> a*2;  // 매개변수 타입과 반환 타입이 Integer
@@ -341,4 +341,44 @@ public class PredicateExam {
 		System.out.println(result);
 	}
 }
+```
+
+## 메서드 참조
+- 람다식을 더욱 간결하게 표현할 수 있다.
+- 람다식이 하나의 메서드만 호출하는 경우에는 메서드 참조(method reference)라는 방법으로 람다식을 간결하게 할 수 있다.
+- 하나의 메서드만 호출하는 람다식은 **클래스이름::메서드이름** 또는 **참조변수::메서드이름**으로 바꿀 수 있다.
+ 
+```
+Function<String, Integer> f = (String s) -> Integer.parseInt(s);
+
+Function<String, Integer> f = Integer::parseInt; // 메서드 참조
+```
+
+```
+BiFunction<String, String, Boolean> f = (s1, s2) -> s1.equals(s2);
+
+BiFunction<String, String, Boolean> f = String::equals; // 메서드 참조
+```
+
+- 이미 생성된 객체의 메서드를 람다식에서 사용한 경우에는 클래스 이름 대신 그 객체의 참조변수를 적어야 한다.
+```
+MyClass Obj = new MyClass();
+Function<String, Boolean> f = (x) -> obj.equals(x); // 람다식
+Function<String, Boolean> f2 = obj::equals; // 메서드 참조
+```
+### 생성자의 메서드 참조
+```
+Supplier<MyClass> s = () -> new MyClass(); // 람다식
+Supplier<MyClass> s = MyClass::new; // 메서드 참조
+```
+```
+Function<Integer, MyClass> f = (i) --> new MyClass(i); // 람다식
+Function<Integer, MyClass> f2 = MyClass::new;  // 메서드 참조
+
+BiFunction<Integer, String, MyClass> bf = (i, s) -> new MyClass(i, s);
+BiFunction<Integer, String, MyClass> bf2 = MyClass::new;  // 메서드 참조
+```
+```
+Function<Integer, int[]> f = x -> new int[x];
+Function<Integer, int[]> f2 = int[]::new;
 ```
