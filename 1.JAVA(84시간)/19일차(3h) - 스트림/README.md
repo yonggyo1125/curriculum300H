@@ -43,7 +43,7 @@ forEach - 최종연산
 
 ##### 스트림의 중간 연산 목록 
 |중간 연산|설명|
-|-------|----|
+|----------|-------|
 |Stream<T> distinct()|중복을 제거|
 |Stream<T> filter(Predicate<T> predicate)|조건에 안 맞는 요소 제외|
 
