@@ -49,7 +49,7 @@ forEach - 최종연산
 |Stream<T> limit(long maxSize)|스트림의 일부를 잘라낸다|
 |Stream<T> skip(long n)|스트림의 일부를 건너뛴다|
 |Stream<T> peek(Consumer<T> action)|스트림의 요소에 작업 수행|
-|Stream<T> sorted()   <Stream<T> sorted(Comparator<T> comparator)|스트림의 요소를 정렬한다.|
+|Stream<T> sorted()<br>Stream<T> sorted(Comparator<T> comparator)|스트림의 요소를 정렬한다.|
 
 
 ##### 스트림의 최종 연산 목록
