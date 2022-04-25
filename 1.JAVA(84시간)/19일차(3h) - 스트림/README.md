@@ -247,8 +247,23 @@ strStream.sort().forEach(System.out::println);
 ```
 
 ### 변환 - map()
+스트림의 요소에서 저장된 값 중에서 원하는 필드만 뽑아내거나 특정 형태로 변환해야 하는 경우
+```
+Stream<R> map(Function<? super T, ? extends R> mapper)
+```
+
+```
+Stream<File> fileStream = Stream.of(new File("Ex1.java"), new File("Ex1"), new File("Ex1.bak"), new File("Ex2.java"), new File("Ex1.txt"));
+
+// map()으로 Stream<File>을 Stream<String>으로 변환
+Stream<String> filenameStream = fileStream.map(File::getName);
+filenameStream.forEach(System.out::println); // 스트림의 모든 파일이름을 출력
+```
 
 ### 조회 - peek()
+- forEach와 비슷하나 스트림의 요소를 소모하지 않는 중간 연산
+- 중간연산이므로 연산 사이에 여러번 넣어도 된다.
+
 
 ### mapToInt(), mapToLong(), mapToDouble()
 
