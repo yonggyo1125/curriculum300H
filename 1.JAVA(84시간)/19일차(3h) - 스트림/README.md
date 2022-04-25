@@ -165,18 +165,86 @@ DoubleStream doubles(long streamSize, double begin, double end)
 ```
 
 ### 람다식 - iterate(), generate()
+람다식을 매개변수로 받아서 람다식에 의해 계산되는 값들을 요소로 하는 무한 스트림을 생성
 
+```
+static <T> Stream<T> iterate(T seed, UnaryOperator<T> f)
+static<T> Stream<T> generate(Supplier<T> s)
+```
+- iterate()는 이전 결과를 이용해서 다음요소를 계산 
+```
+Stream<Integer> evenStream = Stream.iterate(0, n->n+2); // 0, 2, 4, 6 ... 
+```
+
+- generate()는 이전 결과를 사용하지 않고 람다식에 의해 계산되는 값을 요소로 하는 무한 스트림을 생성하여 반환
+- generate()는 이전 결과를 사용하지 않으므로 매개변수 타입이 Suppiler<T> 이다. 
+
+```
+Stream<Double> randomStream = Stream.generate(Math::random);
+Stream<Integer> oneStream = Stream.generate(() -> 1);
+```
 
 ### 빈 스트림
+- 요소가 하나도 없는 비어있는 스트림 
+- 스트림에서 연산을 수행한 결과가 하나도 없을 때, null 보다 빈 스트림을 반환하는 것이 좋다.
+```
+Stream emptyStream = Stream.empty(); // 빈 스트림을 생성해서 반환 
+long count = emptyStream.count(); // count의 값은 0
+```
 
-### 두 스트림의 연결
+### 두 스트림의 연결 - concat()
+```
+String[] str1 = {"123", "456", "789"}
+String[] str2 = {"ABC", "abc", "DEF"};
+
+Stream<String> strs1 = Stream.of(str1);
+Stream<String> strs2 = Stream.of(str2);
+Stream<String> strs3 = Stream.concat(strs1, strs2); 
+```
 
 ## 스트림의 중간 연산
+
 ### 스트림 자르기 - skip(), limit()
+```
+Stream<T> skip(long n)   // n만큼 건너뛰기
+Stream<T> limit(long maxSize) // maxSize 만큼 자르기
+```
+```
+IntStream intStream = IntStream.rangeClosed(1, 10); // 1~10의 요소를 가진 스트림
+intStream.skip(3).limit(5).forEach(System.out::println); // 45678
+```
 
 ### 스트림 요소 걸러내기 - filter(), distinct()
+- filter() - 주어진 조건(Predicate)에 맞지 않는 요소를 걸러낸다.
+- distinct() - 스트림에서 중복된 요소를 제거
+```
+Stream<T> filter(Predicate<? super T> predicate)
+Stream<T> distinct()
+```
+
+- distinct() 
+```
+IntStream intStream = IntStream.of(1, 2, 2, 3, 3, 4, 5, 5, 6);
+intStream.distinct().forEach(System.out::print); // 123456
+```
+
+- filter()
+```
+IntStream intStream = IntStream.rangeClosed(1, 10); // 1 ~ 10
+IntStream.filter( i -> i % 2 == 0).forEach(System.out::print); // 246810
+```
 
 ### 정렬 - sorted()
+```
+Stream<T> sorted()
+Stream<T> sorted(Comparator<? super T> comparator)
+```
+Comparator를 지정하지 않으면 스트림 요소의 기본 정렬 기준(Comparable)으로 정렬한다. 단, 스트림의 요소가 Comparable을 구현한 클래스가 아니면 예외가 발생한다.
+
+```
+Stream<String> strStream = Stream.of("dd", "aaa", "CC", "cc", "b");
+strStream.sort().forEach(System.out::println); 
+```
 
 ### 변환 - map()
 
