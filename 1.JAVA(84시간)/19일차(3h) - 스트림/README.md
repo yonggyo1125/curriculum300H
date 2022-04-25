@@ -253,7 +253,8 @@ Stream<R> map(Function<? super T, ? extends R> mapper)
 ```
 
 ```
-Stream<File> fileStream = Stream.of(new File("Ex1.java"), new File("Ex1"), new File("Ex1.bak"), new File("Ex2.java"), new File("Ex1.txt"));
+Stream<File> fileStream = Stream.of(new File("Ex1.java"), new File("Ex1"), new File("Ex1.bak"), 
+												new File("Ex2.java"), new File("Ex1.txt"));
 
 // map()으로 Stream<File>을 Stream<String>으로 변환
 Stream<String> filenameStream = fileStream.map(File::getName);
