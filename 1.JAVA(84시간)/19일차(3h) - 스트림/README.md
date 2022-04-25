@@ -44,25 +44,25 @@ forEach - 최종연산
 ##### 스트림의 중간 연산 목록 
 |중간 연산|설명|
 |----------|-------|
-|Stream<T> distinct()|중복을 제거|
-|Stream<T> filter(Predicate<T> predicate)|조건에 안 맞는 요소 제외|
-|Stream<T> limit(long maxSize)|스트림의 일부를 잘라낸다|
-|Stream<T> skip(long n)|스트림의 일부를 건너뛴다|
-|Stream<T> peek(Consumer<T> action)|스트림의 요소에 작업 수행|
-|Stream<T> sorted()<br>Stream<T> sorted(Comparator<T> comparator)|스트림의 요소를 정렬한다.|
-|Stream<R> map(Function<T,R> mapper)<br>DoubleStream mapToDouble(ToDoubleFunction<T> mapper)<br>IntStream mapToInt(ToIntFunction<T> mapper)<br><br>Stream<R> flatMap(Function<T, Stream<R>> mapper)<br>DoubleStream flatMapToDouble(Function<T, DoubleStream> m)<br>IntStream flatMapToInt(Function<T, IntStream> m)<br>LongStream flatMapToLong(Function<T, LongStream> m)|스트림의 요소를 변환한다.|
+|Stream\<T\> distinct()|중복을 제거|
+|Stream\<T\> filter(Predicate\<T\> predicate)|조건에 안 맞는 요소 제외|
+|Stream\<T\> limit(long maxSize)|스트림의 일부를 잘라낸다|
+|Stream\<T\> skip(long n)|스트림의 일부를 건너뛴다|
+|Stream\<T\> peek(Consumer\<T\> action)|스트림의 요소에 작업 수행|
+|Stream\<T\> sorted()<br>Stream\<T\> sorted(Comparator\<T\> comparator)|스트림의 요소를 정렬한다.|
+|Stream\<R\> map(Function\<T,R\> mapper)<br>DoubleStream mapToDouble(ToDoubleFunction\<T\> mapper)<br>IntStream mapToInt(ToIntFunction\<T\> mapper)<br><br>Stream\<R\> flatMap(Function\<T, Stream\<R\>\> mapper)<br>DoubleStream flatMapToDouble(Function\<T, DoubleStream\> m)<br>IntStream flatMapToInt(Function\<T, IntStream\> m)<br>LongStream flatMapToLong(Function\<T, LongStream\> m)|스트림의 요소를 변환한다.|
 
 ##### 스트림의 최종 연산 목록
 |최종 연산|설명|
 |----------|-------|
-|void forEach(Consumer<? super T> action)|void forEachOrdered(Consumer<? super T> action)|각 요소에 지정된 작업 수행|
+|void forEach(Consumer\<? super T\> action)|void forEachOrdered(Consumer\<? super T\> action)|각 요소에 지정된 작업 수행|
 |long count())|스트림의 요소의 개수 반환|
-|Optional<T> max(Comparator<? super T> comparator)<br>Optional<T> min(Comparator<? super T> comparator)|스트림의 최대값/최소값을 반환|
-|Optional<T> findAny() // 아무거나 하나<br>Optional<T> findFirst() // 첫 번째 요소|스트림의 요소를 하나 반환|
-|boolean allMatch(Predicate<T> p) // 모두 만족하는지<br>boolean anyMatch(Predicate<T> p) // 하나라도 만족하는지<br>boolean noneMatch(Predicate<> p) // 모두 만족하지 않는지|주어진 조건을 모든 요소가 만족시키는지, 만족시키지 않는지 확인|
-|Object[] toArray()<br>A[] toArray(IntFunction<A[]> generator)|스트림의 모든 요소를 배열로 변환|
-|Optional<T> reduce(BinaryOperator<T> accumulator)<br>T reduce(T identity, BinaryOperator<T> accumulator)|스트림 요소를 하나씩 줄여가면서(리듀싱) 계산한다.|
-|R collect(Collector<T,A,B> collector)|스트림의 요소를 수집한다.<br>주로 요소를 그룹화하거나 분할한 결과를 컬렉션에 담아 반환하는데 사용한다.|
+|Optional\<T\> max(Comparator\<? super T\> comparator)<br>Optional\<T\> min(Comparator\<? super T\> comparator)|스트림의 최대값/최소값을 반환|
+|Optional\<T\> findAny() // 아무거나 하나<br>Optional\<T\> findFirst() // 첫 번째 요소|스트림의 요소를 하나 반환|
+|boolean allMatch(Predicate\<T\> p) // 모두 만족하는지<br>boolean anyMatch(Predicate\<T\> p) // 하나라도 만족하는지<br>boolean noneMatch(Predicate\<T\> p) // 모두 만족하지 않는지|주어진 조건을 모든 요소가 만족시키는지, 만족시키지 않는지 확인|
+|Object[] toArray()<br>A[] toArray(IntFunction\<A[]\> generator)|스트림의 모든 요소를 배열로 변환|
+|Optional\<T\> reduce(BinaryOperator\<T\> accumulator)<br>T reduce(T identity, BinaryOperator\<T\> accumulator)|스트림 요소를 하나씩 줄여가면서(리듀싱) 계산한다.|
+|R collect(Collector\<T,A,B\> collector)|스트림의 요소를 수집한다.<br>주로 요소를 그룹화하거나 분할한 결과를 컬렉션에 담아 반환하는데 사용한다.|
 
 ### 지연된연산
 - 최종 연산이 수행되기 전까지는 중간 연산이 수행되지 않는다.
@@ -71,6 +71,7 @@ forEach - 최종연산
 
 
 ### 기본자료형을 다루는 스트림
+- 요소의 타입이 T인 스트림은 
 
 
 ## 스트림만들기
