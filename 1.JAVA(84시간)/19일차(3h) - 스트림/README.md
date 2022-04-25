@@ -154,27 +154,71 @@ forEach - 최종연산
 |-------|-------|------------|
 |IntStream<br>LongStream<br>DoubleStream|Stream\<Integer\><br>Stream\<Long\><br>Stream\<Double\><br>Stream\<U\>|boxed()<br>boxed()<br>boxed()<br>mapToObj(DoubleFunction\<U\> mapper)|
 
-
-
-
-
 3. 기본형 스트림 -> 기본형 스트림
+
+|from|to|변환 메서드|
+|-------|-------|------------|
+|Stream\<T\>|IntStream<br>LongStream<br>DoubleStream|LongStream<br>DoubleStream|asLongStream()<br>asDoubleStream()|
+
 
 4. 스트림 -> 부분 스트림
 
+|from|to|변환 메서드|
+|-------|-------|------------|
+|Stream\<T\><br>IntStream|Stream\<T\><br>IntStream|skip(long n)<br>limit(long maxSize)|
+
+
 5. 두 개의 스트림 -> 스트림
+
+|from|to|변환 메서드|
+|-------|-------|------------|
+|Stream\<T\>, Stream\<T\>|Stream\<T\>|concat(Stream\<T\> a, Stream\<T\>b)|
+|IntStream, IntStream|IntStream|concat(IntStream a, IntStream b)|
+|LongStream, LongStream|LongStream|concat(LongStream a, LongStream b)|
+|DoubleStream, DoubleStream|DoubleStream|concat(DoubleStream a, DoubleStream b)|
+
 
 6. 스트림의 스트림 -> 스트림
 
+|from|to|변환 메서드|
+|-------|-------|------------|
+|Stream\<\Stream\<T\>\>|Stream\<T\>|flatMap(Function mapper)|
+|Stream\<IntStream\>|IntStream|flatMapToInt(Function mapper)|
+|Stream\<LongStream\>|LongStream|flatMapToLong(Function mapper)|
+|Stream\<DoubleStream\>|DoubleStream|flatMapToDouble(Function mapper)|
+
+
 7. 스트림 -> 병렬 스트림
+
+|from|to|변환 메서드|
+|-------|-------|------------|
+|Stream\<T\><br>IntStream<br>LongStream<br>DoubleStream|Stream\<T\><br>IntStream<br>LongStream<br>DoubleStream|parallel() // 스트림 -> 병렬 스트림<br>sequential() //  병렬 스트림 -> 스트림|
+
 
 8. 스트림 -> 컬렉션
 
+|from|to|변환 메서드|
+|-------|-------|------------|
+|Stream\<T\><br>IntStream<br>LongStream<br>DoubleStream|Collection\<T\><br>List\<T\><br>Set\<T\>|collect(Collectors.toCollection(Supplier supplier))<br>collect(Collectors.toList())<br>Collectors.toSet())|
+
+
 9. 컬렉션 -> 스트림
+
+|from|to|변환 메서드|
+|-------|-------|------------|
+|Collection\<T\>, List\<T\>, Set\<T\>|Stream\<T\>|stream()|
+
 
 10. 스트림 -> Map
 
+|from|to|변환 메서드|
+|-------|-------|------------|
+|Stream\<T\><br>IntStream<br>LongStream<br>DoubleStream|Map<K,V>|collect(Collectors.toMap(Function Key, Function value))<br>collect(Collectors.toMap(Function k, Function v, BinaryOperator merge))|
+
+
 11. 스트림 -> 배열
 
-	
-
+|from|to|변환 메서드|
+|-------|-------|------------|
+|Stream\<T\>|Object[]<br>T[]|toArray()<br>toArray(intFunction\<A[]\> generator)|
+|IntStream<br>LongStream<br>DoubleStream|int[]<br>long[]<br>double[]|toArray()|
