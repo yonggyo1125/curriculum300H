@@ -88,5 +88,60 @@ forEach - 최종연산
 ### 빈 스트림
 
 ### 두 스트림의 연결
+
+## 스트림의 중간 연산
+### 스트림 자르기 - skip(), limit()
+
+### 스트림 요소 걸러내기 - filter(), distinct()
+
+### 정렬 - sorted()
+
+### 변환 - map()
+
+### 조회 - peek()
+
+### mapToInt(), mapToLong(), mapToDouble()
+
+### flatMap() - Stream<T[]>를 Stream<T>로 변환
+
+## Optional<T>와 OptionalInt
+
+### Optional 객체 생성하기
+
+### Optional객체의 값 가져오기
+
+### OptionalInt, OptionalLong, OptionalDouble
+
+
+## 스트림의 최종 연산
+
+### forEach()
+
+### 조건 검사 - allMatch(), anyMatch(), noneMatch(), findFirst(), findAny()
+
+### 통계 - count(), sum(), average(), max(), min()
+
+### 리듀싱 - reduce()
+
+
+## collect()
+
+### 스트림 컬렉션과 배열로 변환 - toList(), toSet(), toMap(), toCollection(), toArray()
+
+### 통계 - counting(), summingInt(), averagingInt(), maxBy(), minBy()
+
+### 리듀싱 - reducing()
+
+### 문자열 결합 - joining()
+
+### 그룹화와 분할 - groupingBy(), partitioningBy()
+
+### partitioningBy()에 의한 분류
+
+### groupingBy()에 의한 분류
+
+## 스트림의 변환
+
+
 	
 
