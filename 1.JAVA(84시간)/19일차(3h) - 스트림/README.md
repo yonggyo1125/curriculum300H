@@ -142,6 +142,7 @@ forEach - 최종연산
 
 ## 스트림의 변환
 1. 스트림 -> 기본형 스트림 
+|from|to|변환 메서드|
 |-------|-------|------------|
 |Stream<T>|IntStream<br>LongStream<br>DoubleStream|mapToInt(ToIntFunction<T> mapper)<br>mapToLong(ToLongFunction<T> mapper)<br>mapToDouble(ToDoubleFunction<T> mapper)|
 
