@@ -289,12 +289,64 @@ int allTotalScore = studentScoreStream.sum();
 |IntSummaryStatistics summaryStatistics()|스트림의 통계 요약 정보|
 
 ### flatMap() - Stream<T[]>를 Stream<T>로 변환
+스트림의 타입이 Stream<T[]>인 경우 Stream<T>로 변환해 준다.
+```
+Stream<String> strStrm = Stream.of("abc", "def", "jklmn");
+Stream<String> strStrm2 = Stream.of("ABC", "GHI", "JKLMN");
+
+Stream<Stream<String>> strmStrm = Stream.of(strStrm, strStrm2);
+Stream<String> strStream = strmStrm.map(s -> s.toArray(String[]::new)) // Stream<Stream<String>> -> Stream<String[]>
+												.flatMap(Arrays::stream); // Stream<String[]> -> Stream<String>
+```
+
 
 ## Optional<T>와 OptionalInt
+- Optional<T>은 제네릭 클래스로 "T타입의 객체"를 감싸는 래퍼 클래스이다.
+- Optional 타입의 객체에는 모든 타입의 참조변수를 담을 수 있다.
+
+```
+public final class Optional<T> {
+	private final T value;  // T 타입의 참조변수
+	...
+}
+```
+- 스트림에서 최종연산의 결과를 Optional 객체에 담아서 반환
+- 객체에 담아서 반환을 하므로 결과가 null인지를  간단하게 체크하는 메서드를 제공한다.
+- if로 따로 체크하지 않아도 NullPointException이 발생하지 않는 보다 간결하고 안전한 코드 작성이 가능해 진다.
 
 ### Optional 객체 생성하기
+- of() 또는 ofNullable()을 사용 
+- 참조변수의 값이 null일 가능성이 있으면 of()대신 ofNullable()을 사용해야 한다.
+- Optional<T>타입의 참조 변수를 기본값으로 초기화 할때는 empty()를 사용한다.
 
-### Optional객체의 값 가져오기
+```
+String str = "abc";
+Optional<String> optVal = Optional.of(str);
+Optional<String> optVal = Optional.of("abc");
+Optional<String> optVal = Optional.of(new String("abc"));
+```
+
+```
+Optional<String> optVal = Optional.of(null); // NullPointException 발생
+Optional<String> optVal = Optional.ofNullable(null);
+```
+
+```
+Optional<String> optVal = Optional.<String>empty(); // 빈 객체로 초기화
+```
+
+### Optional 객체의 값 가져오기
+- get()을 사용하여 Optional 객체에 저장된 값을 가져온다. 값이 null일 때는 NoSuchElementException이 발생한다.
+- orElse("기본값")을 사용하면 값이 null일때 "기본값"으로 대체할 수 있다.
+- 기타 
+```
+T orElseGet(Supplier<? extends T> other)
+T orElseThrow(Supplier<? extends X> exceptionSupplier)
+```
+```
+String str3 = optVal2.orElseGet(String::new);
+String str4 = optVal2.orElseThrow(NullPointerException::new);
+```
 
 ### OptionalInt, OptionalLong, OptionalDouble
 
