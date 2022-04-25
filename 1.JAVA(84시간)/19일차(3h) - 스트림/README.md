@@ -71,20 +71,101 @@ forEach - 최종연산
 
 
 ### 기본자료형을 다루는 스트림
-- 요소의 타입이 T인 스트림은 
+- 요소의 타입이 T인 스트림은 기본적으로 Stream<T>인데, 기본 자료형을 다루려면 오토박싱&언박싱이 발생하여 비효율성이 증가한다(예 - Integer <-> int)
+- 비효율성을 줄이기 위해 데이터 소스의 요소를 기본형으로 다루는 스트림이 제공된다.
+- IntStream, LongStream, DoubleStream
+- 기본자료형에 유용하게 사용할 수 있는 메서드를 제공한다.
 
+* * *
 
 ## 스트림만들기
 
 ### 컬렉션
 
+```
+Stream<T> Collection.stream()
+```
+
+```
+List<Integer> list = Arrays.asList(1,2,3,4,5);
+Stream<Integer> intStream = list.stream();
+
+intStream.forEach(i -> System.out.println(i));  // 또는 메서드 참조 방식으로 람다식 정의 intStream.forEach(System.out::println);
+```
+
+
 ### 배열
 
+```
+Stream<T> Stream.of(T... values) // 가변인자
+Stream<T> Stream.of(T[])
+Stream<T> Arrays.stream(T[])
+Stream<T> Arrays.stream(T[] array, int startInclusive, int endExclusive)  // startInclusive이상 endExclusive 미만 범위의 스트림 생성
+```
+
+```
+사용 예)
+Stream<String> strStream = Stream.of("a", "b", "c"); // 가변인자
+Stream<String> strStream = Stream.of(new String[] {"a", "b", "c"});
+Stream<String> strStream = Arrays.stream(new String[]{"a", "b","c"});
+Stream<String> strStream = Arrays.stream(new String[]{"a", "b", "c", "d"}, 0, 3);
+
+```
+
+int, long, double과 같은 기본형 배열을 소스로 하는 스트림을 생성하는 메서드
+```
+IntStream IntStream.of(int... values)
+IntStream IntStream.of(int[])
+IntStream Arrays.stream(int[])
+IntStream Arrays.stream(int[] array, int startInclusive, inbt endExclusive) // startInclusive이상 endExclusive 미만 범위의 스트림 생성
+```
+
 ### 특정 범위의 정수
+```
+IntStream IntStream.range(int begin, int end)  // begin이상 ~ end 미만
+IntStream IntStream.rangeClosed(int begin, int end) // begin 이상 ~ end 이하
+```
 
 ### 임의의 수
+Random 클래스에는 난수들로 이루어진 스트림을 반환하는 메서드를 가지고 있다.
+```
+IntStream ints()
+LongStream longs()
+DoubleStream doubles()
+```
+- 매개변수가 없다면 크키가 정해지지 않은 무한 스트림
+- limit()를 함께 사용해서 스트림의 크기를 제한해 줘야 한다.
+```
+IntStream intStream = new Random().ints(); // 무한 스트림
+intStream.limit(5).forEach(System.out::println); // 5개의 요소만 출력
+```
+
+- 매개변수가 있다면 크기가 정해진 유한스트림, limit()를 사용하지 않아도 된다.
+```
+IntStream ints(long streamSize)
+LongStream longs(long streamSize)
+DoubleStream doubles(long streamSize)
+```
+
+```
+IntStream intStream = new Random().ints(5); // 크키가 5인 난수 스트림 반환
+```
+
+- 지정된 범위의 난수를 발생시키는 스트림을 얻는 메서드
+```
+begin이상 end 미만 범위에서 난수 발생
+
+IntStream  ints(int begin, int end)
+LongStream longs(long begin, long end)
+DoubleStream doubles(double begin, double end)
+
+IntStream ints(long streamSize, int begin, int end)
+LongStream longs(long streamSize, long begin, long end)
+DoubleStream doubles(long streamSize, double begin, double end)
+```
 
 ### 람다식 - iterate(), generate()
+
 
 ### 빈 스트림
 
