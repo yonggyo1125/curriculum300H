@@ -338,7 +338,7 @@ Optional<String> optVal = Optional.<String>empty(); // 빈 객체로 초기화
 ### Optional 객체의 값 가져오기
 - get()을 사용하여 Optional 객체에 저장된 값을 가져온다. 값이 null일 때는 NoSuchElementException이 발생한다.
 - orElse("기본값")을 사용하면 값이 null일때 "기본값"으로 대체할 수 있다.
-- 기타 
+- 람다식을 매개변수로 하여 저장된 값을 가져올 수 있다.
 ```
 T orElseGet(Supplier<? extends T> other)
 T orElseThrow(Supplier<? extends X> exceptionSupplier)
