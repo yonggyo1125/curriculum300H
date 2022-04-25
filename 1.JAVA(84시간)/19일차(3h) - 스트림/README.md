@@ -141,7 +141,29 @@ forEach - 최종연산
 ### groupingBy()에 의한 분류
 
 ## 스트림의 변환
+1. 스트림 -> 기본형 스트림 
+|Stream<T>|IntStream<br>LongStream<br>DoubleStream|mapToInt(ToIntFunction<T> mapper)<br>mapToLong(ToLongFunction<T> mapper)<br>mapToDouble(ToDoubleFunction<T> mapper)|
 
+
+2. 기본형 스트림 -> 스트림
+
+3. 기본형 스트림 -> 기본형 스트림
+
+4. 스트림 -> 부분 스트림
+
+5. 두 개의 스트림 -> 스트림
+
+6. 스트림의 스트림 -> 스트림
+
+7. 스트림 -> 병렬 스트림
+
+8. 스트림 -> 컬렉션
+
+9. 컬렉션 -> 스트림
+
+10. 스트림 -> Map
+
+11. 스트림 -> 배열
 
 	
 
