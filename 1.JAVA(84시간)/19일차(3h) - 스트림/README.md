@@ -267,6 +267,26 @@ filenameStream.forEach(System.out::println); // 스트림의 모든 파일이름
 
 
 ### mapToInt(), mapToLong(), mapToDouble()
+map()은 연산결과로 Stream<T> 타입입의 스트림을 반환하지만 기본자료형인 int, long, double으로 반환해 주는 기본 스트림을 반환
+```
+DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper)
+IntStream mapToInt(ToIntFunction<? super T> mapper)
+LongStream mapToLong(ToLongFunction<? super T> mapper)
+```
+
+```
+IntStream studentScoreStream = studentStream.mapToInt(Student::getTotalScore);
+int allTotalScore = studentScoreStream.sum();
+```
+
+##### 참고) 기본형 스트림은 숫자를 다루는 편리한 메서드를 제공
+|메서드|메서드 설명|
+|-------|------------|
+|int sum()|스트림의 모든 요소의 총합|
+|OptionalDouble average()|스트림 요소의 평균|
+|OptionalInt max()|스트림 요소 중 제일 큰 값|
+|OptionalInt min()|스트림 요소 중 제일 작은 값|
+|IntSummaryStatistics summaryStatistics()|스트림의 통계 요약 정보|
 
 ### flatMap() - Stream<T[]>를 Stream<T>로 변환
 
