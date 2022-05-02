@@ -426,15 +426,81 @@ int min = intStream.reduce(Integer.MAX_VALUE, (a, b) -> a<b?a:b);
 ```
 
 ## collect()
-
+- 스트림의 최종연산, 매개변수로 컬렉터를 필요로 한다.
+```
+Object collect(Collector collector) // Collector를 구현한 클래스의 객체를 매개변수로
+```
+```
+collect() 스트림의 최종연산, 매개변수로 컬렉터를 필요로 한다.
+Collector 인터페이스, 컬렉터는 이 인터페이스를 구현해야 한다.
+Collectors 클래스, static 메서드로 미리 작성된 컬렉터를 제공한다.
+```
 
 ### 스트림 컬렉션과 배열로 변환 - toList(), toSet(), toMap(), toCollection(), toArray()
+- 스트림의 모든 요소를 컬렉션에 수집하고자 할때는 Collectors클래스의 toList()와 같은 메서드를 사용한다.
+- List나 Set이 아닌 특정 컬렉션을 지정하려면 toCollection()에 해당하는 컬렉션의 생성자 참조를 매개변수로 넣어준다.
+```
+List<String> names = stuStream.map(Student::getName).collect(Collectors.toList());
+ArrayList<String> list = names.stream().collect(Collectors.toCollection(ArrayList::new));
+```
+- toMap()
+```
+Map<String, Person> map = personStream.collect(Collectors.toMap(p->p.getRegId(), p->p));
+Map<String, Person> map = personStream.collect(Collectors.toMap(p->p.getRegId(), Function.identity()));
+```
+
+- toArray()
+	- 매개변수로 해당타입의 생성자를 지정해야 한다. 
+	- 매개변수를 지정하지 않으면 반환되는 배열의 타입은 'Object[]'이다.
+```
+Student[] stuNames = studentStream.toArray(Student[]::new);  // OK
+Student[] stuNames = studentStream.toArray(); // 에러 발생
+Object[] stuNames = studentStream.toArray(); // OK
+```
 
 ### 통계 - counting(), summingInt(), averagingInt(), maxBy(), minBy()
+```
+long count = stuStream.count();
+long count = stuStream.collect(Collectors.counting());
 
+long totalScore = stuStream.mapToInt(Student::getTotalScore).sum();
+long totalScore = stuStream.collect(Collectors.summingInt(Student::getTotalScore));
+
+OptionalInt toScore = studentStream.mapToInt(Student::getTotalScore).max();
+Optional<Student> topStudent = stuStream.max(Comparator.comparingInt(Student::getTotalScore));
+Optional<Student> topStudent = stuStream.collect(maxBy(Comparator.comparingInt(Student::getTotalScore)));
+
+IntSummaryStatistics stat = stuStream.mapToInt(Student::getTotalScore).summaryStatistics();
+IntSummaryStatistics stat = stuStream.collect(summarizingInt(Student::getTotalScore));
+```
 ### 리듀싱 - reducing()
 
+```
+Collector reducing(BinaryOperator<T> op)
+Collector reducing(T identity, BinaryOperator<T> op)
+Collector reducing(U identity, Function<T, U> mapper, BinaryOperator<U> op)
+```
+
+```
+IntStream intStream = new Random().ints(1, 46).distinct().limit(6);
+
+OptionalInt max = intStream.reduce(Integer::max);
+Optional<Integer> max = intStream.boxed().collect(Collectors.reducing(Integer::max));
+
+long sum = intStream.reduce(0, (a, b) -> a + b);
+long sum = intStream.boxed().collect(Collectors.reducing(0, Student::getTotalScore, Integer::sum)));
+```
+IntStream에는 매개변수 3개짜리 collect()만 정의되어 있으므로 매개변수 1개짜리 collect()를 쓰려면 boxed()를 통해 IntStream을 Stream<Integer>로 변환해야 한다.
+
+
 ### 문자열 결합 - joining()
+- 문자열 스트림의 모든 요소를 하나의 문자열로 연결해서 반한다.
+- 구분자를 지정할 수 있고, 접두사와 접미사도 지정가능하다.
+- 스트림의 요소가 String이나 StringBuffer 처럼 CharSequence의 자손인 경우에만 결합이 가능하다 
+- 스트림의 요소가 문자열이 아닌 경우에는 먼저 map()을 이용해서 스트림의 요소를 문자열로 변환해야 한다.
+```
+
+```
 
 ### 그룹화와 분할 - groupingBy(), partitioningBy()
 
