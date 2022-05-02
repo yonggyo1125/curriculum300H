@@ -499,14 +499,89 @@ IntStream에는 매개변수 3개짜리 collect()만 정의되어 있으므로 �
 - 스트림의 요소가 String이나 StringBuffer 처럼 CharSequence의 자손인 경우에만 결합이 가능하다 
 - 스트림의 요소가 문자열이 아닌 경우에는 먼저 map()을 이용해서 스트림의 요소를 문자열로 변환해야 한다.
 ```
+String studentNames = stuStream.map(Student::getName).collect(Collectors.joining());
+String studentNames = stuStream.map(Student::getName).collect(Collectors.joining(","));
+String studentNames = stuStream.map(Student::getName).collect(Collectors.joining(",","[", "]"));
 
+// map() 없이 스트림에 바로 joining()하면, 스트림의 요소에 toString()을 호출한 결과를 결합
+String studentInfo = studentStream.collect(Collectors.joining(",")); // Student의 toString()으로 결합
 ```
 
 ### 그룹화와 분할 - groupingBy(), partitioningBy()
+- 그룹화는 스트림의 요소를 특정 기준으로 그룹화하는 것을 의미한다.
+- 분할은 스트림의 요소를 두 가지, 지정된 조건에 일치하는 그룹과 일치하지 않는 그룹으로 분할을 의미한다.
+- grouping()은 스트림의 요소를 Function으로 분류한다.
+- partitioningBy()은 Predicate로 분류한다.
+- 스트림을 두개의 그룹으로 나눠야 한다면 partitioningBy()로 분할하는 것이 더 빠르다.
+- 그 외에는 groupingBy()를 쓰면 된다.
+- 그룹화와 분할의 결과는 Map에 담겨 반환된다.
+```
+Collector groupingBy(Function classifier)
+Collector groupingBy(Function classifier, Collector downstream)
+Collector groupingBy(Function classifier, Supplier mapFactory, Collector downstream)
+
+Collector partitioningBy(Predicate predicate)
+Collector partitioningBy(Predicate predicate, Collector downstream)
+```
 
 ### partitioningBy()에 의한 분류
+- 기본분할
+```
+Map<Boolean, List<Student>> stuBySex = stuStream
+					.collect(Collectors.partitioningBy(Student::isMale)); // 학생을 성별로 분할
+
+List<Student> maleStudent = stuBySex.get(true); // Map에서 남학생 목록을 얻는다.
+List<Student> femaleStudent = stuBySex.get(false); // Map에서 여학생 목록을 얻는다.
+```
+
+- 기본분할 + 통계정보
+```
+Map<Boolean, Long> stuNumBySex = stuStream
+					.collect(Collectors.partitioningBy(Student::isMale, Collectors.counting()));
+
+System.out.println("남학생 수 :" + stuNumBySex.get(true));
+System.out.println("여학생 수 :" + stuNumBySex.get(false));
+```
+
+- 이중 분할
+```
+Map<Boolean, Map<Boolean, List<Student>>> failedStuBySex = stuStream
+		.collect(
+			partitioningBy(Student::isMale,
+				partitioningBy(s -> s.getScore() < 150)
+			)
+		);
+
+List<Student> failedMaleStu = failedStuBySex.get(true).get(true);
+List<Student> failedFemaleStu = failedStuBySex.get(false).get(true);
+```
 
 ### groupingBy()에 의한 분류
+- groupingBy()로 그룹화 하면 기본적으로 List<T>에 담는다.
+- toList()대신 toSet()이나 toCollection(HashSet::new)을 사용할 수 도 있다.
+- Map의 제네릭 타입도 적절하게 변경해야 한다.
+
+- 기본 그룹화
+```
+Map<Integer, List<Student>> stuByBan = stuStream
+		.collect(Collectors.groupingBy(Student::getBan)); // toList()가 생략됨
+```
+
+- 기본 그룹화 + 통계정보
+```
+Map<Student.Level, Long> stuByLevel = stuStream
+		.collect(groupingBy(s -> {
+			if (s.getScore() >= 200) return Student.Level.HIGH;
+			else if (s.getScore() >= 100) return Student.Level.MID;
+			else return Student.Level.LOW;
+		}, counting()));   // [MID] - 0명, [HIGH] - 8명, [LOW] - 2명
+```
+
+- 다중 그룹화
+```
+Map<Integer, Map<Integer, List<Student>>> stuByHakAndBan = stuStream
+		.collect(groupingBy(Student::getHak, groupingBy(Student::getBan)));
+```
 
 ## 스트림의 변환
 1. 스트림 -> 기본형 스트림 
