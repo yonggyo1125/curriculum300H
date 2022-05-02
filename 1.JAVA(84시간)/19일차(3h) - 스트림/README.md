@@ -370,17 +370,63 @@ OptionalDouble average()
 
 
 ## 스트림의 최종 연산
+- 최종 연산은 스트림의 요소를 소모해서 결과를 
+- 최종 연산후에는 스트림이 닫히게 되고 더 이상 사용할 수 없다.
 
 ### forEach()
+- forEach()는 peek()와 달리 스트림의 요소를 소모하는 최종연산이다
+- 반환 타입이 void이므로 스트림의 요소를 출력하는 용도로 사용된다.
+```
+void forEach(Consumer<? super T> action)
+```
 
 ### 조건 검사 - allMatch(), anyMatch(), noneMatch(), findFirst(), findAny()
+- allMatch() : 지정된 조건에 모든 요소가 일치하는지
+- anyMatch() : 지정된 조건에 일부 요소가 일치하는지
+- noneMatch() : 지정된 조건에 어떤 요소도 일치하지 않는지 
+- findFirst() : 지정된 조건에 일치하는 첫 번째 것을 반환
+- findAny() : 지정된 조건에 일치하는 첫 번째 것을 반환(병렬 스트림에서 사용)
+
+```
+boolean allMatch(Predicate<? super T> predicate)
+boolean anyMatch(Predicate<? super T> predicate)
+boolean noneMatch(Predicate<? super T> predicate)
+```
+
+```
+boolean noFailed = stuStream.anyMatch(s->s.getTotalScore() <= 100);
+```
+
+```
+Optional<Student> stu = stuStream.filter(s->s.getTotalScore() <= 10).findFirst();
+```
+
 
 ### 통계 - count(), sum(), average(), max(), min()
+- IntStream과 같은 기본형 스트림에는 스트림의 요소들에 대한 통계 정보를 얻을 수 있는 메서드들이 있다.
+- 기본형 스트림이 아닌 경우에는 통계 관련 메서드가 3개만 있다(count(), max(), min())
 
 ### 리듀싱 - reduce()
+- 스트림의 요소를 줄여나가면서 연산을 수행하고 최종결과를 반환한다.
+- 매개변수의 타입은 BinaryOperator<T>이다.
+- 처음 두 요소를 가지고 연산한 결과를 가지고 그 다음 요소를 연산한다.
 
+```
+Optional<T> reduce(BinaryOperator<T> accumulator)
+T reduce(T identity, BinaryOperator<T> accumulator)
+```
+**참고** BinaryOperator<T>는 BiFunction의 자손이며 BiFunction<T,T,T>와 동등하다.
+
+- 최종연산 count(), sum(), max(), min() 등은 내부적으로 모두 reduce()를 이용해서 작성된 것이다.
+```
+int count = intStream.reduce(0, (a, b) -> a + 1);
+int sum = intStream.reduce(0, (a,b) -> a + b);
+int max = intStream.reduce(Integer.MIN_VALUE, (a, b) -> a>b?a:b);
+int min = intStream.reduce(Integer.MAX_VALUE, (a, b) -> a<b?a:b);
+```
 
 ## collect()
+
 
 ### 스트림 컬렉션과 배열로 변환 - toList(), toSet(), toMap(), toCollection(), toArray()
 
