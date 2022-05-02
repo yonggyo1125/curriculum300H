@@ -207,3 +207,177 @@ enum Direction {
 	public String getSymbol() { return symbol; }
 }
 ```
+
+#### day16/EnumEx2.java
+```
+package day16;
+
+enum Direction2 {
+	EAST(1, ">"), SOUTH(2, "V"), WEST(3, "<"), NORTH(3, "^");
+	
+	private static final Direction2[] DIR_ARR = Direction2.values();
+	private final int value;
+	private final String symbol;
+	
+	Direction2(int value, String symbol) { // 접근 제어자 private이 생략됨
+		this.value = value;
+		this.symbol = symbol;
+	}
+	
+	public int getValue() { return value; }
+	public String getSymbol() { return symbol; }
+	
+	public static Direction2 of(int dir) {
+		if (dir < 1 || dir > 4) {
+			throw new IllegalArgumentException("Invalid value : " + dir);
+		}
+		
+		return DIR_ARR[dir - 1];
+	}
+	
+	// 방향을 회전시키는 메서드. num의 값만큼 90도씩 시계방향으로 회전한다.
+	public Direction2 rotate(int num) {
+		num = num % 4;
+		
+		if (num < 0) num += 4; // num이 음수일 때는 시계반대 방향으로 회전
+		
+		return DIR_ARR[(value - 1 + num) % 4];
+	}
+	
+	public String toString() {
+		return name() + getSymbol();
+	}
+}
+
+public class EnumEx2 {
+	public static void main(String[] args) {
+		for(Direction2 d : Direction2.values()) {
+			System.out.printf("%s=%d%n", d.name(), d.getValue());
+		}
+		
+		Direction2 d1 = Direction2.EAST;
+		Direction2 d2 = Direction2.of(1);
+		
+		System.out.printf("d1=%s, %d%n", d1.name(), d1.getValue());
+		System.out.printf("d2=%s, %d%n", d2.name(), d2.getValue());
+		
+		System.out.println(Direction2.EAST.rotate(1));
+		System.out.println(Direction2.EAST.rotate(2));
+		System.out.println(Direction2.EAST.rotate(-1));
+		System.out.println(Direction2.EAST.rotate(-2));
+		
+	}
+}
+
+실행결과
+EAST=1
+SOUTH=2
+WEST=3
+NORTH=3
+d1=EAST, 1
+d2=EAST, 1
+SOUTHV
+WEST<
+NORTH^
+WEST<
+```
+
+
+### 열거형에 추상메서드 추가하기
+- 열거형에 추상 메서드를 선언하면 각 열거형 상수가 이 추상 메서드를 반드시 구현해야 한다.
+- 추상클래스나 인터페이스를 가지고 추상 메서드를 구현함으로써 익명 클래스를 작성하는 것과 유사하다
+```
+enum Transportation {
+	BUS(100) { int fare(int distance) { return distance * BASIC_FARE; }},
+	TRAIN(150) { int fare(int distance) { return distance * BASIC_FARE; }},
+	SHIP(100)  { int fare(int distance) { return distance * BASIC_FARE; }},
+	AIRPLANE(300)  { int fare(int distance) { return distance * BASIC_FARE; }};
+	
+	abstract int fare(int distance); // 거리에 따른 요금을 계산하는 추상 메서드
+	
+	protected final int BASIC_FARE; // protected로 해야 각 상수에서 접근가능
+	
+	Transportation(int basicFare) {
+		BASIC_FARE = basicFare;
+	}
+	
+	public int getBasicFare() { return BASIC_FARE; }
+}
+```
+
+#### day16/EnumEx3.java
+```
+package day16;
+
+enum Transportation {
+	BUS(100) { int fare(int distance) { return distance * BASIC_FARE; }},
+	TRAIN(150) { int fare(int distance) { return distance * BASIC_FARE; }},
+	SHIP(100)  { int fare(int distance) { return distance * BASIC_FARE; }},
+	AIRPLANE(300)  { int fare(int distance) { return distance * BASIC_FARE; }};
+	
+	abstract int fare(int distance); // 거리에 따른 요금을 계산하는 추상 메서드
+	
+	protected final int BASIC_FARE; // protected로 해야 각 상수에서 접근가능
+	
+	Transportation(int basicFare) {
+		BASIC_FARE = basicFare;
+	}
+	
+	public int getBasicFare() { return BASIC_FARE; }
+}
+
+public class EnumEx3 {
+	public static void main(String[] args) {
+		System.out.println("bus fare=" + Transportation.BUS.fare(100));
+		System.out.println("train fare=" + Transportation.TRAIN.fare(100));
+		System.out.println("ship fare=" + Transportation.SHIP.fare(100));
+		System.out.println("airplane fare=" + Transportation.AIRPLANE.fare(100));
+	}
+}
+
+실행결과
+bus fare=10000
+train fare=15000
+ship fare=10000
+airplane fare=30000
+```
+
+# 애너테이션(annotation)
+
+## 에너테이션이란?
+
+## 표준 애너테이션
+
+### @Override
+
+### @Deprecated
+
+### @FunctionalInterface
+
+### @SupressWarnings
+
+### @SafeVarags
+
+
+## 메타 애너테이션
+
+### @Target
+
+### @Documented
+
+### @Inherited
+
+### @Repeatable
+
+### @Native
+
+
+## 애너테이션 타입 정의하기
+
+### 애너테이션의 요소
+
+### java.lang.annotation.Annotation
+
+### 마커 애너테이션(Marker Annotation)
+
+### 애너테이션 요소의 규칙
