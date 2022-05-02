@@ -158,7 +158,52 @@ NORTH=3
 ```
 
 ## 열거형에 멤버 추가하기
-
-
-
-
+- Enum클래스에 정의된 ordinal()이 열거형 상수가 정의된 순서를 반환하지만, 이 값을 열거형 상수의 값으로 사용하지 않는 것이 좋다. 이 값은 내부적인 용도로만 사용되기 위한 것이다.
+- 열거형 상수의 값이 불연속적인 경우에는 다음과 같이 열거형 상수의 이름 옆에 원하는 값을 괄호()와 함게 적어주면 된다.
+```
+enum Direction { EAST(1), SOUTH(5), WEST(-1), NORTH(10) }
+```
+- 지정된 값을 값을 저장할 수 있는 인스턴스 변수와 생성자를 새로 추가해 주어야 한다.
+- 주의할 점 
+	- 열거형 상수를 모두 정의한 다음에 다른 멤버들을 추가해야 한다.
+	- 열거형 상수의 마지막에 ';'를 추가해야 한다.
+```
+enum Direction {
+	EAST(1), SOUTH(5), WEST(-1), NORTH(10); // 끝에 ';'를 추가해야 한다.
+	
+	private final int value; // 정수를 저장할 필드(인스턴스 변수)를 추가
+	Direction(int value) { this.value = value; } // 생성자를 추가
+	
+	public int getValue() { return value; } // 외부에서 이 값을 얻을 수 있도록 추가
+}
+```
+- 열거형 생성자는 외부에서 호출이 불가하다. 열거형의 생성자는 제어자가 묵시적으로 private이다
+```
+Direction d = new Direction(1); // 에러, 열거형의 생성자는 외부에서 호출 불가
+```
+```
+enum Direction {
+	...
+	Direction(int value) {  // private Direction(int value)와 동일 
+		this.value = value;
+	}
+	...
+}
+```
+- 열거형 상수에 여러값을 지정할 수 있다. 다만 그에 맞게 인스턴스 변수와 생성자 등을 추가해야 한다.
+```
+enum Direction {
+	EAST(1, ">"), SOUTH(2, "V"), WEST(3, "<"), NORTH(4, "^");
+	
+	private final int value;
+	private final String symbol;
+	
+	Direction(int value, String symbol) { // 접근 제어자 private이 생략됨
+		this.value = value;
+		this.symbol = symbol;
+	}
+	
+	public int getValue() { return value; }
+	public String getSymbol() { return symbol; }
+}
+```
