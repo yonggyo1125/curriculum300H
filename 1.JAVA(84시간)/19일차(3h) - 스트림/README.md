@@ -360,6 +360,7 @@ OptionalInt min()
 OptionalDouble average()
 ```
 - 반환타입이 Optional<T>가 아니라는 것을 제외하고는 Stream에 정의된 것과 비슷하나 Optional에 저장된 값을 꺼낼 때 사용하는 메서드의 이름이 조금씩 다르다
+
 |Optinal클래스|값을 반환하는 메서드|
 |-------|---------|
 |Optional<T>|T get()|
