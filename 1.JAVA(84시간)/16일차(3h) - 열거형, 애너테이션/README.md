@@ -96,6 +96,66 @@ System.out.println(d); // WEST
 System.out.println(Direction.WEST == Direction.valueOf("WEST")); // true
 ```
 
+#### day16/EnumEx1.java
+```
+package day16;
+
+enum Direction { EAST, SOUTH, WEST, NORTH };
+
+public class EnumEx1 {
+	public static void main(String[] args) {
+		Direction d1 = Direction.EAST;
+		Direction d2 = Direction.valueOf("WEST");
+		Direction d3 = Enum.valueOf(Direction.class, "EAST");
+		
+		System.out.println("d1=" + d1);
+		System.out.println("d2=" + d2);
+		System.out.println("d3=" + d3);
+		
+		System.out.println("d1==d2 ? " + (d1 == d2)); // false  
+		System.out.println("d1==d3 ? " + (d1 == d3)); // true
+		System.out.println("d1.equals(d3) ? " + d1.equals(d3)); // true
+		// System.out.println("d2 > d3 ? " + (d1 > d3)); // 에러
+		System.out.println("d1.compareTo(d3) ? " + (d1.compareTo(d3))); // 0
+		System.out.println("d1.compareTo(d2) ? " + (d1.compareTo(d2)));
+		
+		switch(d1) {
+			case EAST: // Direction.EAST라고 쓸 수 없다.
+				System.out.println("The direction is EAST."); break;
+			case SOUTH:
+				System.out.println("The direction is SOUTH."); break;
+			case WEST:
+				System.out.println("The direction is WEST."); break;
+			case NORTH:
+				System.out.println("The direction is NORTH"); break;
+			default:
+				System.out.println("Invalid direction.");
+		}
+		
+		Direction[] dArr = Direction.values();
+		
+		for(Direction d : dArr) {
+			System.out.printf("%s=%d%n", d.name(), d.ordinal());
+		}
+	}
+}
+
+실행 결과
+
+d1=EAST
+d2=WEST
+d3=EAST
+d1==d2 ? false
+d1==d3 ? true
+d1.equals(d3) ? true
+d1.compareTo(d3) ? 0
+d1.compareTo(d2) ? -2
+The direction is EAST.
+EAST=0
+SOUTH=1
+WEST=2
+NORTH=3
+```
 
 ## 열거형에 멤버 추가하기
 
