@@ -860,3 +860,65 @@ public @interface Test {}  // 마커 에너테이션. 정의된 요소가 하나
 	String minor() throws Exception; // 에러, 예외를 선언할 수 없음
 	ArrayList<T> list(); // 에러, 요소의 타입에 타입 매개변수 사용불가
 }
+
+```
+
+#### day16/AnnotationEx6.java
+```
+package day16;
+
+import java.lang.annotation.*;
+
+@Retention(RetentionPolicy.RUNTIME) // 실행시에사용가능하도록 지정
+@interface TestInfo {
+	int count() default 1;
+	String testedBy();
+	String[] testTools() default "JUnit";
+	TestType testType() default TestType.FIRST;
+	DateTime testDate();
+}
+
+@Retention(RetentionPolicy.RUNTIME) // 실행 시에 사용가능하도록 지정
+@interface DateTime {
+	String yymmdd();
+	String hhmmss();
+}
+
+enum TestType { FIRST, FINAL }
+
+@Deprecated
+@TestInfo(testedBy="aaa", testDate=@DateTime(yymmdd="160101", hhmmss="235959"))
+public class AnnotationEx6 {
+	public static void main(String[] args) {
+		// AnnotationEx6의 Class 객체를 얻는다.
+		Class<AnnotationEx6> cls = AnnotationEx6.class;
+		
+		TestInfo anno = (TestInfo)cls.getAnnotation(TestInfo.class);
+		System.out.println("anno.testedBy()=" + anno.testedBy());
+		System.out.println("anno.testDate().yymmdd()" + anno.testDate().yymmdd());
+		System.out.println("anno.testDate().hhmmss()=" + anno.testDate().hhmmss());
+		
+		for(String str : anno.testTools()) {
+			System.out.println("testTools=" + str);
+		}
+		
+		System.out.println();
+		
+		// AnnotationEx6에 적용된 모든 애너테이션을 가져온다.
+		Annotation[] annoArr = cls.getAnnotations();
+		
+		for (Annotation a : annoArr) {
+			System.out.println(a);
+		}
+	}
+}
+
+실행결과
+anno.testedBy()=aaa
+anno.testDate().yymmdd()160101
+anno.testDate().hhmmss()=235959
+testTools=JUnit
+
+@java.lang.Deprecated(forRemoval=false, since="")
+@day16.TestInfo(count=1, testType=FIRST, testTools={"JUnit"}, testedBy="aaa", testDate=@day16.DateTime(yymmdd="160101", hhmmss="235959"))
+```
