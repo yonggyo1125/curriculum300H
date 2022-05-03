@@ -377,11 +377,77 @@ public void method() {
 |@Retention\*|애너테이션이 유지되는 범위를 지정하는데 사용한다.|
 |@Repeatable\*|애너테이션을 반복해서 적용할 수 있게 한다.(JDK1.8)|
 
+
 ## 표준 애너테이션
+- 메서드 앞에만 붙일 수 있는 에너테이션 
+- 조상의 메서드를 오버라이딩 하는 것이라는 걸 컴파일러에게 알려주는 역할을 한다.
+- 오버라이딩 할 떄 메서드 앞에 '@Override'라고 애너테이션을 붙이면, 컴파일러가 같은 이름의 메서드가 조상에 있는지 확인하고 없으면 에러메세지를 출력한다.
+- 오버라이딩할 때 메서드 앞에 '@Override'를 붙이는 것이 필수는 아니지만 알아내기 어려운 실수를 미연에 방지해 주므로 붙이는 것이 좋다.
+
 
 ### @Override
+#### day16/AnnotationEx1.java
+```
+package day16;
+
+class Parent {
+	void parentMethod() {}
+}
+
+public class AnnotationEx1 extends Parent{
+	@Override
+	void parentmethod() {} // 조상 메서드의 이름을 잘못 적음
+}
+
+컴파일 결과
+AnnotationEx1.java:8: error: method does not override or implement a method from a supertype
+        @Override
+        ^
+1 error
+```
 
 ### @Deprecated
+- '@Deprecated' 애너테이션이 붙은 대상은 다른 것으로 대체되었으니 더 이상 사용하지 않을 것을 권한다는 의미
+- 예) java.util.Date 클래스의 대부분의 메서드에서는 '@Deprecated'가 붙어 있다.
+```
+java.util.Date
+	int getDate()
+	Deprecated.
+	As of JDK version 1.1, replaced by Calendar.get(Calendar.DAY_OF_MONTH).
+	
+	이 메서드 대신에 JDK1.1 부터 추가된 Calendar 클래스의  get()을 사용하라는 것
+```
+
+#### day16/AnnotationEx2.java
+```
+package day16;
+
+class NewClass {
+	int newField;
+	
+	int getNewField() { return newField; }
+	
+	@Deprecated
+	int oldField;
+	
+	@Deprecated
+	int getOldField() { return oldField; }
+}
+
+public class AnnotationEx2 {
+	public static void main(String[] args) {
+		NewClass nc = new NewClass();
+		
+		nc.oldField = 10;  // @Deprecated가 붙은 대상을 사용 
+		System.out.println(nc.getOldField()); // @Deprecated가 붙은 대상을 사용 
+	} 
+}
+
+컴파일 결과 
+D:\javaEx\lecture\src\day16>javac AnnotationEx2.java
+Note: AnnotationEx2.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+```
 
 ### @FunctionalInterface
 
