@@ -74,7 +74,10 @@ b.setItem(new Object()); // 경고 발생 안함
 
 ### 지네릭스의 용어
 
-<div style='border: 1px solid #000000; padding: 10px;'>Class Box<T> {}</div>
+Class Box<T> {}
+- **Box<T>** : 지네릭 클래스, 'T의 Box' 또는 'T Box'라고 읽는다.
+- **T** : 타입 변수 또는 타입 매개변수.(T는 타입문자)
+- **Box** : 원시 타입(raw type)
 
 ### 지네릭스의 제한
 
