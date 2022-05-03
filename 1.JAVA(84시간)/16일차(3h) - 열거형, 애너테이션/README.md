@@ -368,7 +368,7 @@ public void method() {
 |@Override|컴파일러에게 오버라이딩하는 메서드라는 것을 알린다.|
 |@Deprecated|앞으로 사용되지 않을 것을 권장하는 대상에게 붙인다.|
 |@SuppressWarnings|컴파일러의 특정 경고메세지가 나타나지 않게 해준다.|
-|@SafeVarargs|제네릭스 타입의 가변인자에 사용한다.(JDK1.7)|
+|@SafeVarargs|지네릭스 타입의 가변인자에 사용한다.(JDK1.7)|
 |@FunctionalInterface|함수형 인터페이스라는 것을 알린다.(JDK1.8)|
 |@Native|native메서드에서 참조되는 상수 앞에 붙인다.(JDK1.8)|
 |@Target\*|애너테이션이 적용 가능한 대상을 지정하는데 사용한다.|
@@ -450,15 +450,150 @@ Note: Recompile with -Xlint:deprecation for details.
 ```
 
 ### @FunctionalInterface
+- '함수형 인터페이스(functional interface)'를 선언할 때, 이 애너테이션을 붙이면 컴파일러가 '함수형 인터페이스'를 올바르게 선언했는지 확인하고, 잘못된 경우 에러를 발생시킨다.
+- 필수는 아니지만, 붙이면 실수를 방지할 수 있으므로 '함수형 인터페이스'를 선언할 때는 이 애너테이션을 붙이는 것이 좋다.
+- 함수형 인터페이스는 추상 메서드가 하나뿐이어야 한다는 제약이 있다(18일차 - 람다식 참조)
+```
+@FunctionalInterface
+public interface Runnable {
+	public abstract void run(); // 추상 메서드
+}
+```
 
 ### @SupressWarnings
+- 컴파일러가 보여주는 경고메시지가 나타나지 않게 억제해 준다.
+- 주로 사용되는 것은 "deprecation", "unchecked", "rawtypes", "varargs" 정도 이다.
+	- deprecation : "@Deprecated"가 붙은 대상을 사용해서 발생하는 경고를 억제
+	- unchecked : 지네릭스로 타입을 지정하지 않았을 때 발생하는 경고를 억제
+	- rawtypes : 지네릭스를 사용하지 않아서 발생하는 경고를 억제
+	- varargs : 가변인자의 타입이 제네릭 타입일 때 발생하는 경고를 억제
+	
+	```
+	@SupressWarnings("unchecked")  // 지네릭스와 관련된 경고를 억제 
+	ArrayList list = new ArrayList(); // 지네릭 타입을 지정하지 않음 
+	list.add(obj); // 경고 발생 
+	```
+- 둘 이상의 경고를 동시에 억제하려면 배열에서처럼 중괄호{}를 추가로 사용해야 한다.
+```
+@SuppressWarnings({"deprecation", "unchecked", "varargs"})
+```
+
+#### day16/AnnotationEx3.java
+```
+package day16;
+
+import java.util.ArrayList;
+
+class NewClass2 {
+	int newField;
+	
+	int getNewField() {
+		return newField;
+	}
+	
+	@Deprecated
+	int oldField;
+	
+	@Deprecated
+	int getOldField() {
+		return oldField;
+	}
+}
+
+public class AnnotationEx3 {
+	@SuppressWarnings("deprecation") // deprecation관련 경고를 억제
+	public static void main(String[] args) {
+		NewClass2 nc = new NewClass2();
+		
+		nc.oldField = 10;
+		System.out.println(nc.getOldField());
+		
+		@SuppressWarnings("unchecked") // 지네릭스 관련 경고를 억제
+		ArrayList<NewClass2> list = new ArrayList(); // 타입을 지정하지 않음
+		list.add(nc);
+	}
+}
+
+```
 
 ### @SafeVarags
+메서드에 선언된 가변인자의 타입이 non-reifiable 타입일 경우, 해당 메서드를 선언하는 부분과 호출하는 부분에서 "unchecked"경고가 발생한다 해당 코드에 문제가 없다면 이 경고를 억제하기 위해 "@SafeVarargs"를 사용해야 한다.
+- 이 애너테이션은 static이나 final이 붙은 메서드에만 붙일 수 있다. 즉 오버라이드 될 수 있는 메서드에는 사용할 수 없다.
+- 지네릭스에서 살펴본 것과 같이 어떤 타입들은 컴파일 이후에 제거된다. 컴파일 후에도 제거되지 않는 타입을 reifiable타입이라 하고, 제거되는 타입을 non-reifiable타입이라고 한다.
+- 지네릭 타입들은 대부분 컴파일 시에 제거되므로 non-reifiable타입이다.
 
+#### day16/AnnotationEx4.java
+```
+package day16;
+
+import java.util.Arrays;
+
+class MyArrayList<T> {
+	T[] arr;
+	
+	@SafeVarargs
+	MyArrayList(T... arr) {
+		this.arr = arr;
+	}
+	
+	@SafeVarargs
+	public static <T> MyArrayList<T> asList(T... a) {
+		return new MyArrayList<>(a);
+	}
+	
+	public String toString() {
+		return Arrays.toString(arr);
+	}
+}
+
+public class AnnotationEx4 {	
+	public static void main(String[] args) {
+		MyArrayList<String> list = MyArrayList.asList("1", "2", "3");
+		
+		System.out.println(list);
+	}
+}
+```
 
 ## 메타 애너테이션
+- 애너테이션을 위한 애너테이션
+- 애너테이션을 붙이는 애너테이션으로 애너테이션을 정의할 때 애너테이션의 적용대상(target)이나 유지기간(retention)등을 지정하는데 사용된다.
+- 메타 애너테이션은 "java.lang.annotation" 패키지에 포함되어 있다.
 
 ### @Target
+애너테이션이 적용 가능한 대상을 지정하는데 사용된다.
+
+#### "@target"으로 지정할 수 있는 애너테이션 적용대상의 종류
+|대상 타입|의미|
+|----------|----------|
+|ANNOTION_TYPE|애너테이션|
+|CONSTRUCTOR|생성자|
+|FIELD|필드(멤버변수, enum상수) - 기본자료형에 사용|
+|LOCAL_VARIABLE|지역변수|
+|METHOD|메서드|
+|PACKAGE|패키지|
+|PARAMETER|매개변수|
+|TYPE|타입(클래스, 인터페이스, enum)|
+|TYPE_PARAMETER|타입 매개변수|
+|TYPE_USE|타입이 사용되는 모든 곳 - 참조자료형에 사용|
+
+```
+import static java.lang.annotation.ElementType.*;
+
+@Target({FIELD, TYPE, TYPE_USE}) // 적용대상이 FIELD, TYPE, TYPE_USE
+public @interface MyAnnotation { // MyAnnotation을 정의
+
+}
+
+@MyAnnotation  // 적용대상이 TYPE인 경우
+class MyClass {
+	@MyAnnotation  // 적용대상이 FIELD인 경우 
+	int i; 
+	
+	@MyAnnotation // 적용대상이 TYPE_USE인 경우
+	MyClass mc;
+}
+```
 
 ### @Documented
 
