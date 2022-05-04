@@ -111,8 +111,47 @@ Box<Grape> grapeBox = new Box<Grape>(); // OK, Grape 객체만 저장가능
 	- 하기 코드에 정의된 Box<T>클래스를 컴파일하는 시점에서는 T가 어떤 타입이 될지 전혀 알수 없기 때문이다.(지네릭은 인스턴스가 만들어질때 T 타입이 결정된다.)
 	- new 연산자와 같은 이유로 instanceof 연산자도 T를 피연산자로 사용할 수 없다.
 	  
+	```
+	class Box<T> {
+		T[] itemArr; // OK, T타입의 배열을 위한 참조변수
+		...
+		T[] toArray() {
+			T[] tmpArr = new T[itemArr.length]; // 에러. 지네릭 배열 생성불가
+			...
+			return tmpArr;
+		}
+		...
+	}
+	```
 
 ## 지네릭 클래스의 선언
+- 참조변수와 생성자에 대입된 타입(매개변수화된 타입)이 일치해야 한다. 일치하지 않으면 에러가 발생한다.
+```
+Box<Apple> appleBox = new Box<Apple>(); // OK
+Box<Apple> appleBox = new Box<Grape>(); // 에러
+
+Apple이 Fruit의 자손이라고 가정
+Box<Fruit> appleBox = new Box<Apple>(); // 에러. 대입된 타입이 다르다.
+```
+
+- 두 지네릭 클래스의 타입이 상속관계에 있고, 대입된 타입이 같을 때는 가능하다.
+```
+FruitBox는 Box의 자손이라고 가정
+
+Box<Apple> appleBox = new FruitBox<Apple>(); // OK. 다형성 
+```
+- 추정이 가능한 경우 타입을 생략할 수 있다.
+```
+Box<Apple> appleBox = new Box<Apple>();
+Box<Apple> appleBox = new Box<>(); 
+```
+
+- 타입 매개변수가 조상 클래스인 배열 또는 컬렉션 프레임워크에서는 자손 클래스를 추가할 수 있다(다형성)
+```
+Box<Fruit> fruitBox = new Box<Fruit>();
+fruitBox.add(new Fruit()); // OK
+fruitBox.add(new Apple()); // OK. void add(Fruit item)
+```
 
 ## 지네릭 클래스의 객체 생성과 사용
 
