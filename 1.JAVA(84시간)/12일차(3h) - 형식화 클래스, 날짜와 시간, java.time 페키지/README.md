@@ -240,11 +240,198 @@ public class DateFormatEx3 {
 ```
 
 ## ChoiceFormat
+특정 범위에 속하는 값을 문자열로 변환해준다.
 
+#### day12/format/ChoiceFormatEx1.java
+```
+package day12.format;
+
+import java.text.*;
+
+public class ChoiceFormatEx1 {
+	public static void main(String[] args) {
+		double[] limits = {60, 70, 80, 90}; // 낮은 값부터 큰 값의 순서로 적어야한다.
+		// limits, grades간의 순서와 개수를 맞추어야 한다.
+		String[] grades = {"D","C", "B", "A"};
+		
+		int[] scores = { 100, 95, 88, 70, 52, 60, 60 };
+		
+		ChoiceFormat form = new ChoiceFormat(limits, grades);
+		
+		for(int i = 0; i < scores.length; i++) {
+			System.out.println(scores[i] + ":" + form.format(scores[i]));
+		}
+	}
+}
+
+실행결과
+100:A
+95:A
+88:B
+70:C
+52:D
+60:D
+60:D
+```
+
+#### day12/format/ChoiceFormatEx2.java
+```
+package day12.format;
+
+import java.text.*;
+
+public class ChoiceFormatEx2 {
+	public static void main(String[] args) {
+		String pattern = "60#D|70#C|80<B|90#A";
+		int[] scores = { 91, 90, 80, 88, 70, 52, 60 };
+		
+		ChoiceFormat form = new ChoiceFormat(pattern);
+		
+		for(int i=0; i<scores.length; i++) {
+			System.out.println(scores[i]+":"+form.format(scores[i]));
+		}
+	}
+}
+
+실행결과
+91:A
+90:A
+80:C
+88:B
+70:C
+52:D
+60:D
+```
 
 ## MessageFormat
+- 데이터를 정해진 양식에 맞게 출력할 수 있도록 도와준다.(format)
+- 지정된 양식에서 필요한 데이터만 손쉽게 추출할 수 있다.(parse)
 
+#### day12/format/MessageFormatEx1.java
+```
+package day12.format;
 
+import java.text.*;
+
+public class MessageFormatEx1 {
+	public static void main(String[] args) {
+		String msg = "Name: {0} \nTel: {1} \nAge: {2} \nBirthday: {3}";
+		
+		Object[] arguments = {
+			"고애신", "02-123-1234", "27", "07-09"
+		};
+		
+		String result = MessageFormat.format(msg,  arguments);
+		System.out.println(result);
+	}
+}
+
+실행결과
+Name: 고애신 
+Tel: 02-123-1234 
+Age: 27 
+Birthday: 07-09
+```
+
+#### day12/format/MessageFormatEx2.java
+홑따옴표(')는 MessageFormat의 양식에 escape문자로 사용되기 때문에 문자열 msg내에서 홑따옴표를 사용하려면 홑따옴표를 연속으로 두 번 사용해야 한다.
+
+```
+package day12.format;
+
+import java.text.*;
+
+public class MessageFormatEx2 {
+	public static void main(String[] args) {
+		String tableName = "CUST_INFO";
+		String msg = "INSERT INTO " + tableName + " VALUES (''{0}'', ''{1}'', {2}, ''{3}'');";
+		
+		Object[][] arguments = {
+				{"최유진", "02-123-1234", "27", "07-09"},
+				{"고애신", "032-333-1234", "33", "10-07"}
+		};
+		
+		for(int i = 0; i < arguments.length; i++) {
+			String result = MessageFormat.format(msg,  arguments[i]);
+			System.out.println(result);
+		}
+	}
+}
+
+실행결과
+INSERT INTO CUST_INFO VALUES ('최유진', '02-123-1234', 27, '07-09');
+INSERT INTO CUST_INFO VALUES ('고애신', '032-333-1234', 33, '10-07');
+```
+
+#### day12/format/MessageFormatEx3.java
+parse(String source)를 이용해서 출력된 데이터로 부터 필요한 데이터를 추출하는 방법
+
+```
+package day12.format;
+
+import java.text.*;
+
+public class MessageFormatEx3 {
+	public static void main(String[] args) throws ParseException {
+		String[] data = {
+				"INSERT INTO CUST_INFO VALUES ('최유진', '02-123-1234', 27, '07-09');",
+				"INSERT INTO CUST_INFO VALUES ('고애신', '032-1234-1234', 33, '10-07');"
+		};
+		
+		String pattern = "INSERT INTO CUST_INFO VALUES ({0}, {1}, {2}, {3});";
+		MessageFormat mf = new MessageFormat(pattern);
+		
+		for(int i = 0; i < data.length; i++) {
+			Object[] objs = mf.parse(data[i]);
+			for(int j = 0; j < objs.length; j++) {
+				System.out.print(objs[j] + ",");
+			}
+			System.out.println();
+		}
+	}
+}
+
+실행결과
+'최유진','02-123-1234',27,'07-09',
+'고애신','032-1234-1234',33,'10-07',
+```
+
+#### day12/format/MessageFormatEx4.java
+
+```
+package day12.format;
+
+import java.util.*;
+import java.text.*;
+import java.io.*;
+
+public class MessageFormatEx4 {
+	public static void main(String[] args) throws ParseException, IOException {
+		String tableName = "CUST_INFO";
+		String fileName = "data.txt";
+		String msg = "INSERT INTO " + tableName + " VALUES ({0},{1},{2},{3});";
+		
+		Scanner s = new Scanner(new File(fileName));
+		String pattern = "{0},{1},{2},{3}";
+		MessageFormat mf = new MessageFormat(pattern);
+		
+		while(s.hasNextLine()) {
+			String line = s.nextLine();
+			Object[] objs = mf.parse(line);
+			System.out.println(MessageFormat.format(msg, objs));
+		}
+	}
+}
+
+data.txt 
+'최유진','02-123-1234',27,'07-09'
+'고애신','032-333-1234',33,'10-07'
+
+실행결과
+INSERT INTO CUST_INFO VALUES ('최유진','02-123-1234',27,'07-09');
+INSERT INTO CUST_INFO VALUES ('고애신','032-333-1234',33,'10-07');
+
+```
 
 * * * 
 # 날짜와 시간
