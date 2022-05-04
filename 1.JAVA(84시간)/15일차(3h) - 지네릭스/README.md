@@ -240,9 +240,44 @@ public class FruitBoxEx1 {
 ```
 
 ## 제한된 지네릭 클래스
+타입 문자로 사용할 타입을 명시하면 한 종류의 타입만 저장할 수 있도록 제한할 수 있지만, 여전히 모든 종류의 타입을 지정할 수 있는 것에는 변함이 없다.
+타입 매개변수 T에 지정할 수 있는 타입의 종류를 제한할 수 있는 방법이 있다.
+
+- **'extends'** 를 사용하면, 특정 타입의 자손들만 대입할 수 있게 제한 할 수 있다.
+``` 
+class FruitBox<T extends Fruit> { // Fruit의 자손만 타입으로 지정가능
+	ArrayList<T> list = new ArrayList<T>();
+	...
+}
+```
+```
+FruitBox<Apple> appleBox = new FruitBox<Apple>(); // OK
+FruitBox<Toy> toyBox = new FruitBox<Toy>(); // 에러. Toy는 Fruit의 자손이 아님
+```
+```
+FruitBox<Fruit> fruitbox = new FruitBox<Fruit>();
+fruitBox.add(new Apple()); // OK. Apple이 Fruit의 자손
+fruitBox.add(new Grape()); // OK. Grape가 Fruit의 자손
+```
+- 만약 클래스가 아니라 인터페이스를 구현해야 한다는 제약이 필요하다면, 이때에도 **'extends'**를 사용한다.
+```
+interface Eatable {}
+class FruitBox<T extends Eatable> { ... }
+```
+
+- 클래스 Fruit의 자손이면서 Eatable  인터페이스도 구현해야 한다면 아래와 같이 **'&'**기호로 연결한다.
+```
+class FruitBox<T extends Fruit & Eatable> { ... }
+
+FruitBox에는 Fruit의 자손이면서 Eatable을 구현한 클래스만 타입 매개변수 T에 대입될 수 있다.
+```
+
+
 
 ## 와일드 카드
+
 
 ## 지네릭 메서드
 
 
+## 지네릭 타입의 제거
