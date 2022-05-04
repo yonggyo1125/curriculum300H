@@ -602,3 +602,60 @@ public static <T extends Product> void printAll(ArrayList<T> list, ArrayList<T> 
 ```
 
 ## 지네릭 타입의 제거
+- 컴파일러는 지네릭 타입을 이용해서 소스파일을 체크하고 필요한 곳에 형변환을 넣어준다. 그리고 지네릭 타입을 제거한다. 즉, 컴파일된 파일(\*.class)에는 지네릭에 대한 정보가 없는것이다.
+- 이렇게 하는 주된 이유는 지네릭이 도입되기 이전의 소스코드와의 호환성을 유지하기 위해서이다.
+- JDK1.5부터 지네릭스가 도입되었지만, 아직도 원시 타입을 사용해서 코드를 작성하는 것을 허용하고는 있다.
+
+### 지네릭 타입 제거과정
+1. 지네릭 타입의 경계(bound)를 제거한다.
+	지네릭 타입이 <T extends Fruit>라면 T는 Fruit로 치환된다. <T>인 경우는 T는 Object로 치환된다. 그리고 클래스 옆의 선언은 제거된다.	
+	- 변환 전 
+	```
+	class Box<T extends Fruit> {
+		void add(T t) 
+	}	
+	```
+	- 변환 후 
+	```
+	class Box {
+		void add(Fruit t) {
+			...
+		}
+	}
+	```
+2. 지네릭 타입을 제거한 후에 타입이 일치하지 않으면 형변환을 추가한다.
+	List의 get()은 Object 타입을 반환하므로 **형변환**이 필요하다.
+	- 변환 전
+	```
+	T get(int i) {
+		return list.get(i);
+	}
+	```
+	- 변환 후
+	```
+	Fruit get(int i) {
+		return (Fruit)list.get(i);
+	}
+	```
+	
+	와일드 카드가 포함되어 있는 경우에는 다음과 같이 적절한 타입으로 형변환이 추가된다.
+	- 변환 전 
+	```
+	static Juice makeJuice(FruitBox<? extends Fruit> box) {
+		String tmp = "";
+		for(Fruit f : box.getList()) tmp += f + " ";
+		return new Juice(tmp);
+	}
+	```
+	
+	- 변환 후
+	```
+	static Juice makeJuice(FruitBox box) {
+		String tmp = "";
+		Iterator it = box.getList().iterator();
+		while(it.hasNext()) {
+			tmp += (Fruit)it.next() + " ";
+		}
+		return new Juice(tmp);
+	}
+	```
