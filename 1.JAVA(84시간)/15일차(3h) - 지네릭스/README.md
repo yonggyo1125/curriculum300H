@@ -612,7 +612,9 @@ public static <T extends Product> void printAll(ArrayList<T> list, ArrayList<T> 
 	- 변환 전 
 	```
 	class Box<T extends Fruit> {
-		void add(T t) 
+		void add(T t) {
+			...
+		}
 	}	
 	```
 	- 변환 후 
