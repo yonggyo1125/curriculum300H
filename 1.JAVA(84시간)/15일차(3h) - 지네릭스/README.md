@@ -357,9 +357,248 @@ grapeBox-[Grape]
 ```
 
 ## 와일드 카드
+매개변수에 과일박스를 대입하면 주스를 만들어 반환하는 Juicer라는 클래스가 있고, 이 클래스에는 과일을 주스로 만들어서 반환하는 makeJuice()라는 static 메서드가 다음과 같이 정의되어 있다.
+```
+class Juicer {
+	static Juice makeJuice(FruitBox<Fruit> box) { // <Fruit>으로 지정
+		String tmp = "";
+		for (Fruit f : box.getList()) {
+			tmp += f + " ";
+			return new Juice(tmp);
+		}
+	}
+}
+```
+Juicer클래스는 지네릭 클래스가 아닌데다, 지네릭 클래스라고 해도 static 메서드에서는 타입 매개변수 T를 매개변수에 사용할 수 없으므로 아예 지네릭스를 적용하지 않던가, 상기 코드와 같이 타입 매개변수 대신, 특정 타입을 지정해줘야 한다.
+```
+FruitBox<Fruit> fruitBox = new FruitBox<Fruit>();
+FruitBox<Apple> appleBox = new FruitBox<Apple>();
+...
+System.out.println(Juicer.makeJuice(fruitBox)); // OK. FruitBox<Fruit> 
+System.out.println(Juicer.makeJuice(appleBox)); // 에러.  FruitBox<Apple>
+```
 
+지네릭 타입을 'FruitBox<Fruit>'로 고정해 놓으면, 상기 코드에서 알 수 있듯이 'FruitBox<Apple>'타입의 객체는 makeJuice()의 매개변수가 될 수 없으므로, 다음과 같이 여러가지 타입의 매개변수를 갖는 makeJuice()를 만들 수 밖에 없다.
+
+```
+static Juice makeJuice(FruitBox<Fruit> box) {
+	String tmp = "";
+	for(Fruit f : box.getList()) tmp += f + " ";
+	return new Juice(tmp);
+}
+
+static Juice makeJuice(FruitBox<Apple> box) {
+	String tmp = "";
+	for(Fruit f : box.getList()) tmp += f + " ";
+	return new Juice(tmp);
+}
+```
+그러나 상기 코드와 같이 오버로딩하면 컴파일 에러가 발생한다. **지네릭 타입이 다른 것만으로는 오버로딩이 성립하지 않기 때문이다.** 
+지네릭 타입은 컴파일러가 컴파일할 떄만 사용하고 제거해버린다. 그래서 위의 두 메서드는 오버로딩이 아니라 **'메서드 중복 정의'**이다.
+이럴 때 사용하기 위해 고안된 것이 바로 **'와일드 카드'**이다. 
+
+- **와일드 카드**는 기호 **'?'**로 표현하는데, 와일드 카드는 어떠한 타입도 될 수 있다.
+- **'?'**만으로는 Object타입과 다를 게 없으므로, 다음과 같이 'extends'와 'super'로 상한(upper bound)와 하한(lower bound)를 제한할 수 있다.
+	- **<? extends T>** : 와일드 카드의 상한 제한. T와 그 자손들만 가능
+	- **<? super T>** : 와일드 카드의 하한 제한. T와 그 조상들만 가능
+	- **<?>** : 제한 없음. 모든 타입이 가능. <? extends Object>와 동일 
+- 지네릭 클래스와 달리 와일드 카드에는 '&'를 사용할 수 없다. 즉, <? extends T & E>와 같이 할 수 없다.
+
+```
+static Juice makeJuice(FruitBox<? extends Fruit> box) {
+	String tmp = "";
+	for(Fruit f : box.getList()) tmp += f + " ";
+	return new Juice(tmp);
+}
+```
+```
+FruitBox<Fruit> fruitBox = new FruitBox<Fruit>();
+FruitBox<Apple> appleBox = new FruitBox<Apple>();
+...
+System.out.println(Juicer.makeJuice(fruitBox)); // OK. FruitBox<Fruit>
+System.out.println(Juicer.makeJuice(appleBox)); // OK. FruitBox<Apple>
+```
+
+#### day15/wildcard/Box.java
+```
+package day15.wildcard;
+
+import java.util.ArrayList;
+
+class Fruit {
+	public String toString() {
+		return "Fruit";
+	}
+}
+
+class Apple extends Fruit {
+	public String toString() {
+		return "Apple";
+	}
+}
+
+class Grape extends Fruit {
+	public String toString() {
+		return "Grape";
+	}
+}
+
+class Juice {
+	String name;
+	
+	Juice(String name) {
+		this.name = name + "Juice";
+	}
+	
+	public String toString() {
+		return name;
+	}
+}
+
+class Juicer {
+	static Juice makeJuice(FruitBox<? extends Fruit> box) {
+		String tmp = "";
+		
+		for(Fruit f : box.getList()) {
+			tmp += f + " ";
+		}
+		
+		return new Juice(tmp);
+	}
+}
+
+class FruitBox<T extends Fruit> extends Box<T> {}
+
+public class Box<T> {
+	ArrayList<T> list = new ArrayList<T>();
+	void add(T item) {
+		list.add(item);
+	}
+	
+	T get(int i) {
+		return list.get(i);
+	}
+	
+	ArrayList<T> getList() {
+		return list;
+	}
+	
+	int size() {
+		return list.size();
+	}
+	
+	public String toString() {
+		return list.toString();
+	}
+}
+```
+
+#### day15/wildcard/FruitBoxEx3.java
+```
+package day15.wildcard;
+
+public class FruitBoxEx3 {
+	public static void main(String[] args) {
+		FruitBox<Fruit> fruitBox = new FruitBox<Fruit>();
+		FruitBox<Apple> appleBox = new FruitBox<Apple>();
+		
+		fruitBox.add(new Apple());
+		fruitBox.add(new Grape());
+		appleBox.add(new Apple());
+		appleBox.add(new Apple());
+		
+		System.out.println(Juicer.makeJuice(fruitBox));
+		System.out.println(Juicer.makeJuice(appleBox));
+	}
+}
+
+실행결과
+Apple Grape Juice
+Apple Apple Juice
+```
 
 ## 지네릭 메서드
+- 메서드의 선언부에 지네릭 타입이 선언된 메서드를 지네릭 메서드라 한다.
+- 선언 위치는 반환 타입 바로 앞이다.
+```
+static <T> void sort(List<T> list, Cimparator<? super T> c)
+```
 
+- 지네릭 클래스에 정의된 타입 매개변수와 지네릭 메서드에 정의된 타입 매개변수는 전혀 별개의 것이다. 같은 타입 문자 T를 사용해도 같은 것이 아니다.
+```
+class FruitBox<T> {
+	...
+	static <T> void sort(LIst<T> list, Comparator<? super T> c) {
+		...
+	}
+	...
+}
+```
+- 상기 코드에서 지네릭 클래스 FruitBox에 선언된 타입 매개변수 T와 지네릭 메서드 sort()에 선언된 타입 매개변수 T는 타입 문자만 같을 뿐 서로 다르다. 
+- sort가 static 메서드로 정의됭 있는데, static 멤버에는 타입 매개변수를 사용할 수 없지만, 메서드에 지네릭 타입을 선언하고 사용하는 것은 가능하다.
+- 지네릭 메서드는 지네릭 클래스가 아닌 클래스에도 정의될 수 있다.
+- 메서드에 선언된 지네릭 타입은 지역변수를 선언한 것과 같다고 생각하면 된다.(지네릭 클래스의 타입이 인스턴스가 만들어질때 결정되지만, 지네릭 메서드는 메서드가 호출될때 타입이 결정된다.)
+
+- 앞서 다루었던 makeJuice()를 지네릭 메서드로 바꾸면 다음과 같다.
+
+와일드 카드 방식
+```
+static Juice makeJuice(FruitBox<? extends Fruit> box) {
+	String tmp = "";
+	for(Fruit f : box.getList()) tmp += f + " ";
+	return new Juice(tmp);
+}
+```
+
+지네릭 메서드
+```
+static <T extends Fruit> Juice makeJuice(FruitBox<T> box) {
+	String tmp = "";
+	for(Fruit f : box.getList()) tmp += f + " ";
+	return new Juice(tmp);
+}
+```
+
+- 지네릭 메서드를 호출할 때는 하기와 같이 타입 변수에 타입을 대입해야 한다.
+```
+FruitBox<Fruit> fruitBox = new FruitBox<Fruit>();
+FruitBox<Apple> appleBox = new FruitBox<Apple>();
+...
+System.out.println(Juicer.<Fruit>makeJuice(fruitBox));
+System.out.println(Juicer.<Apple>makeJuice(appleBox));
+```
+
+- 그러나 대부분의 경우 컴파일러가 타입을 추정할 수 있기 때문에 생략해도 된다.(상기 코드에서도 fruitBox와 appleBox의 선언부를 통해 대입된 타입을 컴파일러가 추정할수 있다.)
+```
+System.out.println(Juicer.makeJuice(fruitBox)); // 대입된 타입을 생략할 수 있다.
+System.out.println(Juicer.makeJuice(appleBox));
+```
+
+- 지네릭 메서드를 호출할 때, 대입된 타입을 생략할 수 없는 경우에는 참조변수나 클래스의 이름을 생략할 수 없다.
+```
+System.out.println(<Fruit>makeJuice(fruitBox)); // 에러. 클래스 이름 생략불가
+System.out.println(this.<Fruit>makeJuice(fruitBox)); // OK
+System.out.println(Juicer.<Fruit>makeJuice(fruitBox)); // OK
+```
+- 같은 클래스 내에 있는 멤버들끼리는 참조변수나 클래스이름, 즉, **'this.'**나 **'클래스이름.'**을 생략하고 메서드 이름만으로 호출이 가능하지만, **대입된 타입이 있을때는 반드시 써줘야 한다.**
+
+- 지네릭 메서드는 매개변수의 타입이 복잡할때 단순하게 변경할 수 있다. 
+와일드카드 방식 매개변수
+```
+public static void printAll(ArrayList<? extends Product> list, ArrayList<? extends Product> list2) {
+	for (Unit u : list) {
+		System.out.println(u);
+	}
+}
+```
+
+지네릭 메서드 형태로 변환
+```
+public static <T extends Product> void printAll(ArrayList<T> list, ArrayList<T> list2) {
+	for (Unit u : list) {
+		System.out.println(u);
+	}
+}
+```
 
 ## 지네릭 타입의 제거
