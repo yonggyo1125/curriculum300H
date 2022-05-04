@@ -17,7 +17,7 @@
 |%|퍼센트|#.#%|123456789%|
 |\u2030|퍼밀(퍼센트 x 10)|#.#\u2030|1234567890‰|
 |\u00A4|통화|\u00A4 #,###|₩ 1,234,568|
-|\`|escape문자|\`#\`#,##<br>\`\`#.###|#1,234,568<br>\`1,234,568|
+|'|escape문자|\'#'#,##<br>\'#.###|#1,234,568<br>\'1,234,568|
 
 #### day12/format/DecimalFormatEx1.java  - 숫자를 형식화된 문자열로 변환
 ```
@@ -42,8 +42,8 @@ public class DecimalFormatEx1 {
 			"#.#%",
 			"#.#\u2030",
 			"\u00A4 #,###",
-			"`#`#.###",
-			"``#,###"
+			"'#'#.###",
+			"''#,###"
 		};
 		
 		for (int i = 0; i < pattern.length; i++) {
@@ -67,8 +67,8 @@ public class DecimalFormatEx1 {
                #.#% : 123456789%
                #.#‰ : 1234567890‰
             ¤ #,### : ? 1,234,568
-            `##.### : `1234567.89
-             `#,### : `1,234,568
+            '#'#.### : #1234567.89
+             ''#,### : '1,234,568
 ```
 #### day12/format/DecimalFormatEx2.java  - 패턴이 있는 문자열을 숫자로 변환
 ```
@@ -128,9 +128,119 @@ public class DecimalFormatEx2 {
 |Z|Time zone(RFC 822 time zone)|+0900|
 |\`|escape 문자(특수문자를 표현하는데 사용)|없음|
 
+#### day12/format/DateFormatEx1.java - Date 인스턴스를 형식화된 날짜 문자열로 변환
+```
+package day12.format;
 
+import java.util.*;
+import java.text.*;
+
+public class DateFormatEx1 {
+	public static void main(String[] args) {
+		Date today = new Date();
+		
+		SimpleDateFormat sdf1, sdf2, sdf3, sdf4;
+		SimpleDateFormat sdf5, sdf6, sdf7, sdf8, sdf9;
+		
+		sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+		sdf2 = new SimpleDateFormat("''yy년 MMM dd일 E요일");
+		sdf3 = new SimpleDateFormat("yyyy--MM-dd HH:mm:ss.SSS");
+		sdf4 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
+		
+		sdf5 = new SimpleDateFormat("오늘은 올 해의 D번째 날입니다.");
+		sdf6 = new SimpleDateFormat("오늘은 이 달의 d번째 날입니다.");
+		sdf7 = new SimpleDateFormat("오늘은 올 해의 w번째 주입니다.");
+		sdf8 = new SimpleDateFormat("오늘은 이 달의 W번재 주입니다.");
+		sdf9 = new SimpleDateFormat("오늘은 이 달의 F번째 E요일 입니다.");
+		
+		System.out.println(sdf1.format(today));
+		System.out.println(sdf2.format(today));
+		System.out.println(sdf3.format(today));
+		System.out.println(sdf4.format(today));
+		System.out.println();
+		System.out.println(sdf5.format(today));
+		System.out.println(sdf6.format(today));
+		System.out.println(sdf7.format(today));
+		System.out.println(sdf8.format(today));
+		System.out.println(sdf9.format(today));
+			
+	}
+}
+
+실행 결과
+2022-05-04
+'22년 5월 04일 수요일
+2022--05-04 23:17:44.147
+2022-05-04 11:17:44 오후
+
+오늘은 올 해의 124번째 날입니다.
+오늘은 이 달의 4번째 날입니다.
+오늘은 올 해의 19번째 주입니다.
+오늘은 이 달의 1번재 주입니다.
+오늘은 이 달의 1번째 수요일 입니다.
+```
+#### day12/format/DateFormatEx2.java - Calendar클래스를 이용한 Date인스턴스를 형식화된 날짜 문자열로 변환
+```
+package day12.format;
+
+import java.util.*;
+import java.text.*;
+
+public class DateFormatEx2 {
+	public static void main(String[] args) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(2022, 4, 4); // 2022년 5월 4일 - Month는 0~11의 범위를 갖는다.
+		
+		Date day = cal.getTime();
+		
+		SimpleDateFormat sdf1, sdf2, sdf3, sdf4;
+		sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+		sdf2 = new SimpleDateFormat("yy-MM-dd E요일");
+		sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		sdf4 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
+		
+		System.out.println(sdf1.format(day));
+		System.out.println(sdf2.format(day));
+		System.out.println(sdf3.format(day));
+		System.out.println(sdf4.format(day));
+	}
+}
+
+
+실행결과
+2022-05-04
+22-05-04 수요일
+2022-05-04 23:23:24.437
+2022-05-04 11:23:24 오후
+```
+
+#### day12/format/DateFormatEx3.java - 형식화된 문자열을 Date 인스턴스로 변환
+```
+package day12.format;
+
+import java.util.*;
+import java.text.*;
+
+public class DateFormatEx3 {
+	public static void main(String[] args) {
+		DateFormat df = new SimpleDateFormat("yyyy년 MM월 dd일");
+		DateFormat df2 = new SimpleDateFormat("yyyy/MM/dd");
+		
+		try {
+			Date d = df.parse("2022년 05월 04일");
+			System.out.println(df2.format(d));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+실행결과
+2022/05/04
+```
 
 ## ChoiceFormat
+
 
 ## MessageFormat
 
