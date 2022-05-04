@@ -179,7 +179,7 @@ class Grape extends Fruit {
 	}
 }
 
-class Toy extends Fruit {
+class Toy  {
 	public String toString() {
 		return "Toy";
 	}
@@ -272,7 +272,89 @@ class FruitBox<T extends Fruit & Eatable> { ... }
 FruitBox에는 Fruit의 자손이면서 Eatable을 구현한 클래스만 타입 매개변수 T에 대입될 수 있다.
 ```
 
+#### day15/fruitboxex2/Box.java
+```
+package day15.fruitboxex2;
 
+import java.util.ArrayList;
+
+class Fruit implements Eatable {
+	public String toString() {
+		return "Fruit";
+	}
+}
+
+class Apple extends Fruit {
+	public String toString() {
+		return "Apple";
+	}
+}
+
+class Grape extends Fruit {
+	public String toString() {
+		return "Grape";
+	}
+}
+
+class Toy {
+	public String toString() {
+		return "Toy";
+	}
+}
+
+interface Eatable {}
+
+class FruitBox<T extends Fruit & Eatable> extends Box<T> {}
+
+public class Box<T> {
+	ArrayList<T> list = new ArrayList<T>();
+	void add(T item) {
+		list.add(item);
+	}
+	
+	T get(int i) {
+		return list.get(i);
+	}
+	
+	int size() {
+		return list.size();
+	}
+	
+	public String toString() {
+		return list.toString();
+	}
+}
+```
+#### day15/fruitboxex2/FruitBoxEx2.java
+```
+package day15.fruitboxex2;
+
+public class FruitBoxEx2 {
+	public static void main(String[] args) {
+		FruitBox<Fruit> fruitBox = new FruitBox<Fruit>();
+		FruitBox<Apple> appleBox = new FruitBox<Apple>();
+		FruitBox<Grape> grapeBox = new FruitBox<Grape>();
+		//FruitBox<Grape> grapeBox = new FruitBox<Apple>(); // 에러, 타입 불일치
+		//FruitBox<Toy> toyBox = new FruitBox<Toy>();  // 에러.
+		
+		fruitBox.add(new Fruit());
+		fruitBox.add(new Apple());
+		fruitBox.add(new Grape());
+		appleBox.add(new Apple());
+		//appleBox.add(new Grape()); // 에러, Grape는 Apple의 자손이 아님
+		grapeBox.add(new Grape());
+		
+		System.out.println("fruitBox-" + fruitBox);
+		System.out.println("appleBox-" + appleBox);
+		System.out.println("grapeBox-" + grapeBox);
+	}
+}
+
+실행결과
+fruitBox-[Fruit, Apple, Grape]
+appleBox-[Apple]
+grapeBox-[Grape]
+```
 
 ## 와일드 카드
 
