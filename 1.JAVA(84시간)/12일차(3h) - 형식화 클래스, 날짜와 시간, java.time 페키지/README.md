@@ -1421,11 +1421,102 @@ Period와 Duration을 다른 단위의 값으로 변환하는데 사용된다.
 </tbody>
 </table>
 
+#### LocalDate의 toEpochDay() 
+- Epoch Day인 '1970-01-01'부터 날짜를 세어서 반환
+- 이 메서드를 이용하면 Period를 사용하지 않고도 두 날짜간의 일수를 계산할 수 있다.
+
+```
+LocalDate date1 = LocalDate.of(2021, 11, 28);
+LocalDate date2 = LocalDate.of(2021, 11, 29);
+
+long period = date2.toEpochDay() - date1.toEpochDay();
+```
+
+#### LocalTime의 toSecondOfDay(), toNanoOfDay()
+Duration을 사용하지 않고도 뺄샘으로 시간 차이를 계산할 수 있다.
+
+```
+int toSecondOfDay()
+long toNanoOfDay()
+```
+
+#### day12/time/NewTimeEx4.java
+```
+package day12.time;
+
+import java.time.*;
+import java.time.temporal.*;
+
+public class NewTimeEx4 {
+	public static void main(String[] args) {
+		LocalDate date1 = LocalDate.of(2020, 1, 1);
+		LocalDate date2 = LocalDate.of(2021, 12, 31);
+		
+		Period pe = Period.between(date1, date2);
+		
+		System.out.println("date1=" + date1);
+		System.out.println("date2=" + date2);
+		System.out.println("pe=" + pe);
+		
+		System.out.println("YEAR=" + pe.get(ChronoUnit.YEARS));
+		System.out.println("MONTH=" + pe.get(ChronoUnit.MONTHS));
+		System.out.println("DAY=" + pe.get(ChronoUnit.DAYS));
+		
+		LocalTime time1 = LocalTime.of(0, 0, 0);
+		LocalTime time2 = LocalTime.of(12, 34, 56); // 12시간 23분 56초
+		
+		Duration du = Duration.between(time1, time2);
+		
+		System.out.println("time1=" + time1);
+		System.out.println("time2=" + time2);
+		System.out.println("du=" + du);
+		
+		LocalTime tmpTime = LocalTime.of(0, 0).plusSeconds(du.getSeconds());
+		
+		System.out.println("HOUR=" + tmpTime.getHour());
+		System.out.println("MINUTE=" + tmpTime.getMinute());
+		System.out.println("SECOND=" + tmpTime.getSecond());
+		System.out.println("NANO=" + tmpTime.getNano());
+	}
+}
+
+실행결과
+date1=2020-01-01
+date2=2021-12-31
+pe=P1Y11M30D
+YEAR=1
+MONTH=11
+DAY=30
+time1=00:00
+time2=12:34:56
+du=PT12H34M56S
+HOUR=12
+MINUTE=34
+SECOND=56
+NANO=0
+```
+
 ## 파싱과 포맷
+- 날짜와 시간을 원하는 형식으로 출력하고 해석(파싱, parsing)하는 방법
+- 형식화(formatting)와 관련된 클래스들은 java.time.format 패키지에 들어가 있다.
+- DateTimeFormatter
 
-### 로케일에 종속된 형식화
+### 출력 형식 정의하기
+DateTimeFormatter의 ofPattern()으로 원하는 출력형식을 작성할 수 있다.
 
-### 출력 형식 직접 정의하기
+```
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+```
+#### DateTimeFormatter와 패턴에 사용되는 기호
+
+|기호|의미|보기|
+|----|-------|------|
+|G|연대(BC,AD)|서기 또는 AD|
+|y 또는 u|년도|2021|
+|M 또는 L|월(1~12 또는 1월~12월)|11|
+|Q 또는 q|분기(quarter)|4|
+|w|년의 몇 번째 주(1~53)|48|
+
 
 ### 문자열을 날짜와 시간으로 파싱하기
 
