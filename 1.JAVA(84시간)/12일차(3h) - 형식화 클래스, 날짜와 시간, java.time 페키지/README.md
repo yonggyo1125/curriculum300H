@@ -818,18 +818,60 @@ LocalTime birthTime = LocalTime.parse("23:59:59");
 ### 특정 필드의 값 가져오기 - get(), getXXX()
 - 주의할 점 : Calendar와 달리 월(month)의 범위가 1~12이고, 요일은 월요일이 1, 화요일이 2, ..., 일요일은 7이라는 것이다.
 
-|클래스|메서드|설명(1999-12-31 23:59:59)|
-|---|----|-----|
-|LocalDate|int getYear()|년도(1999)|
-|     ^      |int getMonthValue()|월(12)|
-|     ^      |Month getMonth()|월(DECEMBER) getMonth().getValue() = 12|
-|     ^      |int getDayOfMonth()|일(31)|
-|     ^      |int getDayOfYear()|같은 해의 1월 1일부터 몇번째 일(365)|
-|     ^      |DayOfWeek getDayOfWee()|요일(FRIDAY) getDayOfWeek().getValue() = 5|
-|     ^      |int lengthOfMonth()|같은 달의 총 일수(31)|
-|     ^      |int lengthOfYear()|같은 해의 총 일수(365), 윤년이면 366|
-|     ^      |boolean isLeapYear()|윤년 여부 확인(false)|
-  
+- LocalDate
+|메서드|설명(1999-12-31 23:59:59)|
+|----|-----|
+|int getYear()|년도(1999)|
+|int getMonthValue()|월(12)|
+|Month getMonth()|월(DECEMBER) getMonth().getValue() = 12|
+|int getDayOfMonth()|일(31)|
+|int getDayOfYear()|같은 해의 1월 1일부터 몇번째 일(365)|
+|DayOfWeek getDayOfWee()|요일(FRIDAY) getDayOfWeek().getValue() = 5|
+|int lengthOfMonth()|같은 달의 총 일수(31)|
+|int lengthOfYear()|같은 해의 총 일수(365), 윤년이면 366|
+|boolean isLeapYear()|윤년 여부 확인(false)|
+ 
+ - LocalTime
+|메서드|설명(1999-12-31 23:59:59)|
+|----|-----|
+|int getHour()|시(23)|
+|int getMinute()|분(59)|
+|int getSecond()|초(59)|
+|int getNano()|나노초(0)|
+
+
+- get(), getLong() : 원하는 필드를 직접 지정할 수 있다<br> 대부분의 필드는 int타입의 범위에 속하지만, 몇몇 필드는 int타입의 범위를 넘어서는데, 그때에는 get()대신 getLong()을 사용한다. 하기 표는 ChronoField에 정의된 상수 목록이며 getLong을 사용해야 하는 경우는 \*표 표기 하였다.
+|TemporalField(ChronoField)|설명|
+|----|------|
+|ERA|시대|
+|YEAR_OF_ERA, YEAR|년|
+|MONTH_OF_YEAR|월|
+|DAY_OF_WEEK|요일(1:월요일, 2:화요일, ... 7:일요일)|
+|DAY_OF_MONTH|일|
+|AMPM_OF_DAY|오전/오후|
+|HOUR_OF_DAY|시간(0~23)|
+|CLOCK_HOUR_OF_DAY|시간(1~24)|
+|HOUR_OF_AMPM|시간(0~11)|
+|CLOCK_HOUR_OF_AMPM|시간(1~12)|
+|MINUTE_OF_HOUR|분|
+|SECOND_OF_MINUTE|초|
+|MILLI_OF_SECOND|천분의 일초|
+|MICRO_OF_SECOND \*|백만분의 일초|
+|NANO_OF_SECOND \*|10억분의 일초|
+|DAY_OF_YEAR|그 해의 몇번째날|
+|EPOCH_DAY \*|EPOCH(1970.1.1)부터 몇번째 날|
+|MINUTE_OF_DAY|그 날의 몇 번째 분(시간을 분으로 환산)|
+|SECOND_OF_DAY|그 날의 몇 번째 초(시간을 초로 환산)|
+|MILL_OF_DAY|그날의 몇번째 몇 번째 밀리초|
+|MICRO_OF_DAY \*|그날의 몇 번째 마이크로 초|
+|NANO_OF_DAY \*|그날의 몇 번째 나노초|
+|ALIGNED_WEEK_OF_MONTH|그 달의 n번째 주|
+|ALIGNED_WEEK_OF_YEAR|그 해의 n번째 주|
+|ALIGNED_DAY_OF_WEEK_IN_MONTH|요일(그 달의 1일을 월요일로 간주하여 계산)|
+|ALIGNED_DAY_OF_WEEK_IN_YEAR|요일(그 해의 1월 1일을 월요일로 간주하여 계산)|
+|INSTANT_SECONDS|년월일을 초단위로 환산(1970-01-01 00:00:00 UTC를 0초로 계산) Instant에만 사용가능|
+|OFFSET_SECONDS|UTC와 시차. ZoneOffset에만 사용가능|
+|PROLEPTIC_MONTH|년월을 월단위로 환산(2015년11월 = 2015\*12+11)|
 
 
 ### 필드의 값 변경하기 - with(), plus(), minus()
