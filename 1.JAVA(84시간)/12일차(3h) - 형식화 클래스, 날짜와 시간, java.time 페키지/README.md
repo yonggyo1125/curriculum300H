@@ -1379,11 +1379,15 @@ pe = pe.withYears(2); // 1년에서 2년으로 변경. withMonths(), withDays()
 du = du.withSeconds(120); // 60초에서 120초로 변경. withNanos()
 ```
 
-### 사칙연산, 비교연산, 기타 메서드
-
-
-
 ### 다른 단위로 변환 - toTotalMonths(), toDays(), toHours(), toMinutes()
+Period와 Duration을 다른 단위의 값으로 변환하는데 사용된다.
+
+#### Period와 Duration의 변환 메서드
+<table>
+<tr>
+	<td>111</td>
+</tr>
+</table>
 
 ## 파싱과 포맷
 
