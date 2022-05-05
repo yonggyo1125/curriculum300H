@@ -809,7 +809,28 @@ LocalDate birthDate = LocalDate.ofYearDay(1999, 365); // 1999년 12월 31일
 LocalTime birthTime = LocalTime.ofSecondDay(86399); // 23시 59분 59초
 ```
 
+- parse() : 문자열을 날짜와 시간으로 변환할 수 있다.
+```
+LocalDate birthDate = LocalDate.parse("1999-12-31");
+LocalTime birthTime = LocalTime.parse("23:59:59");
+```
+
 ### 특정 필드의 값 가져오기 - get(), getXXX()
+- 주의할 점 : Calendar와 달리 월(month)의 범위가 1~12이고, 요일은 월요일이 1, 화요일이 2, ..., 일요일은 7이라는 것이다.
+
+|클래스|메서드|설명(1999-12-31 23:59:59)|
+|---|----|-----|
+|LocalDate|int getYear()|년도(1999)|
+|^^|int getMonthValue()|월(12)|
+|^^|Month getMonth()|월(DECEMBER) getMonth().getValue() = 12|
+|^^|int getDayOfMonth()|일(31)|
+|^^|int getDayOfYear()|같은 해의 1월 1일부터 몇번째 일(365)|
+|^^|DayOfWeek getDayOfWee()|요일(FRIDAY) getDayOfWeek().getValue() = 5|
+|^^|int lengthOfMonth()|같은 달의 총 일수(31)|
+|^^|int lengthOfYear()|같은 해의 총 일수(365), 윤년이면 366|
+|^^|boolean isLeapYear()|윤년 여부 확인(false)|
+  
+
 
 ### 필드의 값 변경하기 - with(), plus(), minus()
 
