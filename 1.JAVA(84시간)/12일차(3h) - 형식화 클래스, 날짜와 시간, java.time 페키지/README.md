@@ -702,9 +702,9 @@ public class CalendarEx4 {
 - LocalDate 클래스 : 날짜를 표현
 - LocalDateTime 클래스 : 날짜와 시간을 모두 표현
 
----
+```
 LocalDate(날짜) + LocalTime(시간) -> LocalDateTime(날짜 & 시간)
----
+```
 
 ### Period와 Duration
 
