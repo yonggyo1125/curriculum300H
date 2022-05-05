@@ -1384,9 +1384,20 @@ Period와 Duration을 다른 단위의 값으로 변환하는데 사용된다.
 
 #### Period와 Duration의 변환 메서드
 <table>
+<thead>
 <tr>
-	<td>111</td>
+	<th>클래스</th>
+	<th>메서드</th>
+	<th>설명</th>
 </tr>
+</thead>
+<tbody>
+	<tr>
+		<td>Period</td>
+		<td></td>
+		<td></td>
+	</tr>
+</tbody>
 </table>
 
 ## 파싱과 포맷
