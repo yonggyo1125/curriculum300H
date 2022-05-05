@@ -1087,30 +1087,301 @@ LocalTime time = dt.toLocalTime(); // LocalDateTime -> LocalTime
 ```
 
 ### LocalDateTime으로 ZonedDateTime 만들기
+- LocalDateTIme에 시간대(time-zone)을 추가하면, ZonedDateTime이 된다. 기존에는 TimeZone클래스로 시간대를 다뤘지만 새로운 시간 패키지에서는 ZoneId라는 클래스를 사용한다.
+- ZoneId는 일광 절약시간(DST, Daylight Saving Time)을 자동적으로 처리해 주므로 편리하다.
+- LocalDateTime에 atZone()으로 시간대 정보를 추가하면, ZonedDateTime을 얻을 수 있다.
+> 사용가능한 ZoneId의 목록은 Zoned.getAvailableZoneIds()로 얻을 수 있다.
 
+```
+ZoneId zid = ZoneId.of("Asia/Seoul");
+ZonedDateTime zdt = dateTime.atZone(zid);
+```
+- LocalDate의 asStartOfDate() 메서드에 매개변수로 ZoneId를 지정하는 방법
+```
+ZoneId zid = ZoneId.of("Asia/Seoul");
+ZonedDateTime zdt = LocalDate.now().atStartOfDay(zid);
+```
+- 특정 시간대의 시간을 알고 싶을 경우
+```
+예: 뉴욕의 현재 시간을 알고 싶은 경우
+
+ZoneId nyId = ZoneId.of("America/New_York");
+ZonedDateTime nyTime = ZonedDateTime.now().withZoneSameInstant(nyId);
+
+- 상기 코드에서 now() 대신 of를 사용하면 날짜와 시간을 지정할 수 있다.
+```
 
 ### ZonedOffset 
+UTC로 부터 얼마만큼 떨어져 있는지를 ZoneOffset으로 표현한다.
+```
+ZoneOffset krOffset = ZonedDateTime.now().getOffset();
+ZoneOffset krOffset = ZoneOffset.of("+9");
+int krOffsetInSec = krOffset.get(ChronoField.OFFSET_SECONDS); // 32400초
+```
 
 ### OffsetDateTime
+- ZonedDateTime은 ZonedId로 구역을 표현하는데, ZoneId가 아닌 ZoneOffset을 사용하는 것이 OffsetDateTime이다.
+- ZoneId는 일광절약시간처럼 시간대와 관련된 규칙들을 포함하고 있는데, ZoneOffset은 단지 시간대를 시간의 차이로만 구분한다.
+- 서로 다른 시간대에 존재하는 컴퓨터간의 통신에는 OffsetDateTime이 필요하다.
+
+```
+ZoneId zid = ZoneId.of("Asia/Seoul");
+ZoneOffset krOffset = ZoneOffset.of("+9");
+
+ZonedDateTime zdt = ZonedDateTime.of(date, time, zid);
+OffsetDateTime odt = OffsetDateTime.of(date, time, krOffset);
+
+// ZonedDateTime -> OffsetDateTime
+OffsetDateTime odt = zdt.toOffsetDateTime();
+```
 
 ### ZonedDateTime의 변환
+ZonedDateTime도 LocalDateTime처럼 날짜와 시간에 관련된 다른 클래스로 변환하는 메서드를 가지고 있다.
 
+```
+LocalDate toLocalDate()
+LocalTime toLocalTime()
+LocalDateTime toLocalDateTime()
+OffsetDateTime toOffsetDateTime()
+long toEpochSecond()
+Instant toInstant()
 
+// ZonedDateTime -> GregorianCalendar
+GregorianCalendar from(ZonedDateTime zdt)
+
+// GregorianCalendar -> ZonedDateTime
+ZonedDateTime toZonedDateTime()
+```
+#### day12/time/NewTimeEx2.java
+```
+package day12.time;
+
+import java.time.*;
+
+public class NewTimeEx2 {
+	public static void main(String[] args) {
+		LocalDate date = LocalDate.of(2021,  12, 31); // 2021년 12월 31일
+		LocalTime time = LocalTime.of(12, 34, 56); // 12시 34분 56초
+		
+		// 2021년 12월 31일 12시 34분 56초
+		LocalDateTime dt = LocalDateTime.of(date,  time);
+		
+		ZoneId zid = ZoneId.of("Asia/Seoul");
+		ZonedDateTime zdt = dt.atZone(zid);
+		//String strZid = zdt.getZone().getId();
+		//System.out.println(strZid); // Asia/Seoul
+		
+		ZonedDateTime seoulTime = ZonedDateTime.now();
+		ZoneId nyId = ZoneId.of("America/New_York");
+		ZonedDateTime nyTime = ZonedDateTime.now().withZoneSameInstant(nyId);
+		
+		// ZonedDateTime -> OffsetDateTime
+		OffsetDateTime odt = zdt.toOffsetDateTime();
+		
+		System.out.println(dt);
+		System.out.println(zid);
+		System.out.println(zdt);
+		System.out.println(seoulTime);
+		System.out.println(nyTime);
+		System.out.println(odt);
+	}
+}
+
+실행결과
+2021-12-31T12:34:56
+Asia/Seoul
+2021-12-31T12:34:56+09:00[Asia/Seoul]
+2022-05-05T19:40:28.799906600+09:00[Asia/Seoul]
+2022-05-05T06:40:28.802895400-04:00[America/New_York]
+2021-12-31T12:34:56+09:00
+```
 
 ## TemporalAdjusters
+자주 쓰일만한 날짜 계산들을 대신 해주는 메서드를 정의해 놓은 것이 TemporalAdjusters클래스이다.
+
+```
+LocalDate today = LocalDate.now();
+LocalDate nextMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+```
+
+### TemporalAdjusters의 메서드
+
+|메서드|설명|
+|------|----|
+|firstDayOfNextYear()|다음 해의 첫 날|
+|firstDayOfNextMonth()|다음 달의 첫 날|
+|firstDayOfYear()|올 해의 첫 날|
+|firstDayOfMonth()|이번 달의 첫 날|
+|lastDayOfYear()|올 해의 마지막 날|
+|lastDayOfMonth()|이번 달의 마지막 날|
+|firstInMonth (DayOfWeek dayOfWeek)|이번 달의 첫 번째 ?요일|
+|lastInMonth (DayOfWeek dayOfWeek)|이번 달의 마 지막 ?요일|
+|previous(DayOfWeek dayOfWeek)|지난 ?요일(당일 미포함)|
+|previousOrSame(DayOfWeek dayOfWeek)|지난 ?요일(당일 포함)|
+|next(DayOfWeek dayOfWeek)|다음 ?요일(당일 미포함)|
+|nextOrSame(DayOfWeek dayOfWeek)|다음 ?요일(당일 포함)|
+|dayOfWeekInMonth(int ordinal, DayOfWeek dayOfWeek)|이번 달의 n번째 ?요일|
+
 
 ### TemporalAdjuster 직접 구현하기
+- 보통은 TemporalAdjusters에 정의된 메서드로 충분하지만, 필요하다면 자주 사용되는 날짜계산을 새주는 메서드를 직접 만들 수도 있다.
+- TemporalAdjuster인터페이스는 추상 메서드 하나만 정의되어 있으며, 이 메서드만 구현하면 된다.
+```
+@FunctionalInterface
+public interface TemporalAdjuster {
+	Temporal adjusterInto(Temporal temporal);
+}
+```
+- 실제로 구현해야 하는 것은 adjustInfo()지만, TemporalAdjuster와 같이 사용해야 하는 메서드는 with()이다.
+- adjustInfo()는 내부적으로 사용할 의도로 작성된 것이므로 with()를 사용
+- 날짜와 시간에 관련된 대부분의 클래스는 Temporal 인터페이스를 구현하였으므로 adjustInfo()의 매개변수가 될 수 있다.
+```
+특정 날짜로부터 2일 후의 날짜 계산하는 예
+
+class DayAfterTomorrow implements TemporalAdjuster {
+	@Override
+	public Temporal adjustInfo(Temporal temporal) {
+		return temporal.plus(2, ChronoUnit.DAYS); // 2일을 더한다.
+	}
+}
+```
+
+#### day12/time/NewTimeEx3.java
+```
+package day12.time;
+
+import java.time.*;
+import java.time.temporal.*;
+import static java.time.DayOfWeek.*;
+import static java.time.temporal.TemporalAdjusters.*;
+
+class DayAfterTomorrow implements TemporalAdjuster {
+
+	@Override
+	public Temporal adjustInto(Temporal temporal) {
+		return temporal.plus(2, ChronoUnit.DAYS);
+	}
+}
+
+public class NewTimeEx3 {
+	public static void main(String[] args) {
+		LocalDate today = LocalDate.now();
+		LocalDate date = today.with(new DayAfterTomorrow());
+		
+		p(today);
+		p(date);
+		p(today.with(firstDayOfNextMonth())); // .다음 달의 첫 날
+		p(today.with(firstDayOfMonth())); // 이 달의 첫 날 
+		p(today.with(lastDayOfMonth())); // 이 달의 마지막 날 
+		p(today.with(firstInMonth(TUESDAY))); // 이 달의 첫번째 화요일 
+		p(today.with(lastInMonth(TUESDAY))); // 이 달의 마지막 화요일 
+		p(today.with(previous(TUESDAY))); // 지난 주 화요일
+		p(today.with(previousOrSame(TUESDAY))); // 지난 주 화요일(오늘 포함)
+		p(today.with(next(TUESDAY))); // 다음 주 화요일
+		p(today.with(nextOrSame(TUESDAY))); // 다음 주 화요일(오늘 포함)
+		p(today.with(dayOfWeekInMonth(4, TUESDAY))); // 이달의 4번째 화요일
+	}
+	
+	public static void p(Object obj) {
+		System.out.println(obj);
+	}
+}
+
+실행결과
+2022-05-05
+2022-05-07
+2022-06-01
+2022-05-01
+2022-05-31
+2022-05-03
+2022-05-31
+2022-05-03
+2022-05-03
+2022-05-10
+2022-05-10
+2022-05-24
+```
 
 
 ## Period와 Duration
+period는 날짜의 차이, Duration은 시간의 차이를 계산
+```
+날짜 - 날짜 = Period
+시간 - 시간 = Duration
+```
 
 ### between()
+두 날짜의 차이를 나타내는 Period 객체를 반환
+
+#### Period - 날짜의 차이 
+```
+LocalDate date1 = LocalDate.of(2020, 1, 1);
+LocalDate date2 = LocalDate.of(2021, 12, 31);
+
+Period pe = Period.between(date1, date2); 
+```
+date1이 date2보다 날짜 상으로 이전이면 양수로, 이후면 음수로 Period에 저장된다.
+
+#### Duration - 시간의 차이 
+```
+LocalTime time1 = LocalTime.of(00, 00, 00);
+LocalTime time2 = LocalTime.of(12, 34, 56);  // 12시 34분 56초
+
+Duration du = Duration.between(time1, time2);
+```
+
+#### get() - Period, Duration에서 특정 필드의 값을 얻을 때
+```
+long year = pe.get(ChronoUnit.YEARS); // int getYears();
+long month = pe.get(ChronoUnit.MONTHS); // int getMonths()
+long day = pe.get(ChronoUnit.DAYS); // int getDays()
+
+long sec = du.get(ChronoUnit.SECONDS); // long getSeconds()
+long nano = du.get(ChronoUnit.NANOS); // long getNano()
+```
+
+- Duration에서는 ChonoUnit.SECONDS, ChonoUnit.NANOS 또는 long getSeconds(), long getNanos() 밖에 사용할 수 없다.
+- 만약 Durationdptj 시, 분, 초 형태로 변환하는 방법은 다음과 같다.
+```
+LocalTime tmpTime = LocalTime.of(0,0,0).plusSeconds(du.getSeconds());
+
+int hour = tmpTime.getHour();
+int min = tmpTime.getMinute();
+int sec = tmpTime.getSecond();
+int nano = du.getNano();
+```
 
 ### between()과 until() 
+- until()과 between()은 거의 같은 일을 한다.
+- between()은 static 메서드이고, until()은 인스턴스 메서드라는 차이가 있다.
+
+```
+Period pe = Period.between(today, myBirthDay);
+Period pe = today.until(myBirthDay);
+long dday = today.until(myBirthDay, ChronoUnit.DAYS);
+long sec = LocalTime.now().until(endTime, ChronoUnit.SECONDS);
+```
 
 ### of(), with()
 
+#### of() - 지정한 값으로 Period 또는 Duration의 인스턴스 생성
+- Period에는 of(), ofYears(), ofMonths(), ofWeeks(), ofDays()가 있다.
+- Duration에는 of(), ofDays(), ofHours(), ofMinutes(), ofSeconds()가 있다.
+
+```
+Period pe = Period.of(1, 12, 31); // 1년 12개월 31일
+Duration du = Duration.of(60, ChonoUnit.SECONDS); // 60초
+Duration du = Duration.ofSecond(60); // Duration.of(60, ChonoUnit.SECONDS)과 동일 
+```
+#### with() - 특정 필드의 값을 변경
+```
+pe = pe.withYears(2); // 1년에서 2년으로 변경. withMonths(), withDays()
+du = du.withSeconds(120); // 60초에서 120초로 변경. withNanos()
+```
+
 ### 사칙연산, 비교연산, 기타 메서드
+
+
 
 ### 다른 단위로 변환 - toTotalMonths(), toDays(), toHours(), toMinutes()
 
