@@ -707,15 +707,40 @@ LocalDate(날짜) + LocalTime(시간) -> LocalDateTime(날짜 & 시간)
 ```
 - ZonedDateTime 클래스 : LocalDateTime + 시간대
 - Instant 클래스 : 날짜와 시간을 초 단위(정확히는 나노초)로 표현한다. 
-	<br>날짜와 시간을 초단위로 표현한 값을 타임스탬프(time-stamp)라고 부르는데, 이 값은 날짜와 시간을 하나의 정수로 표현할 수 있으므로 날짜와 시간의 차이를 계삲거나 순서비를 비교하는데 유리하다.
+	<br>날짜와 시간을 초단위로 표현한 값을 타임스탬프(time-stamp)라고 부르는데, 이 값은 날짜와 시간을 하나의 정수로 표현할 수 있으므로 날짜와 시간의 차이를 계산하거나 순서비를 비교하는데 유리하다.
 	
 - 기타 : Year, YearMonth, MonthDay 클래스
 
 ### Period와 Duration
+- Period 클래스 - 두 날짜 간의 차이를 표현하기 위한 것
+- Double 클래스 - 시간의 차이를 표현하기 위한 것
+
+```
+날짜 - 날짜 = Period
+시간 - 시간 = Duration
+```
 
 ### 객체 생성하기 - now(), of()
+- now() : 현재 날짜와 시간을 저장하는 객체를 생성한다.
+```
+LocalDate date = LocalDate.now(); // 현재 날짜
+LocalTime time = LocalTime.now(); // 현재 시간
+LocalDateTime dateTime = LocalDateTime.now(); // 현재 날짜와 시간 
+ZonedDateTime dateTimeInKr = ZonedDateTime.now(); // 현재 날짜와 시간 + 시간대
+```
+
+- of() : 지정된 날짜, 시간, 시간대의 객체를 생성한다.
+```
+LocalDate date = LocalDate.of(2021,11,23); // 2021년 11월 23일
+LocalTime time = LocalTime.of(23,59,59); // 23시 59분 59초
+
+LocalDateTime dateTime = LocalDateTime.of(date, time);
+ZonedDateTime zDateTime = ZonedDateTime.of(dateTime, ZoneId.of("Asia/Seoul"));
+```
 
 ### Temporal과 TemporalAmount
+- LocalDate, LocalTime, LocalDateTime, ZonedDateTime등 날짜와 시간을 표현하기 위한 클래스들은 모두 **Temporal, TemporalAccessor, TemporalAdjuster 인터페이스**를 구현하였다.
+- Duration과 Period는 **TemporalAmount 인터페이스**를 구현하였다.
 
 ### TemporalUnit과 TemporalField
 
