@@ -604,6 +604,54 @@ void set(int year, int month, int date, int hourOfDay, in minute, int second)
 - 또는 간단히 **boolean after(Object when)**과 **boolean before(Object when)**을 사용해도 된다.
 
 #### day12/date_calendar/CalendarEx3.java
+```
+package day12.date_calendar;
+
+import java.util.*;
+
+public class CalendarEx3 {
+	public static void main(String[] args) {
+		Calendar date = Calendar.getInstance();
+		date.set(2021, 7, 31); // 2021년 8월 31일
+		
+		System.out.println(toString(date));
+		System.out.println("= 1일 후 =");
+		date.add(Calendar.DATE, 1);
+		System.out.println(toString(date));
+		
+		System.out.println("= 6달 전 =");
+		date.add(Calendar.MONTH, -6);
+		System.out.println(toString(date));
+	
+		System.out.println("= 31일 후(roll) =");
+		date.roll(Calendar.DATE, 31);
+		System.out.println(toString(date));
+		
+		System.out.println("= 31일 후(add) =");
+		date.add(Calendar.DATE, 31);
+		System.out.println(toString(date));
+	}
+	
+	public static String toString(Calendar date) {
+		return date.get(Calendar.YEAR) + "년 " + (date.get(Calendar.MONTH) + 1) + "월 " + date.get(Calendar.DATE) + "일";
+	}
+}
+
+실행결과
+2021년 8월 31일
+= 1일 후 =
+2021년 9월 1일
+= 6달 전 =
+2021년 3월 1일
+= 31일 후(roll) =
+2021년 3월 1일
+= 31일 후(add) =
+2021년 4월 1일
+```
+- **add(int field, int amount)**를 사용하면 지정한 필드의 값을 원하는 만큼 증가 또는 감소 시킬수 있다.
+- **roll(int field, int amount)**도 지정한 필드의 값을 증가 또는 감소시킬 수 있는데, add메서드와의 차이점은 다른 필드에 영향을 미치지 않는다는 것
+예를 들어 add메서드로 날짜 필드(Calendar.MONTH)의 값을 31만큼 증가시켰다면 다음 달로 넘어가므로 월 필드(Calendar.MONTH)의 값도 1이 증가하지만, roll 메서드는 같은 경우에 월 필드의 값은 변하지 않고 일 필드의 값만 바뀐다.
+
 
 #### day12/date_calendar/CalendarEx4.java
 
