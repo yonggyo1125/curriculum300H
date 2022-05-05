@@ -104,15 +104,128 @@ JSP 생명 주기를 완료합니다. JSP 컨터에너는 실행되고 있는 JS
 ```
 
 ### 스크립틀릿(scriptlet)
+문법 (각 행이 세미콜론으로 끝나야 함)
+```
+<% 자바 코드; %>
+```
+- 스크립틀릿 태그에 작성된 자바 코드는 서블릿 프로그램으로 변환될 때 \_jspService() 메서드 내부에 복사 됩니ᅟᅡᆮ. 
+- \_jspService() 메서드 내부에 복사되므로 지역변수가 되어 이 태그에 선언된 변수는 스크립틀릿 태그 내에서만 사용할 수 있습니다.
+
+
+#### 선언문 태그와 스크립틀릿 태그의 비교
+
+|선언문 태그|스크립틀릿 태그|
+|----|----|
+|변수뿐만 아니라 메서드를 선언할 수 있습니다.|스크립틀릿 태그는 메서드 없이 변수만을 선언할 수 있습니다.|
+|서블릿 프로그램으로 변환될 때 \_jspService() 메서드 외부에 배치됩니다.|서블릿 프로그램으로 변환될 때 \_jspService() 메서드 내부에 배치됩니다.|
+
+
+#### day02/scriptlet01.jsp
+```
+<html>
+<head>
+<title>Scripting Tag</title>
+</head>
+<body>
+	<% 
+		int a = 2;
+		int b = 3;
+		int sum = a + b;
+		out.println("2 + 3 = " + sum);
+	%>
+</body>
+</html>
+```
+
+#### day02/scriptlet02.jsp
+```
+<html>
+<head>
+<title>Scripting tag</title>
+</head>
+<body>
+	<%
+		for (int i = 0; i <= 10; i++) {
+			if (i % 2 == 0)
+				out.println(i + "<br>");
+		}
+	%>
+</body>
+</html>
+```
 
 ### 표현문(expression)
+- <%=와 %>를 사용하여 웹브라우저에 출력할 부분을 표현합니다.
+- 표현문 태그는 스크립틀릿 태그에서 사용할 수 없으므로 이 경우네는 out.print() 메서드를 사용해야 합니다.
+```
+<%=자바 코드%>     각 행을 세미콜론으로 종료할 수 없음
+```
+
+#### day02/expression01.jsp
+```
+<html>
+<head>
+<title>Scripting Tag</title>
+</head>
+<body>
+	<p> Today's date: <%=new java.util.Date()%></p>
+</body>
+</html>
+
+```
+
+#### day02/expression02.jsp
+```
+<html>
+<head>
+<title>Scripting Tag</title>
+</head>
+<body>
+	<%
+		int a = 10;
+		int b = 20;
+		int c = 30;
+	%>
+	<%=a + b + c%>
+</body>
+</html>
+```
 
 ## 디렉티브 태그
+- 디렉티브 태그는 JSP 페이지를 어떻게 처리할 것인지 설정하는 태그입니다. 
+- 디렉티브 태그는 JSP 페이지가 서블릿 프로그램에서 서블릿 클래스로 변환될 때 JSP 페이지와 관련된 정보를 JSP 컨테이너에 지시하는 메시지입니다. 
+- 디렉티브 태그는 JSP 페이지를 수정하여 다시 컴파일 하는 경우에만 역할을 수행하기 때문에 개별 HTML 응답에 특별한 영향을 미치지 않습니다.
+- 디렉티브 태그는 세 종류이며 모두 <%@ ... %>을 사용합니다.
+
+### 디렉티브 태그의 종류
+|디렉티브 태그| 형식|설명|
+|----|----|---------|
+|page|<%@ page ...%>|JSP 페이지에 대한 정보를 설정합니다.|
+|include|<%@ include ... %>|JSP 페이지의 특정 영역에 다른 문서를 포함합니다.|
+|taglib|<%@ taglib ... %>|JSP 페이지에서 사용할 태그 라이브러리를 설정합니다.|
 
 ### page
+- JSP 페이지에 대한 정보를 설정하는 태그
+- JSP 페이지가 생성할 콘텐츠 유형의 문서, 사용할 자바 클래스, 오류 페이지 설정, 세션 사용 여부, 출력 버퍼의 존재 유무 등과 같이 JSP 컨테이너가 JSP 페이지를 실행하는 데 필요한 정보를 설정할 수 있습니다.
+- JSP 페이지의 어디에서든 선언할 수 있지만 일반적으로 JSP 페이지의 최상단에 선언하는 것을 권장
+- 하나의 page 디렉티브 태그에 하나 또는 여러 개의 속성을 설정할 수 있습니다. 또는 여러 개의 속성마다 개별적으로 page 디렉티브 태그를 선언할 수 있습니다.
+- import 속성을 제외한 속성은 JSP 페이지에 한 번씩만 설정할 수 있습니다.
+```
+<%@ page 속성1=“값” [속성2=“값2” .. ] %>    
+<%과 @사이에 공백이 없어야 함
+```
+#### page 디렉티브 태그의 속성
+|속성|설명|기본값|
+|----|---------------|----|
+|language|현재 JSP 페이지가 사용할 프로그래밍 언어를 설정합니다.<br><% page language=“java” %>|java|
+|contentType|현재 JSP 페이지가 생성할 문서의 콘텐츠 유형을 설정합니다.<br>(text/html, text/xml , text/plain)<br><%@ page contentType=“text/html%><br>constentType은 문자열 세트를 설정 할 수 있음<br><%@ page contentType=“text/html; charset=utf-8” %>|text/html|
+
 
 ### include
 
 ### taglib
 
 ## JSP의 주석 처리
+```
+<%-- JSP 주석 처리 내용 --%>
+```
