@@ -873,11 +873,103 @@ LocalTime birthTime = LocalTime.parse("23:59:59");
 |INSTANT_SECONDS|년월일을 초단위로 환산(1970-01-01 00:00:00 UTC를 0초로 계산) Instant에만 사용가능|
 |OFFSET_SECONDS|UTC와 시차. ZoneOffset에만 사용가능|
 |PROLEPTIC_MONTH|년월을 월단위로 환산(2015년11월 = 2015\*12+11)|
+- 상기 목록은 ChonoField에 정의된 모든 상수를 나열하였으나, 사용할 수 있는 필드는 클래스마다 다르다(예 : LocalDate는 날짜를 표현하기 위한 것이므로, MINUTE_OF_HOUR와 같이 시간에 관련된 필드는 사용할 수 없다)
+- 해당 클래스가 지원하지 않는 필드를 사용하면 UnsupportedTemporalTypeException이 발생한다.
 
+- range() : 특정 필드가 가질 수 있는 값의 범위를 조회
+```
+System.out.println(ChronoField.CLOCK_HOUR_OF_DAY.range()); // 1 - 24
+System.out.println(ChronoField.HOUR_OF_DAY.range()); // 0 - 23
+```
 
 ### 필드의 값 변경하기 - with(), plus(), minus()
+#### with()
+- 날짜와 시간에서 특정 필드 값을 변경하려면, 하기와 같이 with로 시작하는 메서드를 사용한다.
+```
+LocalDate withYear(int year)
+LocalDate withMonth(int month)
+LocalDate withDayOfMonth(int dayOfMonth)
+LocalDate withDayOfYear(int dayOfYear)
+
+LocalTime withHour(int hour)
+LocalTime withMinute(int minute)
+LocalTime withSecond(int second)
+LocalTime withNano(int nanoSecond)
+```
+
+- with()를 사용하면 원하는 필드를 직접 지정할 수 있다.
+```
+LocalDate with(TemporalField field, long newValue)
+```
+
+```
+date = date.withYear(2000); 년도를 2000년으로 변경
+time = time.withHour(12); // 시간을 12시로 변경
+```
+#### plus(), minus()
+- 특정 필드에 값을 더하거나 뺄때 
+```
+LocalTime plus(TemporalAmount amountToAdd);
+LocalTime plus(long amountToAdd, TemporalUnit unit)
+
+LocalDate plus(TemporalAmount amountToAdd)
+LocalDate plus(long amountToAdd, TemporalUnit unit)
+```
+
+- plus()로 만든 메서드
+```
+LocalDate plusYears(long yearsToAdd)
+LocalDate plusMonths(long monthToAdd)
+LocalDate plusDays(long daysToAdd)
+LocalDate plusWeeks(long weeksToAdd)
+
+LocalTime plusHours(long hoursToAdd)
+LocalTime plusMinutes(long minutesToAdd)
+LocalTime plusSeconds(long secondsToAdd)
+LocalTime plusNanos(long nanoToAdd)
+```
+
+### LocalTime의 truncatedTo()
+- 지정된 것보다 작은 단위의 필드를 0으로 만든다.
+```
+LocalTime time = LocalTime.of(12, 34, 56); // 12시 34분 56초
+time = time.truncatedTo(ChronoUnit.HOURS); // 시(hours)보다 작은 단위를 0으로 만든다
+System.out.println(time); // 12:00
+```
+- LocalDate에 truncatedTo()는 없다. LocalDate의 필드인 년, 월, 일은 0이 될수 없다.
+
+### ChronoUnit에 정의된 상수 목록
+|TemporalUnit(ChronoUnit)|설명|
+|-----|----|
+|FOREVER|Long.MAX_VALUE초(약 3천억년)|
+|ERAS|1,000,000,000년|
+|MILLENNIA|1,000년|
+|CENTURIES|100년|
+|DECADES|10년|
+|YEARS|년|
+|MONTHS|월|
+|WEEKS|주|
+|DAYS|일|
+|HALF_DAYS|반나절|
+|HOURS|시|
+|MINUTES|분|
+|SECONDS|초|
+|MILLIS|천분의 일초|
+|MICROS|백만분의 일초|
+|NANOS|10억분의 일초|
 
 ### 날짜와 시간의 비교 - isAfter(), isBefore(), isEqual()
+- LocalDate와 LocalTime도 compareTo()가 적절하게 오버라이딩 되어 있어, 하기와 같이 compareTo()로 비교할 수 있다.
+```
+int result = date1.compareTo(date2); // 같으면 0, date1이 이전이면 -1, 이후면 1
+```
+- 그러나 보다 편하하게 비교할 수 있는 메서드들이 추가로 제공된다.
+```
+boolean isAfter(ChronoLocalDate other)
+boolean isBefore(ChronoLocalDate other)
+boolean isEqual(ChronoLocalDate other) // LocalDate에만 있음
+```
+
 
 ## Instant
 
