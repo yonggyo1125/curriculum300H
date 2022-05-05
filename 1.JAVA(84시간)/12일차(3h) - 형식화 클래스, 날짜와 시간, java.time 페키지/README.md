@@ -742,10 +742,72 @@ ZonedDateTime zDateTime = ZonedDateTime.of(dateTime, ZoneId.of("Asia/Seoul"));
 - LocalDate, LocalTime, LocalDateTime, ZonedDateTime등 날짜와 시간을 표현하기 위한 클래스들은 모두 **Temporal, TemporalAccessor, TemporalAdjuster 인터페이스**를 구현하였다.
 - Duration과 Period는 **TemporalAmount 인터페이스**를 구현하였다.
 
-### TemporalUnit과 TemporalField
+```
+Temporal, TemporalAccessor, TemporalAdjuster를 구현한 클래스
+	- LocalDate, LocalTime, LocalDateTime, ZonedDateTime, Instant 등
+	
+TemporalAmount를 구현한 클래스
+	- Period, Duration
+```
 
+### TemporalUnit과 TemporalField
+- TemportalUnit 인터페이스 : 날짜와 시간의 단위를 정의해 놓은 것, 이 인터페이스를 구현한 것이 **열거형 ChronoUnit**이다.
+- TemporalFIeld 인터페이스 : 년, 월, 일 등의 날짜와 시간의 필드를 정의해 놓은 것, 이 인터페이스를 구현한 것이 **열거형 ChronoField**이다.
+```
+LocalTime now = LocalTime.now(); // 현재 시간
+int minute = now.getMinute(); // 현재 시간에서 분(minute)만 추출
+int minute = now.get(ChronoField.MINUTE_OF_HOUR); // now.getMinute()와 동일
+```
+- 날짜와 시간에서 틀정 필드의 값만 얻을 때는 get()이나 get으로 시작하는 이름의 메서드를 이용한다.
+- 특정 날자의 시간에서 지정된 단위의 값을 더하거나 뺄 때는 plus() 또는 minus()에 값과 함께 열거형 ChonoUnit을 사용한다.
+
+```
+int get(TemporalField field)
+LocalDate plus(long amountToAdd, TemporalUnit unit)
+```
+
+```
+LocalDate today = LocalDate.now(); // 오늘
+LocalDate tomorrow = today.plus(1, ChronoUnit.DAYS); // 오늘에 1일을 더한다.
+LocalDate tomorrow = today.plusDays(1); // today.plus(1, ChronoUnit.DAYS)와 동일
+```
+
+- isSupported() : TemporalField나 TemporalUnit을 사용할 수 있는지 확인하는 메서드
+```
+boolean isSupported(TemporalUnit unit)  // Temporal에 정의
+boolean isSupported(TemporalField field) // TemporalAccessor에 정의
+```
 
 ## LocalDate와 LocalTime
+- LocalDate와 LocalTime은 java.time 패키지의 가장 기본이 되는 클래스이다.
+- 나머지 클래스 들은 이 두 클래스의 확장이다.
+- now() : 현재의 날짜와 시간을 LocalDate와 LocalTime으로 각각 반환한다.
+```
+LocalDate today = LocalDate.now(); // 오늘의 날짜
+LocalTime now = LocalTime.now(); // 현재 시간
+
+LocalDate birthDate = LocalDate.of(2021, 12, 31); // 2021년 12월 31일
+LocalTime birthTime = LocalTime.of(23, 59, 59); // 23시 59분 59초
+```
+
+- of() : 지정된 날짜와 시간으로 LocalDate와 LocalTime 객체를 생성한다.
+```
+static LocalDate of(int year, Month month, int dayOfMonth)
+static LocalDate of(int year, int month, int dayOfMonth)
+
+static LocalTime of(int hour, int min)
+static LocalTime of(int hour, int min, int sec)
+static LocalTime of(int hour, int min, int sec, int nanoOfSecond)
+```
+
+- 일 단위 또는 초 단위로 시간을 지정할 수 있다. 
+```
+// 1999년의 365번째 날
+LocalDate birthDate = LocalDate.ofYearDay(1999, 365); // 1999년 12월 31일
+
+// 오늘 0시 0분 0초 부터 86399초(하루는 86400초)가 지난 시간 
+LocalTime birthTime = LocalTime.ofSecondDay(86399); // 23시 59분 59초
+```
 
 ### 특정 필드의 값 가져오기 - get(), getXXX()
 
