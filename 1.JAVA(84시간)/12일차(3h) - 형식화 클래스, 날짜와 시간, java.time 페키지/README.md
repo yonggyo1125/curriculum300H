@@ -841,6 +841,7 @@ LocalTime birthTime = LocalTime.parse("23:59:59");
 
 
 - get(), getLong() : 원하는 필드를 직접 지정할 수 있다<br> 대부분의 필드는 int타입의 범위에 속하지만, 몇몇 필드는 int타입의 범위를 넘어서는데, 그때에는 get()대신 getLong()을 사용한다. 하기 표는 ChronoField에 정의된 상수 목록이며 getLong을 사용해야 하는 경우는 \*표 표기 하였다.
+
 |TemporalField(ChronoField)|설명|
 |----|------|
 |ERA|시대|
