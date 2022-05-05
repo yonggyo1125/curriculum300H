@@ -1539,8 +1539,99 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 |X 또는 x|zone-offset(Z는 +00:00를 의미)|+09|
 |'|escape문자(특수문자를 표현하는데 사용)|없음|
 
+
+#### day12/time/format/DateFormatterEx1.java
+```
+package day12.time.format;
+
+import java.time.*;
+import java.time.format.*;
+
+public class DateFormatterEx1 {
+	public static void main(String[] args) {
+		ZonedDateTime zdateTime = ZonedDateTime.now();
+		
+		String[] patternArr = {
+			"yyyy-MM-dd HH:mm:ss",
+			"''yy년 MMM월 dd일 E요일",
+			"yyyy-MM-dd HH:mm:ss.SSS Z VV",
+			"yyyy-MM-dd hh:mm:ss s",
+			"오늘은 올 해의 D번째 날입니다.",
+			"오늘은 이 달의 d번째 날입니다.",
+			"오늘은 이 달의 w번째 주입니다.",
+			"오늘은 이 달의 W번째 주입니다.",
+			"오늘은 이달의 W번째 E요일입니다."
+		};
+		
+		for(String p : patternArr) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(p);
+			System.out.println(zdateTime.format(formatter));
+		}
+	}
+}
+
+실행결과
+2022-05-05 21:29:31
+'22년 5월월 05일 목요일
+2022-05-05 21:29:31.962 +0900 Asia/Seoul
+2022-05-05 09:29:31 31
+오늘은 올 해의 125번째 날입니다.
+오늘은 이 달의 5번째 날입니다.
+오늘은 이 달의 19번째 주입니다.
+오늘은 이 달의 1번째 주입니다.
+오늘은 이달의 1번째 목요일입니다.
+```
+
 ### 문자열을 날짜와 시간으로 파싱하기
 
+```
+static LocalDateTime parse(CharSequence text)
+static LocalDateTime parse(CharSequence text, DateTimeFormatter formatter)
+```
 
+- 자주 사용되는 기본적인 형식의 문자열은 ISO_LOCAL_DATE와 같은 형식화 상수를 사용하지 않고도 파싱이 가능하다.
+```
+LocalDate newDate = LocalDate.parse("2001-01-01");
+LocalTime newTime = LocalTime.parse("23:59:59");
+LocalDateTime newDateTime = LocalDateTime.parse("2001-01-01T23:59:59");
+```
 
+- ofPattern()을 이용해서 파싱을 할 수 있다.
+```
+DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+LocalDateTime endOfYear = LocalDateTime.parse("2021-12-31 23:59:59", pattern);
+```
 
+#### day12/time/format/DateFormatterEx2.java
+```
+package day12.time.format;
+
+import java.time.*;
+import java.time.format.*;
+
+public class DateFormatterEx2 {
+	public static void main(String[] args) {
+		LocalDate newYear = LocalDate.parse("2016-01-01", DateTimeFormatter.ISO_LOCAL_DATE);
+		
+		LocalDate date = LocalDate.parse("2001-01-01");
+		LocalTime time = LocalTime.parse("23:59:59");
+		LocalDateTime dateTime = LocalDateTime.parse("2001-01-01T23:59:59");
+		
+		DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime endOfYear = LocalDateTime.parse("2021-12-31 23:59:59", pattern);
+		
+		System.out.println(newYear);
+		System.out.println(date);
+		System.out.println(time);
+		System.out.println(dateTime);
+		System.out.println(endOfYear);
+	}
+}
+
+실행결과
+2016-01-01
+2001-01-01
+23:59:59
+2001-01-01T23:59:59
+2021-12-31T23:59:59
+```
