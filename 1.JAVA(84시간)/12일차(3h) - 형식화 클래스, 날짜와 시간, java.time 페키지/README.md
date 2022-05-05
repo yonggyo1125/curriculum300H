@@ -821,14 +821,14 @@ LocalTime birthTime = LocalTime.parse("23:59:59");
 |클래스|메서드|설명(1999-12-31 23:59:59)|
 |---|----|-----|
 |LocalDate|int getYear()|년도(1999)|
-|^^|int getMonthValue()|월(12)|
-|^^|Month getMonth()|월(DECEMBER) getMonth().getValue() = 12|
-|^^|int getDayOfMonth()|일(31)|
-|^^|int getDayOfYear()|같은 해의 1월 1일부터 몇번째 일(365)|
-|^^|DayOfWeek getDayOfWee()|요일(FRIDAY) getDayOfWeek().getValue() = 5|
-|^^|int lengthOfMonth()|같은 달의 총 일수(31)|
-|^^|int lengthOfYear()|같은 해의 총 일수(365), 윤년이면 366|
-|^^|boolean isLeapYear()|윤년 여부 확인(false)|
+|^|int getMonthValue()|월(12)|
+|^|Month getMonth()|월(DECEMBER) getMonth().getValue() = 12|
+|^|int getDayOfMonth()|일(31)|
+|^|int getDayOfYear()|같은 해의 1월 1일부터 몇번째 일(365)|
+|^|DayOfWeek getDayOfWee()|요일(FRIDAY) getDayOfWeek().getValue() = 5|
+|^|int lengthOfMonth()|같은 달의 총 일수(31)|
+|^|int lengthOfYear()|같은 해의 총 일수(365), 윤년이면 366|
+|^|boolean isLeapYear()|윤년 여부 확인(false)|
   
 
 
