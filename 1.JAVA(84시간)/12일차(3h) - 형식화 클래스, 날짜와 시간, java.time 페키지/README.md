@@ -1040,24 +1040,67 @@ long toEpochMilli()
 	(예 : 한국은 시간대가 +09:00이므로 Instant와 LocalTime간에는 9시간의 차이가 있다.)<br>
 	> UTC는 'Coordincated Universal Time'의 약어로 '세계 협정시'이라고 하며, 1972년 1월 1일부터 시행된 국제 표준시이다. 이전에 사용되던 GMT(Greenwich Mean Time)와 UTC는 거의 같지만, UTC가 좀 더 정확하다.
 
-## LocalDateTime과 ZonedDateTime
+### Instant와 Date간의 변환
+Instant는 기존의 java.util.Date를 대체하기 위한 것이며, JDK1.8부터 Date에 Instant로 변환할 수 있는 새로운 메서드가 추가되었다.
+```
+static Date from(Instant instant)  // Instant -> Date
+Instant toInstant()  // Date -> Instant
+```
 
-### LocalDate와 LocalTime으로 LocalDateTime 만들기
+
+## LocalDateTime과 ZonedDateTime
+- LocalDate에 LocalTime을 합쳐 놓은 것이 LocalDateTime이다.
+- LocalDateTime에 시간대(time zone)을 추가한 것이 ZonedDateTime이다.
+
+```
+LocalDate + LocalTime -> LocalDateTime
+LocalDateTime + 시간대 -> ZonedDateTime
+```
+
+### LocalDate와 LocalTime으로 LocalDateTime만들기
+- LocalDate와 LocalTime을 합쳐서 만들기 
+```
+LocalDate date = LocalDate.of(2021, 12, 31);
+LocalTime time = LocalTime.of(12, 34, 56);
+
+LocalDateTime dt = LocalDateTime.of(date, time);
+LocalDateTIme dt2 = date.atTime(time);
+LocalDateTime dt3 = time.atDate(date);
+LocalDateTime dt3 = date.atTime(12, 34, 56);
+LocalDateTime dt4 = time.atDate(LocalDate.of(2021, 12, 31));
+LocalDateTime dt6 = date.atStartOfDay(); // dt6 = date.atTime(0, 0, 0);
+```
+
+- of() - 날짜와 시간을 직접 지정, now() - 현재 날짜와 시간
+```
+// 2021년 12월 31일 12시 34분 56초
+LocalDateTime dateTime = LocalDateTime.of(2021, 12, 31, 12, 34, 56);
+
+LocalDateTime today = LocalDateTime.now();
+```
 
 ### LocalDateTime의 변환
+```
+LocalDateTime dt = LocalDateTime.of(2021, 12, 31, 12, 34, 56);
+LocalDateTime date = dt.toLocalDate(); // LocalDateTime -> LocalDate
+LocalTime time = dt.toLocalTime(); // LocalDateTime -> LocalTime
+```
 
 ### LocalDateTime으로 ZonedDateTime 만들기
 
-### ZonedOffset
+
+### ZonedOffset 
 
 ### OffsetDateTime
 
 ### ZonedDateTime의 변환
 
 
+
 ## TemporalAdjusters
 
 ### TemporalAdjuster 직접 구현하기
+
 
 ## Period와 Duration
 
