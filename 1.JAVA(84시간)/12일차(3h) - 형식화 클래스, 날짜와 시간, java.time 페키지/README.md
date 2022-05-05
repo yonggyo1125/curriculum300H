@@ -648,8 +648,8 @@ public class CalendarEx3 {
 = 31일 후(add) =
 2021년 4월 1일
 ```
-- ** add(int field, int amount) **를 사용하면 지정한 필드의 값을 원하는 만큼 증가 또는 감소 시킬수 있다.
-- ** roll(int field, int amount) **도 지정한 필드의 값을 증가 또는 감소시킬 수 있는데, add메서드와의 차이점은 다른 필드에 영향을 미치지 않는다는 것
+- add(int field, int amount)를 사용하면 지정한 필드의 값을 원하는 만큼 증가 또는 감소 시킬수 있다.
+- roll(int field, int amount)도 지정한 필드의 값을 증가 또는 감소시킬 수 있는데, add메서드와의 차이점은 다른 필드에 영향을 미치지 않는다는 것
 예를 들어 add메서드로 날짜 필드(Calendar.MONTH)의 값을 31만큼 증가시켰다면 다음 달로 넘어가므로 월 필드(Calendar.MONTH)의 값도 1이 증가하지만, roll 메서드는 같은 경우에 월 필드의 값은 변하지 않고 일 필드의 값만 바뀐다.
 
 
