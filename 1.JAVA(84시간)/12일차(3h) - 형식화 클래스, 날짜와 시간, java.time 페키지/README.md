@@ -654,12 +654,50 @@ public class CalendarEx3 {
 
 
 #### day12/date_calendar/CalendarEx4.java
+```
+package day12.date_calendar;
+
+import java.util.*;
+
+public class CalendarEx4 {
+	public static void main(String[] args) {
+		Calendar date = Calendar.getInstance();
+		
+		date.set(2021, 0, 31); // 2021년 1월 31일
+		System.out.println(toString(date));
+		date.roll(Calendar.MONTH, 1);
+		System.out.println(toString(date));
+	}
+	
+	public static String toString(Calendar date) {
+		return date.get(Calendar.YEAR) + "년 " + (date.get(Calendar.MONTH) + 1) + "월 " + date.get(Calendar.DATE) + "일";
+	}
+}
+
+실행결과
+2021년 1월 31일
+2021년 2월 28일
+```
 
 
 * * *
 # java.time 패키지
+- Date와 Calendar가 가지고 있는 단점들을 해소하기 위해 JDK1.8부터 'java.time 패키지'가 추가되었다.
+- 이 패키지는 다음과 같이 4개의 하위 패키지를 가지고 있다
+|패키지|설명|
+|----|--------|
+|java.time|날짜와 시간을 다루는데 필요한 핵심 클래스들을 제공|
+|java.time.chrono|표준(ISO)이 아닌 달력 시스템을 위한 클래스들을 제공|
+|java.time.format|날짜와 시간을 파싱하고, 형식화하기 위한 클래스들을 제공|
+|java.time.temporal|날짜와 시간의 필드(field)와 단위(unit)을 위한 클래스들을 제공|
+|java.time.zone|시간대(time-zone)와 관련된 클래스들을 제공|
+
+- 상기 패키지들에 속한 클래스들의 가장 큰 특징은 String클래스 처럼 불변(immutable)이라는 것이다.
+- 그래서 날짜나 시간을 변경하는 메서드들은 기존의 객체를 변경하는 대신 항상 변경된 새로운 객체를 반환한다. 
+- 기존 Calendar 클래스는 변경이 가능하므로, 멀티 쓰레드 환경에서 안전하지 못하다.
 
 ## java.time 패키지의 핵심 클래스
+- 날짜와 시간을 하나로 표현하는 Calendar 클래스와 달리, java.time 패키지에서는 날짜와 시간을 별도 클래스로 분리해 **놓았다**. 
 
 ### Period와 Duration
 
