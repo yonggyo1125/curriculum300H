@@ -601,7 +601,7 @@ void set(int year, int month, int date, int hourOfDay, in minute, int second)
 ```
 
 - 시간상 전후를 알고 싶을 때는 두 날짜간의 차이가 양수인지 음수인질을 판단하면 된다. 
-- 또는 간단히 **boolean after(Object when)**과 **boolean before(Object when)**을 사용해도 된다.
+- 또는 간단히 boolean after(Object when)과 boolean before(Object when)을 사용해도 된다.
 
 #### day12/date_calendar/CalendarEx3.java
 ```
