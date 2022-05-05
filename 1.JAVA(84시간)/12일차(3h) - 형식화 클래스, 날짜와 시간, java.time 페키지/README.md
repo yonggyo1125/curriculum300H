@@ -697,7 +697,14 @@ public class CalendarEx4 {
 - 기존 Calendar 클래스는 변경이 가능하므로, 멀티 쓰레드 환경에서 안전하지 못하다.
 
 ## java.time 패키지의 핵심 클래스
-- 날짜와 시간을 하나로 표현하는 Calendar 클래스와 달리, java.time 패키지에서는 날짜와 시간을 별도 클래스로 분리해 **놓았다**. 
+- 날짜와 시간을 하나로 표현하는 Calendar 클래스와 달리, java.time 패키지에서는 날짜와 시간을 별도 클래스로 분리해 놓았다. 
+- LocalTime 클래스 : 시간을 표현
+- LocalDate 클래스 : 날짜를 표현
+- LocalDateTime 클래스 : 날짜와 시간을 모두 표현
+
+---
+LocalDate(날짜) + LocalTime(시간) -> LocalDateTime(날짜 & 시간)
+---
 
 ### Period와 Duration
 
