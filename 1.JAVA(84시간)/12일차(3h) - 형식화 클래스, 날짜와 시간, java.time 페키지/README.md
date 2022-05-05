@@ -435,20 +435,50 @@ INSERT INTO CUST_INFO VALUES ('고애신','032-333-1234',33,'10-07');
 
 * * * 
 # 날짜와 시간
+
+## Calendar와 Date
 Date는 날짜와 시간을 다룰 목적으로 JDK1.0부터 제공되어온 클래스이다. 
 Date클래스의 기능이 부족했기 때문에 Calendar라는 새로운 클래스를 그 다음 버전인 JDK1.1부터 제공하기 시작하였다.
 Calendar는 Date보다는 낳았지만 몇가지 단점들이 발견 되어 JDK1.8부터 **java.time 패키지**로 기존의 단점을 개선한 새로운 클래스들이 추가 되었다.
 
-## Calendar와 Date
-- Calendar는 추상 클래스이기 때문에 직접 객체를 생성할 수 없고, 메서드를 통해서 완전히 구현된 클래스의 인스턴스를 얻어야 한다.
+
+### Calendar와 GregorianCalendar
+Calendar는 추상 클래스이기 때문에 직접 객체를 생성할 수 없고, 메서드를 통해서 완전히 구현된 클래스의 인스턴스를 얻어야 한다.
 ```
 Calendar cal = new Calendar(); // 에러, 추상클래스는 인스턴스를 생성할 수 없다.
 
 Calendar cal = Calendar.getInstance(); // OK, getInstance() 메서드는 Calendar 클래스를 구현한 클래스의 인스턴스를 반환한다.
 ```
 
-	
-### Calendar와 GregorianCalendar
+Calendar를 상속받아 완전히 구현한 클래스로는 GregorianCalendar와 BuddhistCalendar가 있다.
+getInstance()는 시스템의 국가와 지역설정을 확인해서 태국인 경우에는 BuddhistCalendar의 인스턴스를 반환하고, 그 외에는 GregorianCalendar와 인스턴스를 반환한다.
+
+GregorianCalendar는 Calendar를 상속받아 오늘날 전세계 공통으로 사용하고 있는 그레고리력에 맞게 구현한 것으로 태국을 제외한 나머지 국가에서는 GregorianCalendar를 사용하면 된다. 
+
+인스턴스를 직접 생성해서 사용하지 않고 메소드를 통해서 인스턴스를 반환받게 하는 이유는 최소한의 변경으로 프로그램이 동작할 수 있도록 하기 위한 것이다.
+```
+class MyApplication {
+	public static void main(String[] args) {
+		Calendar cal = new GregorianCalendar(); // 경우에 따라 이 부분을 변경해야 한다.
+		...
+	}
+}
+```
+상기 코드와 같이 특정 인스턴스를 생성하도록 프로그램이 작성되어 있다면, 다른 종류의 역법(calendar)을 사용하는 국가에서 실행되거나, 새로운 역법이 추가된다면, 즉 다른 종류의 인스턴스를 필요로 하는 경우에 MyApplication을 변경해야 한다.
+
+```
+class MyApplication {
+	public static void main(String[] args) {
+		Calendar cal = Calendar.getInstance();
+		...
+	}
+}
+```
+getIntance()를 사용하면 구현되는 내용은 달라지겠지만 MyApplication이 변경되지 않아도 된다. 
+getInstance()메서드가 static인 이유는 메서드 내의 코드에서 인스턴스 변수를 사용하거나 인스턴스 메서드를 호출하지 않기 때문
+Calenda는 추상 클래스 이므로 객체를 생성할 수 없다, 따라서 객체를 생성하기 위한 static 메서드은 getInstance()가 필요하다.
+
+
 
 ### Date와 Calendar간의 변환
 
