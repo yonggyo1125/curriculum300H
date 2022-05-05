@@ -705,6 +705,11 @@ public class CalendarEx4 {
 ```
 LocalDate(날짜) + LocalTime(시간) -> LocalDateTime(날짜 & 시간)
 ```
+- ZonedDateTime 클래스 : LocalDateTime + 시간대
+- Instant 클래스 : 날짜와 시간을 초 단위(정확히는 나노초)로 표현한다. 
+	<br>날짜와 시간을 초단위로 표현한 값을 타임스탬프(time-stamp)라고 부르는데, 이 값은 날짜와 시간을 하나의 정수로 표현할 수 있으므로 날짜와 시간의 차이를 계삲거나 순서비를 비교하는데 유리하다.
+	
+- 기타 : Year, YearMonth, MonthDay 클래스
 
 ### Period와 Duration
 
