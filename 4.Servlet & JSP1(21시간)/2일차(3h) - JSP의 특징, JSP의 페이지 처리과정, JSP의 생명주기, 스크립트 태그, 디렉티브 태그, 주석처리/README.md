@@ -6,6 +6,8 @@
 
 ## JSP의 페이지 처리과정
 
+![JSP 페이지 처리과정](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/4.Servlet%20%26%20JSP1(21%EC%8B%9C%EA%B0%84)/2%EC%9D%BC%EC%B0%A8(3h)%20-%20JSP%EC%9D%98%20%ED%8A%B9%EC%A7%95%2C%20JSP%EC%9D%98%20%ED%8E%98%EC%9D%B4%EC%A7%80%20%EC%B2%98%EB%A6%AC%EA%B3%BC%EC%A0%95%2C%20JSP%EC%9D%98%20%EC%83%9D%EB%AA%85%EC%A3%BC%EA%B8%B0%2C%20%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%20%ED%83%9C%EA%B7%B8%2C%20%EB%94%94%EB%A0%89%ED%8B%B0%EB%B8%8C%20%ED%83%9C%EA%B7%B8%2C%20%EC%A3%BC%EC%84%9D%EC%B2%98%EB%A6%AC/images/JSP%ED%8E%98%EC%9D%B4%EC%A7%80_%EC%B2%98%EB%A6%AC_%EA%B3%BC%EC%A0%95.png)
+
 1. 웹 브라우저가 웹 서버에 JSP를 요청합니다. 웹 서버는 요청된 Hello.jsp에서 jsp 확장자를 발견하여 JSP 페이지임을 확인하고 웹 서버에 있는 JSP 컨테이너에 전달합니다.
 2. JSP 컨테이너는 JSP 페이지를 서블릿 프로그램인 Hello_jsp.java로 변환합니다.
 3. JSP 컨테이너가 서블릿 프로그램을 컴파일하여 Hello_jsp.class로 만들고 이를 웹 서버에 전달합니다.
