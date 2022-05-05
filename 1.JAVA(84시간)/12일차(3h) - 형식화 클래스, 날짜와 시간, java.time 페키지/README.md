@@ -1037,8 +1037,8 @@ long toEpochMilli()
 ```
 
 - Instant는 항상 UTC(+00:00)를 기준으로 하기 때문에 LocalTime과 차이가 있을 수 있다.<br>
-	(예 : 한국은 시간대가 +09:00이므로 Instant와 LocalTime간에는 9시간의 차이가 있다.)
-[note] UTC는 'Coordincated Universal Time'의 약어로 '세계 협정시'이라고 하며, 1972년 1월 1일부터 시행된 국제 표준시이다. 이전에 사용되던 GMT(Greenwich Mean Time)와 UTC는 거의 같지만, UTC가 좀 더 정확하다.
+	(예 : 한국은 시간대가 +09:00이므로 Instant와 LocalTime간에는 9시간의 차이가 있다.)<br>
+	> UTC는 'Coordincated Universal Time'의 약어로 '세계 협정시'이라고 하며, 1972년 1월 1일부터 시행된 국제 표준시이다. 이전에 사용되던 GMT(Greenwich Mean Time)와 UTC는 거의 같지만, UTC가 좀 더 정확하다.
 
 ## LocalDateTime과 ZonedDateTime
 
