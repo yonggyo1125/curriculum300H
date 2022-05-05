@@ -1394,8 +1394,29 @@ Period와 Duration을 다른 단위의 값으로 변환하는데 사용된다.
 <tbody>
 	<tr>
 		<td>Period</td>
-		<td></td>
-		<td></td>
+		<td>long toTotalMonths()</td>
+		<td>년월일을 월단위로 변환해서 반환(일 단위는 무시)</td>
+	</tr>
+	<tr>
+		<td rowspan='5'>Duration</td>
+		<td>long toDays()</td>
+		<td>일단위로 변환해서 반환</td>
+	<tr>
+	<tr>
+		<td>long toHours()</td>
+		<td>시간단위로 변환해서 반환</td>
+	</tr>
+	<tr>
+		<td>long toMinutes()</td>
+		<td>분단위로 변환해서 반환</td>
+	</tr>
+	<tr>
+		<td>long toMillis()</td>
+		<td>천분의 일초 단위로 반환해서 반환</td>
+	</tr>
+	<tr>
+		<td>long toNanos()</td>
+		<td>나노초 단위로 반환해서 반환</td>
 	</tr>
 </tbody>
 </table>
