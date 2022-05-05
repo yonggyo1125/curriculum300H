@@ -474,8 +474,7 @@ class MyApplication {
 	}
 }
 ```
-getIntance()를 사용하면 구현되는 내용은 달라지겠지만 MyApplication이 변경되지 않아도 된다. 
-getInstance()메서드가 static인 이유는 메서드 내의 코드에서 인스턴스 변수를 사용하거나 인스턴스 메서드를 호출하지 않기 때문
+getIntance()를 사용하면 구현되는 내용은 달라지겠지만 MyApplication이 변경되지 않아도 된다.    getInstance()메서드가 static인 이유는 메서드 내의 코드에서  인스턴스 변수를 사용하거나 인스턴스 메서드를 호출하지 않기 때문   
 Calenda는 추상 클래스 이므로 객체를 생성할 수 없다, 따라서 객체를 생성하기 위한 static 메서드은 getInstance()가 필요하다.
 
 
