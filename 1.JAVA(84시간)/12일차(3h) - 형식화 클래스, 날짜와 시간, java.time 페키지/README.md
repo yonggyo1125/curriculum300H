@@ -1401,7 +1401,7 @@ Period와 Duration을 다른 단위의 값으로 변환하는데 사용된다.
 		<td rowspan='5'>Duration</td>
 		<td>long toDays()</td>
 		<td>일단위로 변환해서 반환</td>
-	<tr>
+	</tr>
 	<tr>
 		<td>long toHours()</td>
 		<td>시간단위로 변환해서 반환</td>
