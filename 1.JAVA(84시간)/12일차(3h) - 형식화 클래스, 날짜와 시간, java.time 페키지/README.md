@@ -437,13 +437,13 @@ INSERT INTO CUST_INFO VALUES ('고애신','032-333-1234',33,'10-07');
 # 날짜와 시간
 
 ## Calendar와 Date
-Date는 날짜와 시간을 다룰 목적으로 JDK1.0부터 제공되어온 클래스이다. 
-Date클래스의 기능이 부족했기 때문에 Calendar라는 새로운 클래스를 그 다음 버전인 JDK1.1부터 제공하기 시작하였다.
-Calendar는 Date보다는 낳았지만 몇가지 단점들이 발견 되어 JDK1.8부터 **java.time 패키지**로 기존의 단점을 개선한 새로운 클래스들이 추가 되었다.
+- Date는 날짜와 시간을 다룰 목적으로 JDK1.0부터 제공되어온 클래스이다. 
+- Date클래스의 기능이 부족했기 때문에 Calendar라는 새로운 클래스를 그 다음 버전인 JDK1.1부터 제공하기 시작하였다.
+- Calendar는 Date보다는 낳았지만 몇가지 단점들이 발견 되어 JDK1.8부터 **java.time 패키지**로 기존의 단점을 개선한 새로운 클래스들이 추가 되었다.
 
 
 ### Calendar와 GregorianCalendar
-Calendar는 추상 클래스이기 때문에 직접 객체를 생성할 수 없고, 메서드를 통해서 완전히 구현된 클래스의 인스턴스를 얻어야 한다.
+- Calendar는 추상 클래스이기 때문에 직접 객체를 생성할 수 없고, 메서드를 통해서 완전히 구현된 클래스의 인스턴스를 얻어야 한다.
 ```
 Calendar cal = new Calendar(); // 에러, 추상클래스는 인스턴스를 생성할 수 없다.
 
@@ -451,7 +451,7 @@ Calendar cal = Calendar.getInstance(); // OK, getInstance() 메서드는 Calenda
 ```
 
 - Calendar를 상속받아 완전히 구현한 클래스로는 GregorianCalendar와 BuddhistCalendar가 있다.
-getInstance()는 시스템의 국가와 지역설정을 확인해서 태국인 경우에는 BuddhistCalendar의 인스턴스를 반환하고, 그 외에는 GregorianCalendar와 인스턴스를 반환한다.
+- getInstance()는 시스템의 국가와 지역설정을 확인해서 태국인 경우에는 BuddhistCalendar의 인스턴스를 반환하고, 그 외에는 GregorianCalendar와 인스턴스를 반환한다.
 
 - GregorianCalendar는 Calendar를 상속받아 오늘날 전세계 공통으로 사용하고 있는 그레고리력에 맞게 구현한 것으로 태국을 제외한 나머지 국가에서는 GregorianCalendar를 사용하면 된다. 
 
@@ -464,7 +464,7 @@ class MyApplication {
 	}
 }
 ```
-상기 코드와 같이 특정 인스턴스를 생성하도록 프로그램이 작성되어 있다면, 다른 종류의 역법(calendar)을 사용하는 국가에서 실행되거나, 새로운 역법이 추가된다면, 즉 다른 종류의 인스턴스를 필요로 하는 경우에 MyApplication을 변경해야 한다.
+- 상기 코드와 같이 특정 인스턴스를 생성하도록 프로그램이 작성되어 있다면, 다른 종류의 역법(calendar)을 사용하는 국가에서 실행되거나, 새로운 역법이 추가된다면, 즉 다른 종류의 인스턴스를 필요로 하는 경우에 MyApplication을 변경해야 한다.
 
 ```
 class MyApplication {
@@ -479,8 +479,80 @@ class MyApplication {
 - Calenda는 추상 클래스 이므로 객체를 생성할 수 없다, 따라서 객체를 생성하기 위한 static 메서드은 getInstance()가 필요하다.
 
 
-
 ### Date와 Calendar간의 변환
+- Calendar가 새로 추가되면서 Date는 대부분의 메서드가 'dreprecated' 되었으므로 잘 사용되지 않는다.
+- 그러나 여전히 Date를 필요로 하는 메서드들이 있기 때문에 Calendar를 Date로 또는 그 반대로 변환할 일이 있다.
+	- Calendar를 Date로 변환 
+	```
+	Calendar cal = Calendar.getInstance();
+	...
+	Date d = new Date(cal.getTimeInMillis()); // Date(long date)
+	```
+	
+	- Date를 Calendar로 변환
+	```
+	Date d = new Date();
+	...
+	Calendar cal = Calendar.getInstance();
+	cal.setTime(d);
+	```
+#### day12/date_calendar/CalendarEx1.java
+```
+package day12.date_calendar;
+
+import java.util.*;
+
+public class CalendarEx1 {
+	public static void main(String[] args) {
+		// 기본적으로 현재날짜와 시간으로 설정된다.
+		Calendar today = Calendar.getInstance();
+		
+		System.out.println("이 해의 년도 : " + today.get(Calendar.YEAR));
+		System.out.println("월(0~11, 0:1월) : " + today.get(Calendar.MONTH));
+		System.out.println("이 해의 몇 째 주 : " + today.get(Calendar.WEEK_OF_YEAR));
+		System.out.println("이 달의 몇 째 주 : " + today.get(Calendar.WEEK_OF_MONTH));
+		
+		// DATE와 DAY_OF_MONTH와는 같다.
+		System.out.println("이 달의 몇 일 : "+ today.get(Calendar.DATE));
+		System.out.println("이 달의 몇 일 : "+ today.get(Calendar.DAY_OF_MONTH));
+		System.out.println("이 해의 몇 일 : "+ today.get(Calendar.DAY_OF_YEAR));
+		System.out.println("요일(1~7), 1:일요일  : "+ today.get(Calendar.DAY_OF_WEEK)); // 1. 일요일, 2. 월요일 ... 7.토요일 
+		System.out.println("이 달의 몇 째 요일 : "+ today.get(Calendar.DAY_OF_WEEK_IN_MONTH));
+		System.out.println("오전_오후(0:오전, 1:오후) : "+ today.get(Calendar.AM_PM));
+		System.out.println("시간(0~11) : "+ today.get(Calendar.HOUR));
+		System.out.println("시간(0~23) : "+ today.get(Calendar.HOUR_OF_DAY));
+		System.out.println("분(0~59) : "+ today.get(Calendar.MINUTE));
+		System.out.println("초(0~59) : "+ today.get(Calendar.SECOND));
+		System.out.println("1000분의 1초(0~999)  : "+ today.get(Calendar.MILLISECOND));
+		
+		System.out.println("TimeZone(~12~+12): " + (today.get(Calendar.ZONE_OFFSET) / (60 * 60 * 1000)));
+		System.out.println("이 달의 마지막 날:" + today.getActualMaximum(Calendar.DATE));
+	}
+}
+
+실행결과
+이 해의 년도 : 2022
+월(0~11, 0:1월) : 4
+이 해의 몇 째 주 : 19
+이 달의 몇 째 주 : 1
+이 달의 몇 일 : 5
+이 달의 몇 일 : 5
+이 해의 몇 일 : 125
+요일(1~7), 1:일요일  : 5
+이 달의 몇 째 요일 : 1
+오전_오후(0:오전, 1:오후) : 0
+시간(0~11) : 9
+시간(0~23) : 9
+분(0~59) : 56
+초(0~59) : 58
+1000분의 1초(0~999)  : 207
+TimeZone(~12~+12): 9
+이 달의 마지막 날:31
+```
+- getInstance(),를 통해서 얻은 인스턴스는 기본적으로 현재 시스템의 날짜와 시간에 대한 정보를 담고 있다.
+- 원하는 날짜나 시간으로 설정하려면 **set 메서드 ** 사용
+- 원하는 필드의 값을 얻어오려면 **int get(int field)**를 사용
+- get(Calendar.MONTH)로 얻어오는 값의 범위는 0~11이다. 즉 0은 1월, 11은 12월을 의미한다.
 
 
 * * *
