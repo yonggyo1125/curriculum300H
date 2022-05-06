@@ -264,6 +264,579 @@ select * from member;
 </html>	
 ```
 
+### PreparedStatement 객체로 데이터 접근하기
+- 동적인 쿼리에 사용
+- PreparedStatement 객체는 하나의 객체로 여러 번의 쿼리를 실행할 수 있으며, 동일한 쿼리문을 특정 값만 바꾸어서 여러 번 실행해야 할 때, 매개변수가 많아서 쿼리문을 정리해야 할 때 유용합니다.
+```
+PreparedStatement prepareStatement(String sql) throws SQLException
+```
+- 매개변수 sql은 데이터베이스에 보낼 쿼리문이며, 쿼리문에 정해지지 않은 값을 물음표(?)로 표시하여 사용합니다. 
+- 이 물음표에 값을 할당하기 위해 setXXX() 메서드를 사용하는데, 이 메서드는 2개의 매개변수로 설정한 물음표 위치 값(1부터 시작함)과 실제 할당된 값을 가집니다.
+이때 Xxx는 필드 데이터형으로, 해당 필드의 데이터형이 문자열이면 setString().이 되고 int이면 setInt()가 됩니다.
+
+#### setXxx() 메서드의 종류
+
+|메서드|반환유형|설명|
+|------|----|---------|
+|setString(int parameterIndex, String x)|void|필드 유형이 문자열인 경우|
+|setInt(int parameterIndex, int x)|void|필드 유형이 정수형인 경우|
+|setLong(int parameterIndex, long x)|void|필드 유형이 정수형인 경우|
+|setDouble(int parameterIndex, double x)|void|필드 유형이 실수형인 경우|
+|setFloat(int parameterIndex, float x)|void|필드 유형이 실수형인 경우|
+|setObject(int parameterIndex, Object x)|void|필드 유형이 객체형인 경우|
+|setDate(int parameterIndex, Date x)|void|setDate(int parameterIndex, Date x)|
+|seTimestamp(int parameterIndex, Timestamp x)|void|필드 유형이 시간형인 경우|
+
+
+#### PreparedStatement 객체의 메서드 종류
+
+|메서드|반환유형|설명|
+|-----|----|---------|
+|executeQuery()|ResultSet|SELECT 문을 실행할 때 사용합니다(ResultSet 객체 반환)|
+|executeUpdate()|int|삽입, 수정 삭제와 관련된 SQL 문 실행에 사용합니다.|
+|close()|void|PreparedStatement 객체를 반환할 때 사용합니다.|
+
+#### executeQuery() 메서드 사용 예 : SELECT 쿼리문
+```
+<% 
+   Connection conn = null;
+   ... (생략) ...
+   String sql = “SELECT * FROM Member WHERE id = ?”;
+   PreparedStatement pstmt = conn.prepareStatement(sql);
+   pstmt.setString(1, “1”);
+   ResultSet rs = pstmt.executeQuery(sql);
+   ... (생략) ... 
+   pstmt.close();
+%>
+```
+
+#### executeUpdate() 메서드 사용 예(삽입) : INSERT 쿼리문
+```
+<%
+   Connection conn = null; 
+   ... (생략) ...
+   String sql = “INSERT INTO Member(id, name, passwd) VALUES (?,?,?)”;
+   PreparedStatement pstmt = conn.prepareStatement(sql);
+   pstmt.setString(1, “1”);
+   pstmt.setString(2, “홍길순”);
+   pstmt.setString(3, “1234”);
+   pstmt.executeUpdate();
+   ... (생략) ...
+   pstmt.close();
+%>
+```
+
+#### day05/insert02.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Database SQL</title>
+</head>
+<body>	
+	<form method="post" action="insert02_process.jsp">
+		<p>	아이디 : <input type="text" name="id">
+		<p>	비밀번호 : <input type="password" name="passwd">
+		<p>	이름 : <input type="text" name="name">
+		<p>	<input type="submit" value="전송">
+	</form>
+</body>
+</html>
+```
+
+#### day05/insert02_process.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page import="java.sql.*"%>
+<html>
+<head>
+<title>Database SQL</title>
+</head>
+<body>
+<%@ include file="dbconn.jsp" %>
+<%
+	request.setCharacterEncoding("utf-8");
+
+	String id = request.getParameter("id");
+	String passwd = request.getParameter("passwd");
+	String name = request.getParameter("name");
+	
+	PreparedStatement pstmt = null;
+
+	try {
+		String sql = "insert into member(id, passwd, name) values(?,?,?)";
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, id);
+		pstmt.setString(2, passwd);
+		pstmt.setString(3, name);
+		pstmt.executeUpdate();
+		out.println("Member 테이블  삽입이 성공했습니다.");
+	} catch (SQLException ex) {
+		out.println("Member 테이블 삽입이 실패했습니다.<br>");
+		out.println("SQLException: " + ex.getMessage());
+	} finally {
+		if (pstmt != null)
+			pstmt.close();
+		if (conn != null)
+			conn.close();
+	}
+%>
+</body>
+</html>
+```
+
+### 쿼리문 실행 결과 값 가져오기
+- SELECT 쿼리문 실행 시 executeQuery() 메서드를 사용하면 실행 결과가 java.sql.ResultSet 형으로 반환
+- ResultSet 객체는 Statement 또는 PreparedStatement 객체로 SELECT 문을 사용하여 얻어온 레코드 값을 테이블 형태로 가진 객체입니다.
+
+#### Statement 객체를 사용하는 경우
+```
+ResultSet executeQuery(String sql) throws SQLException
+```
+
+#### PreparedStatement 객체를 사용하는 경우
+```
+ResultSet executeQuery() throws SQLException
+```
+
+- ResultSet 객체는 SELECT문으로 필드값을 가져오기 위해 getXxx() 메서드를 사용합니다.
+- Xxx는 필드의 데이터형과 관련이 있습니다.
+- 해당 필드의 데이터형이 문자열이면 getString()이 되고 int이면 getInt()가 됩니다. 
+- ResultSet 객체의 getXxx() 메서드를 사용하여 필드 순번으로 필드 값을 가져온다면 첫 번째는 1부터 시작합니다.
+
+
+### ResultSet 객체의 메서드 
+
+|메서드|반환유형|설명|
+|-------|----|---------|
+|getXxx(int ColumnIndex)|XXX|설정한 ColumnIndex(필드 순번)의 필드 값을 설정한 XXX 형으로 가져옵니다.|
+|getXxx(String ColumnName)|XXX|설정한 ColumnName(필드 명)의 필드 값을 설정한 XXX 형으로 가져옵니다.|
+|absolute(int row)|boolean|설정한 row 행으로 커서를 이동합니다.|
+|beforeFirst()|void|첫 번째 행의 이전으로 커서를 이동합니다.|
+|afterLast()|void|마지막 행의 다음으로 커서를 이동합니다.|
+|first()|void|첫 번째의 행으로 커서를 이동합니다.|
+|last()|void|마지막 행으로 커서를 이동합니다.|
+|next()|boolean|다음 행으로 커서를 이동합니다.|
+|previous()|boolean|현재 행의 이전 행으로 커서를 이동합니다.|
+|close()|void|ResultSet 객체를 반환할 때 사용합니다.|
+
+#### executeQuery() 메서드 사용 예 : SELECT 쿼리문 
+```
+<%
+   Connection conn = null;
+   ... (생략) ...
+   Statement stmt = conn.createStatement();
+   String sql = “SELECT * FROM Member WHERE id = 1”;
+   ResultSet rs = stmt.executeQuery(sql);
+
+   while(rs.next()) {
+       out.println(rs.getString(2) + “, ” + rs.getString(3) + “<br>”);
+   }
+   rs.close();
+   stmt.close();
+%>
+```
+
+#### day05/select01.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page import="java.sql.*"%>                   
+<html>
+<head>
+<title>Database SQL</title>
+</head>
+<body>
+<%@ include file="dbconn.jsp" %>
+	<table width="300" border="1">
+		<tr>
+			<th>아이디</th>
+			<th>비밀번호</th>
+			<th>이름</th>
+		</tr>
+		<%
+			ResultSet rs = null;
+			Statement stmt = null;
+
+			try {
+				String sql = "select * from member";
+				stmt = conn.createStatement();
+				rs = stmt.executeQuery(sql);
+
+				while (rs.next()) {
+					String id = rs.getString("id");
+					String pw = rs.getString("passwd");
+					String name = rs.getString("name");
+		%>
+		<tr>
+			<td><%=id%></td>
+			<td><%=pw%></td>
+			<td><%=name%></td>
+		</tr>
+		<%
+				}
+			} catch (SQLException ex) {
+				out.println("Member 테이블 호출이 실패했습니다.<br>");
+				out.println("SQLException: " + ex.getMessage());
+			} finally {
+				if (rs != null)
+					rs.close();
+				if (stmt != null)
+					stmt.close();
+				if (conn != null)
+					conn.close();
+			}
+		%>
+	</table>
+</body>
+</html>
+```
+#### day05/select02.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page import="java.sql.*"%>                   
+<html>
+<head>
+<title>Database SQL</title>
+</head>
+<body>
+<%@ include file="dbconn.jsp" %>				
+	<table width="300" border="1">
+		<tr>
+			<th>아이디</th>
+			<th>비밀번호</th>
+			<th>이름</th>
+		</tr>
+		<%
+			ResultSet rs = null;			
+			PreparedStatement pstmt = null;
+
+			try {
+				String sql = "select * from member";
+				pstmt = conn.prepareStatement(sql);
+				rs = pstmt.executeQuery();
+
+				while (rs.next()) {
+					String id = rs.getString("id");
+					String pw = rs.getString("passwd");
+					String name = rs.getString("name");
+		%>
+		<tr>
+			<td><%=id%></td>
+			<td><%=pw%></td>
+			<td><%=name%></td>
+		</tr>
+		<%
+				}
+			} catch (SQLException ex) {
+				out.println("Member 테이블 호출이 실패했습니다.<br>");
+				out.println("SQLException: " + ex.getMessage());
+			} finally {
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (conn != null)
+					conn.close();
+			}
+		%>
+	</table>
+</body>
+</html>
+```
+
+#### day05/update01.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Database SQL</title>
+</head>
+<body>	
+	<form method="post" action="update01_process.jsp">
+		<p>	아이디 : <input type="text" name="id">
+		<p>	비밀번호 : <input type="password" name="passwd">
+		<p>	이름 : <input type="text" name="name">
+		<p>	<input type="submit" value="전송">
+	</form>
+</body>
+</html>
+```
+
+#### day05/update01_process.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page import="java.sql.*"%>
+<html>
+<head>
+<title>Database SQL</title>
+</head>
+<body>
+<%@ include file="dbconn.jsp" %>
+	<%
+		request.setCharacterEncoding("utf-8");
+
+		String id = request.getParameter("id");
+		String passwd = request.getParameter("passwd");
+		String name = request.getParameter("name");
+		
+		ResultSet rs = null;
+		Statement stmt = null;
+		
+		try {			
+			String sql = "select id, passwd from member where id = '" + id + "'";
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+
+			if (rs.next()) {
+				String rId = rs.getString("id");
+				String rPasswd = rs.getString("passwd");
+
+				if (id.equals(rId) && passwd.equals(rPasswd)) {
+					sql = "update member set name = '" + name + "' where id = '" + id + "'";
+					stmt = conn.createStatement();
+					stmt.executeUpdate(sql);
+					out.println("Member 테이블을 수정했습니다.");
+				} else
+					out.println("일치하는 비밀번호가 아닙니다");
+			} else
+				out.println("Member 테이블에 일치하는 아이디가 없습니다.");
+		} catch (SQLException ex) {
+			out.println("SQLException: " + ex.getMessage());
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (conn != null)
+				conn.close();
+		}
+	%>
+</body>
+</html>
+```
+
+#### day05/update02.jsp 
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Database SQL</title>
+</head>
+<body>	
+	<form method="post" action="update02_process.jsp">
+		<p>	아이디 : <input type="text" name="id">
+		<p>	비밀번호 : <input type="password" name="passwd">
+		<p>	이름 : <input type="text" name="name">
+		<p>	<input type="submit" value="전송">
+	</form>
+</body>
+</html>
+```
+#### day05/update02_process.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page import="java.sql.*"%>
+<html>
+<head>
+<title>Database SQL</title>
+</head>
+<body>
+	<%@ include file="dbconn.jsp" %>
+	<%
+		request.setCharacterEncoding("utf-8");
+
+		String id = request.getParameter("id");
+		String passwd = request.getParameter("passwd");
+		String name = request.getParameter("name");
+
+		ResultSet rs = null;
+		PreparedStatement pstmt = null;		
+
+		try {
+			String sql = "select id, passwd from member where id = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				String rId = rs.getString("id");
+				String rPasswd = rs.getString("passwd");
+
+				if (id.equals(rId) && passwd.equals(rPasswd)) {
+					sql = "update member set name = ? where id = ?";
+					pstmt = conn.prepareStatement(sql);
+					pstmt.setString(1, name);
+					pstmt.setString(2, id);
+					pstmt.executeUpdate();
+					out.println("Member 테이블을 수정했습니다.");
+				} else
+					out.println("일치하는 비밀번호가 아닙니다");
+			} else
+				out.println("Member 테이블에 일치하는 아이디가 없습니다.");
+		} catch (SQLException ex) {
+			out.println("SQLException: " + ex.getMessage());
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (pstmt != null)
+				pstmt.close();
+			if (conn != null)
+				conn.close();
+		}
+	%>
+</body>
+</html>
+```
+
+#### day05/delete01.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Database SQL</title>
+</head>
+<body>	
+	<form method="post" action="delete01_process.jsp">
+		<p>	아이디 : <input type="text" name="id">
+		<p>	비밀번호 : <input type="password" name="passwd">		
+		<p>	<input type="submit" value="전송">
+	</form>
+</body>
+</html>
+```
+
+#### day05/delete01_process.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page import="java.sql.*"%>
+<html>
+<head>
+<title>Database SQL</title>
+</head>
+<body>
+<%@ include file="dbconn.jsp" %>
+	<%
+		request.setCharacterEncoding("utf-8");
+
+		String id = request.getParameter("id");
+		String passwd = request.getParameter("passwd");
+		String name = request.getParameter("name");
+
+		ResultSet rs = null;
+		Statement stmt = null;
+		
+		try {
+			String sql = "select id, passwd from member where id = '" + id + "'";
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			
+			if (rs.next()) {
+				String rId = rs.getString("id");
+				String rPasswd = rs.getString("passwd");
+
+				if (id.equals(rId) && passwd.equals(rPasswd)) {
+					sql = "delete from member where id = '"+ id +"' and passwd = '"+ passwd + "'";
+					stmt = conn.createStatement();
+					stmt.executeUpdate(sql);
+					out.println("Member 테이블을 삭제했습니다.");
+				} else
+					out.println("일치하는 비밀번호가 아닙니다");
+			} else
+				out.println("Member 테이블에 일치하는 아이디가 없습니다.");
+		} catch (SQLException ex) {
+			out.println("SQLException: " + ex.getMessage());
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+			if (conn != null)
+				conn.close();
+		}
+	%>
+</body>
+</html>
+```
+
+#### day05/delete02.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Database SQL</title>
+</head>
+<body>	
+	<form method="post" action="delete02_process.jsp">
+		<p>	아이디 : <input type="text" name="id">
+		<p>	비밀번호 : <input type="password" name="passwd">		
+		<p>	<input type="submit" value="전송">
+	</form>
+</body>
+</html>
+```
+
+#### day05/delete02_process.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page import="java.sql.*"%>
+<html>
+<head>
+<title>Database SQL</title>
+</head>
+<body>
+<%@ include file="dbconn.jsp" %>
+	<%
+		request.setCharacterEncoding("utf-8");
+
+		String id = request.getParameter("id");
+		String passwd = request.getParameter("passwd");
+		String name = request.getParameter("name");
+
+		ResultSet rs = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			String sql = "select id, passwd from member where id = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+				String rId = rs.getString("id");
+				String rPasswd = rs.getString("passwd");
+
+				if (id.equals(rId) && passwd.equals(rPasswd)) {
+					sql = "delete from member where id = ? and passwd = ?";
+					pstmt = conn.prepareStatement(sql);
+					pstmt.setString(1, id);
+					pstmt.setString(2, passwd);
+					pstmt.executeUpdate();
+					out.println("Member 테이블을 삭제했습니다.");
+				} else
+					out.println("일치하는 비밀번호가 아닙니다");
+			} else
+				out.println("Member 테이블에 일치하는 아이디가 없습니다.");
+		} catch (SQLException ex) {
+			out.println("SQLException: " + ex.getMessage());
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (pstmt != null)
+				pstmt.close();
+			if (conn != null)
+				conn.close();
+		}
+	%>
+</body>
+</html>
+```
+
 ## JSTL SQL 태그 라이브러리 사용하기
+
+### SQL 태그
+
+|태그|설명|
+|-----|-------|
+|<sql:setDataSource>|DataSource를 설정하는 데 사용합니다.|
 
 
