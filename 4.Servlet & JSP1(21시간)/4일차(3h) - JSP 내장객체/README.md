@@ -262,6 +262,160 @@ process.jsp
 ```
 
 #### 응답 HTTP 헤더 관련 메서드
+- 응답 HTTP 헤더 관련 메서드는 서버가 웹 브라우저에 응답하는 정보에 헤더를 추가하는 기능을 제공
+- 헤더 정보에는 주로 서버에 대한 정보가 저장되어 있습니다.
+
+|응답 HTTP 헤더 관련 메서드|반환유형|설명|
+|-------|-----|--------|
+|addCookie(Cookie cookie)|void|쿠키를 추가합니다.|
+|addDateHeader(String name, long date)|void|설정한 헤더 이름 name에 날짜/시간을 추가합니다.|
+|addHeader(String name String value)|void|설정한 헤더 이름 name에 value를 추가합니다.|
+|addIntHeader(String name, int value)|void|설정한 헤더 이름 name에 정수 값 value를 추가|
+|setDateHeader(String name, long date)|void|설정한 헤더 이름 name에 날짜/시간을 설정|
+|setHeader(String name, String value)|void|설정한 헤더 이름 name에 문자열 값 value 설정|
+|setIntHeader(String name, int value)|void|설정한 헤더 이름 name에 정수 값 value를 설정|
+|containsHeader(String name)|boolean|설정한 헤더 이름 name이 HTTP 헤더에 포함되었는지 여부를 확인|
+|getHeader(String name)|String|설정한 헤더 이름 name 값을 가져옵니다.|
+
+```
+예제)
+<%@ page contentType=“text/html; charset=utf-8” %>
+<html>
+<body>
+	<%
+		response.setHeader(“Cache-control”, “use_cache”);
+		response.addHeader(“contentType”, “text/html; charset=utf-8”);
+		response.setDateHeader(“date”, 1L);
+	%>
+	Cache-control : <%=response.getHeader(“Cache-control”)%><br>
+	contentType : <%=response.getHeader(“contentType”)%><br>
+	date : <%=response.getHeader(“date”)%>
+</body>
+</html>
+```
+
+#### day04/response02.jsp
+```
+<%@ page contentType=“text/html; charset=utf-8” %>
+<html>
+<body>
+	이 페이지는 5초마다 새로고침 됩니다.<br>
+	<%
+		response.setIntHeader(“Refresh”, 5);
+	%>
+	<%=java.util.Calendar.getInstance().getTime()%>
+</body>
+</html>
+```
+
+#### 응답 콘텐츠 관련 메서드 
+|응답 콘텐츠 관련 메서드|반환유형|설명|
+|-------|-----|--------|
+|setContentType(String type)|void|웹브라우저에 응답할 MIME 유형을 설정합니다.|
+|getContentType()|String|웹브라우저에 응답할 MIME 유형을 가져옵니다.|
+|setCharacterEncoding(String charset)|void|웹브라우저에 응답할 문자 인코딩을 설정합니다.|
+|getCharacterEncoding()|String|웹브라우저에 응답할 문자 인코딩을 가져옵니다.|
+|sendError(int status_code, String message)|void|웹브아루저에 응답할 오류(코드 및 오류메세지)를 설정|
+|setStatus(int statuscode)|void|웹브라우저에 응답할 HTTP 코드를 설정합니다.|
+
+```
+예제)
+<%@ page contentType=“text/html; charset=utf-8” %>
+<html>
+<body>
+	<%
+		response.setCharacterEncoding(“utf-8”);
+		response.setContentType(“text/html; charset=utf-8”);
+	%>
+	문자 인코딩 : <%=response.getCharacterEncoding()%><br>
+	콘텐츠 유형 : <%=response.getContentType()%>
+</body>
+</html>
+```
 
 
-### out
+#### day04/response03.jsp
+```
+<%@ page contentType=“text/html; charset=utf-8”%>
+<html>
+<body>
+	<%
+		response.sendError(404, “요청 페이지를 찾을 수 없습니다.”);
+	%>
+</body>
+</html>
+```
+
+
+### out 내장 객체의 기능과 사용법
+- out 내장 객체는 웹브라우저에 데이터를 전송하는 출력 스트림 객체입니다.
+- JSP 컨테이너는 JSP 페이지에 사용되는 모든 표현문 태그와 HTML, 일반 텍스트 등을 out 내장 객체를 통해 웹브라우저에 그대로 전달합니다.
+- out 내장 객체는 스크립틀릿 태그에 사용하여 단순히 값을 출력하는 표현문 태그 <%= ... %>와 같은 결과를 얻을 수 있습니다.
+
+#### out 내장 객체 메서드의 종류
+
+|out 내장 객체 메서드|반환유형|설명|
+|-------|-----|---------|
+|print(String str)|void|설정된 str 값을 웹브라우저에 출력합니다.|
+|println(String str)|void|설정된 str 값을 웹 브라우저에 출력합니다. 이때 줄바꿈(\r\n 또는 \n)이 적용됩니다.|
+|newLine()|void|줄바꿈(\r\n 또는 \n)을 출력합니다.|
+|getBufferSize()|int|현재 출력 버퍼의 크기를 가져옵니다.|
+|getRemaining()|int|현재 남아 있는 출력 버퍼의 크기를 가져옵니다.|
+|clear()|void|현재 출력 버퍼에 저장되어 있는 내용을 웹브라우저에 전송하지 않고 비웁니다. 만약 버퍼가 이미 플러쉬되었다면 IOException이 발생합니다.|
+|clearBuffer()|void|현재 출력 버퍼에 저장되어 있는 내용을 웹브라우저에 전송하지 않고 비웁니다. 만약 버퍼가 이미 플러쉬되었다면 IOException이 발생하지 않습니다.|
+|flush()|void|현재 출력 버퍼에 저장되어 있는 내용을 웹브라우저에 전송하고 비웁니다.|
+|isAutoFlush()|boolean|출력버퍼가 채워졌을 때의 처리를 결정합니다. 자동으로 플러쉬하는 경우 true를 반환하고, 그렇지 않은 경우 false를 반환|
+
+
+
+#### day04/out01.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Implicit Objects</title>
+</head>
+<body>
+	<%
+		out.println("오늘의 날짜 및 시각 " + "<br>");		
+		out.println(java.util.Calendar.getInstance().getTime());
+	%>
+</body>
+</html>
+```
+
+#### day04/out02.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Implicit Objects</title>
+</head>
+<body>
+	<form action="out02_process.jsp" method="post">
+		<p> 아 이 디 : <input type="text" name="id">
+		<p>	비밀번호 : <input type="text" name="passwd">
+		<p>	<input type="submit" value="전송" />
+	</form>
+</body>
+</html>
+```
+
+#### day04/out02_process.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Implicit Objects</title>
+</head>
+<body>
+	<%
+		request.setCharacterEncoding("utf-8");
+		String userid = request.getParameter("id");
+		String password = request.getParameter("passwd");
+	%>
+	<p>	아 이 디 : <% out.println(userid); %>
+	<p>	비밀번호 : <% out.println(password); %>	
+</body>
+</html>
+```
