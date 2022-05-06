@@ -94,11 +94,58 @@ Collection 인터페이로부터 상속받은 것은 제외하였다.
 
 
 #### Map인터페이스의 메서드
+
 |메서드|설명|
 |----|----------|
+|void clear()|Map의 모든 객체를 삭제한다.|
+|boolean containsKey(Object key)|지정된 key객체와 일치하는  Map의 key객체가 있는지 확인한다.|
+|boolean containsValue(Object value)|지정된 value객체와 일치하는 Map의 value객체가 있는지 확인한다.|
+|Set entrySet()|Map에 저장되는 있는 key-value쌍을 Map.Entry타입의 객체로 저장한 Set으로 반환한다.|
+|boolean equals(Object o)|동일한 Map인지 비교한다.|
+|Object get(Object key)|지정된 key객체에 대응하는 value객체를 찾아서 반환한다.|
+|int hashCode()|해시코드를 반환한다.|
+|boolean isEmpty()|Map이 비어있는지 확인한다.|
+|Set keySet()|Map에 저장된 모든 key객체를 반환한다.|
+|Object put(Object key, Object value)|Map에 value객체를 key객체에 연결(mapping)하여 저장한다.|
+|void putAll(Map f)|지정된 Map의 모든 key-value쌍을 추가한다.|
+|Object remove(Object key)|지정한 key객체와 일치하는 key-value객체를 삭제한다.|
+|int size()|Map에 저장된 key-value쌍의 개수를 반환한다.|
+|Collection values()|Map에 저장된 모든 value객체를 반환한다.|
+
+> Map 인터페이스에서 값(values)은 중복을 허용하기 때문에 Collection타입으로 반환하고, 키(key)는 중복을 허용하지 않기 때문에 Set타입으로 반환한다.
 
 
 ### Map.Entry 인터페이스
+- Map.Entry인터페이스는 Map인터페이스의 내부 인터페이스이다.
+- 내부 클래스와 같이 인터페이스도 인터페이스 안에 인터페으스를 정의하는 것이 가능하다.
+- Map에 저장되는 key-value쌍을 다루기 위해 내부적으로 Entry 인터페이스를 정의해 놓은 것
+
+```
+Map 인터페이스의 소스코드 일부
+
+public interface Map {
+	...
+	interface Entry {
+		Object getKey();
+		Object getValue();
+		Object setValue(Object value);
+		boolean equals(Object o);
+		int hashCode();
+		...
+	}
+}
+```
+
+#### Map.Entry 인터페이스와 메서드
+
+|메서드|설명|
+|----|----------|
+|boolean equals(Object o)|동일한 Entry인지 비교한다.|
+|Object getKey()|Entry의 key 객체를 반환한다.|
+|Object getValue()|Entry의 value객체를 반환한다.|
+|int hashCode()|Entry의 해시코드를 반환한다.|
+|Object setValue(Object value)|Entry의 value객체를 지정된 객체로 바꾼다.|
+
 
 ## ArrayList
 
