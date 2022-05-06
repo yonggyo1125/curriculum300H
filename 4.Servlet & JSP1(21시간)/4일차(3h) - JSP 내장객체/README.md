@@ -166,6 +166,7 @@ process.jsp
 </html>
 ```
 > 참고) 속성을 공유할 수 있는 유효범위<br>내장 객체가 존재하는 동안 사용할 수 있는 속성의 영역(scope)은 page, request, session, application입니다.
+
 |영역|내장객체|속성의 유효 범위|
 |----|-----|--------|
 |page|pageContext|해당 페이지가 클라이언트에게 서비스를 제공하는 동안 유효합니다.|
