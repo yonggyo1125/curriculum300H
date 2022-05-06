@@ -165,7 +165,7 @@ public class ArraList extends AbstractList implements List, RandomAccess, Clonea
 }
 ```
 - ArrayList는 elementData라는 이름의 Object 배열을 멤버변수로 선언하고 있다.
-- 선언된 배열의 타입의 모든 객체의 최상위 조상인 Object이기 때문에 모든 종류의 객체를 담을 수 있다.
+- 선언된 배열의 타입이 모든 객체의 최상위 조상인 Object이기 때문에 모든 종류의 객체를 담을 수 있다.
 
 ### ArrayList의 생성자와 메서드
 
