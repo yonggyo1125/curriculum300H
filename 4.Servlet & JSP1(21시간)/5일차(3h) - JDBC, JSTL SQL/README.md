@@ -838,5 +838,220 @@ ResultSet executeQuery() throws SQLException
 |태그|설명|
 |-----|-------|
 |\<sql:setDataSource\>|DataSource를 설정하는 데 사용합니다.|
+|\<sql:query\>|조회 쿼리문을 실행하는 데 사용합니다.|
+|\<sql:update\>|삽입,수정, 삭제 쿼리문을 실행하는 데 사용합니다.|
+|\<sql:param\>|쿼리문에 문자열 형식의 파라미터를 설정하는 데 사용합니다.|
+|\<sql:dateParam\>|쿼리문에 날짜 형식의 파라미터를 설정하는 데 사용합니다.|
+|\<sql:transaction\>|트랜잭션을 구현하는 데 사용합니다.|
 
+#### day05/member.sql
+```
+drop table member;
+
+CREATE TABLE IF NOT EXISTS member(
+   id VARCHAR(20) NOT NULL,
+   passwd  VARCHAR(20),
+   name VARCHAR(30),    
+   PRIMARY KEY (id)
+);
+INSERT INTO member VALUES('1', '1234', '홍길순');
+INSERT INTO member VALUES('2', '1235', '홍길동');
+```
+
+#### day05/sql01.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
+<html>
+<head>
+<title>JSTL</title>
+</head>
+<body>
+	<sql:setDataSource var="dataSource"
+		url="jdbc:mysql://localhost:3306/JSPBookDB"
+		driver="com.mysql.cj.jdbc.Driver" user="root" password="1234" />
+
+
+	<sql:query var="resultSet" dataSource="${dataSource}">
+		select * from member
+	</sql:query>
+
+	<table border="1">
+		<tr>
+			<c:forEach var="columnName" items="${resultSet.columnNames}">
+				<th width="100"><c:out value="${columnName}" /></th>
+			</c:forEach>
+		</tr>
+		<c:forEach var="row" items="${resultSet.rowsByIndex}">
+		<tr>
+			<c:forEach var="column" items="${row}" varStatus="i">
+			<td>
+				<c:if test="${column != null}">
+					<c:out value="${column}" />
+				</c:if> 
+				<c:if test="${column == null}">
+					&nbsp;
+				</c:if>
+			</td>
+			</c:forEach>
+		</tr>
+		</c:forEach>
+	</table>
+</body>
+</html>
+```
+
+#### day05/sql02.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>JSTL</title>
+</head>
+<body>
+	<form method="post" action="sql02_process.jsp">
+		<p>아이디 : <input type="text" name="id">
+		<p>비밀번호 : <input type="password" name="passwd">
+		<p>이름 : <input type="text" name="name">
+		<p><input type="submit" value="전송">
+	</form>
+</body>
+</html>
+```
+
+#### day05/sql02_process.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
+<html>
+<head>
+<title>JSTL</title>
+</head>
+<body>
+	<%
+		request.setCharacterEncoding("utf-8");
+
+		String id = request.getParameter("id");
+		String passwd = request.getParameter("passwd");
+		String name = request.getParameter("name");
+	%>
+	<sql:setDataSource var="dataSource"
+		url="jdbc:mysql://localhost:3306/JSPBookDB"
+		driver="com.mysql.cj.jdbc.Driver" user="root" password="1234" />
+
+
+	<sql:update dataSource="${dataSource}" var="resultSet">
+		INSERT INTO member(id, name, passwd) VALUES (?,?,?)
+		<sql:param value="<%=id%>" />
+		<sql:param value="<%=name%>" />
+		<sql:param value="<%=passwd%>" />
+	</sql:update>
+	<c:import var="url" url="sql01.jsp"  />
+	${url}
+</body>
+</html>
+```
+
+#### day05/sql03.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>JSTL</title>
+</head>
+<body>
+	<form method="post" action="sql03_process.jsp">
+		<p>아이디 : <input type="text" name="id">
+		<p>비밀번호 : <input type="password" name="passwd">
+		<p>이름 : <input type="text" name="name">
+		<p><input type="submit" value="전송">
+	</form>
+</body>
+</html>
+```
+
+#### day05/sql03_process.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
+<html>
+<head>
+<title>JSTL</title>
+</head>
+<body>
+	<%
+		request.setCharacterEncoding("utf-8");
+
+		String id = request.getParameter("id");
+		String passwd = request.getParameter("passwd");
+		String name = request.getParameter("name");
+	%>
+	<sql:setDataSource var="dataSource"
+		url="jdbc:mysql://localhost:3306/JSPBookDB"
+		driver="com.mysql.jdbc.Driver" user="root" password="1234" />
+
+
+	<sql:update dataSource="${dataSource}" var="resultSet">
+		UPDATE member SET name =?  where id =? and passwd =?
+		<sql:param value="<%=name%>" />
+		<sql:param value="<%=id%>" />		
+		<sql:param value="<%=passwd%>" />		
+	</sql:update>
+	<c:import var="url" url="sql01.jsp"  />
+	${url}
+</body>
+</html>
+```
+
+#### day05/sql04.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>JSTL</title>
+</head>
+<body>
+	<form method="post" action="sql04_process.jsp">
+		<p>아이디 : <input type="text" name="id">
+		<p>비밀번호 : <input type="password" name="passwd">		
+		<p><input type="submit" value="전송">
+	</form>
+</body>
+</html>
+```
+
+#### day05/sql04_process.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
+<html>
+<head>
+<title>JSTL</title>
+</head>
+<body>
+	<%
+		request.setCharacterEncoding("utf-8");
+
+		String id = request.getParameter("id");
+		String passwd = request.getParameter("passwd");		
+	%>
+	<sql:setDataSource var="dataSource"
+		url="jdbc:mysql://localhost:3306/JSPBookDB"
+		driver="com.mysql.cj.jdbc.Driver" user="root" password="1234" />
+
+
+	<sql:update dataSource="${dataSource}" var="resultSet">
+		DELETE FROM member where id =? and passwd =?
+		<sql:param value="<%=id%>" />		
+		<sql:param value="<%=passwd%>" />		
+	</sql:update>
+	<c:import var="url" url="sql01.jsp"  />
+	${url}
+</body>
+</html>
+```
 
