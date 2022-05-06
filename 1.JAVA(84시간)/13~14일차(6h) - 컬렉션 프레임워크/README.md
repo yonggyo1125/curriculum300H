@@ -15,11 +15,46 @@
 
 >인터페이스의  List와 Set을 구현한 컬렉션 클래스들은 서로 많은 공통부분이 있어서, 공통된 부분을 다시 뽑아 Collection인터페이스를 정의할 수 있었지만 Map 인터페이스는 이들과는 전혀 다른 형태로 컬렉션을 다루기 때문에 같은 상속계층도에 포함되지 못했다.
 
+|인터페이스|특징|
+|----|----------|
+|List|순서가 있는 데이터의 집합. 데이터의 중복을 허용한다.<br>구현클래스:ArrayList, LinkedList, Stack,Vector등|
+|Set|순서를 유지하지 않는 데이터의 집합. 데이터의 중복을 허용하지 않는다.<br>구현클래스: HashSet, TreeSet 등|
+|Map|키(key)와 값(value)의 쌍(pair)으로 이루어진 데이터의 집합<br>순서는 유지되지 않으며, 키는 중복을 허용하지 않고, 값은 중복을 허용한다.<br>구현클래스: HashMap, TreeMap, Hashtable, Properties|
+
+> 키(Key)란, 데이터 집합 중에서 어떤 값(value)을 찾는데 열쇠(key)가 된다는 의미에서 붙여진 이름이다. 그래서 키(Key)는 중복을 허용하지 않는다.
+
+- 컬렉션 프레임워크의 모든 컬렉션 클래스들을  List, Set, Map중 하나를 구현하고 있다. 
+- 구현한 인터페이스의 이름이 클래스의 이름에 포함되어 있어서 이름만으로도 클래스의 특징을 쉽게 알 수 있도록 되어 있다.
+- 그러나 Vector, Stack, Hashtable, Properties와 같은 클래스들은 컬렉션 프레임워크가 만들어지기 이전부터 존재하던 것이기 때문에 컬렉션 프레임워크의 명명법을 따르지 않는다.
+- Vector나 Hashtable과 같은 기존의 컬렉션 클래스들은 호환을 위해, 설계를 변경해서 남겨두었지만 가능하면 사용하지 않는 것이 좋다. 그 대신 새로 추가된 ArrayList와 HashMap을 사용하는 것이 좋다.
 
 
 ### Collection인터페이스
+- Collection은 List와 Set의 조상 인터페이스 이다.
+- Collection 인터페이스는 컬렉션 클래스에 저장된 데이터를 읽고, 추가하고, 삭제하는 등 컬렉션을 다루는데 가장 기본이적인 메서드들을 정의하고 있다.
+
+#### Collection 인터페이스에 정의된 메서드
+|메서드|설명|
+|----|----------|
+|boolean add(Object o)<br>boolean addAll(Collection c)|지정된 객체(o) 또는 Collection(c)의 객체들을 Collection에 추가한다.|
+|void clear()|Collection의 모든 객체를 삭제한다.|
+|boolean contains(Object o)<br>boolean containsAll(Collection c)|지정된 객체(o) 또는 Collection의 객체들이 Collection에 포함되어 있는지 확인한다.|
+|boolean equals(Object o)|동일한 Collection인지 비교한다.|
+|int hashCode()|Collection의 hash code를 반환한다.|
+|boolean isEmpty()|Collection이 비어 있는지 확인한다.|
+|Iterator iterator()|Collection의 iterator를 얻어서 반환한다.|
+|boolean remove(Object o)|지정된 객체를 삭제한다.|
+|boolean removeAll(Collection c)|지정된 Collection에 포함된 객체들을 삭제한다.|
+|boolean retainAll(Collection c)|지정된 Collection에 포함된 객체만 남기고 다른 객체들은 Collection에서 삭제한다. 이 작업으로 인해 Collection에 변화가 있으면 true를 그렇지 않다면 false를 반환한다.|
+|int size()|Collection에 저장된 객체의 개수를 반환한다.|
+|Object[] toArray()|Collection에 저장된 객체를 객체배열(Object[])로 반환한다.|
+|Object[] toArray(Object[] a)|지정된 배열에 Collection의 객체를 지정해서 반환한다.|
+
 
 ### List 인터페이스
+List 인터페이스는 **중복을 허용**하면서 **저장순서가 유지**되는 컬렉션을 구현하는데 사용된다.
+
+
 
 ### Set 인터페이스
 
