@@ -148,6 +148,60 @@ public interface Map {
 
 
 ## ArrayList
+- ArrayList는 컬렉션 프레임워크에서 가장 많이 사용되는 컬렉션 클래스이다.
+- ArrayList는 List인터페이스를 구현하기 때문에 데이터의 저장순서가 유지되고 중복을 허용한다는 특징을 갖는다.
+- ArrayList는 기존의 Vector를 개선한 것으로 Vector와 구현원리와 기능적인 측면에서 동일하다고 할 수 있다.<br>
+  (Vector는 기존에 작성된 소스와의 호환성을 위해서 남겨둔 것이므로 가능하면 Vector보다는 ArrayList를 사용하는 것이 좋다.)
+  
+- ArrayList는 Object배열을 이용해서 데이터를 순차적으로 자정한다.
+- 첫 번쨀로 저장한 객체는 Object배열의 0번째 위치에 저장되고 그 다음에 저장하는 객체는 1번째 위치에 저장된다(배열에 순서대로 저장된다.)
+- 배열에 더 이상 저장할 공간이 없으면 **보다 큰 새로운 배열을 생성**해서 **기존의 배열에 저장된 내용을 새로운 배열로 복사**한 다음에 저장된다.
+
+```
+public class ArraList extends AbstractList implements List, RandomAccess, Cloneable, java.io.Serializable {
+	...
+	transient Object[] elementData;
+	...
+}
+```
+- ArrayList는 elementData라는 이름의 Object 배열을 멤버변수로 선언하고 있다.
+- 선언된 배열의 타입의 모든 객체의 최상위 조상인 Object이기 때문에 모든 종류의 객체를 담을 수 있다.
+
+### ArrayList의 생성자와 메서드
+
+|메서드|설명|
+|----|----------|
+|ArrayList()|크기가 10인 ArrayList를 생성|
+|ArrayList(Collection c)|주어진 컬렉션이 저장된 ArrayList를 생성|
+|ArrayList(int initialCapacity)|지정된 초기용량을 갖는 ArrayList를 생성|
+|boolean add(Object o)|ArrayList의 마지막 객체를 추가, 성공하면 true|
+|void add(int index, Object element)|지정된 위치(index)에 객체를 저장|
+|boolean addAll(Collection c)|주어진 컬렉션의 모든 객체를 저장한다.|
+|boolean addAll(int index, Collection c)|지정된 위치부터 주어진 컬렉션의 모든 객체를 저장한다.|
+|void clear()|ArrayList를 완전히 비운다.|
+|Object clone()|ArrayList를 복제한다.|
+|boolean contains(Object c)|지정된 객체(o)가 ArrayList에 포함되어 있는지 확인|
+|void ensureCapacity(int minCapacity)|ArrayList의 용량이 최소한 minCapacity가 되도록 한다.|
+|Object get(int index)|지정된 위치(index)에 저장된 객체를 반환한다.|
+|int indexOf(Object o)|지정된 객체가 저장된 위치를 찾아 반환한다.|
+|boolean isEmpty()|ArrayList가 비어있는지 확인한다.|
+|Iterator iterator()|ArrayList의 Iterator 객체를 반환|
+|int lastIndexOf(Object o)|객체(o)가 저장된 위치를 끝부터 역방향으로 검색해서 반환|
+|ListIterator listIterator()|ArrayList의 ListIterator를 반환|
+|ListIterator listIterator(int index)|ArrayList의 지정된 위치부터 시작하는 ListIterator를 반환|
+|Object remove(int index)|지정된 위치(index)에 있는 객체를 제거한다.|
+|boolean remove(Object o)|지정된 객체를 제거한다.(성공하면 true, 실패하면 false)|
+|boolean removeAll(Collection c)|지정된 컬렉션에 저장된 것과 동일한 객체들을 ArrayList에서 제거한다.|
+|boolean retainAll(Collection c)|ArrayList에 저장된 객체중 주어진 컬렉션과 공통인 것만 남기고 나머지는 삭제한다.|
+|Object set(int index, Object element)|주어진 객체(element)를 지정된 위치(index)에 저장한다.|
+|int size()|ArrayList에 저장된 객체의 개수를 반환한다.|
+|void sort(Comparator c)|지정된 정렬기준(c)으로 ArrayList를 정렬|
+|List subList(int fromIndex, int toIndex)|fromIndex부터 toIndex사이에 저장된 객체를 반환한다.|
+|Object[] toArray()|ArrayList에 저장된 모든 객체들을 객체배열로 반환한다.|
+|Object[] toArray(Object[] a)|ArrayList에 저장한 모든 객체들을 객체배열 a에 담아 반환한다.|
+|void trimToSize()|용량을 크기에 맞게 줄인다.(빈 공간을 없앤다.)|
+
+
 
 ## LinkedList
 
