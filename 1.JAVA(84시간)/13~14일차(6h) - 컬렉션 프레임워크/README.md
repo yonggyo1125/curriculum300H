@@ -78,9 +78,15 @@ Collection 인터페이로부터 상속받은 것은 제외하였다.
 - Set 인터페이스를 구현한 클래스로는 HashSet, TreeSet 등이 있다.
 
 #### Set의 상속계층도
+![Set의 상속계층도](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC/images/Set%EC%9D%98_%EC%83%81%EC%86%8D%EA%B3%84%EC%B8%B5%EB%8F%84.png)
 
 
 ### Map 인터페이스
+- Map인터페이스는 키(key)와 값(value)을 하나의 쌍으로 묶어서 저장하는 컬렉션 클래스를 구현하는 데 사용된다.
+- 키는 중복될 수 없지만 값은 중복을 허용한다.
+- 기존에 저장된 데이터와 중복된 키와 값을 저장하면 기존의 값은 없어지고 마지막에 저장된 값이 남게된다.
+- Map인터페이스를 구현한 클래스로는 Hashtable, HashMap, LinkedHashMap, SortedMap, TreeMap등이 있다.
+> Map이란 개념은 어떤 두 값을 연결한다는 의미에서 붙여진 이름이다.
 
 ### Map.Entry 인터페이스
 
