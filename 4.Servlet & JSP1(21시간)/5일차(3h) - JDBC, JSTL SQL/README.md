@@ -837,6 +837,6 @@ ResultSet executeQuery() throws SQLException
 
 |태그|설명|
 |-----|-------|
-|<sql:setDataSource>|DataSource를 설정하는 데 사용합니다.|
+|\<sql:setDataSource\>|DataSource를 설정하는 데 사용합니다.|
 
 
