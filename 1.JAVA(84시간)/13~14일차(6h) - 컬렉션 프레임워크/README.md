@@ -88,6 +88,16 @@ Collection 인터페이로부터 상속받은 것은 제외하였다.
 - Map인터페이스를 구현한 클래스로는 Hashtable, HashMap, LinkedHashMap, SortedMap, TreeMap등이 있다.
 > Map이란 개념은 어떤 두 값을 연결한다는 의미에서 붙여진 이름이다.
 
+
+#### Map의 상속계층도
+![Map의 상속계층도](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC/images/Map%EC%9D%98_%EC%83%81%EC%86%8D%EA%B3%84%EC%B8%B5%EB%8F%84.png)
+
+
+#### Map인터페이스의 메서드
+|메서드|설명|
+|----|----------|
+
+
 ### Map.Entry 인터페이스
 
 ## ArrayList
