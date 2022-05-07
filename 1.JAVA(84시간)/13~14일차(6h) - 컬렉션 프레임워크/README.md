@@ -1341,12 +1341,404 @@ public class HashSetEx4 {
 |Object[] toArray()|지정된 객체를 객체배열로 반환한다.|
 |Object[] toArray(Object[] a)|저장된 객체를 주어진 객체배열에 저장하여 반환한다.|
 
+#### day13_14/TreeSetEx1.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class TreeSetEx1 {
+	public static void main(String[] args) {
+		Set set = new TreeSet();
+		
+		for(int i = 0; set.size() < 6; i++) {
+			int num = (int)(Math.random()*45) + 1;
+			set.add(num);
+		}
+		
+		System.out.println(set);
+	}
+}
+
+
+실행결과
+[2, 15, 17, 28, 32, 36]
+```
+
+#### day13_14/TreeSetEx2.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class TreeSetEx2 {
+	public static void main(String[] args) {
+		TreeSet set = new TreeSet();
+		
+		String from = "b";
+		
+		String to = "d";
+		
+		set.add("abc");
+		set.add("alien");
+		set.add("bat");
+		
+		set.add("car");
+		set.add("Car");
+		set.add("disc");
+		
+		set.add("dance");
+		set.add("dZZZZ");
+		set.add("dzzzz");
+		
+		set.add("elephant");
+		set.add("elevator");
+		set.add("fan");
+		set.add("flower");
+		
+		System.out.println(set);
+		System.out.println("range search : from " + from + " to " + to);
+		System.out.println("result1 : " + set.subSet(from, to));
+		System.out.println("result2 : " + set.subSet(from, to + "zzz"));
+	}
+}
+
+실행결과
+[Car, abc, alien, bat, car, dZZZZ, dance, disc, dzzzz, elephant, elevator, fan, flower]
+range search : from b to d
+result1 : [bat, car]
+result2 : [bat, car, dZZZZ, dance, disc]
+```
+
+#### day13_14/TreeSetEx3.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class TreeSetEx3 {
+	public static void main(String[] args) {
+		TreeSet set = new TreeSet();
+		int[] score = {80, 95, 50, 35, 45, 65, 10, 100};
+		
+		for(int i = 0; i < score.length; i++) {
+			set.add(Integer.valueOf(score[i]));
+		}
+		
+		System.out.println("50보다 작은 값 : " + set.headSet(Integer.valueOf(50)));
+		System.out.println("50보다 큰 값 : " + set.tailSet(Integer.valueOf(50)));
+	}
+}
+
+
+실행결과
+50보다 작은 값 : [10, 35, 45]
+50보다 큰 값 : [50, 65, 80, 95, 100]
+```
 
 
 ## HashMap과 Hashtable
+- Hashtable과 HashMap의 관계는 Vector와 ArrayList의 관계와 같아서 Hashtable보다는 새로운 버전인 HashMap을 사용할 것
+- HashMap은 Map을 구현했으므로 앞에서 살펴본 Map의 특징, 키(key)와 값(value)를 묶어서 하나의 데이터(entry)로 저장한다는 특징을 갖는다.
+- 해싱(hashing)을 사용하기 때문에 많은 데이터를 검색하는데 뛰어난 성능을 보인다.
+- 해싱(hashing)으 사용한 컬렉션 클래스들은 저장순서를 유지하지 않는다.
 
+```
+public class HashMap extends AbstractMap implements Map, Cloneable, Serializable {
+	transient Entry[] table;
+	...
+	static class Entry implements Map.Entry {
+		final Object key;
+		Object value;
+		...
+	}
+	...
+}
+```
+- HashMap은 Entry라는 내부 클래스를 정의하고, 다시 Entry타입의 배열을 선언하고 있다. 
+- 키(key)와 값(value)은 별개의 값이 아니라 서로 관련된 값이기 때문에 각각의 배열로 선언하기 보다는 하나의 클래스로 정의해서 하나의 배열로 다루는 것이 데이터 무결성(integrity)적인 측면에서 더 바람직하기 때문이다.
+- HashMpa은 키와 값을 각각 Object 타입으로 저장한다, 즉 (Object, Object)의 형태로 저장하기 때문에 어떤 객체도 저장할 수 있지만 키는 주로 String을 대문자 또는 소문자로 통일해서 사용하곤 한다.
+- 키는 저장된 값을 찾는데 사용되는 것이기 때문에 컬렉션 내에서 유일(unique)해야 한다.<br>
+(HashMap에 저장된 데이터를 하나의 키로 검색했을 때 결과가 단 하나이어야 함을 뜻한다.)
+
+- **키(key) : ** 컬렉션 내의 키(key) 중에서 유일해야 한다. 
+- **값(value) : ** 키(key)와 달리 데이터의 중복을 허용한다.
+
+### HashMap의 생성자와 메서드
+
+|생성자 또는 메서드|설명|
+|-----|------|
+|HashMap()|HashMap객체를 생성|
+|HashMap(int initialCapacity)|지정된 값을 초기용량으로 하는 HashMap객체를 생성|
+|HashMap(int initialCapacity, float loadFactor)|지정된 초기용량과 load factor의 HashMap객체를 생성|
+|HashMap(Map m)|지정된 Map의 모든 요소를 포함하는 HashMap객체를 생성|
+|void clear()|HashMap에 저장된 모든 객체를 제거|
+|Object clone()|현재 HashMap을 복제해서 반환|
+|boolean containsKey(Object key)|HashMap에 지정된 키(key)가 포함되어있는지 알려준다.(포함되어 있다면 true)|
+|boolean containsValue(Object value)|HashMap에 지정된 값(value)이 포함되어있는지 알려준다.(포함되어 있으면 true)|
+|Set entrySet()|HashMap에 저장된 키와 값을 엔트리(키와 값의 결합)의 형태로 Set에 저장해서 반환|
+|Object get(Object key)|지정된 키(key)의 값(객체)를 반환, 못찾으면 null 반환|
+|Object getOrDetail(Object key, Object defaultValue)|지정된 키(key)의 값(객체)를 반환한다. 키를 못찾으면 기본값(defaultValue)로 지정한 객체를 반환|
+|boolean isEmpty()|HashMap이 비어있는지 알려준다.|
+|Set keySet()|HashMap에 저장된 모든 키가 저장된 Set을 반환|
+|Object put(Object key, Object value)|지정된 키와 값을 HashMap에 저장|
+|void putAll(Map m)|Map에 저장된 모든 요소를 HashMap에 저장|
+|Object remove(Object key)|HashMap에서 지정된 키로 저장된 값(객체)를 제거|
+|Object replace(Object key, Object value)|지정된 키와 값을 지정된 객체(value)로 대체|
+|boolean replace(Object key, Object oldValue, Object newValue)|지정된 키와 객체(oldValue)가 모두 일치하는 경에만 새로운 객체(newValue)로 대체|
+|int size()|HashMap에 저장된 요소의 개수를 반환|
+|Collection values()|HashMap에 저장된 모든 값을 컬렉션 형태로 반환|
+
+#### day13_14/HashMapEx1.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class HashMapEx1 {
+	public static void main(String[] args) {
+		HashMap map = new HashMap();
+		map.put("myId", "1234");
+		map.put("asdf", "1111");
+		map.put("asdf", "1234");
+		
+		Scanner s = new Scanner(System.in); // 화면으로부터 라인단위로 입력을 받는다.
+		
+		while(true) {
+			System.out.println("id와 password를 입력해주세요.");
+			System.out.print("id : ");
+			String id = s.nextLine().trim();
+			System.out.println();
+			
+			System.out.print("password :");
+			String password = s.nextLine().trim();
+			System.out.println();
+			
+			if (!map.containsKey(id)) {
+				System.out.println("입력하신 id는 존재하지 않습니다. 다시 입력해주세요.");
+				
+				continue;
+			} else {
+				if (!(map.get(id)).equals(password)) {
+					System.out.println("비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
+				} else {
+					System.out.println("id와 비밀번호가 일치합니다.");
+					break;
+				}
+			}
+		}
+	}
+}
+
+
+실행결과
+id와 password를 입력해주세요.
+id : asdf
+
+password :1111
+
+비밀번호가 일치하지 않습니다. 다시 입력해주세요.
+id와 password를 입력해주세요.
+id : asdf
+
+password :1234
+
+id와 비밀번호가 일치합니다.
+```
+
+#### day13_14/HashMapEx2.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class HashMapEx2 {
+	public static void main(String[] args) {
+		HashMap map = new HashMap();
+		map.put("이병헌", Integer.valueOf(90));
+		map.put("김태리", Integer.valueOf(100));
+		map.put("유연석", Integer.valueOf(100));
+		map.put("김민정", Integer.valueOf(80));
+		map.put("변요한", Integer.valueOf(90));
+		
+		Set set = map.entrySet();
+		Iterator it = set.iterator();
+		
+		while(it.hasNext()) {
+			Map.Entry e = (Map.Entry)it.next();
+			System.out.println("이름 : " + e.getKey() + ", 점수 : " + e.getValue());
+		}
+		
+		set = map.keySet();
+		System.out.println("참가자 명단 : " + set);
+		
+		Collection values = map.values();
+		it = values.iterator();
+		
+		int total = 0;
+		while(it.hasNext()) {
+			Integer i = (Integer)it.next();
+			total += i.intValue();
+		}
+		
+		System.out.println("총점 : " + total);
+		System.out.println("평균 : " + (float)total / set.size());
+		System.out.println("최고점수 : " + Collections.max(values));
+		System.out.println("최저점수 : " + Collections.min(values));
+	}
+}
+
+
+실행결과
+이름 : 변요한, 점수 : 90
+이름 : 김태리, 점수 : 100
+이름 : 유연석, 점수 : 100
+이름 : 이병헌, 점수 : 90
+이름 : 김민정, 점수 : 80
+참가자 명단 : [변요한, 김태리, 유연석, 이병헌, 김민정]
+총점 : 460
+평균 : 92.0
+최고점수 : 100
+최저점수 : 80
+```
 
 ## TreeMap
+- TreeMap은 이진검색트리 형태로 키와 값의 쌍으로 이루어진 데이터를 저장한다
+- 검색과 정렬에 적합한 컬렉션 클래스이다.
+- 검색에 관련한 대부분의 경우에서 HashMap이 TreeMap보다 더 뛰어나므로 HashMap을 사용하는 것이 좋다. 다만 범위 검색이나 정렬이 필요한 경우에는 TreeMap을 사용하는 것이 좋다.
+
+### TreeMap의 생성자와 메서드
+
+|생성자 또는 메서드|설명|
+|-----|------|
+|TreeMap()|TreeMap 객체를 생성|
+|TreeMap(Comparator c)|지정된 Comparator를 기준으로 정렬하는 TreeMap객체를 생성|
+|TreeMap(Map m)|주어진 Map에 저장된 모든 요소를 포함하는 TreeMap을 생성|
+|TreeMap(SortedMap m)|주어진 SortedMap에 저장된 모든 요소를 포함하는 TreeMap을 생성|
+|Map.Entry ceilingEntry(Object key)|지정된 key와 일치하거나 큰 것중 제일 작은 것의 키와 값의 쌍(Map.Entry)를 반환. 없으면 null을 반환|
+|Object ceillingKey(Object key)|지정된 key와 일치하거나 큰 것중 제일 작은 것의 키와 값의 쌍(Map.Entry)를 반환, 없으면 null을 반환|
+|void clear()|TreeMap에 저장된 모든 객체를 제거|
+|Object clone()|현재 TreeMap을 복제해서 반환|
+|Comparator comparator()|TreeMap의 정렬기준이 되는 Comparator를 반환 Comparator가 지정되지 않았다면 null을 반환|
+|boolean containsKey(Object key)|TreeMap에 지정된 키(key)가 포함되어 있는지를 알려줌(포함되어 있으면 true)|
+|boolean containsValue(Object value)|TreeMap에 저장된 값(value)이 포함되어 있는지 알려줌(포함되어 있으면 true)|
+|NavigableSet descendingKeySet()|TreeMap에 저장된 키를 역순으로 정렬해서 NavigableSet에 담아서 반환|
+|Set entrySet()|TreeMap에 저장된 키와 값을 엔트리(키와 값의 결합)의 형태로 Set에 저장해서 반환|
+|Map.Entry firstEntry()|TreeMap에 저장된 첫번째(가장 작은) 키와 값의 쌍(Map.Entry)을 반환|
+|Object firstKey()|TreeMap에 저장된 첫번째(가장 작은) 키를 반환|
+|Map.Entry floorEntry(Object key)|지정된 key와 일치하거나 작은 것 중에서 제일 큰 키를 반환. 없으면 null을 반환|
+|Object get(Object key)|지정된 키(key)의 값(객체)를 반환|
+|SortedMap headMap(Object toKey)|TreeMap에 저장된 첫번째 요소부터 지정된 범위에 속한 모든 요소가 담긴 SortedMap을 반환(toKey는 미포함)|
+|NavigableMap headMap(Object toKey, boolean inclusive)|TreeMap에 저장된 첫번째 요소부터 지정된 범위에 속한 모든 요소가 담긴 SortedMap을 반환. inclusive의 값이 true면 toKey도 포함|
+|Map.Entry higherEntry(Object key)|지정된 Key키 보다 큰 키 중에서 제일 작은 키의 쌍(Map.Entry)을 반환, 없으면 null을 반환|
+|boolean isEmpty()|TreeMap이 비어있는지 알려준다.|
+|Set keySet()|TreeMap에 저장된 모든 키가 저장된 Set을 반환|
+|Map.Entry lastEntry()|TreeMap에 저장된 마지막 키(가장 큰 키)의 쌍을 반환|
+|Object lastKey()|TreeMap에 저장된 마지막 키(가장 큰 키)를 반환|
+|Map.Entry lowerEntry(Object key)|지정된 key보다 작은 키 중에서 제일 큰 키의 쌍(Map.Entry)을 반환, 없으면 null을 반환|
+|NavigableSet navigableKeySet()|TreeMap의 모든 키가 담긴 NavigableSet을 반환|
+|Map.Entry pollFirstEntry()|TreeMap에서 제일 작은 키를 제거하면서 반환|
+|Map.Entry pollLastEntry()|TreeMap에서 제일 큰 키를 제거하면서 반환|
+|Object put(Object key, Object value)|지정된 키와 값을 TreeMap에 저장|
+|void putAll(Map map)|Map에 저장된 모든 요소를 TreeMap에 저장|
+|Object remove(Object key)|TreeMap에 지정된 키로 저장된 값(객체)를 제거|
+|Object replace(Object k, Object v)|기존의 키(k)의 값을 지정된 값(v)로 변경|
+|boolean replace(Object key, Object oldValue, Object newValue)|기존의 키(key)값을 새로운 값(newValue)으로 변경. 단, 기존의 값과 지정된 값(oldValue)가 일치해야 함|
+|int size()|TreeMap에 저장된 요소의 개수를 반환|
+|NavigableMap subMap(Object fromKey, boolean fromInclusive, Object toKey, boolean toInclusive)|지정된 두개의 키 사이에 있는 모든 요소들이 담긴 NavigableMap을 반환. fromInclusive가 true면 범위에 fromKey포함. toInclusive가 true면 범위에 toKey포함|
+|SortedMap subMap(Object fromKey, Object toKey)|지정된 구 개의 키 사이에 있는 모든 요소들이 담긴 SortedMap을 반환(toKey는 포함되지 않는다.)|
+|NavigableMap tailMap(Object fromKey)|지정된 키부터 마지막 요소의 범위에 속한 요소가 담긴 SortedMap을 반환|
+|NavigableMap tailMap(Object fromKey, boolean inclusive)|지정된 키부터 마지막 요소의 범위에 속한 요소가 담긴 NavigableMap을 반환. inclusive가 true면 fromKey 포함|
+|Collection values()|TreeMap에 저장된 모든 값을 걸렉션의 형태로 반환|
+
+#### day13_14/TreeMapEx.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class TreeMapEx {
+	public static void main(String[] args) {
+		String[] data = {"A", "K", "A", "K", "D", "K", "A", "K", "K", "K", "Z", "D"};
+		
+		TreeMap map = new TreeMap();
+		
+		for (int i = 0; i < data.length; i++) {
+			if (map.containsKey(data[i])) {
+				Integer value = (Integer)map.get(data[i]);
+				map.put(data[i], Integer.valueOf(value.intValue() + 1));
+			} else {
+				map.put(data[i], Integer.valueOf(1));
+			}
+		}
+		
+		Iterator it = map.entrySet().iterator();
+		
+		System.out.println("= 기본정렬 =");
+		while(it.hasNext()) {
+			Map.Entry entry = (Map.Entry)it.next();
+			int value = ((Integer)entry.getValue()).intValue();
+			System.out.println(entry.getKey() + " : " + printBar('#', value) + " " + value);
+		}
+		
+		System.out.println();
+		
+		// map을 ArrayList을 변환한 다음에 Collections.sort()로 정렬
+		Set set = map.entrySet();
+		List list = new ArrayList(set); //  ArrayList(Collection c)
+		
+		Collections.sort(list, new ValueComparator());
+		
+		it = list.iterator();
+		
+		System.out.println("= 값의 크기가 큰 순서로 정렬 =");
+		while(it.hasNext()) {
+			Map.Entry entry = (Map.Entry)it.next();
+			int value = ((Integer)entry.getValue()).intValue();
+			System.out.println(entry.getKey() + " : " + printBar('#', value) + " " + value);
+		}
+	}
+	
+	static class ValueComparator implements Comparator {
+		public int compare(Object o1, Object o2) {
+			if (o1 instanceof Map.Entry && o2 instanceof Map.Entry) {
+				Map.Entry e1 = (Map.Entry)o1;
+				Map.Entry e2 = (Map.Entry)o2;
+				
+				int v1 = ((Integer)e1.getValue()).intValue();
+				int v2 = ((Integer)e2.getValue()).intValue();
+				
+				return v2 - v1;
+			}
+			return -1;
+		}
+	}
+	
+	public static String printBar(char ch, int value) {
+		char[] bar = new char[value];
+		
+		for(int i = 0; i < bar.length; i++) {
+			bar[i] = ch;
+		}
+		
+		return new String(bar);
+	}
+}
+
+실행결과
+= 기본정렬 =
+A : ### 3
+D : ## 2
+K : ###### 6
+Z : # 1
+
+= 값의 크기가 큰 순서로 정렬 =
+K : ###### 6
+A : ### 3
+D : ## 2
+Z : # 1
+```
+
 
 ## Properties
 
