@@ -52,15 +52,102 @@ public interface Runnable {
 ```
 
 #### day17/ThreadEx1.java
+```
+package day17;
+
+class ThreadEx1_1 extends Thread {
+	public void run() {
+		for(int i = 0; i < 5; i++) {
+			System.out.println(getName()); // 조상인 Thread의 getName()을 호출
+		}
+	}
+}
+
+class ThreadEx1_2 implements Runnable {
+	public void run() {
+		for (int i = 0; i < 5; i++) {
+			// Thread.currentThread(); // 현재 실행중인 Thread를 반환한다.
+			System.out.println(Thread.currentThread().getName());
+		}
+	}
+}
+
+public class ThreadEx1 {
+	public static void main(String[] args) {
+		ThreadEx1_1 t1 = new ThreadEx1_1();
+		
+		Runnable r = new ThreadEx1_2();
+		Thread t2 = new Thread(r); //  생성자 new Thread(Runnable target)
+		
+		t1.start();
+		t2.start();
+	}
+}
 
 
+실행결과
+Thread-1
+Thread-1
+Thread-1
+Thread-1
+Thread-1
+Thread-0
+Thread-0
+Thread-0
+Thread-0
+Thread-0
+```
+
+- Thread클래스를 상속받으면, 자손 클래스에서 조상인 Thread클래스의 메서드를 직접 호출할 수 있지만, Runnable을 구현하면 Thread클래스의 static메서드인 currentThread()를 호출하여 스레드에 대한 참조를 얻어와야만 호출이 가능하다.
+```
+static Thread currentThread() : 현재 실행중인 쓰레드의 참조를 반환한다.
+String getName() : 쓰레드의 이름을 반환한다.
+```
+
+- 쓰레드의 이름은 다음과 같은 생성자나 메서드를 통해서 지정 또는 변경할 수 있다.<br>
+(쓰레드의 이름을 지정하지 않으면 'Thread-번호'의 형식으로 이름이 정해진다)
+```
+Thread(Runnable target, String name)
+Thread(String name)
+void setName(String name)
+```
 
 ### 쓰레드의 실행 - start()
+- 쓰레드를 생성했다고 해서 자동으로 실행되는 것은 아니다. 
+- start()를 호출해야만 쓰레드가 실행된다.
+- 사실은 start()가 호출되었다고 해서 바로 실행되는 것이 아니라. 일단 실행대기 상태에 있다가 자신의 차례가 되어야 실행된다. 물론 실행대기중인 쓰레드가 하나도 없으면 곧바로 실행상태가 된다.
+- 한 번 실행이 종료된 쓰레드는 다시 실행할 수 없다.(즉, 하나의 쓰레드에 대해  start()가 한번만 호출될수 있다.)
 
+> 쓰레드의 실행순서는 OS의 스케줄러가 작성한 스케줄에 의해 결정된다. 
+
+```
+ThreadEx1_1 t1 = new ThreadEx1_1();
+t1.start();
+t1.start(); // IllegalThreadStateException 예외발생
+```
 
 ## start()와 run()
+- main메서드에서 run()을 호출하는 것은 생성된 쓰레드를 실행시키는 것이 아니라 단순히 클래스에 선언된 메서드를 호출하는 것일 뿐이다.
+
+- 반면에 start()는 새로운 쓰레드가 작업을 실행하는데 필요한 호출스택(call stack)을 생성한 다음에 run()을 호출해서, 생성된 호출 스택에 run()이 첫 번째로 올라가게 한다.
+- 모든 쓰레드는 독립적인 작업을 수행하기 위해 자신만의 호출스택을 필요로 하기 때문에, 새로운 쓰레드를 생성하고 실행시킬 때마다 새로운 호출스택이 생성되고 스레드가 종료되면 작업에 사용된 호출스택은 소멸된다.
+
+
+1. main() 메서드에서 쓰레드의  start()를 호출한다.
+2. start()는 새로운 쓰레드를 생성하고 쓰레드가 작업하는데 사용될 호출 스택을 생성한다.
+3. 새로 생성된 호출스택에 run()이 호출되어, 쓰레드가 독립된 공간에서 작업을 수행한다.
+4. 이제는 호출 스택이 2개이므로 스케줄러가 정한 순서에 의해서 번갈아가며 실행된다.
+
+- 쓰레드가 둘 이상일 때는 호출스택의 최상위에 있는 메서드일지라도 대기상태에 있을 수 있다.
+- 스케줄러는 실행대기중인 쓰레드들의 우선순위를 고려하여 실행순서와 실행시간을 결정하고, 각 쓰레드들은 작성된 스케줄에 따라 자신의 순서가 되면 지정된 시간동안 작업을 수행한다.
+- 이 때 주어진 시간동안 작업을 마치지 못한 쓰레드는 다시 자신의 차례가 돌아올 때까지 대기상태로 있게 된다.
+- 작업을 마친 쓰레드, 즉 run()은 수행이 종료된 쓰레드는 호출스택이 모두 비워지면서 이 쓰레드가 사용하던 호출스택은 사라진다.
+- 이는 자바프로그램을 실행하면 호출스택이 생성되고 main메서드가 처음으로 호출되고, main메서드가 종료되면 호출스택이 비워지면서 프로그램도 종료되는 것과 같다.
 
 ### main 쓰레드
+- main메서드의 작업을 수행하는 것도 쓰레드이며, 이를 main쓰레드라고 한다.
+- main메서드가 수행를 마쳤다하더라도 다른 쓰레드가 아직 작업을 마치지 않은 상태라면 프로그램이 종료되지 않는다.
+- 실행중인 사용자 쓰레드가 하나도 없을 때 프로그램은종료된다.
 
 
 ## 싱글쓰레드와 멀티쓰레드
