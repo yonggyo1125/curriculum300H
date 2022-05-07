@@ -879,10 +879,31 @@ copy2:[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 ```
 
 ## Arrays
+Arrays클래스에는 배열을 다루는데 유용한 메서드가 정의되어 있다.
 
 ### 배열의 복사 - copyOf(), copyOfRange()
+copyOf()는 배열 전체를, copyOfRange()는 배열의 일부를 복사해서 새로운 배열을 만들어 반환한다. 지정된 범위의 끝은 포함되지 않는다.
+
+```
+int[] arr = {0,1,2,3,4};
+int[] arr2 = Arrays.copyOf(arr, arr.length);
+int[] arr3 = Arrays.copyOf(arr, 3);
+int[] arr4 = Arrays.copyOf(arr, 7); // arr4 = [0,1,2,3,4,0,0]
+int[] arr5 = Arrays.copyOfRange(arr, 2, 4); // arr5 = [2,3] - 4는 불포함
+int[] arr6 = Arrays.copyOfRange(arr, 0, 7); // arr6 = [0,1,2,3,4, 0, 0] 
+```
 
 ### 배열 채우기 - fill(), setAll()
+- fill() : 배열의 모든 요소를 지정된 값으로 채운다.
+- setAll() : 배열을 채우는데 사용할 함수형 인터페이스를 매개변수로 받는다.
+
+```
+int[] arr = new int[5];
+Arrays.fill(arr, 9); // arr = [9,9,9,9,9]
+Arrays.setAll(arr, () -> (int)(Math.random() * 5) + 1); // arr = [1,5,2,1,1]  1~5 사이의 랜덤 숫자
+```
+>**) -> (int)(Math.random() \* 5) + 1**은 람다식(lambda expression)이다. [람다식 참고](https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC/images)
+
 
 ### 배열의 정렬과 검색 - sort(), binarySearch()
 
