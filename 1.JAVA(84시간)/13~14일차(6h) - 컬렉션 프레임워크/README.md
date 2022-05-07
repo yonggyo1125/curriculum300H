@@ -693,8 +693,40 @@ public class PriorityQueueEx {
 
 
 ## Iterator, ListIterator, Enumeration
+- 컬렉션에 저장된 요소를 접근하는데 사용되는 인터페이스이다.
+- Enumeration은 Iterator의 구버전이고, ListIterator는 Iterator의 기능을 향상 시킨 것이다.
 
 ### Iterator
+- 컬렉션 프레임워크에서는 컬렉션에 저장된 요소들을 읽어오는 방법을 표준화하였다.
+- 컬렉션에 저장된 각 요소에 접근하는 기능을 가진 Iterator인터페이스를 정의하고, Collection 인터페이스에는 Iterator(Iterator를 구현한 클래스의 인스턴스)를 반환하는 iterator()를 정의하고 있다.
+- iterator()는 Collection인터페이스에 정의된 메서드이므로 Collection 인터페이스의 자손인 List와 Set에도 포함되어 있으며, 각 컬렉션의 특징에 알맞게 작성되어 있다.
+- 컬렉션 클래스에 대해 iterator()를 호출하여 Iterator를 얻은 다음 반복문, 주로 while문을 사용해서 컬렉션 클래스의 요소를 읽어 올 수 있다.
+
+#### Iterator 인터페이스 메서드
+|메서드|설명|
+|-----|--------|
+|boolean hasNext()|읽어 올 요소가 남아있는지 확인한다. 있으면 true, 없으면 false를 반환한다.|
+|Object next()|다음 요소를 읽어온다. next()를 호출하기 전에 hasNext()를 호출해서 읽어 올 요소가 있는지 확인하는 것이 안전하다.|
+|void remove()|next()로 읽어 온 요소를 삭제한다. next()를 호출한 다음에 remove()를 호출해야한다.|
+
+```
+List list = new ArrayList();
+Iterator it = list.iterator();
+
+while(it.hasNext()) {
+	System.out.println(it.next());
+}
+```
+
+- Map 인터페이스를 구현한 컬렉션 클래스는 키(key)와 값(value)을 쌍(pair)으로 저장하고 있기 때문에 iterator()를 직접 호출할 수 없다. 
+- 그 대신 keySet()이나 entrySet()과 같은 메서드를 통해서 키와 값을 각각 따로 Set의 형태로 얻어 온 후에 다시 iterator()를 호출해야 Iterator를 호출해야 Iterator를 얻을 수 있다.
+
+```
+Map map = new HashMap();
+...
+Iterator it = map.keySet().iterator();
+```
+>Iterator list = map.entrySet().iterator();은<br>Set eSet = map.entrySet();<br>Iterator list = eSet.iterator(); 를 합친것으로 이해하면 되다. 
 
 ### ListIterator와 Enumeration
 
