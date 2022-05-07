@@ -1099,8 +1099,6 @@ strArr=[tiger, lion, cat, Dog]
 - HashSet은 Set인터페이스를 구현한 가장 대표적인 컬렉션이다.
 - Set인터페이스의 특징대로 HashSet은 중복된 요소를 저장하지 않는다.
 
->HashSet은 내부적으로 HashMap을 이용해서 만들어졌으며 HashSet이란 이름은 해싱(Hashing)을 이용해서 구현했기 때문에 붙여진 것이다. [해싱(hashing) 참고](https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC#%ED%95%B4%EC%8B%B1%EA%B3%BC-%ED%95%B4%EC%8B%9C%ED%95%A8%EC%88%98)
-
 ### HashSet의 메서드
 
 |생성자 또는 메서드|설명|
@@ -1180,15 +1178,114 @@ public class HashSetEx2 {
 
 
 ### equals()와 hashCode()
+- HashSet의 add메서드는 새로운 요소를 추가하기 전에 기존에 저장된 요소와 같은 것인지 판별하기 위해서 추가하려는 요소의 equals()와 hashCode()를 호출하기 때문에 equals()와 hashCode()를 목적에 맞게 오버라이딩 해야 한다.
+- 오버라이딩 하지 않는다면, 기본 equals()와 hashCode()는 모든 클래스의 조상인 Object에 정의되어 있는 메서드 이며, hashCode()은 생성된 인스턴스의 주소이며, equals()역시 동일한 주소일때 true를 반환한다. 
+- 인스턴스의 동일 여부가 아닌 논리적인 동일성으로 중복을 판단하기 위해서는 equals()와 hashCode()를 재정의한다.
 
 
+#### day13_14/Person.java
+```
+package day13_14;
 
+public class Person {
+	String name;
+	int age;
+	
+	public Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+	
+	public String toString() {
+		return name + ":" + age;
+	}
+}
+```
+
+#### day13_14/HashSetEx3.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class HashSetEx3 {
+	public static void main(String[] args) {
+		HashSet set = new HashSet();
+		
+		set.add("abc");
+		set.add("abc");
+		set.add(new Person("David", 10));
+		set.add(new Person("David", 10));
+		
+		System.out.println(set);
+	}
+}
+
+실행결과
+[abc, David:10, David:10]
+```
+Person 클래스는 name과 age를 멤버변수로 갖는다. 이름(name)과 나이(age)가 같으면 같은 사람으로 인식하려는 의도록 작성되었으나 실행결과는 두 인스턴스의 name과 age의 값이 같음에도 불구하고 서로 다른 것으로 인식하여 "David:10"이 두번 출력 되었다.<br><br>
+이를 인스턴스의 일치가 아닌 논리적인 일치로 인식되게 하려면 equals()와 hashCode()를 재정의해야 한다.
+
+#### day13_14/Person2.java
+```
+package day13_14;
+
+public class Person2 {
+	String name;
+	int age;
+	
+	public  Person2(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof Person2) {
+			Person2 tmp = (Person2)obj;
+			return name.equals(tmp.name) && age == tmp.age;
+		}
+		
+		return false;
+	}
+	
+	public int hashCode() {
+		return (name + age).hashCode();  // 또는 java.util.Objects 클래스의 hash를 이용해도 된다. Objects.hash(name+age);
+	}
+	
+	public String toString() {
+		return name + ":" + age;
+	}
+}
+```
+
+#### day13_14/HashSetEx4.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class HashSetEx4 {
+	public static void main(String[] args) {
+		HashSet set = new HashSet();
+		
+		set.add(new String("abc"));
+		set.add(new String("abc"));
+		set.add(new Person2("David", 10));
+		set.add(new Person2("David", 10));
+		
+		System.out.println(set);
+	}
+}
+
+실행결과
+[abc, David:10]
+```
 
 ## TreeSet
 
 ## HashMap과 Hashtable
 
-### 해싱과 해시함수
 
 ## TreeMap
 
