@@ -726,7 +726,7 @@ Map map = new HashMap();
 ...
 Iterator it = map.keySet().iterator();
 ```
->Iterator list = map.entrySet().iterator();은<br>Set eSet = map.entrySet();<br>Iterator list = eSet.iterator(); 를 합친것으로 이해하면 되다. 
+>Iterator list = map.entrySet().iterator();은 아래 두 문장을 하나로 합친 것으로 이해하면 된다.<br>Set eSet = map.entrySet();<br>Iterator list = eSet.iterator(); 
 
 ### ListIterator와 Enumeration
 
