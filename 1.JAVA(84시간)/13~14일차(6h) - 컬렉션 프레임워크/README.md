@@ -902,7 +902,7 @@ int[] arr = new int[5];
 Arrays.fill(arr, 9); // arr = [9,9,9,9,9]
 Arrays.setAll(arr, () -> (int)(Math.random() * 5) + 1); // arr = [1,5,2,1,1]  1~5 사이의 랜덤 숫자
 ```
->**) -> (int)(Math.random() \* 5) + 1**은 람다식(lambda expression)이다. [람다식 참고](https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC/images)
+>**) -> (int)(Math.random() \* 5) + 1**은 람다식(lambda expression)이다. [람다식 참고](https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/18%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%9E%8C%EB%8B%A4%EC%8B%9D)
 
 
 ### 배열의 정렬과 검색 - sort(), binarySearch()
