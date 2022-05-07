@@ -361,6 +361,74 @@ ZZZ
 
 ### LinkedList의 생성자와 메서드
 
+|생성자 또는 메서드|설명|
+|----|----|
+|LinkedList()|LinkeList 객체를 생성|
+|LinkList(Collection c)|주어진 컬렉션을 포함하는 LinkedList객체를 생성|
+|boolean add(Object o)|지정된 객체(o)를 LinkedList의 끝에 추가, 저장에 성공하면 true, 실패하면 false|
+|void add(int index, Object element)|지정된 위치(index)에 객체(element)를 추가|
+|boolean addAll(Collection c)|주저진 컬렉션에 포함된 모든 요소를 LinkedList의 끝에 추가한다. 성공하면 true, 실패하면 false)
+|void clear()|LinkedList의 모든 요소를 삭제|
+|boolean contains(Object o)|지정된 객체가 LinkedList에 포함되어 있는지 알려줌|
+|boolean containsAll(Collection c)|지정된 컬렉션의 모든 요소가 포함되어 있는지 알려줌|
+|Object get(int index)|지정된 위치(index)의 객체를 반환|
+|int indexOf(Object o)|지정된 객체가 저장된 위치(앞에서 몇 번째)를 반환|
+|boolean isEmpty()|LinkedList가 비어 있는지 알려 준다. 비어있으면 true|
+|Iterator iterator()|Iterator를 반환한다.|
+|int lastIndexOf(Object o)|지정된 객체의 위치(index)를 반환(끝부터 역순검색)|
+|ListIterator listIterator()|ListIterator를 반환한다.|
+|ListIterator listIterator(int index)|지정된 위치에서부터 시작하는 ListIterator를 반환|
+|Object remove(int index)|지정된 위치(index)의 객체를 LinkedList에서 제거|
+|booleam remove(Object o)|지정된 객체를 LinkedList에서 제거, 성공하면 true, 실패하면 false|
+|boolean removeAll(Collection c)|지정된 컬렉션의 요소와 일치하는 요소를 모두 삭제|
+|boolean retainAll(Collection c)|지정된 컬렉션의 모든 요소가 포함되어 있는지 확인|
+|Object set(int index, Object element)|지정된 위치(index)의 객체를 주어진 객체로 바꿈|
+|int size()|LinkedList에 저장된 객체의 수를 반환|
+|List subList(int fromIndex, int toIndex)|LinkedList의 일부를 List로 반환|
+|Object[] toArray()|LinkedList에 저장된 객체를 배열로 반환|
+|Object[] toArray(Object[] a)|LinkedList에 저장된 객체를 주어진 배열에 저장하여 반환|
+|Object element()|LinkedList의 첫 번째 요소를 반환|
+|boolean offer(Object o)|지정된 객체(o)를 LinkedList의 끝에 추가, 성공하면 true, 실패하면 false|
+|Object peek()| LinkedList의 첫 번째 요소를 반환|
+|Object poll()|LinkedList의 첫 번째 요소를 반환, LinkedList에서는 제거된다.|
+|Object remove()|LinkedList의 첫 번째 요소를 제거|
+|void addFirst(Object o)|LinkeList의 맨 앞에 객체(o)를 추가|
+|void addLast(Object o)|LinkedList의 맨 끝에 객체(o)를 추가|
+|Iterator descendingIterator()|역순으로 조회하기 위한 DescendingIterator를 반환|
+|Object getFirst()|LinkedList의 첫번째 요소를 반환|
+|Object getLast()|LinkedList의 마지막 요소를 반환|
+|boolean offerFirst(Object o)|LinkedList의 맨 앞에 객체(o)를 추가, 성공하면 true|
+|boolean offerLast(Object o)|LinkedList의 맨 끝에 객체(o)를 추가, 성공하면 true|
+|Object peekFirst()|LinkedList의 첫번째 요소를 반환|
+|Object peekLast()|LinkedList의 마지막 요소를 반환|
+|Object pollFirst()|LinkedList의 첫번째 요소를 반환하면서 제거|
+|Object pollLast()|LinkedList의 마지막 요소를 반환하면서 제거|
+|Object pop()|removeFirst()와 동일|
+|void push(Object o)|addFirst()와 동일|
+|Object removeFirst()|LinkedList의 첫번째 요소를 제거|
+|Object removeLast()|LinkedList의 마지막 묘소를 제거|
+|boolean removeFirstOccurence(Object o)|LinkedList에서 첫번째로 일치하는 객체를 제거|
+|boolean removeLastOccurence(Object o)|LinkedList에서 마지막으로 일치하는 객체를 제거|
+
+>>LinkedList는 Queue인터페이스(JDK1.5)와 Deque인터페이스(JDK1.6)를 구현하도록 변경되었는데, 마지막 22개 메서드는 Queue인터페이스와 Deque 인터페이스를 구현하면서 추가된 것이다.
+
+LinkedList 역시 List 인터페이스를 구현했기 때문에 ArrayList의 내부구현방법만 다를 뿐 제공하는 메서드의 종류와 기능은 거의 같다.
+
+#### day13_14/ArrayListLinkedListTest.java
+
+#### day13_14/ArrayListLinkedListTest2.java
+
+
+- LinkedList는 불연속적으로 위치한 각 요소들이 서로 연결된 것이라 처음부터 n번째 데이터까지 차례대로 따라가야만 원하는 값을 얻을 수 있다.
+- 따라서 LinkedList는 저장해야하는 데이터의 개수가 많아질수록 데이터를 읽어 오는 시간, 즉 접근시간(access time)이 길어진다는 단점이 있다.
+
+#### ArrayList와 LinkedList 비교
+|컬렉션|읽기(접근시간)|추가/삭제|비고|
+|----|----|----|--------|
+|ArrayList|빠르다|느리다|순차적인 추가삭제는 더 빠름.<br>비효율적인 메모리사용|
+|LinkedList|느리다|빠르다|데이터가 많을수록 접근성이 떨어진다.|
+
+
 
 
 ## Stack과 Queue
