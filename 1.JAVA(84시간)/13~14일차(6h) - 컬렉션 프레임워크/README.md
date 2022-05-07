@@ -415,9 +415,142 @@ ZZZ
 LinkedList 역시 List 인터페이스를 구현했기 때문에 ArrayList의 내부구현방법만 다를 뿐 제공하는 메서드의 종류와 기능은 거의 같다.
 
 #### day13_14/ArrayListLinkedListTest.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class ArrayListLinkedListTest {
+	public static void main(String[] args) {
+		// 추가할 데이터의 개수를 고려햐여 충분히 잡아야한다.
+		ArrayList al = new ArrayList(2000000);
+		LinkedList ll = new LinkedList();
+		
+		System.out.println("= 순차적으로 추가하기 =");
+		System.out.println("ArrayList : " + add1(al));
+		System.out.println("LinkedList : " + add1(ll));
+		System.out.println();
+		
+		System.out.println("= 중간에 추가하기 =");
+		System.out.println("ArrayList : " + add2(al));
+		System.out.println("LinkedList : " + add2(ll));
+		System.out.println();
+		
+		System.out.println("= 중간에서 삭제하기 =");
+		System.out.println("ArrayList : " + remove2(al));
+		System.out.println("LinkedList : " +remove2(ll));
+		System.out.println();
+		
+		System.out.println("= 순차적으로 t삭제하기 =");
+		System.out.println("ArrayList : " + remove1(al));
+		System.out.println("LinkedList : " + remove1(ll));
+		System.out.println();
+	}
+	
+	public static long add1(List list) {
+		long start = System.currentTimeMillis();
+		
+		for(int i = 0; i < 1000000; i++) {
+			list.add(i + "");
+		}
+		
+		long end = System.currentTimeMillis();
+		return end - start;
+	}
+	
+	public static long add2(List list) {
+		long start = System.currentTimeMillis();
+		
+		for(int i = 0; i < 10000; i++) {
+			list.add(500, "X");
+		}
+		
+		long end = System.currentTimeMillis();
+		return end - start;
+	}
+	
+	public static long remove1(List list) {
+		long start = System.currentTimeMillis();
+		
+		for(int i = list.size() - 1; i >= 0; i--) {
+			list.remove(i);
+		}
+		
+		long end = System.currentTimeMillis();
+		return end - start;
+	}
+	
+	public static long remove2(List list) {
+		long start = System.currentTimeMillis();
+		
+		for (int i = 0; i < 10000; i++) {
+			list.remove(i);
+		}
+		
+		long end = System.currentTimeMillis();
+		return end - start;
+	}
+}
+
+실행결과
+= 순차적으로 추가하기 =
+ArrayList : 256
+LinkedList : 362
+
+= 중간에 추가하기 =
+ArrayList : 3760
+LinkedList : 24
+
+= 중간에서 삭제하기 =
+ArrayList : 3143
+LinkedList : 244
+
+= 순차적으로 t삭제하기 =
+ArrayList : 21
+LinkedList : 61
+```
 
 #### day13_14/ArrayListLinkedListTest2.java
+```
+package day13_14;
 
+import java.util.*;
+
+public class ArrayListLinkedListTest2 {
+	public static void main(String[] args) {
+		ArrayList al = new ArrayList(1000000);
+		LinkedList ll = new LinkedList();
+		add(al);
+		add(ll);
+		
+		System.out.println("= 접근시간 테스트 =");
+		System.out.println("ArrayList : " + access(al));
+		System.out.println("LinkedList : " + access(ll));
+	}
+	
+	public static void add(List list) {
+		for(int i = 0; i < 100000; i++) {
+			list.add(i + "");
+		}
+	}
+	
+	public static long access(List list) {
+		long start = System.currentTimeMillis();
+		
+		for (int i = 0; i < 10000; i++) {
+			list.get(i);
+		}
+		
+		long end = System.currentTimeMillis();
+		return end - start;
+	}
+}
+
+실행결과
+= 접근시간 테스트 =
+ArrayList : 1
+LinkedList : 241
+```
 
 - LinkedList는 불연속적으로 위치한 각 요소들이 서로 연결된 것이라 처음부터 n번째 데이터까지 차례대로 따라가야만 원하는 값을 얻을 수 있다.
 - 따라서 LinkedList는 저장해야하는 데이터의 개수가 많아질수록 데이터를 읽어 오는 시간, 즉 접근시간(access time)이 길어진다는 단점이 있다.
@@ -429,9 +562,9 @@ LinkedList 역시 List 인터페이스를 구현했기 때문에 ArrayList의 �
 |LinkedList|느리다|빠르다|데이터가 많을수록 접근성이 떨어진다.|
 
 
-
-
 ## Stack과 Queue
+
+
 
 
 ## Iterator, ListIterator, Enumeration
