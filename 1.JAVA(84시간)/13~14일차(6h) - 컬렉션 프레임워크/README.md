@@ -703,6 +703,7 @@ public class PriorityQueueEx {
 - 컬렉션 클래스에 대해 iterator()를 호출하여 Iterator를 얻은 다음 반복문, 주로 while문을 사용해서 컬렉션 클래스의 요소를 읽어 올 수 있다.
 
 #### Iterator 인터페이스 메서드
+
 |메서드|설명|
 |-----|--------|
 |boolean hasNext()|읽어 올 요소가 남아있는지 확인한다. 있으면 true, 없으면 false를 반환한다.|
@@ -728,7 +729,154 @@ Iterator it = map.keySet().iterator();
 ```
 >Iterator list = map.entrySet().iterator();은 아래 두 문장을 하나로 합친 것으로 이해하면 된다.<br>Set eSet = map.entrySet();<br>Iterator list = eSet.iterator(); 
 
+
+#### day13_14/IteratorEx1.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class IteratorEx1 {
+	public static void main(String[] args) {
+		ArrayList list = new ArrayList();
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		
+		Iterator it = list.iterator();
+		
+		while(it.hasNext()) {
+			Object obj = it.next();
+			System.out.println(obj);
+		}
+	}
+}
+
+실행결과
+1
+2
+3
+4
+5
+```
+
 ### ListIterator와 Enumeration
+
+#### Enumeration
+- 컬렉션 프레임워크가 만들어지기 이전에 사용하던 것으로 Iterator의 구버전이다.
+- 이전 버전으로 작성된 소스와의 호환을 위해 남겨둔 것
+
+##### Enumeration 인터페이스의 메서드
+
+|메서드|설명|
+|-----|--------|
+|boolean hasMoreElements()|읽어 올 요소가 남아있는지 확인한다. 있으면 true, 없으면 false를 반환한다. Iterator의 hasNext()와 같다.|
+|Object nextElement()|다음 요소를 읽어 온다. nextElement()를 호출하기 전에 hasMoreElements()를 호출해서 읽어올 요소가 남아있는지 확인하는 것이 안전한다. Iterator의 next()와 같다.|
+
+
+#### ListIterator
+- Iterator를 상속받아서 기능을 추가한 것
+- Iterator는 단방향으로만 이동할 수 있는데 반해 ListIterator는 양방향으로의 이동이 가능하다.
+- ArrayList, LinkedList와 같이 List인터페이스를 구현한 컬렉션에서만 사용할 수 있다.
+
+##### ListIterator의 메서드
+
+|메서드|설명|
+|-----|--------|
+|void add(Object o)|컬렉션에 새로운 객체(o)를 추가한다(선택적 기능)|
+|boolean hasNext()|읽어 올 다음 요소가 남아있는지 확인한다. 있으면 true, 없으면 false를 반환|
+|boolean hasPrevious()|읽어 올 이전 요소가 남아있는지 확인한다. 있으면 true, 없으면 false를 반환|
+|Object next()|다음 요소를 읽어온다. next()를 호출하기 전에 hasNext()를 호출해서 읽어 올 요소가 있는지 확인하는 것이 안전하다.|
+|Object previous()|이전 요소를 읽어 온다. previous()를 호출하기 전에 hasPrevious()를 호출해서 읽어 올 요소가 있는지 확인하는 것이 안전하다.|
+|int nextIndex()|다음 요소의 index를 반환한다.|
+|int previousIndex()|이전 요소의 index를 반환한다.|
+|void remove()|next() 또는 previous()로 읽어 온 요소를 삭제한다. 반드시 next()나 previous()를 먼저 호출한 다음에 이 메서드를 호출해야한다.(선택적 기능)|
+|void set(Object o)|next() 또는 previous()로 읽어 온 요소를 지정된 객체(o)로 변경한다. 반드시 next()나 previous()를 먼저 호출한 다음에 이 메서드를 호출해야 한다.(선택적 기능)|
+
+#### day13_14/ListIteratorEx1.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class ListIteratorEx1 {
+	public static void main(String[] args) {
+		ArrayList list = new ArrayList();
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		
+		ListIterator it = list.listIterator();
+		
+		while(it.hasNext()) {
+			System.out.print(it.next()); // 순방향으로 진행하면서 읽어온다.
+		}
+		System.out.println();
+		
+		while(it.hasPrevious()) {
+			System.out.print(it.previous()); // 역방향으로 진행하면서 읽어온다.
+		}
+		System.out.println();
+	}
+}
+
+실행결과
+12345
+54321
+```
+
+#### day13_14/ListIteratorEx2.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class ListIteratorEx2 {
+	public static void main(String[] args) {
+		ArrayList original = new ArrayList(10);
+		ArrayList copy1 = new ArrayList(10);
+		ArrayList copy2 = new ArrayList(10);
+		
+		for(int i = 0; i < 10; i++) {
+			original.add(i+"");
+		}
+		
+		Iterator it = original.iterator();
+		
+		while(it.hasNext()) {
+			copy1.add(it.next());
+		}
+		
+		System.out.println("= Original에서 copy1로 복사(copy) =");
+		System.out.println("original:" + original);
+		System.out.println("copy1:" + copy1);
+		System.out.println();
+		
+		it = original.iterator(); // Iterator는 재사용이 안되므로, 다시 얻어와야 한다.
+		while(it.hasNext()) {
+			copy2.add(it.next());
+			it.remove();
+		}
+		
+		System.out.println("= Original에서 copy2로 이동(copy) =");
+		System.out.println("original:" + original);
+		System.out.println("copy2:" + copy2);
+	}
+}
+
+실행결과
+= Original에서 copy1로 복사(copy) =
+original:[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+copy1:[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+= Original에서 copy2로 이동(copy) =
+original:[]
+copy2:[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
 
 ## Arrays
 
