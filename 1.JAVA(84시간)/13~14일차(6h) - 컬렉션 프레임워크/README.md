@@ -906,12 +906,59 @@ Arrays.setAll(arr, () -> (int)(Math.random() * 5) + 1); // arr = [1,5,2,1,1]  1~
 
 
 ### 배열의 정렬과 검색 - sort(), binarySearch()
+- sort() : 배열을 정렬할 때 사용
+- binarySearch() : 배열에 저장된 요소를 검색할 때 사용
+- binarySearch()는 배열에서 지정된 값이 저장된 위치(index)를 찾아서 반환하는데, 반드시 배열이 정렬된 상태이어야 올바른 결과를 얻는다. 
+- binarySearch()는 검색한 값과 일치하는 요소들이 여러 개 있다면, 이 중에서 어떤 것의 위치가 반환될지는 알 수 없다.
+
+```
+int[] arr = { 3, 2, 0, 1, 4 };
+int idx = Arrays.binarySearch(arr, 2); // idx = -5 - 잘못된 결과
+
+Arrays.sort(arr); // 배열 arr을 정렬한다.
+System.out.println(Arrays.toString(arr)); // [0,1,2,3,4]
+int idx = Arrays.binarySearch(arr, 2); // idx = 2  - 올바른 결과
+
+```
 
 ### 문자열 비교와 출력 - equals(), toString()
+- toString() : 배열의 모든 요소를 문자열로 편하게 출력할 수 있다.  일차원 배열에서만 사용할 수 있다.
+- deepToString() : 배열의 모든 요소를 재귀적으로 접근해서 문자열을 구성하므로 다차원 배열에서도 사용할 수 있다.
+```
+int[] arr = {0,1,2,3,4};
+int[][] arr2D = {{11,22}, {21,22}};
+
+System.out.println(Arrays.toString(arr)); // [0,1,2,3,4]
+System.out.println(Arrays.deepToString(arr2D)); // [[11,12], [21,22]]
+```
+
+- equals() : 두 배열에 저장된 모든 요소를 비교해서 같으면 true, 다르면 false를 반환한다. 일차원 배열에서만 사용가능하다.
+- deepToEquals() : 다차원 배열에서도 사용할 수 있다.
+```
+String[][] str2D = new String[][]{{"aaa", "bbb"}, {"AAA", "BBB"}};
+String[][] str2D2 = new String[][]{{"aaa", "bbb"}, {"AAA", "BBB"}};
+
+System.out.println(Arrays.equals(str2D, str2D2)); // false
+System.out.println(Arrays.deepEquals(str2D, str2D2)); // true
+```
 
 ### 배열을 List로 변환 - asList(Object... a)
+- asList()는 배열을 List에 담아서 반환합니다. 
+- 매개변수 타입이 가변인수이므로 배열 생성 없이 저장할 요소들만 나열하는 것도 가능하다.
+```
+List list = Arrays.asList(new Integer[]{1,2,3,4,5});
+List list = Arrays.asList(1,2,3,4,5);
+```
+
+- asList()가 반환한 List의 크기를 변경할 수 없다(추가 삭제가 불가능)
+- 추가 삭제가 필요하다면 다음과 같이 새로운 List를 생성하면 된다.
+```
+List list = new ArrayList(Arrays.asList(1,2,3,4,5));
+```
 
 ### stream()
+stream()은 컬렉션을 스트림으로 변환합니다. 
+[스트림 참고](https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/19%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%8A%B8%EB%A6%BC)
 
 
 ## Comparator와 Comparable
