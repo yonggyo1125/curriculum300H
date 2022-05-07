@@ -900,9 +900,9 @@ int[] arr6 = Arrays.copyOfRange(arr, 0, 7); // arr6 = [0,1,2,3,4, 0, 0]
 ```
 int[] arr = new int[5];
 Arrays.fill(arr, 9); // arr = [9,9,9,9,9]
-Arrays.setAll(arr, () -> (int)(Math.random() * 5) + 1); // arr = [1,5,2,1,1]  1~5 사이의 랜덤 숫자
+Arrays.setAll(arr, i -> (int)(Math.random() * 5) + 1); // arr = [1,5,2,1,1]  1~5 사이의 랜덤 숫자
 ```
->**() -> (int)(Math.random() \* 5) + 1**은 람다식(lambda expression)이다. [람다식 참고](https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/18%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%9E%8C%EB%8B%A4%EC%8B%9D)
+>**i -> (int)(Math.random() \* 5) + 1**은 람다식(lambda expression)이다. [람다식 참고](https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/18%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%9E%8C%EB%8B%A4%EC%8B%9D)
 
 
 ### 배열의 정렬과 검색 - sort(), binarySearch()
@@ -961,9 +961,147 @@ stream()은 컬렉션을 스트림으로 변환합니다.
 [스트림 참고](https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/19%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%8A%B8%EB%A6%BC)
 
 
+#### day13_14/ArraysEx.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class ArraysEx {
+	public static void main(String[] args) {
+		int[] arr = {0,1,2,3,4};
+		int[][] arr2D = {{11,12,13}, {21,22,23}};
+		
+		System.out.println("arr=" + Arrays.toString(arr));
+		System.out.println("arr2D=" + Arrays.deepToString(arr2D));
+		
+		int[] arr2 = Arrays.copyOf(arr,  arr.length);
+		int[] arr3 = Arrays.copyOf(arr,  3);
+		int[] arr4 = Arrays.copyOf(arr,  7);
+		int[] arr5 = Arrays.copyOfRange(arr,  2, 4);
+		int[] arr6 = Arrays.copyOfRange(arr,  0, 7);
+		
+		System.out.println("arr2=" + Arrays.toString(arr2));
+		System.out.println("arr3=" + Arrays.toString(arr3));
+		System.out.println("arr4=" + Arrays.toString(arr4));
+		System.out.println("arr5=" + Arrays.toString(arr5));
+		System.out.println("arr6=" + Arrays.toString(arr6));
+		
+		int[] arr7 = new int[5];
+		Arrays.fill(arr7, 9);
+		System.out.println("arr7=" + Arrays.toString(arr7));
+		
+		Arrays.setAll(arr7, i -> (int)(Math.random()*6) + 1);
+		System.out.println("arr7=" + Arrays.toString(arr7));
+		
+		for(int i : arr7) {
+			char[] graph = new char[i];
+			Arrays.fill(graph, '*');
+			System.out.println(new String(graph) + i);
+		}
+		
+		String[][] str2D = new String[][] {{"aaa","bbb"},{"AAA", "BBB"}};
+		String[][] str2D2 = new String[][] {{"aaa","bbb"},{"AAA", "BBB"}};
+		
+		System.out.println(Arrays.equals(str2D, str2D2)); // false
+		System.out.println(Arrays.deepEquals(str2D, str2D2)); // true
+		
+		char[] chArr = {'A', 'D', 'C', 'B', 'E'};
+		
+		System.out.println("chArr=" + Arrays.toString(chArr));
+		System.out.println("index of B =" + Arrays.binarySearch(chArr, 'B'));
+		System.out.println("= After sorting =");
+		Arrays.sort(chArr);
+		System.out.println("chArr="+Arrays.toString(chArr));
+		System.out.println("index of B =" + Arrays.binarySearch(chArr, 'B'));
+	}
+}
+
+실행결과
+arr=[0, 1, 2, 3, 4]
+arr2D=[[11, 12, 13], [21, 22, 23]]
+arr2=[0, 1, 2, 3, 4]
+arr3=[0, 1, 2]
+arr4=[0, 1, 2, 3, 4, 0, 0]
+arr5=[2, 3]
+arr6=[0, 1, 2, 3, 4, 0, 0]
+arr7=[9, 9, 9, 9, 9]
+arr7=[2, 4, 5, 4, 1]
+**2
+****4
+*****5
+****4
+*1
+false
+true
+chArr=[A, D, C, B, E]
+index of B =-2
+= After sorting =
+chArr=[A, B, C, D, E]
+index of B =1
+```
+
 ## Comparator와 Comparable
+- Arrays.sort()를 호출만 하면 컴퓨터가 알아서 배열을 정렬하는 것처럼 보이지만, 사실은 Character클래스의 Comparable의 구현에 의해 정렬되었던 것이다.
+- Comparator와 Comparable은 모두 인터페이스로 컬렉션을 정렬하는데 필요한 메서드를 정의하고 있다.
+- Comparable을 구현하고 있는 클래스들은 같은 타입의 인스턴스끼리 서보 비교할 수 있는 클래스들, 주로 Integer와 같은 wrapper 클래스와 String, Date, File과 같은 것들이며 기본적으로 오름차순, 즉 작은 값에서부터 큰 값의 순서로 정렬되도록 구현되어 있다.
+- 따라서 Comparable을 구현한 클래스는 정렬이 가능하다는 것을 의미한다.
+
+
+### java.util.Comparator
+```
+public interface Comparator {
+	int compare(Object o1, Object o2);
+	boolean equals(Object obj);
+}
+```
+
+### java.lang.Comparable
+```
+public interface Comparable {
+	public int compareTo(Object o);
+}
+```
+
+- compare()와 compareTo()는 선언형태와 이름이 다를뿐 두 객체를 비교한다는 같은 기능을 가지고 있다.
+- 두 객체가 같으면 0, 비교하는 값보다 작으면 음수, 크면 양수를 반환한다.
+- 예를 들어 TreeSet에서 Integer 인스턴스를 저장한다면 이때 정렬되는 기준이 compareTo메서드에 의한 것이다.
+- **Comparable** : 기본 정렬기준을 구현하는데 사용
+- **Comparator** : 기본 정렬기준 외에 다른 기준으로 정렬하고자할 때 사용 
+
+#### day13_14/ComparatorEx.java
+```
+package day13_14;
+
+import java.util.*;
+
+class Descending implements Comparator {
+	public int compare(Object o1, Object o2) {
+		if (o1 instanceof Comparable && o2 instanceof Comparable) {
+			Comparable c1 = (Comparable)o1;
+			Comparable c2 = (Comparable)o2;
+			return c1.compareTo(c2) * -1; // 또는 c2.compareTo(c1);
+		}
+		return -1;
+	}
+}
+
+실행결과
+strArr=[Dog, cat, lion, tiger]
+strArr=[cat, Dog, lion, tiger]
+strArr=[tiger, lion, cat, Dog]
+```
+- 문자열의 오름차순 정렬은 공백, 숫자, 대문자, 소문자 순으로 정렬된다(문자의 유니코드의 숫자가 작은 값부터 큰 값으로 정렬된다.)
+- 대소문자를 구분하지 않고 비교하는 Comparator를 String 클래스에서 상수의 형태로 제공한다(static final Comparator Case_INSENSITIVE_ORDER)
+
 
 ## HashSet
+- HashSet은 Set인터페이스를 구현한 가장 대표적인 컬렉션이다.
+- Set인터페이스의 특징대로 HashSet은 중복된 요소를 저장하지 않는다.
+
+>HashSet은 내부적으로 HashMap을 이용해서 만들어졌으며 HashSet이란 이름은 해싱(Hashing)을 이용해서 구현했기 때문에 붙여진 것이다. [해싱(hashing) 참고](https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC#%ED%95%B4%EC%8B%B1%EA%B3%BC-%ED%95%B4%EC%8B%9C%ED%95%A8%EC%88%98)
+
+
 
 ## TreeSet
 
