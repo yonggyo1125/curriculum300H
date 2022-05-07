@@ -1741,14 +1741,315 @@ Z : # 1
 
 
 ## Properties
+- Properties는 HashMap의 구버전인 Hashtable을 상속받아 구현한 것
+- Hashtable은 키와 값을 (Object, Object)의 형태로 저장하는데 비해 Properties는 (String, String)의 형태로 저장하는 보다 단순화된 컬렉션 클래스이다.
+- 주로 애플리케이션의 환경 설정과 관련된 속성(property)를 저장하는데 사용되며 데이터를 파일로 부터 읽고 쓰는 편리한 기능을 제공한다.
+
+### Properties의 생상자와 메서드
+
+|생성자 또는 메서드|설명|
+|-----|------|
+|Properties()|Properties객체를 생성한다.|
+|Properties(Properties defaults)|지정된 Properties에 저장된 목록을 가진 Properties 객체를 생성한다.|
+|String getProperty(String key)|지정된 키(key)의 값(value)를 반환한다.|
+|String getProperty(String key, String defaultValue)|지정된 키(key)의 값(value)를 반환한다. 키를 못찾으면 defaultValue를 반환한다.|
+|void list(PrintStream out)|지정된 PrintStream에 저장된 목록을 출력한다.|
+|void list(PrintWriter out)|지정된 PrintWriter에 저장된 목록을 출력한다.|
+|void load(InputStream inStream)|지정된 InputStream으로부터 목록을 읽어서 저장한다.|
+|void load(Reader reader)|지정된  Reader으로 부터 목록을 읽어서 저장한다.|
+|void loadFromXML(inputStream in)|지정된 InputStream으로부터 XML 문서를 읽어서 XML문서에 저장된 목록을 읽어다 담는다(load & save)|
+|Enumeration propertyNames()|목록의 모든 키(key)가 담긴 Enumeration을 반환한다.|
+|void save(OutputStream out, String header)|deprecated되었으므로  store()를 사용|
+|Object setProperty(String key, String value)|지정된 키와 값을 저장한다.이미 존재하는 키(key)면 새로운 값(value)로 바뀐다.|
+|void store(OutputStream out, String comments)|저장된 목록을 지정된 OutputStream에 출력(저장)한다. comments는 목록에 대한 주석으로 저장된다.|
+|void store(Writer writer, String comments)|저장된 목록을 지정된 Writer에 출력(저장)한다. comments는 목록에 대한 설명(주석)으로 저장된다.|
+|void storeToXML(OutputStream os, String comments)|지정된 목록을 지정된 출력스트림에 XML문서로 출력(저장)한다. comment는 목록에 대한 설명(주석)으로 저장된다.|
+|void storeToXML(OutputStream os, String comment, String encoding)|지정된 목록을 지정된 출력스트림에 해당 인코딩의  XML문서로 출력(저장)한다. comment는 목록에 대한 설명(주석)으로 저장된다.|
+|Set stringPropertyNames()|properties에 저장되어 있는 모든 키(key)를 Set에 담아서 반환한다.|
+
+#### day13_14/PropertiesEx1.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class PropertiesEx1 {
+	public static void main(String[] args) {
+		Properties prop = new  Properties();
+		
+		// prop에 키와 값(key, value)를 저장한다.
+		prop.setProperty("timeout", "30");
+		prop.setProperty("language", "kr");
+		prop.setProperty("size", "10");
+		prop.setProperty("capacity", "10");
+		
+		// prop에 저장된 요소들을 Enumeration을 이용해서 출력한다.
+		Enumeration e = prop.propertyNames();
+		
+		while(e.hasMoreElements()) {
+			String element = (String)e.nextElement();
+			System.out.println(element + "=" + prop.getProperty(element));
+		}
+		
+		System.out.println();
+		prop.setProperty("size", "20"); // size의 값을 20으로 변경한다.
+		System.out.println("size=" + prop.getProperty("size"));
+		System.out.println("capacity=" + prop.getProperty("capacity", "20"));
+		System.out.println("loadFactor=" + prop.getProperty("loadFactor", "0.75"));
+		
+		System.out.println(prop); // prop에 저장된 요소들을 출력한다.
+		prop.list(System.out); // prop에 저장된 요소들을 화면(System.out)에 출력한다.
+	}
+}
+
+
+실행결과
+capacity=10
+size=10
+timeout=30
+language=kr
+
+size=20
+capacity=10
+loadFactor=0.75
+{size=20, language=kr, timeout=30, capacity=10}
+-- listing properties --
+size=20
+language=kr
+timeout=30
+capacity=10
+```
+
+#### day13_14/PropertiesEx2.java
+```
+package day13_14;
+
+import java.io.*;
+import java.util.*;
+
+public class PropertiesEx2 {
+	public static void main(String[] args) {
+		// commandLine에서 inputfile을 지정해주지 않으면 프로그램을 종료한다.
+		if (args.length != 1) {
+			System.out.println("USAGE: java PropertiesEx2 INPUTFILENAME");
+			System.exit(0);
+		}
+		
+		Properties prop = new Properties();
+		
+		String inputFile = args[0];
+		
+		try {
+			prop.load(new FileInputStream(inputFile));
+		} catch (IOException e) {
+			System.out.println("지정된 파일을 찾을 수 없습니다.");
+			System.exit(0);
+		}
+		
+		String name = prop.getProperty("name");
+		String[] data = prop.getProperty("data").split(",");
+		int max = 0, min = 0;
+		int sum = 0;
+		
+		for (int i = 0; i < data.length; i++) {
+			int intValue = Integer.parseInt(data[i]);
+			
+			if (i==0) max = min = intValue;
+			
+			if (max < intValue) 
+				max = intValue;
+			else if (min > intValue) 
+				min = intValue;
+			
+			sum += intValue;
+		}
+		
+		System.out.println("이름 :" + name);
+		System.out.println("최대값 :" + max);
+		System.out.println("최소값 :" + min);
+		System.out.println("합계 :" + sum);
+		System.out.println("평균 :" + (sum*100.0/data.length)/100);
+	}
+}
+
+input.txt
+# 주석 입니다.
+name=Lee, Yonggyo
+data=9,1,5,2,8,13,26,11,35,1
+```
+
+#### day13_14/PropertiesEx3.java
+```
+package day13_14;
+
+import java.util.*;
+import java.io.*;
+
+public class PropertiesEx3 {
+	public static void main(String[] args) {
+		Properties prop = new Properties();
+		
+		prop.setProperty("timeout", "30");
+		prop.setProperty("language", "kr");
+		prop.setProperty("size", "10");
+		prop.setProperty("capacity", "10");
+		
+		try {
+			prop.store(new FileOutputStream("output.txt"), "Properties Excample");
+			
+			prop.storeToXML(new FileOutputStream("output.xml"), "Properties Example");
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+실행결과
+output.txt 
+#Properties Excample
+#Sun May 08 00:04:25 KST 2022
+size=10
+language=kr
+timeout=30
+capacity=10
+
+
+output.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Properties Example</comment>
+<entry key="size">10</entry>
+<entry key="language">kr</entry>
+<entry key="timeout">30</entry>
+<entry key="capacity">10</entry>
+</properties>
+```
+
+#### day13_14/PropertiesEx4.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class PropertiesEx4 {
+	public static void main(String[] args) {
+		Properties sysProp = System.getProperties();
+		System.out.println("java.version :" + sysProp.getProperty("java.version"));
+		System.out.println("user.language :" + sysProp.getProperty("user.language"));
+		
+		sysProp.list(System.out);
+	}
+}
+
+실행결과
+java.version :17.0.1
+user.language :ko
+-- listing properties --
+java.specification.version=17
+sun.cpu.isalist=amd64
+sun.jnu.encoding=MS949
+java.class.path=D:\javaEx\lecture\bin
+java.vm.vendor=Eclipse Adoptium
+sun.arch.data.model=64
+user.variant=
+java.vendor.url=https://adoptium.net/
+java.vm.specification.version=17
+os.name=Windows 10
+sun.java.launcher=SUN_STANDARD
+user.country=KR
+sun.boot.library.path=D:\자바공부\eclipse\plugins\org.eclipse.j...
+sun.java.command=day13_14.PropertiesEx4
+jdk.debug=release
+sun.cpu.endian=little
+user.home=C:\Users\YONGGYO
+user.language=ko
+java.specification.vendor=Oracle Corporation
+java.version.date=2021-10-19
+java.home=D:\자바공부\eclipse\plugins\org.eclipse.j...
+file.separator=\
+java.vm.compressedOopsMode=Zero based
+line.separator=
+
+java.vm.specification.vendor=Oracle Corporation
+java.specification.name=Java Platform API Specification
+user.script=
+sun.management.compiler=HotSpot 64-Bit Tiered Compilers
+java.runtime.version=17.0.1+12
+user.name=YONGGYO
+path.separator=;
+os.version=10.0
+java.runtime.name=OpenJDK Runtime Environment
+file.encoding=MS949
+java.vm.name=OpenJDK 64-Bit Server VM
+java.vendor.version=Temurin-17.0.1+12
+java.vendor.url.bug=https://github.com/adoptium/adoptium-...
+java.io.tmpdir=C:\Users\YONGGYO\AppData\Local\Temp\
+java.version=17.0.1
+user.dir=D:\javaEx\lecture
+os.arch=amd64
+java.vm.specification.name=Java Virtual Machine Specification
+sun.os.patch.level=
+native.encoding=MS949
+java.library.path=D:\자바공부\eclipse\plugins\org.eclipse.j...
+java.vm.info=mixed mode
+java.vendor=Eclipse Adoptium
+java.vm.version=17.0.1+12
+sun.io.unicode.encoding=UnicodeLittle
+java.class.version=61.0
+```
 
 ## Collections
+- Arrays가 배열과 관련된 메서드를 제공하는 것처럼, Collections는 컬렉션과 관련된 메서드를 제공한다.
+- fill(), copy(), sort(), binarySearch()등의 메서드는 두 클래스 모두 포함되어 있고 같은 기능을 한다.
+
+> java.util.Collection은 인터페이스이고, java.util.Collections는 클래스이다.
+
 
 ### 컬렉션의 동기화
+멀티 쓰레드 프로그래미엥서는 하나의 객체를 여러 쓰레드가 동시에 접근할 수 있기 때문에 데이터의 일관성을 유지하기 위해서는 공유되는 객체에 동기화(synchronization)가 필요하다.
+
+```
+static Collection synchronizedCollection(Collection c)
+static List synchronizedList(List list)
+static Set sychronizedSet(Set s)
+static Map sychronizedMap(Map m)
+static SortedSet synchronizedSortedSet(SortedSet s)
+static SortedMap synchronizedSortedMap(SortedMap m)
+```
 
 ### 변경불가 컬렉션 만들기
+```
+static Collection unmodifiableCollection(Collection c)
+static List unmodifiableList(List list)
+static Set unmodifiableSet(Set s)
+static Map unmodifiableMap(Map m)
+static NavigableSet unmodifiableNavigableSet(NavigableSet s)
+static SortedSet unmodifiableSortedSet(SortedSet s)
+static NavigableMap unmodifiableNavigableMap(NavigableMap m)
+static SortedMap unmodifiableSortedMap(SortedMap m)
+```
+
 
 ### 싱글톤 컬렉션 만들기
+```
+static List singletonList(Object o)
+static Set singleton(Object o)
+static Map singletonMap(Object key, Object value)
+```
 
 ### 한 종류의 객체만 저장하는 컬렉션 만들기 
+```
+static Collection checkedCollection(Collection c, Class type)
+static List checkedList(List list, Class type)
+static Set checkedSet(Set s, Class type)
+static Map checkedMap(Map m, Class keyType, Class valueType)
+static Queue checkedQueue(Queue queue, Class type)
+static NavigableSet checkedNavigableSet(NavigableSet s, Class type)
+static SortedSet checkedSortedSet(SortedSet s, Class type)
+static NavigableMap checkedNavigableMap(NavigableMap m, Class keyType, Class valueType)
+static SortedMap checkedSortedMap(SortedMap m, Class keyType, Class valueType)
+```
 
+#### day13_14/CollectionsEx.java
