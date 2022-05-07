@@ -1306,7 +1306,40 @@ public class HashSetEx4 {
 ![이진검색트리 저장과정](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC/images/%EC%9D%B4%EC%A7%84%EA%B2%80%EC%83%89%ED%8A%B8%EB%A6%AC_%EC%A0%80%EC%9E%A5%EA%B3%BC%EC%A0%95.png)
 
 
+### TreeSet의 생성자와 메서드
 
+|생성자 또는 메서드|설명|
+|-----|------|
+|TreeSet()|기본생성자|
+|TreeSet(Collection c)|주어진 컬렉션을 저장하는 TreeSet을 생성|
+|TreeSet(Comparator comp)|주어진 정렬조건으로 정렬하는 TreeSet을 생성|
+|TreeSet(SortedSet s)|주어진 SortedSet을 구현한 컬렉션을 저장하는 TreeSet을 생성|
+|boolean add(Object o)<br>boolean addAll(Collection c)|지정된 객체(o) 또는 Collection(c)의 객체들을 Collection에 추가|
+|Object ceilling(Object o)|지정된 객체와 같은 객체를 반환. 없으면 큰 값을 가진 객체 중 제일 가까운 값의 객체를 반환. 없으면 null|
+|void clear()|저장된 모든 객체를 삭제한다.|
+|Object clone()|TreeSet을 복제하여 반환한다.|
+|Comparator comparator()|TreeSet의 정렬기준(Comparator)을 반환한다.|
+|boolean contains(Object o)<br>boolean containsAll(Collection c)|지정된 객체(o) 또는 Collection의 객체들이 포함되어 있는지 확인한다.|
+|NavigableSet descendingSet()|TreeSet에 저장된 요소들을 역순으로 정렬해서 반환|
+|Object first()|정렬된 순서에서 첫 번쨰 객체를 반환한다.|
+|Object floor(Object o)|지정된 객체와 같은 객체를 반환. 없으면 작은 값을 가진 객체 중 제일 가까운 값의 객체를 반환. 없으면 null|
+|SortedSet headSet(Object toElement)|지정된 객체보다 작은 값의 객체들을 반환한다.|
+|NavigableSet headSet(Object toElement, boolean inclusive)|지정된 객체보다 작은 값의 객체들을 반환. inclusive가 true이면, 같은 값의 객체도 포함|
+|Object higher(Object o)|지정된 객체보다 큰 값을 가진 객체 중 제일 가까운 값의 객체를 반환. 없으면 null|
+|boolean isEmpty()|TreeSet이 비어있는지 확인한다.|
+|Iterator iterator()|TreeSet의 Iterator를 반환한다.|
+|Object last()|정렬된 순서에서 마지막 객체를 반환한다.|
+|Object lower(Object o)|지정된 객체보다 작은 값을 가진 객체 중 제일 가까운 값의 객체를 반환. 없으면 null|
+|Object pollFirst()|TreeSet의 첫번째 요소(제일 작은 값의 객체)를 반환|
+|Object pollLast()|TreeSet의 마지막 번째 요소(제일 큰 값의 객체)를 반환|
+|boolean remove(Object o)|지정된 객체를 삭제한다.|
+|boolean retainAll(Collection c)|주어진 컬렉션과 공통 요소만 남기고 삭제한다.(교집합)|
+|int size()|저장된 객체의 개수를 반환한다.|
+|SortedSet subSet(Object fromELement, Object toElement)|범위검색(fromElement와  toElement사이)의 결과를 반환한다.(끝 범위인 toElement는 범위에 포함되지 않음)|
+|NavigableSet\<E\> subSet(E fromElement, boolean fromInclusive, E toElement, boolean toInclusive)|범위 검색(fromElement와 toElement사이)의 결과를 반환한다.(fromInclusive가 true이면 시작값이 포함되고, toInclusive가 true면 끝값이 포함된다)|
+|SortedSet tailSet(Object fromElement)|지정된 객체보다 큰 값의 객체들을 반환한다.|
+|Object[] toArray()|지정된 객체를 객체배열로 반환한다.|
+|Object[] toArray(Object[] a)|저장된 객체를 주어진 객체배열에 저장하여 반환한다.|
 
 
 
