@@ -410,7 +410,7 @@ ZZZ
 |boolean removeFirstOccurence(Object o)|LinkedList에서 첫번째로 일치하는 객체를 제거|
 |boolean removeLastOccurence(Object o)|LinkedList에서 마지막으로 일치하는 객체를 제거|
 
->>LinkedList는 Queue인터페이스(JDK1.5)와 Deque인터페이스(JDK1.6)를 구현하도록 변경되었는데, 마지막 22개 메서드는 Queue인터페이스와 Deque 인터페이스를 구현하면서 추가된 것이다.
+>LinkedList는 Queue인터페이스(JDK1.5)와 Deque인터페이스(JDK1.6)를 구현하도록 변경되었는데, 마지막 22개 메서드는 Queue인터페이스와 Deque 인터페이스를 구현하면서 추가된 것이다.
 
 LinkedList 역시 List 인터페이스를 구현했기 때문에 ArrayList의 내부구현방법만 다를 뿐 제공하는 메서드의 종류와 기능은 거의 같다.
 
