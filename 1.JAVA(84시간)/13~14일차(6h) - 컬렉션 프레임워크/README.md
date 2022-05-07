@@ -1290,14 +1290,20 @@ public class HashSetEx4 {
 - 다만 트리는 데이터를 순차적으로 저장하는 것이 아니라 저장위치를 찾아서 저장해야 하고, 삭제하는 경우 트리의 일부를 재구성해야 하므로 링크드 리스트보다 데이터의 추가/삭제 시간은 더 걸린다. 
 - 대신 배열이나 링크드리스트에 비해 검색과 정렬 기능이 더 뛰어나다.
 
-### 이진트리(binary tree)
+### 이진 검색 트리(binary search tree)
 - 모든 노드는 최대 두 개의 자식노드를 가질 수 있다.
 - 왼쪽 자식노드의 값은 부모노드의 값보다 작고 오른쪽자식노드의 값은 부모노드의 값모다 커야 한다.
 - 노드의 추가 삭제에 시간이 걸린다.(순차적으로 저장하지 않으므로)
 - 검색(범위검색)과 정렬에 유리하다.
 - 중복된 값을 저장하지 못한다.
 
+![이진트리의 예](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC/images/%EC%9D%B4%EC%A7%84%ED%8A%B8%EB%A6%AC%EC%9D%98_%EC%98%88.png)
 
+#### 이진검색트리(binary search tree)
+![이진검색트리](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC/images/%EC%9D%B4%EC%A7%84%EA%B2%80%EC%83%89%ED%8A%B8%EB%A6%AC.png)
+
+#### 이진 검색트리 저장과정
+![이진검색트리 저장과정](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC/images/%EC%9D%B4%EC%A7%84%EA%B2%80%EC%83%89%ED%8A%B8%EB%A6%AC_%EC%A0%80%EC%9E%A5%EA%B3%BC%EC%A0%95.png)
 
 
 
