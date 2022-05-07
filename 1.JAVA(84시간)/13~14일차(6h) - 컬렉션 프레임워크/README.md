@@ -1101,6 +1101,87 @@ strArr=[tiger, lion, cat, Dog]
 
 >HashSet은 내부적으로 HashMap을 이용해서 만들어졌으며 HashSet이란 이름은 해싱(Hashing)을 이용해서 구현했기 때문에 붙여진 것이다. [해싱(hashing) 참고](https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC#%ED%95%B4%EC%8B%B1%EA%B3%BC-%ED%95%B4%EC%8B%9C%ED%95%A8%EC%88%98)
 
+### HashSet의 메서드
+
+|생성자 또는 메서드|설명|
+|-----|------|
+|HashSet()|HashSet객체를 생성한다.|
+|HashSet(Collection c)|주어진 컬렉션을 포함하는 HashSet객체를 생성한다.|
+|HashSet(int initialCapacity)|주어진 값을 초기용량으로 하는 HashSet객체를 생성한다.|
+|HashSet(int initialCapacity, float loadFactor)|초기용량과 load factor를 지정하는 생성자.|
+|boolean add(Object o)|새로운 객체를 저장한다.|
+|boolean addAll(Collection c)|주어진 컬렉션에 저장된 모든 객체들을 추가한다.(합집합)|
+|void clear()|저장된 모든 객체를 삭제한다.|
+|Object clone()|HashSet을 복제해서 반환한다(얕은 복사)|
+|boolean contains(Object o)|지정된 객체를 포함하고 있는지 알려준다.|
+|boolean containsAll(Collection c)|주어진 컬렋현에 저장된 모든 객체들을 포함하고 있는지 알려준다.|
+|boolean isEmpty()|HashSet이 비어있는지 알려준다.|
+|Iterator iterator()|Iterator를 반환한다.|
+|boolean remove(Object o)|지정된 객체를 HashSet에서 삭제한다.(성공하면 true, 실패하면 false)|
+|boolean retainAll(Collection c)|주어진 컬렉션에 저장된 객체와 동일한 것만 남기고 삭제한다.(교집합)|
+|int size()|저장된 객체의 개수를 반환한다.|
+|Object[] toArray()|저장된 객체들을 객체배열의 형태로 반환한다.|
+|Object[] toArray(Object[] a)|저장된 객체들을 주어진 객체배열(a)에 담는다.|
+
+>load factor는 컬렉션 클래스에 저장공간이 가득 차기 전에 미리 용량을 확보하기 위한 것으로 이 값을 0.8로 지정하면, 저장공간의 80%가 채워졌을 때 용량이 두 배로 늘어난다. 기본값은 0.75, 즉 75%이다.
+
+#### day13_14/HashSetEx1.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class HashSetEx1 {
+	public static void main(String[] args) {
+		Object[] objArr = {"1", Integer.valueOf(1), "2", "2", "3", "3", "4", "4", "4" };
+		Set set = new HashSet();
+		
+		for(int i = 0; i < objArr.length; i++) {
+			set.add(objArr[i]); // HashSet에 objArr의 요소를 저장한다.
+		}
+		
+		System.out.println(set);
+	}
+}
+
+
+실행결과
+[1, 1, 2, 3, 4]
+```
+
+#### day13_14/HashSetEx2.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class HashSetEx2 {
+	public static void main(String[] args) {
+		Set set = new HashSet();
+		
+		for (int i = 0; set.size() < 6; i++) {
+			int num = (int)(Math.random()*45) + 1;
+			set.add(Integer.valueOf(num));
+		}
+		
+		List list = new LinkedList(set);  // LinkedList(Collection c)
+		Collections.sort(list); // Collections.sort(List list)
+		System.out.println(list);
+	}
+}
+
+
+실행결과
+[5, 13, 25, 30, 37, 38]
+```
+
+- 번호를 크기순으로 정렬하기 위해서 Collections클래스의 sort(List list)를 사용했다.
+- 이 메서드는 인자로 List인터페이스 타입을 필요로 하기 때문에 LinkedList클래스의 생성자 LinkedList(Collection c)를 이용해서 HashSet에 저장된 객체들을 LinkedList에 담아서 처리
+
+
+### equals()와 hashCode()
+
+
 
 
 ## TreeSet
