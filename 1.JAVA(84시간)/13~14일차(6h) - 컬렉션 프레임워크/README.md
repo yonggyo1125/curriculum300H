@@ -201,9 +201,130 @@ public class ArraList extends AbstractList implements List, RandomAccess, Clonea
 |Object[] toArray(Object[] a)|ArrayList에 저장한 모든 객체들을 객체배열 a에 담아 반환한다.|
 |void trimToSize()|용량을 크기에 맞게 줄인다.(빈 공간을 없앤다.)|
 
+#### day13_14/ArrayListEx1.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class ArrayListEx1 {
+	public static void main(String[] args) {
+		ArrayList list1 = new ArrayList(10);
+		list1.add(Integer.valueOf(5));
+		list1.add(Integer.valueOf(4));
+		list1.add(Integer.valueOf(2));
+		list1.add(Integer.valueOf(0));
+		list1.add(Integer.valueOf(1));
+		list1.add(Integer.valueOf(3));
+		
+		ArrayList list2 = new ArrayList(list1.subList(1, 4));
+		print(list1, list2);
+		
+		Collections.sort(list1);
+		Collections.sort(list2);
+		print(list1, list2);
+		
+		System.out.println("list1.containsAll(list2):" + list1.containsAll(list2));
+		
+		list2.add("B");
+		list2.add("C");
+		list2.add(3, "A");
+		print(list1, list2);
+		
+		list2.set(3, "AA");
+		print(list1, list2);
+		
+		// list1과 list2와 겹치는 부분만 남기ㄷ고 나머지는 삭제한다.
+		System.out.println("list1.retainAll(list2):" + list1.retainAll(list2));
+		
+		print(list1, list2);
+		
+		
+		// list2에서 list1에 포함된 객체들을 삭제한다.
+		for(int i = list2.size() - 1; i >=0; i--) {
+			if (list1.contains(list2.get(i)))
+				list2.remove(i);
+		}
+		print(list1, list2);
+	}
+	
+	static void print(ArrayList list1, ArrayList list2) {
+		System.out.println("list1:" + list1);
+		System.out.println("list2:" + list2);
+		System.out.println();
+	}
+}
+
+실행결과
+list1:[5, 4, 2, 0, 1, 3]
+list2:[4, 2, 0]
+
+list1:[0, 1, 2, 3, 4, 5]
+list2:[0, 2, 4]
+
+list1.containsAll(list2):true
+list1:[0, 1, 2, 3, 4, 5]
+list2:[0, 2, 4, A, B, C]
+
+list1:[0, 1, 2, 3, 4, 5]
+list2:[0, 2, 4, AA, B, C]
+
+list1.retainAll(list2):true
+list1:[0, 2, 4]
+list2:[0, 2, 4, AA, B, C]
+
+list1:[0, 2, 4]
+list2:[AA, B, C]
+```
+
+- list2의 각 요소를 접근하기 위해 get(int index)메서드와 for문을 사용하였는데, for문의 변수 i를 0부터 증가시킨 것이 아니라 **list2.size() - 1** 부터 감소시키면서 거꾸로 반복 시켰다.
+- 변수 i를 증가시켜가면서 삭제하면, 한 요소가 삭제될 때마다 빈 공간을 채우기 위해 나머지 요소들이 자리이동을 하기 때문에 올바른 결과를 얻을 수 없다.
+- 그래서 제어변수를 감소시켜가면서 삭제를 해야 자리이동이 발생해도 영향을 받지 않고 작업이 가능하다.
+
+#### day13_14/ArrayListEx2.java
+```
+package day13_14;
+
+import java.util.*;
+
+public class ArrayListEx2 {
+	public static void main(String[] args) {
+		final int LIMIT = 10;
+		String source = "0123456789abcdefghijABCDEFGHIJ!@#$%^&*()ZZZ";
+		int length = source.length();
+		
+		List list = new ArrayList(length / LIMIT + 10); // 크기를 약간 여유 있게 잡는다.
+		
+		for(int i = 0; i < length; i+=LIMIT) {
+			if (i+LIMIT < length) {
+				list.add(source.substring(i, i+LIMIT));
+			} else {
+				list.add(source.substring(i));
+			}
+		}
+		
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println(list.get(i));
+		}
+	}
+}
+
+실행결과
+0123456789
+abcdefghij
+ABCDEFGHIJ
+!@#$%^&*()
+ZZZ
+```
+
+- ArrayList를 생성할 때, 저장할 요소의 개수를 고려해서 실제 저장할 개수보다 약간 여유 있는 크기로 하는것이 좋다.
+- 생설할 때 지정한 크기보다 더 많은 객체를 저장하면 자동적으로 크기가 늘어나기는 하지만 이 과정에서 처리시간이 많이 소요되기 때문이다.
+
+>ArrayList나 Vector같이 배열을 이용한 자료구조는 데이터를 읽어오고 저장하는 데는 효율이 좋지만, 용량을 변경해야 할 때는 새로운 배여릉ㄹ 생성한 후 기존의 배열로 부터 새로 생성된 배열로 데이터를 복사해야하기 때문에 상당히 효율이 떨어진다는 단점을 가지고 있다. 따라서 처음에 인스턴스를 생성할 때, 저장한 데이터의 개수를 잘 고려하여 충분한 용량의 인스턴스를 생성하는 것이 좋다.
 
 
 ## LinkedList
+
 
 ## Stack과 Queue
 
