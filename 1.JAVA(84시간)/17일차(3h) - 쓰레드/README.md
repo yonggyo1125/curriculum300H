@@ -680,24 +680,664 @@ public class ThreadEx10 implements Runnable {
 6. 실행을 모두 마치거나 stop()이 호출되면 쓰레드는 소멸된다.
 > 실행을 위해 1부터 6까지 번호를 붙이기는 했지만 번호의 순서대로 쓰레드가 수행되는 것은 아니다.
 
-
-
 ### sleep(long millis) - 일정시간 동안 쓰레드를 멈추게 한다.
+- sleep()은 지정된 시간동안 쓰레드를 멈추게 한다.
+- sleep()에 의해 일시정지 상태가 된 쓰레드는 지정된 시간이 다 되거나 interrupt()가 호출되면, InterruptedException이 발생되어 잠에서 깨어나 실행대기 상태가 된다.
+- sleep()을 호출 할때는 항상 try ~ catch 문으로 예외를 처리해줘야 한다.
 
+#### day17/ThreadEx11.java
+```
+package day17;
+
+class ThreadEx11_1 extends Thread {
+	public void run() {
+		for(int i = 0; i < 300; i++) {
+			System.out.print("-");
+		}
+		System.out.print("<<th1 종료>>");
+	}
+}
+
+class ThreadEx11_2 extends Thread {
+	public void run() {
+		for(int i = 0; i < 300; i++) {
+			System.out.print("|");
+		}
+		System.out.print("<<th2 종료>>");
+	}
+}
+
+public class ThreadEx11 {
+	public static void main(String[] args) {
+		ThreadEx11_1 th1 = new ThreadEx11_1();
+		ThreadEx11_2 th2 = new ThreadEx11_2();
+		th1.start();
+		th2.start();
+		
+		try {
+			th1.sleep(2000); 
+		} catch(InterruptedException e) {}
+		System.out.print("<<main 종료>>");
+	}
+}
+
+실행결과
+----------------------------------------|||------------------||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||---------------------------------------------------------------------------------------------------------||||---------------------||||||||||||||||||||||||||||||||||---------------------------------------------||||--|||||||||||||||||---------------------------------------------------------------|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||------|||||<<th1 종료>>||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||<<th2 종료>><<main 종료>>
+```
+
+- th1이 가장 먼저 종료 되었고, 그 다음이 th2, main의 순서인 것을 알수 있는데, th1.sleep(2000)으로 작성한 코드를 보았을대 th1이 가장 먼저 종료되었다는 것이 뜻밖이라고 생각할 수 있다.
+- 그 이유는 sleep()은 항상 현재 실행 중인 쓰레드에 대해 작동하기 때문에 'th1.sleep(2000)'과 같이 호출하였어도 실제로 영향을 받는 것은 main메서드를 실행하는 main 메서드이다.
+- sleep()은 static으로 선언되어 있으며, 참조변수를 이용해서 호출하기 보다는 'Thread.sleep(200);'과 같이 해야 한다.
+> yield()가 static으로 선언되어 있는 것도 sleep()과 같은 이유이다.
 
 ### interrupt()와 interrupted() - 쓰레드의 작업을 취소한다.
+- interrupt()는 쓰레드에게 작업을 멈추라고 요청한다.
+- 단지 멈추라고 요청만 하는 것일 뿐 쓰레드를 강제 종료시키지는 못한다.
+- interrupt()는 interrupted상태(인스턴스 변수)를 바꾸는 것일 뿐이다.
+- interrupted()는 쓰레드에 대해 interrupt()가 호출되었는지 알려준다. interrupt()가 호출되지 않았다면 false를, interrupt()가 호출되었다면 true를 반환한다.
+
+```
+Thread th = new Thread();
+th.start();
+...
+th.interrupt(); // 쓰레드 th에 interrupt()를 호출한다.
+
+class MyThread extends Thread {
+	public void run() {
+		while(!interrupted()) { // interrupted()의 결과가 false인 동안 반복
+			...
+		}
+	}
+}
+```
+
+- interrupt()가 호출되면 interrupted()의 결과가 false에서 true로 바뀌어 while문을 벗어나게 된다. 
+- interrupted()와 달리 isInterrupted()는 쓰레드의 interrupted상태를 false로 초기화하지 않는다.
+```
+void interrupt()   // 쓰레드의 interrupted 상태를 false에서 true로 변경.
+boolean isInterrupted()  // 쓰레드의 interrupted 상태를 반환
+static boolean interrupted()  // 현재 쓰레드의 interrupted상태를 반환 후, false로 변경 
+```
+- 쓰레드가 sleep(), wait(), join()에 의해 '일시정지 상태(WAITING)'에 있을 때, 해당 쓰레드에 대해 interrupt()를 호출하면 sleep(), wait(), join()에서 InterruptedException이 발생하고 쓰레드는 '실행대기 상태(RUNNABLE)'로 바뀐다.(즉, 멈춰있던 쓰레드를 깨워서 실행가능한 상태로 만드는 것이다.)
+
+#### day17/ThreadEx12.java
+```
+package day17;
+
+import javax.swing.JOptionPane;
+
+class ThreadEx12_1 extends Thread {
+	public void run() {
+		int i = 10;
+		
+		while(i != 0 && !isInterrupted()) {
+			System.out.println(i--);
+			for(long x=0;x < 250000000000L;x++); // 시간 지연
+		}
+		System.out.println("카운트가 종료되었습니다.");
+	}
+}
+
+public class ThreadEx12 {
+	public static void main(String[] args) throws Exception {
+		ThreadEx12_1 th1 = new ThreadEx12_1();
+		th1.start();
+		String input = JOptionPane.showInputDialog("아무 값이나 입력하세요.");
+		System.out.println("입력하신 값은 " + input + "입니다.");
+		th1.interrupt(); // interrupt()를 호출하면, interrupted상태가 true가 된다.
+		System.out.println("isInterrupted():" +  th1.isInterrupted()); // true
+	}
+}
+```
+
+#### day17/ThreadEx13.java
+```
+package day17;
+
+import javax.swing.JOptionPane;
+
+class ThreadEx13_1 extends Thread {
+	public void run() {
+		int i = 10;
+		
+		while(i != 0 && !isInterrupted()) {
+			System.out.println(i--);
+			try {
+				Thread.sleep(1000); // 1초 지연 
+			} catch(InterruptedException e) {}
+		}
+		System.out.println("카운트가 종료되었습니다.");
+	}
+}
+
+public class ThreadEx13 {
+	public static void main(String[] args) throws Exception {
+		ThreadEx13_1 th1 = new ThreadEx13_1();
+		th1.start();
+		String input = JOptionPane.showInputDialog("아무 값이나 입력하세요.");
+		System.out.println("입력하신 값은 " + input + "입니다.");
+		th1.interrupt(); // interrupt()를 호출하면, interrupted상태가 true가 된다.
+		System.out.println("isInterrupted():" +  th1.isInterrupted()); // true
+	}
+}
+
+실행결과
+10
+9
+8
+7
+입력하신 값은 abcd입니다.
+isInterrupted():false
+6
+5
+4
+3
+2
+1
+카운트가 종료되었습니다.
+```
+- Thread.sleep(1000)으로 1초동안 지연되도록 변경하였다. 그러나 카운트가 종료되지 않았고 isInterrupted()의 결과가 false이다.
+- Thread.sleep(1000)에서 InterruptedException이 발생했기 했기 때문이다. 
+- sleep()에 의해 쓰레드가 잠시 멈춰있을 때, interrupt()를 호출하면 InterruptedException이 발생되고 스레드의 interrupted상태는 false로 자동 초기화된다.
+- 그럴때는 catch블럭에 interrupt()를 추가로 넣어줘서 쓰레드의 interrupted 상태를 true로 다시 바꿔줘여 한다.
+
+변경 전
+```
+try {
+	Thread.sleep(1000);
+} catch (InterruptedException e) {}
+```
+
+변경 후
+```
+try {
+	Thread.sleep(1000);
+} catch (InterruptedException e) {
+	interrupt();
+}
+```
 
 ### suspend(), resume(), stop()
+- suspend(), resume(), stop()은 쓰레드의 실행을 제어하는 가장 손쉬운 방법이지만 suspend()와 stop()이 교착상태(deadlock)를 일으키기 쉽게 작성되어 있으므로 사용이 권장되지 않는다.
+
+- suspend(), resume(), stop()의 문제를 해결하는 방법에 대한 예제
+
+#### day17/ThreadEx14.java
+```
+package day17;
+
+public class ThreadEx14 {
+	public static void main(String[] args) {
+		ThreadEx14_1 th1 = new ThreadEx14_1("*");
+		ThreadEx14_1 th2 = new ThreadEx14_1("**");
+		ThreadEx14_1 th3 = new ThreadEx14_1("***");
+		th1.start();
+		th2.start();
+		th3.start();
+		
+		try {
+			Thread.sleep(2000);
+			th1.suspend();
+			Thread.sleep(2000);
+			th2.suspend();
+			Thread.sleep(3000);
+			th1.resume();
+			Thread.sleep(3000);
+			th1.stop();
+			th2.stop();
+			Thread.sleep(2000);
+			th3.stop();
+		} catch (InterruptedException e) {}
+	}
+}
+
+class ThreadEx14_1  implements Runnable {
+	volatile boolean suspended = false;
+	volatile boolean stopped = false;
+	
+	Thread th;
+	
+	ThreadEx14_1(String name) {
+		th = new Thread(this, name);
+	}
+	
+	public void run() {
+		while(!stopped) {
+			if (!suspended) {
+				System.out.println(Thread.currentThread().getName());
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {}
+			}
+		}
+		System.out.println(Thread.currentThread().getName() + " - stopped");
+	}
+	
+	public void suspend() {
+		suspended = true;
+	}
+	
+	public void resume() {
+		suspended = false;
+	}
+	
+	public void stop() {
+		stopped = true;
+	}
+	
+	public void start() {
+		th.start();
+	}
+}
+
+실행결과
+*
+***
+**
+*
+***
+**
+***
+*
+**
+***
+**
+***
+***
+***
+*
+***
+*
+***
+*
+***
+** - stopped
+* - stopped
+***
+***
+*** - stopped
+```
+
 
 ### yield() - 다른 쓰레드에게 양보한다.
+- yield()는 쓰레드 자신에게 주어진 실행시간을 다음 차례의 쓰레드에게 양보(yield)한다.
+- 예를 들어 스케줄러에 의해 1초의 실행시간을 할당받은 쓰레드가 0.5초의 시간동안 작업한 상태에서 yield()가 호출되면, 나머지 0.5초는 포기하고 다시 실행대기상태가 된다.
+- yield()와 interrupt()를 적절히 사용하면, 프로그램의 응답성을 높이고 보다 효율적인 실행이 가능하게 할 수 있다.
+
+
+#### day17/ThreadEx15.java
+```
+package day17;
+
+public class ThreadEx15 {
+	public static void main(String[] args) {
+		ThreadEx15_1 th1 = new ThreadEx15_1("*");
+		ThreadEx15_1 th2 = new ThreadEx15_1("**");
+		ThreadEx15_1 th3 = new ThreadEx15_1("***");
+		th1.start();
+		th2.start();
+		th3.start();
+		
+		try {
+			Thread.sleep(2000);
+			th1.suspend();
+			Thread.sleep(2000);
+			th2.suspend();
+			Thread.sleep(3000);
+			th1.resume();
+			Thread.sleep(3000);
+			th1.stop();
+			th2.stop();
+			Thread.sleep(2000);
+			th3.stop();
+		} catch (InterruptedException e) {}
+	}
+}
+
+class ThreadEx15_1  implements Runnable {
+	volatile boolean suspended = false;
+	volatile boolean stopped = false;
+	
+	Thread th;
+	
+	ThreadEx15_1(String name) {
+		th = new Thread(this, name);
+	}
+	
+	public void run() {
+		String name = th.getName();
+		
+		while(!stopped) {
+			if (!suspended) {
+				System.out.println(Thread.currentThread().getName());
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					System.out.println(name + " - interrupted");
+				}
+			} else { // 정지상태이면 다른 쓰레드로 바로 양보한다(넘긴다) - 응답성 향상 
+				Thread.yield();
+			}
+		}
+		System.out.println(Thread.currentThread().getName() + " - stopped");
+	}
+	
+	public void suspend() {
+		suspended = true;
+		th.interrupt();
+		System.out.println(th.getName() + " - interrupt() by suspend()");
+		// interrupt()를 호출하면 sleep 구간을 건너띄고 바로 InterruptedException으로 건너띄므로 응답성이 좋아진다.
+	}
+	
+	public void resume() {
+		suspended = false;
+	}
+	
+	public void stop() {
+		stopped = true;
+		th.interrupt();
+		System.out.println(th.getName() + " - interrupt() by stop()");
+		// interrupt()를 호출하면 sleep 구간을 건너띄고 바로 InterruptedException으로 건너띄므로 응답성이 좋아진다.
+	}
+	
+	public void start() {
+		th.start();
+	}
+}
+
+실행결과
+*
+***
+**
+*
+***
+**
+*
+***
+* - interrupted
+* - interrupt() by suspend()
+**
+***
+**
+***
+** - interrupted
+** - interrupt() by suspend()
+***
+***
+***
+*
+*
+***
+*
+***
+***
+* - interrupted
+* - stopped
+* - interrupt() by stop()
+** - interrupt() by stop()
+** - stopped
+***
+*** - stopped
+*** - interrupt() by stop()
+```
 
 ### join() - 다른 쓰레드의 작업을 기다린다.
+- 쓰레드 자신이 하던 작업을 잠시 멈추고 다른 쓰레드가 지정된 시간동안 작업을 수향하도록 할 때 join()을 사용한다.
+```
+void join()
+void join(long millis)
+void join(long millis, int nanos)
+```
 
+- 시간을 지정하지 않으면 해당 쓰레드가 작업을 모두 마칠 때까지 기다리게 된다. 작업 중에 다른 쓰레드의 작업이 먼저 수행되어야할 필요가 있을 때 join()을 사용한다.
+```
+try {
+	th1.join(); // 현재 실행중인 쓰레드가 쓰레드 th1의 작업이 끝날때까지 기다린다.
+} catch (InterruptedException e) {}
+```
+
+- join()도 sleep()처럼 interrupt()에 의해 대기상태에서 벗어날 수 있으며, join()이 호출되는 부분을 try~catch문으로 감싸야 한다. 
+- join()은 sleep()과 유사한 점이 있지만 sleep()과 다른 점은 join()은 현재 쓰레드가 아닌 특정 쓰레드에 대해 동작하므로 static메서드가 아니라는 것이다.
+> join()은 자신의 작업 중간에 다른 쓰레드의 작업을 참여(join)시킨다는 의미로 이름 지어진 것이다.
+
+#### day17/ThreadEx16.java
+```
+package day17;
+
+public class ThreadEx16 {
+	static long startTime = 0;
+	
+	public static void main(String[] args) {
+		ThreadEx16_1 th1 = new ThreadEx16_1();
+		ThreadEx16_2 th2 = new ThreadEx16_2();
+		th1.start();
+		th2.start();
+		startTime = System.currentTimeMillis();
+		
+		try {
+			th1.join(); // main쓰레드가  th1의 작업이 끝날 때까지 기다린다.
+			th2.join(); // main쓰레드가 th2의 작업이 끝날 때까지 기다린다.
+		} catch (InterruptedException e) {}
+		
+		System.out.print("소요시간:" + (System.currentTimeMillis() - ThreadEx16.startTime));
+	}
+}
+
+class ThreadEx16_1 extends Thread {
+	public void run() {
+		for(int i = 0; i < 300; i++) {
+			System.out.print(new String("-"));
+		}
+	}
+}
+
+class ThreadEx16_2 extends Thread {
+	public void run() {
+		for(int i = 0; i < 300; i++) {
+			System.out.print(new String("|"));
+		}
+	}
+}
+
+실행결과
+---------|||||||||||||||||||||||||||||||||||||||||||||||||||||
+||||||||||||||||||||||||||||||||||||||||||||----------|||||||
+||||||||||||||||||||||||||||||||||||||||||--------|-------
+--------------------------------------------
+--------------||||||||||||||||||||||||||-------------
+-----------------------------|||||||||||||||||||---
+-----------------------------|||||||||||||||------
+------------------------------------||||||||||||||
+||||||||||||||||||||||--------------||||||||||----------
+||||--|||||||||||||||-------------------------------
+--------|||||||||||||||||||||||||||-------------|------
+--------소요시간:19
+```
+- join()을 사용하지 않았으면 main쓰레드는 바로 종료된다. 
+- join()으로 쓰레드 th1, th2의 작업을 마칠 때 까지 main쓰레드가 기다리게 된다.
 
 ## 쓰레드의 동기화
+- 멀티쓰레드 프로세스의 경우 여러 쓰레드가 같은 프로세스 내의 자원을 공유해서 작업하기 때문에 서로의 작업에 영향을 주게된다.
+- 만일 쓰레드A가 작업하던 도중에 다른 쓰레드B에게 제어권이 넘어갔을 때, 쓰레드 A가 작업하던 공유데이터를 쓰레드B가 임의로 변경하였다면, 다시 쓰레드 A가 제어권을 받아서 나머지 작업을 마쳤을 때 원래 의도했던 것과는 다름 결과를 얻을 수 있다.
+- 이러한 일이 발생하는 것을 방지하기 위해서 한 쓰레드가 특정 작업을 끝마치기 전까지 다른 쓰레드에 의해 방해받지 않도록 하는 것이 필요하다.
+- 그래서 도입된 개념이 **임계영역**(critical section)과 **잠금**(락, lock)이다.
+- 공유 데이터를 사용하는 코드 영역을 임계 영역으로 지정해 놓고, 공유 데이터(객체)가 가지고 있는 lock을 획득한 단 하나의 쓰레드만 이 영역 내의 코드를 수행할 수 있게 한다. 그리고 해당 쓰레드가 임계 영역 내의 모든 코드를 수행하고 벗어나서 lock을 반납해야만 다른 쓰레드가 반납된 lock을 획득하여 임계영역의 코드를 수행할 수 있게 한다.
+- **쓰레드의 동기화(synchronization)** : 한 쓰레드가 진행 중인 작업을 다른 쓰레드가 간섭하지 못하도록 막는 것
 
 ### synchronized를 이용한 동기화
 
-### volatile
+#### 메서드 전체를 임계영역으로 지정	
+```
+public synchronized void calcSum() { 
+	...
+}
+```
+메서드 전체가 임계 영역으로 설정된다. 쓰레드는 synchronized메서드가 호출된 시점부터 해당 메서드가 포함된 객체의 lock을 얻어 작업을 수행하다가 메서드가 종료되면 lock을 반환한다.
 
-####  volatile로 long과 double을 원자화
+#### 특정한 영역을 임계 영역으로 지정
+```
+synchroninzed(객체의 참조변수) {
+	...
+}
+```
+sychronized블럭 영역 안으로 들어가면서 부터 쓰레드는 지정된 객체의 lock을 얻게 되고, 이 블럭을 벗어나면 lock을 반납한다.
+
+- 상기 두 방법 모두 lock의 획득과 반납이 모두 자동적으로 이루어지므로 임계영역만 설정해 주면된다. 
+- 모든 객체는 lock을 하나씩 가지고 있으며 해당 lock을 가지고 있는 쓰레드만 임계 영역의 코드를 수행할 수 있다. 그리고 다른 쓰레드들은 lock을 얻을 때까지 기다리게 된다.
+- 임계 영역은 멀티쓰레드 프로그램의 성능을 좌우하기 때문에 메서드 전체에 락을 거는 것 보다는 **sychronized블럭으로 임계영역을 최소화**하는 것이 좋다.
+
+#### day17/Account.java
+```
+package day17;
+
+public class Account {
+	private int balance = 1000;
+	
+	public int getBalance() {
+		return balance;
+	}
+	
+	public void withdraw(int money) {
+		if (balance >= money) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {}
+			balance -= money;
+ 		}
+	}
+}
+```
+
+#### day17/ThreadEx17.java
+
+```
+package day17;
+
+public class ThreadEx17 {
+	public static void main(String[] args) {
+		Runnable r = new RunnableEx17();
+		new Thread(r).start();
+		new Thread(r).start();
+	}
+}
+
+class RunnableEx17 implements Runnable {
+	Account acc = new Account();
+	
+	public void run() {
+		while(acc.getBalance() > 0) {
+			// 100, 200, 300중의 한 값으로 임의로 선택해서 출금(withdraw)
+			int money = (int)(Math.random() * 3 + 1) * 100;
+			acc.withdraw(money);
+			System.out.println("balance:" + acc.getBalance());
+		}
+	}
+}
+
+실행결과
+balance:600
+balance:600
+balance:400
+balance:200
+balance:200
+balance:100
+balance:-100
+balance:-200
+```
+
+- 잔고가 0이상일 때(acc.getBalance() > 0) 출금이 가능하게 하는 조건이 있지만 잔고가 음수가 되었다.
+- 그 이유는 한 쓰레드가 if문의 조건식을 통과하고 출금하기 바로 직전에 다른 쓰레드가 끼어들어서 출금을 먼저 했기 때문이다.
+- 따라서 잔고를 확인하는 if문과 출금하는 문장은 하나의 임계 영역으로 묶여져야 한다.
+
+##### 동기화 예
+```
+public synchronized void withdraw(int money) {
+	if (balance >= money) {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {}
+		balance -= money;
+ 	}
+}
+```
+```
+public void withdraw(int money) {
+	synchronized(this) {
+		if (balance >= money) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {}
+			balance -= money;
+		}
+	}
+}
+```
+
+#### day17/Account2.java
+```
+package day17;
+
+public class Account2 {
+	private int balance = 1000;
+	
+	public int getBalance() {
+		return balance;
+	}
+	
+	public synchronized void withdraw(int money) {
+		if (balance >= money) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {}
+			balance -= money;
+ 		}
+	}
+}
+```
+
+#### day17/ThreadEx18.java
+```
+package day17;
+
+public class ThreadEx18 {
+	public static void main(String[] args) {
+		Runnable r = new RunnableEx18();
+		new Thread(r).start();
+		new Thread(r).start();
+	}
+}
+
+
+class RunnableEx18 implements Runnable {
+	Account2 acc = new Account2();
+	
+	public void run() {
+		while(acc.getBalance() > 0) {
+			// 100, 200, 300중의 한 값으로 임의로 선택해서 출금(withdraw)
+			int money = (int)(Math.random() * 3 + 1) * 100;
+			acc.withdraw(money);
+			System.out.println("balance:" + acc.getBalance());
+		}
+	}
+}
+
+실행결과
+balance:700
+balance:600
+balance:500
+balance:200
+balance:0
+balance:0
+```
+
+### volatile
+- 싱글코어 프로세서가 장착된 컴퓨터에서는 아무런 문제가 없으나 멀티코어 프로세서에서는 코어마다 별도의 캐시를 가지고 있기 때문에 변수값의 변경사항이 바로 반영이 되지 않을 수 있다.
+
+- 코어는 메모리에서 읽어온 값을 캐지에 저장하고 캐시에서 값을 읽어서 작업한다. 다시 같은 값을 읽어올 때는 먼저 캐시에 있는지 확인하여 없을 때만 메모리에서 읽어온다.
+- 그러다보니 도중에 메모리에 저장된 변수의 값이 변경이 되었는데도 캐시에 저장된 값이 갱신되지 않아서 메모리에 저장된 값이 다른 경우가 발생한다. 
+- 변수 앞에 **volatile**을 붙이면 코어가 변수의 값을 읽어올 때 캐시가 아닌 메모리에서 읽어오기 때문에 캐시와 메모리간의 불일치가 해결된다.
+
+```
+volatile boolean suspended = false;
+volatile boolean stopped = false;
+```
