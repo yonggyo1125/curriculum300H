@@ -101,28 +101,358 @@ bis.read(); // 보조스트림인 BufferedInputStream으로 부터 데이터를 
 
 |InputStream|Reader|
 |-----|-----|
+|abstract int read()<br>int read(byte[] b)<br>int read(byte[] b, int off, int len|int read()<br>int read(char[] cbuf)<br>abstract int read(char[] cbuf, int off, int len)|
 
 |OutputStream|Writer|
 |-----|-----|
+|abstract void write(int b)<br>void write(byte[] b)<br>void write(byte[] b, int off, int len|void write(int c)<br>void write(char[] cbuf)<br>abstract void write(char[] cbuf, int off, int len)<br>void write(String str)<br>void write(String str, int off, int len)|
 
 
 #### 바이트기반 보조스트림과 문자기반 보조스트림
 
 |바이트기반 보조스트림|문자기반 보조스트림|
 |-----|-----|
+|BufferedInputStream<br>BufferdOutputStream|BufferedReader<br>BufferedWriter|
+|FilterInputStream<br>FilterOutputStream|FilterReader<br>FilterWriter|
+|LineNumberInputStream(deprecated)|LineNumberReader|
+|PrintStream|PrintWriter|
+|PushbackInputStream|PushbackReader|
 
 ## 바이트기반 스트림
 
 ### InputStream과 OutputStream
+InputStream과 OutputStream은 모든 바이트기반의 스트림의 조상이며 다음과 같은 메서드가 선언되어 있다.
+
+#### InputStream 메서드 
+
+|메서드명|설명|
+|----|------|
+|int available()|스트림으로 부터 읽어 올 수 있는 데이터의 크기를 반환한다.|
+|void close()|스트림을 닫음으로써 사용하고 있던 자원을 반환한다.|
+|void mark(int readlimit)|현재위치를 표시해 놓는다. 후에 reset()에 의해서 표시해 놓은 위치로 다시 돌아갈 수 있다. readlimit은 되돌아갈 수 있는 byte의 수이다.|
+|boolean markSupported()|mark()와 resest()을 지원하는지를 알려준다.mark()와 reset()기능을 지원하는 것은 선택적이므로 mark()와 reset()을 사용하기 전에 markSupported()를 호출해서 지원여부를 확인해야 한다.|
+|abstract int read()|1 byte를 읽어 온다(0~255사이의 값). 더 이상 읽어올 데이터가 없으면 -1을 반환한다. abstract메서드라서 InputStream의 자손들은 자신의 상황에 알맞게 구현해야 한다.|
+|int read(byte[] b)|배열 b의 크기만큼 읽어서 배열을 채우고 읽어 온 데이터의 수를 반환한다. 반환하는 값은 항상 배열의 크기보다 작거나 같다.|
+|int read(byte[] b, int off, int len)|최대 len개의 byte를 읽어서, 배열 b의 지정된 위치(off)부터 저장한다. 실제로 읽어 올 수 있는 데이터가 len개보다 적을 수 있다.|
+|void reset()|스트림에서의 위치를 마지막으로 mark()이 호출되었던 위치로 되돌린다.|
+|long skip(long n)|스트림에서 주어진 길이(n)만큼을 건너뛴다.|
+
+
+#### OutputStream 메서드
+
+|메서드명|설명|
+|----|------|
+|void close()|입력소스를 닫음으로써 사용하고 있던 자원을 반환한다.|
+|void flush()|스트림의 버퍼에 있는 모든 내용을 출력소스에 쓴다.|
+|abstract void write(int b)|주어진 값을 출력소스에 쓴다.|
+|void write(byte[] b)|주어진 배열 b에 저장된 모든 내용을 출력소스에 쓴다|
+|void write(byte[] b, int off, int len)|주어진 배열 b에 저장된 내용 중에서 off번째 부터 len개 만큼을 읽어서 출력소스에 쓴다.|
+
+- 스트림의 종류에 따라서 mark()와 reset()을 사용하여 이미 읽은 데이터를 되돌려 다시 읽을 수 있다. 이 기능을 지원하는 스트림인지 확인하는 markSupported()를 통해서 알 수 있다.
+- 프로그램이 종료될 때, 사용하고 닫지 않은 스트림을 JVM이 자동으로 닫아 주기는 하지만, 스트림을 사용해서 모든 작업을 마치고 난 후에는 close()를 호출해서 반드시 닫아 주어야 한다.
+- ByteArrayInputStream과 같이 메모리를 사용하는 스트림과 System.in, System.out과 같은 표준 입출력 스트림은 닫아 주지 않아도 된다.
+
 
 ### ByteArrayInputStream과 ByteArrayOutputStream
+- ByteArrayInputStream, ByteArrayOutputStream은 메모리, 즉 바이트배열에 데이터를 입출력 하는데 사용되는 스트림이다.
+- 주로 다른 곳에 입출력하기 전에 데이터를 임시로 바이트배열에 담아서 변환 등의 작업을 하는데 사용된다.
+
+#### day20_21/IOEx1.java
+```
+package day20_21;
+
+import java.io.*;
+import java.util.Arrays;
+
+public class IOEx1 {
+	public static void main(String[] args) {
+		byte[] inSrc = {0,1,2,3,4,5,6,7,8,9};
+		byte[] outSrc = null;
+		
+		ByteArrayInputStream input = null;
+		ByteArrayOutputStream output = null;
+		
+		input = new ByteArrayInputStream(inSrc);
+		output = new ByteArrayOutputStream();
+		
+		int data = 0;
+		while((data = input.read()) != -1) {
+			output.write(data);
+		}
+		outSrc = output.toByteArray(); // 스트림의 내용을 byte배열로 반환한다.
+		
+		System.out.println("Input Source :" + Arrays.toString(inSrc));
+		System.out.println("Output Source :" + Arrays.toString(outSrc));
+	}
+}
+
+실행결과
+Input Source :[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+Output Source :[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+ 
+- 바이트배열은 사용하는 자원이 메모리 밖에 없으므로 가비지컬렉터에 의해 자동적으로 자원을 반환하므로  close()를 이용해서 스트림을 닫지 않아도 된다.
+- read()와 write(int b)를 사용하기 때문에 한 번에 1byte만 읽고 쓰므로 작업효율이 떨어진다.
+
+
+#### day20_21/IOEx2.java
+```
+package day20_21;
+
+import java.io.*;
+import java.util.Arrays;
+
+public class IOEx2 {
+	public static void main(String[] args) {
+		byte[] inSrc = {0,1,2,3,4,5,6,7,8,9};
+		byte[] outSrc = null;
+		byte[] temp = new byte[10];
+		
+		ByteArrayInputStream input = null;
+		ByteArrayOutputStream output = null;
+		
+		input = new ByteArrayInputStream(inSrc);
+		output = new ByteArrayOutputStream();
+		
+		input.read(temp, 0, temp.length); // 읽어온 데이터를 배열 temp에 담는다.
+		output.write(temp, 5, 5); // temp[5]부터 5개의 데이터를 write한다.
+		
+		outSrc = output.toByteArray();
+		
+		System.out.println("Input Source :" + Arrays.toString(inSrc));
+		System.out.println("temp            :" + Arrays.toString(temp));
+		System.out.println("Ouput Source :" + Arrays.toString(outSrc));
+	}
+}
+
+실행결과
+Input Source :[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+temp            :[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+Ouput Source :[5, 6, 7, 8, 9]
+```
+- byte 배열을 사용해서 한 번에 배열의 크기만큼 읽고 쓸 수 있다. 배열(temp)을 이용하면 한 번에 더 많은 물건을 옮길 수 있는 것과 같다.
+- 배열을 이용한 입출력은 작업의 효율을 증가시키므로 가능하면 입출력 대상에 따라 알맞은 크기의 배열을 사용하는 것이 좋다.
+
+ 
+#### day20_21/IOEx3.java
+```
+package day20_21;
+
+import java.io.*;
+import java.util.Arrays;
+
+public class IOEx3 {
+	public static void main(String[] args) {
+		byte[] inSrc = {0,1,2,3,4,5,6,7,8,9};
+		byte[] outSrc = null;
+		byte[] temp = new byte[4];
+		
+		ByteArrayInputStream input = null;
+		ByteArrayOutputStream output = null;
+		
+		input  = new ByteArrayInputStream(inSrc);
+		output = new ByteArrayOutputStream();
+		
+		System.out.println("Input Source :" + Arrays.toString(inSrc));
+		
+		try {
+			while(input.available() > 0) {
+				input.read(temp);
+				output.write(temp);
+				
+				outSrc = output.toByteArray();
+				printArrays(temp, outSrc);
+			}
+		} catch (IOException e) {}
+	}
+	
+	static void printArrays(byte[] temp, byte[] outSrc) {
+		System.out.println("temp          :" + Arrays.toString(temp));
+		System.out.println("Output Source :" + Arrays.toString(outSrc));
+	}
+}
+
+실행결과
+Input Source :[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+temp          :[0, 1, 2, 3]
+Output Source :[0, 1, 2, 3]
+temp          :[4, 5, 6, 7]
+Output Source :[0, 1, 2, 3, 4, 5, 6, 7]
+temp          :[8, 9, 6, 7]
+Output Source :[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 6, 7]
+```
+- read()나 write()는 IOException을 발생시킬 수 있기 때문에 try ~ catch문으로 감싸주었다.
+- available()은 블락킹(blocking)없이 읽어 올 수 있는 바이트 수를 반환한다.
+- 보다 나은 성능을 위해서 temp에 담긴 내용을 지우고 쓰는 것이 아니라 그냥 기존의 내용 위에 덮어 쓴다. 따라서 temp의 내용은 '[4,5,6,7]'이었는데, 8과 9를 읽고 난 후에는 [8,9,6,7]이 된다.
+
+- 원하는 결과를 얻기 위해서는 코드를 다음과 같이 수정해야 한다. 
+
+수정 전 
+```
+while(input.available() > 0) {
+		input.read(temp);
+		output.write(temp);
+}
+```
+
+수정 후
+```
+while(input.available() > 0) {
+	int len = input.read(temp);
+	output.write(temp, 0, len);
+}
+```
+
+#### day20_21/IOEx4.java
+```
+package day20_21;
+
+import java.io.*;
+import java.util.Arrays;
+
+public class IOEx4 {
+	public static void main(String[] args) {
+		byte[] inSrc = {0,1,2,3,4,5,6,7,8,9};
+		byte[] outSrc = null;
+		byte[] temp = new byte[4];
+		
+		ByteArrayInputStream input = null;
+		ByteArrayOutputStream output = null;
+		
+		input  = new ByteArrayInputStream(inSrc);
+		output = new ByteArrayOutputStream();
+				
+		try {
+			while(input.available() > 0) {
+				int len = input.read(temp); // 읽어 온 데이터의 개수를 반환한다.
+				output.write(temp, 0, len); // 읽어 온 만큼만 write한다.
+			}
+		} catch (IOException e) {}
+		
+		outSrc = output.toByteArray();
+				
+		System.out.println("Input Source :" + Arrays.toString(inSrc));
+		System.out.println("temp            :" + Arrays.toString(temp));
+		System.out.println("Ouput Source :" + Arrays.toString(outSrc));
+	}
+}
+
+실행결과
+Input Source :[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+temp            :[8, 9, 6, 7]
+Ouput Source :[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
 
 ### FileInputStream과 FileOutputStream
+- FileInputStream/FileOutputStream은 파일에 입출력을 하기 위한 스트림이다.
+- 실제 프로그래밍에서 많이 사용되는 스트림 중 하나이다.
+
+#### FileInputStream과 FileOutputStream의 생성자
+
+|생성자|설명|
+|----|------|
+|FileInputStream(String name)|지정한 파일이름(name)을 가진 실제 파일과 연결된 FileInputStream을 생성한다.|
+|FileInputStream(File file)|파일의 이름이 String이 아닌 File인스턴스로 지정해주어야 한다는 점을 제외하고 FileInputStream(String name)과 같다.|
+|FileInputStream(FileDescriptor fdObj)|파일 디스크립터(fdObj)로 FileInputStream을 생성한다.|
+|FileOutputStream(String name)|지정된 파일이름(name)을 가진 실제 파일과의 연결된 FileOutputStream을 생성한다.|
+|FileOutputStream(String name, boolean append)|지정된 파일이름(name)을 가진 실제 파일과 연결된 FileOutputStream을 생성한다. 두번째 인자인 append를 true로 하면 출력 시 기존의 파일내용의 마지막에 덧붙인다.false면 기존의 파일내용을 덮어쓰게 된다.|
+|FileOutputStream(File file)|파일의 이름을 String이 아닌 File인스턴스로 지정해주어야 하는 점을 제외하고 FileOutputStream(String name)과 같다.|
+FileOutputStream(File file, boolean append)|파일의 이름을 String이 아닌 File인스턴스로 지정해주어야 하는 점을 제외하고 FileOutputStream(String name, boolean append)과 같다.|
+|FileOutputStream(FileDescriptor fdObj)|파일 디스크립터(fdObj)로 FileOutputStream을 생성한다.|
+
+#### day20_21/FileViewer.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class FileViewer {
+	public static void main(String[] args) throws IOException {
+		FileInputStream fis = new FileInputStream(args[0]);
+		int data = 0;
+		
+		while((data = fis.read()) != -1) {
+			char c = (char)data;
+			System.out.print(c);
+		}
+		
+		fis.close();
+	}
+}
+
+실행결과
+D:\javaEx\lecture\src>java day20_21.FileViewer D:\javaEx\lecture\src\day20_21\FileViewer.java
+package day20_21;
+
+import java.io.*;
+
+public class FileViewer {
+        public static void main(String[] args) throws IOException {
+                FileInputStream fis = new FileInputStream(args[0]);
+                int data = 0;
+
+                while((data = fis.read()) != -1) {
+                        char c = (char)data;
+                        System.out.print(c);
+                }
+
+                fis.close();
+        }
+}
+```
+> read()가 한 번에 1byte씩 파일로부터 데이터를 읽어 들이긴 하지만, 데이터의 범위가 십진수로 0~255범위의 정수값이고, 또 읽을 수 있는 입력값이 더이상 없음을 알릴 수 있는 값(-1)도 필요하다. 그래서 다소 크긴 하지만 정수형 중에서는 연산이 가장 효율적이고 빠른 int형 값을 반환하도록 한 것이다.
+
+#### day20_21/FileCopy.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class FileCopy {
+	public static void main(String[] args) {
+		try {
+			FileInputStream fis = new FileInputStream(args[0]);
+			FileOutputStream fos = new FileOutputStream(args[1]);
+			
+			int data = 0;
+			while((data=fis.read()) != -1) {
+				fos.write(data);;  // void write(int b)
+			}
+			fis.close();
+			fos.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+실행결과
+java day20_21/FileCopy.java day20_21/FileCopy.java D:\javaEx\lecture\src\day20_21\FileCopy.bak
+
+```
+> 텍스트파일을 다루는 경우에는 FileInputStream/FileOutputStream보다 문자기반의 스트림인 FileReader/FileWriter를 사용하는 것이 더 좋다.
 
 
 ## 바이트기반의 보조스트림
 
 ### FilterInputStream과 FilterOutputStream
+- FilterInputStream/FilterOutputStream은 InputStream/OutputStream의 자손이면서 모든 보조스트림의 조상이다.
+- 보조스트림은 자체적으로 입출력을 수행할 수 없기 때문에 기반스트림을 필요로 한다.
+```
+protected FilterInputStream(InputStream in)
+public FilterOutputStream(OutputStream out)
+```
+
+- FilterInputStream/FilterOutputStream의 모든 메서드는 단순히 기반스트림의 메서드를 그대로 호출할 뿐 FilterInputStream/FilterOutputStream자체로는 아무런 일도 하지 않는다. 
+- FilterInputStream/FilterOutputStream은 상속을 통해 원하는 작업을 수행하도록 읽고 쓰는 메서드를 오버라이딩해야 한다.
+
+- 생성자 FilterInputStream(InputStream in)은 접근제어가가 protected이기 때문에 FilterInputStream의 인스턴스를 생성해서 사용할 수 없고 상속을 통해서 오버라이딩 되어야 한다. 
+-FilterInputStream/FilterOutputStream을 상속받아서 기반스트림에 보조기능을 추가한 보조스트림 클래스는 다음과 같다.
+
+- **FilterInputStream의 자손** : BufferedInputStream, DataInputStream, PushbackInputStream 등 
+- **FilterOutputStream의 자손** : BufferedOutputStream, DataOutputStream, PrintStream 등
+
 
 ### BufferedInputStream과 BufferedOutputStream
 
