@@ -153,7 +153,84 @@ t1.start(); // IllegalThreadStateException 예외발생
 ### main 쓰레드
 - main메서드의 작업을 수행하는 것도 쓰레드이며, 이를 main쓰레드라고 한다.
 - main메서드가 수행를 마쳤다하더라도 다른 쓰레드가 아직 작업을 마치지 않은 상태라면 프로그램이 종료되지 않는다.
-- 실행중인 사용자 쓰레드가 하나도 없을 때 프로그램은종료된다.
+- ***실행중인 사용자 쓰레드가 하나도 없을 때 프로그램은 종료된다.**
+
+
+#### day17/ThreadEx2.java
+```
+package day17;
+
+class ThreadEx2_1 extends Thread {
+	public void run() {
+		throwException();
+	}
+	
+	public void throwException() {
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+public class ThreadEx2 {
+	public static void main(String[] args) throws Exception {
+		ThreadEx2_1 t1 = new ThreadEx2_1();
+		t1.start();
+	}
+}
+
+실행결과
+java.lang.Exception
+	at day17.ThreadEx2_1.throwException(ThreadEx2.java:10)
+	at day17.ThreadEx2_1.run(ThreadEx2.java:5)
+```
+
+- 호출스택의 첫 번쨰 메서드가 main 메서드가 아니라 run메서드이다.
+- 한 쓰레드가 예외가 발생해서 종료되어도 다른 쓰레드의 실행에는 영향을 미치지 않는다.
+- main쓰레드 호출스택이 없는 이유는 main쓰레드가 종료되었기 때문이다.
+
+![start 실행](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/17%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%93%B0%EB%A0%88%EB%93%9C/images/start_%EC%8B%A4%ED%96%89.png)
+
+
+
+#### day17/ThreadEx3.java
+```
+package day17;
+
+
+class ThreadEx3_1 extends Thread {
+	public void run() {
+		throwException();
+	}
+	
+	public void throwException() {
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+public class ThreadEx3 {
+	public static void main(String[] args) throws Exception {
+		ThreadEx3_1 t1 = new ThreadEx3_1();
+		t1.run();
+	}
+}
+
+실행결과
+java.lang.Exception
+	at day17.ThreadEx3_1.throwException(ThreadEx3.java:11)
+	at day17.ThreadEx3_1.run(ThreadEx3.java:6)
+	at day17.ThreadEx3.main(ThreadEx3.java:21)
+	
+```
+- 단순히 ThreadEx3_1 클래스의 run()이 호출되었고 쓰레드가 새로 생성되지 않았다.
+- main쓰레드의 호출 스택에서 run()이 호출되었고  main메서드가 포함되어 있다.
+![run 실행](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/17%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%93%B0%EB%A0%88%EB%93%9C/images/run_%EC%8B%A4%ED%96%89.png)
 
 
 ## 싱글쓰레드와 멀티쓰레드
