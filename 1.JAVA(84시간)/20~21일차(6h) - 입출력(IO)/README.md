@@ -455,8 +455,218 @@ public FilterOutputStream(OutputStream out)
 
 
 ### BufferedInputStream과 BufferedOutputStream
+- BufferedInputStream/BufferedOutputStream은 스트림의 입출력 효율을 높이기 위해 버퍼를 사용하는 보조스트림이다.
+- 한 바이트씩 입출력하는 것 보다는 버퍼(바이트배열)를 이용해서 한 번에 여러 바이트를 입출력하는 것이 빠르기 때문에 대부분의 입출력 작업에 사용된다.
+
+#### BufferedInputStream의 생성자
+
+|생성자|설명|
+|----|------|
+|BufferedInputStream(InputStream in, int size)|주어진 InputStream인스턴스를 입력소스(input source)로 하여 지정된 크게(byte단위)의 버퍼를 갖는 BufferedInputStream인스턴스를 생성한다.|
+|BufferedInputStream(InputStream in)|주어진 InputStream인스턴스를 입력소스(input source)로 하여 버퍼의 크기를 지정해주지 않으므로 기본적으로 8192byte 크기의 버퍼를 갖게 된다.|
+
+
+#### BufferedOutputStream의 생성자와 메서드
+
+|메서드/생성자|설명|
+|----|------|
+|BufferedOutputStream(OutputStream out, int size)|주어진 OutputStream인스턴스를 출력소스(output source)로 하여 지정된 크기(단위byte)의 버퍼를 갖는 BufferedOutputStream인스턴스를 생성한다.|
+|BufferedOutputStream(OutputStream out)|주어진 OutputStream인스턴스를 출력소스(output source)로 하여 버퍼의 크기를 지정해주지 않으므로 기본적으로 8192byte크기와 버퍼를 갖게된다.|
+|flush()|버퍼의 모든 내용을 출력소스에 출력한 다음, 버퍼를 비운다.|
+|close()|flush()를 호출해서 버퍼의 모든 내용을 출력소스에 출력하고, BufferedOutputStream인스턴스가 사용하던 모든 자원을 반환한다.|
+
+- 버퍼가 가득 찼을 때만 출력소스에 출력을 하기 때문에, 마지막 출력부분이 출력소스에 쓰이지 못하고 BufferedOutputStream의 버퍼에 남아있는 채로 프로그램이 종료될 수 있다는 점을 주의해애 한다.
+- 그래서 프로그램에서 모든 출력작업을 마친 후 BufferedOutputStream에 close()나 flush()를 호출해서 마지막에 버퍼에 있는 모든 내용이 출력소스에 출력되도록 해야 한다.
+> BufferedOuptutStream의 close()는 flush()를 호출하여 버퍼의 내용을 출력스트림에 쓰도록 한 후, BufferedOutputStream인스턴스의 참조변수에 null을 지정함으로써 사용하던 자원들이 반환되게 한다.
+
+#### day20_21/BufferedOutputStreamEx1.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class BufferedOutputStreamEx1 {
+	public static void main(String[] args) {
+		try {
+			FileOutputStream fos = new FileOutputStream("123.txt");
+			
+			// BufferedOutputStream의 버퍼크기를 5로 한다.
+			BufferedOutputStream bos = new BufferedOutputStream(fos, 5);
+			
+			// 파일 123.txt에 1 부터 9까지 출력한다.
+			for(int i = '1'; i <= '9'; i++) {
+				bos.write(i);
+			}
+			
+			//fos.close();
+			bos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+```
 
 ### DataInputStream과 DataOutputStream
+- DataInputStream/DataOutputStream도 각각 FilterInputStream/FilterOutputStream의 자손이며 DataInputStream은 DataInput인터페이스를, DataOutputStream은 DataOutput인터페이스를 각각 구현하였기 때문에, 데이터를 읽고 쓰는데 있어서 byte단위가 아닌, 8가지 기본 자료형의 단위로 읽고 쓸 수 있다는 장점이 있다.
+- DataOutputStream이 출력하는 형식은 각 기본 자료형 값을 16진수로 표현하여 저장한다. 예를 들어 int값을 출력한다면 4byte의 16진수로 출력된다.
+- 각 자료형의 크기가 다르므로, 출력한 데이터를 다시 읽어 올 때는 출력했을 때의 순서를 염두에 두어야 한다.
+
+#### DataInputStream의 생성자와 메서드
+
+|메서드/생성자|설명|
+|----|------|
+|DataInputStream(InputStream in)|주어진 InputStream인스턴스를 기반스트림으로 하는 DataInputStream인스턴스를 생성한다.|
+|boolean readBoolean()<br>byte readByte()<br>char readChar()<br>short readShort()<br>int readInt()<br>long readLong()<br>float readFloat()<br>double readDouble()<br>int readUnsignedByte()<br>int readUnsignedByte()<br>int readUnsignedShort()|각 타입에 맞게 값을 읽어온다.<br>더 이상 읽을 값이 없으면 EOFException을 발생시킨다.|
+|void readFully(byte[] b)<br>void readFully(byte[] b, int off, int len)|입력스트림에서 지정된 배열의 크기만큼 또는 지정된 위치에서 len만큼 데이터를 읽어온다. 파일의 끝에 도달하면 EOFException이 발생하고, I/O에러가 발생하면 IOException이 발생한다.|
+|String readUTF()|UTF-8형식으로 쓰여진 문자를 읽는다.<br>더 이상 읽을 값이 없으면 EOFException이 발생한다.|
+|static String readUTF(DataInput in)|입력스트림(in)에서 UTF-8형식의 유니코드를 읽어온다.|
+|int skipBytes(int n)|현재 읽고 있는 위치에서 지정된 숫자(n) 만크을 건너뛴다.|
+
+
+#### DataOutputStream의 생성자와 메서드
+
+|메서드/생성자|설명|
+|----|------|
+|DataOutputStream(OutputStream out)|주어진 OutputStream인스턴스를 기반스트림으로 하는 DataOutputStream인스턴스를 생성한다.|
+|void writeBoolean(boolean b)<br>void writeByte(int b)<br>void writeChar(int c)<br>void writeChars(String s)<br>void writeShort(int s)<br>void writeInt(int i)<br>void writeLong(long l)<br>void writeFloat(float f)<br>void writeDouble(double d)|각 자료형에 알맞는 값들을 출력한다.|
+|void writeUTF(String s)|UTF형식으로 문자를 출력한다.|
+|void writeChars(String s)|주어진 문자열을 출력한다. writeChar(int c)메서드를 여러번 호출한 결과와 같다.|
+|int size()|지금까지 DataOutputStream에 쓰여진 byte의 수를 알려 준다.|
+
+#### day20_21/DataOutputStreamEx1.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class DataOutputStreamEx1 {
+	public static void main(String[] args) {
+		FileOutputStream fos = null;
+		DataOutputStream dos = null;
+		
+		try {
+			fos = new FileOutputStream("sample.dat");
+			dos = new DataOutputStream(fos);
+			dos.writeInt(10);
+			dos.writeFloat(20.0f);
+			dos.writeBoolean(true);
+			
+			dos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+```
+
+#### day20_21/DataOutputStreamEx2.java
+```
+package day20_21;
+
+import java.io.*;
+import java.util.Arrays;
+
+public class DataOutputStreamEx2 {
+	public static void main(String[] args) {
+		ByteArrayOutputStream bos = null;
+		DataOutputStream dos = null;
+		
+		byte[] result = null;
+		
+		try {
+			bos = new ByteArrayOutputStream();
+			dos = new DataOutputStream(bos);
+			dos.writeInt(10);
+			dos.writeFloat(20.0f);
+			dos.writeBoolean(true);
+			
+			result = bos.toByteArray();
+			
+			String[] hex = new String[result.length];
+			
+			for(int i = 0; i < result.length; i++) {
+				if (result[i] < 0) {
+					hex[i] = String.format("%02x", result[i]+256);
+				} else {
+					hex[i] = String.format("%02x", result[i]);
+				}
+			}
+			
+			System.out.println("10진수 :" + Arrays.toString(result));
+			System.out.println("16진수 :" + Arrays.toString(hex));
+			
+			dos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+실행결과
+10진수 :[0, 0, 0, 10, 65, -96, 0, 0, 1]
+16진수 :[00, 00, 00, 0a, 41, a0, 00, 00, 01]
+```
+
+#### day20_21/DataInputStreamEx1.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class DataInputStreamEx1 {
+	public static void main(String[] args) {
+		try {
+			FileInputStream fis = new FileInputStream("sample.dat");
+			DataInputStream dis = new DataInputStream(fis);
+			
+			System.out.println(dis.readInt());
+			System.out.println(dis.readFloat());
+			System.out.println(dis.readBoolean());
+			dis.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+실행결과
+10
+20.0
+true
+```
+>여러종류의 자료형으로 출력한 경우, 읽을 때는 반드시 쓰인 순서대로 읽어야 한다.
+#### day20_21/DataOuputStreamEx3.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class DataOuputStreamEx3 {
+	public static void main(String[] args) {
+		int[] score = {100, 90, 95, 85, 50};
+		
+		try {
+			
+			FileOutputStream fos = new FileOutputStream("score.dat");
+			DataOutputStream dos = new DataOutputStream(fos);
+			
+			for(int i=0; i<score.length; i++) {
+				dos.writeInt(score[i]);
+			}
+			
+			dos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+```
+
+#### day20_21/DataInputStreamEx2.java
+
+
 
 ### SequenceInputStream
 
