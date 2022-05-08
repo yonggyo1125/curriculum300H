@@ -1196,10 +1196,143 @@ public class InputStreamReaderEx {
 ## 표준입출력과 File
 
 ### 표준입출력 - System.in, System.out, System.err
+- 표준 입출력은 콘솔(console, 도스창)을 통한 데이터 입력과 콘솔로의 데이터 출력을 의미 한다.
+- 자바에서는 표준 입출력(standard I/O)을 위해 3가지 입출력 스트림, System.in, System.out, System.err을 제공하는데, 이 들은 자바 애플리케이션의 실행과 동시에 사용할 수 있도록 생성되기 때문에 개발자가 별도로 스트림을 생성하는 코드를 작성하지 않고도 사용이 가능하다.
+- 자바를 처음 시작할 때부터 지금까지 줄 곧 사용해온 System.out을 스트림 생성없이 사용할 수 있었던 것이 바로 이러한 이유 때문이다.
+
+- **System.in** : 콘솔로부터 데이터를 입력받는데 사용 (**InputStream**)
+- **System.out** : 콘솔로 데이터를 출력하는데 사용 (**PrintStream**)
+- **System.err** : 콘솔로 데이터를 출력하는데 사용 (**PrintStream**)
+
+- in, out, err는 System클래스에 선언된 클래스변수(static변수)이다.
+- 선언부만을 봐서는 out, err, in의 타입은 InputStream과 PrintStream이지만 실제로는 버퍼를 이용하는 BufferedInputStream과 BufferedOutputStream의 인스턴스를 사용한다.
+
+#### day20_21/StandardIOEx1.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class StandardIOEx1 {
+	public static void main(String[] args) {
+		try {
+			int input = 0;
+			while((input = System.in.read()) != -1) {
+				System.out.println("input :" + input + ", (char)input :" + (char)input);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+실행결과
+hello
+input :104, (char)input :h
+input :101, (char)input :e
+input :108, (char)input :l
+input :108, (char)input :l
+input :111, (char)input :o
+input :13, (char)input :
+
+input :10, (char)input :
+
+```
+- 마지막 2개 출력 결과물이 비어 있는 상태로 출력이 되고 있는데, 실제로는 두개의 특수문자 '\r'과 '\n'이 입력된 것으로 간주된다.
+- '\r'은 캐리지리턴(carriage return), 즉 커서를 현재 라인의 첫 번째 컬럼으로 이동시키고, '\n'은 커서를 다름줄로 이동시키는 줄바꿈(new line)을 한다.
+- 그래서 Enter키를 누르면, 캐리지리턴과 줄바꿈이 수행되어 다음 줄의 첫 번째 컬럼으로 커서가 이동하는 것이다.
+
+- 여기에서 한 가지 문제는 Enter키도 사용자 입력으로 간주되어 매 입력때마다 '\r'과 '\n'이 붙기 때문에 이 들을 제거해 주어야 하는 불편한 점이 있다.
+- 이러한 불편함을 제거하려면 System.in에 bufferedReader를 이용해서 readLine()을 통해 라인단위로 데이터를 입력받으면 된다.
+
 
 ### 표준입출력의 대상변경 - setOut(), setErr(), setIn()
+setIn(), setOut(), setErr()을 사용하면 입출력을 콘솔 이외에 다른 입출력 대상으로 변경하는 것이 가능하다.
+
+|메서드|설명|
+|------|--------|
+|static void setOut(PrintStream out)|System.out의 출력을 지정된  PrintStream으로 변경|
+|static void setErr(PrintStream err)|System.err의 출력을 지정한 PrintStream으로 변경|
+|static void setIn(InputStream in)|System.in의 입력을 지정한 InputStream으로 변경|
+
+
+#### day20_21/StandardIOEx2.java
+```
+package day20_21;
+
+public class StandardIOEx2 {
+	public static void main(String[] args) {
+		System.out.println("out : Hello World!");
+		System.err.println("err : Hello World!");
+	}
+}
+
+실행결과
+out : Hello World!
+err : Hello World!
+```
+
+#### day20_21/StandardIOEx3.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class StandardIOEx3 {
+	public static void main(String[] args) {
+		PrintStream ps = null;
+		FileOutputStream fos = null;
+		
+		try {
+			fos = new FileOutputStream("test.txt");
+			ps = new PrintStream(fos);
+			System.setOut(ps); // System.out의 출력대상을 test.txt파일로 변경
+		} catch (FileNotFoundException e) {
+			System.err.println("File not found.");
+		}
+		
+		System.out.println("Hello by System.out");
+		System.err.println("Hello by System.err");
+	}
+}
+
+
+실행결과
+Hello by System.err
+
+test.txt
+Hello by System.out
+```
+
 
 ### RandomAccessFile
+- 자바에서는 입력과 출력이 각각 분리되어 별도로 작업을 하도록 설계되어 있는데 RandomAccessFile만은 하나의 클래스로 파일에 대한 입력과 출력을 모두 할 수 있도록 되어 있다.
+- InputStream이나 OutputStream으로부터 상속받지 않고 DataInput인터페이스와 DataOutput인터페이스를 모두 구현했기 때문에 읽기와 쓰기가 모두 가능하다 
+- 사실 DataInputStream은 DataInput인터페이스를, DataOutputStream은 DataOutput인터페이스를 구현했다. 이 두 클래스의 기본 자료형(primitive data type)을 읽고 쓰기 위한 메서드들은 모두 이 2개의 인터페이스에 정의되어 있는 것들이다.
+- 따라서 RandomAccessFile클래스도 DataInputStream과 DataOutputStream처럼 기본자료형 단위로 데이터를 읽고 쓸 수 있다.
+- RandomAccessFile클래스의 가장 큰 장점은 파일의 어느 위치에나 읽기/쓰기가 가능하다는 것이다. 다른 입출력 클래스들은 입력소스에 순차적으로 읽기/쓰기를 하기 때문에 읽기와 쓰기가 제한적인데 반해서 RandomAccessFile클래스는 파일에 읽고 쓰는 위치에 제한이 없다.
+- 내부적으로 파일 포인터를 사용하는데, 입출력 작업이 수행되는 곳이 바로 파일 포인터가 위치한 곳이 된다.
+- 파일 포인터의 위치는 파일의 제일 첫 부분(0부터 시작)이며, 읽기 또는 쓰기를 수행할때 마다 작업이 수향된 다음 위치로 이동하게 된다.
+- 순차적으로 읽기나 쓰기를 한다면 , 파일 포인터를 이동시키기 위해 별도의 작업이 필요하지 않지만 파일의 임의의 위치에 있는 내용에 대해서 작업하고자 한다면, 먼저 파일 포인터를 원하는 위치로 옮긴 다음 작업을 해야 한다.
+- getFilePointer() : 현재 작업중인 파일에서 파일 포인터의 위치를 알고 싶을 때 사용
+- seek(long pos), skipBytes(int n) : 파일 포인터의 위치를 옮기기 위해서 사용 
+
+> 사실 모든 입출력에 사용되는 클래스들은 입출력 시 다음 작업이 이루어질 위치를 저장하고 있는 포인터를 내부적으로 갖고 있다. 다만 내부적으로 사용될 수 있기 때문에 작업자가 포인터의 위치를 마음대로 변경할 수 없다는 것이 RandomAccessFile과 다른 점이다.
+
+#### RandomAccessFile의 생성자와 메서드
+
+|생성자/메서드|설명|
+|------|--------|
+|RandomAccessFile(File file, String mode)<br>RandomAccessFile(String fileName, String mode)|주어진 file에 읽기 또는 읽기와 쓰기를 하기 위한 RandomAccessFile인스턴스를 생성한다. mode의 값은 "r", "rw", "rws", "rwd"가 지정가능하다.<br>"r" - 파일로부터 읽기(r)만을 수행할 때<br>"rw" - 파일에 읽기(r)와 쓰기(w)<br>"rws"와 "rwd"는 기본적으로 "rw"와 같은데, 출력내용이 파일에 지연 없이 바로 쓰이게 한다. "rwd"는 파일 내용만, "rws"는 파일 메타정보도 포함|
+|FileChannel getChannel()|파일의 파일 채널을 반환한다.|
+|FileDescriptor getFD()|파일의 파일 디스크립터를 반환|
+|long getFilePointer()|파일 포인터의 위치를 알려 준다.|
+|long length()|파일의 크기를 얻을 수 있다.(단위 byte)|
+|void seek(long pos)|파일 포인터의 위치를 변경한다. 위치는 파일의 첫 부분부터 pos크기만큼 떨어진 곳이다(단위 byte)|
+|void setLength(long newLength)|파일의 크기를 지정한 길이로 변경한다.(byte 단위)|
+|int skipBytes(int n)|지정된 수만큼의  byte를 건너뛴다.|
+
 
 ### File
 
