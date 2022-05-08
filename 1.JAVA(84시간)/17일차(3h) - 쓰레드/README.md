@@ -239,17 +239,212 @@ java.lang.Exception
 - 하나의 쓰레드로 두개의 작업을 수행한 시간과 두개의 쓰레드로 두 개의 작업을 수행한 시간은 거의 같다.
 - 오히려 두 개의 쓰레드로 작업한 시안이 싱글쓰레드로 작업한 시간보다 더 걸리게 되는데, 쓰레드간의 작업 전환(context switching)에 시간이 걸리기 때문이다.
 - 작업 전환을 할 때는 현재 진행 중인 작업의 상태, 다음에 실행할 위치 등의 정보를 저장하고 읽어 오는 시간이 소요된다.
+- 단순히 CPU만 사용하는 계산작업이라면 오히려 멀티쓰레드보다 싱글쓰레드로 프로그래밍하는 것이 더 효율적이다.
 
 ![싱글쓰레드 프로세스와 멀티쓰레드 프로세스의 비교](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/17%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%93%B0%EB%A0%88%EB%93%9C/images/%EC%8B%B1%EA%B8%80%EC%93%B0%EB%A0%88%EB%93%9C_%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%EC%99%80_%EB%A9%80%ED%8B%B0%EC%93%B0%EB%A0%88%EB%93%9C_%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4_%EB%B9%84%EA%B5%90.png)
-
 
 >프로세스 또는 쓰레드간의 작업 전환을 컨텍스트 스위칭(context switching)이라고 한다.
 
 
+#### day17/ThreadEx4.java
+```
+package day17;
+
+public class ThreadEx4 {
+	public static void main(String[] args) {
+		long startTime = System.currentTimeMillis();
+		
+		for(int i = 0; i < 300; i++) {
+			System.out.printf("%s", new String("-"));
+		}
+		
+		System.out.print("소요시간1:" + (System.currentTimeMillis() - startTime));
+		
+		for(int i = 0; i < 300; i++) {
+			System.out.printf("%s", new String("-"));
+		}
+		
+		System.out.print("소요시간2:" + (System.currentTimeMillis() - startTime));
+	}
+}
+
+실행결과
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------소요시간1:62------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------소요시간2:78
+```
+#### day17/ThreadEx5.java
+```
+package day17;
+
+class ThreadEx5_1 extends Thread {
+	public void run() {
+		for(int i = 0; i < 300; i++) {
+			System.out.printf("%s", new String("-"));
+		}
+		
+		System.out.print("소요시간2:" + (System.currentTimeMillis() - ThreadEx5.startTime));
+	}
+}
+
+public class ThreadEx5 {
+	static long startTime = 0;
+	
+	public static void main(String[] args) {
+		ThreadEx5_1 th1 = new ThreadEx5_1();
+		th1.start();
+		startTime = System.currentTimeMillis();
+		
+		for(int i = 0; i < 300; i++) {
+			System.out.printf("%s", new String("-"));
+		}
+		
+		System.out.print("소요시간1:" + (System.currentTimeMillis() - startTime));
+	}
+}
+
+실행시간
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------소요시간1:74--------------------소요시간2:76
+```
+
+#### day17/ThreadEx6.java
+```
+package day17;
+
+import javax.swing.JOptionPane;
+
+public class ThreadEx6 {
+	public static void main(String[] args) throws Exception {
+		String input = JOptionPane.showInputDialog("아무 값이나 입력하세요.");
+		System.out.println("입력하신 값은 " + input + "입니다.");
+		
+		for(int i = 10; i > 0; i--) {
+			System.out.println(i);
+			try {
+				Thread.sleep(1000); // 1초간 시간을 지연한다.
+			} catch (InterruptedException e) {}
+		}
+	}
+}
+
+실행결과
+입력하신 값은 abcd입니다.
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+```
+
+#### day17/ThreadEx7.java
+```
+package day17;
+
+import javax.swing.JOptionPane;
+
+class ThreadEx7_1 extends Thread {
+	public void run() {
+		for(int i = 10; i > 0; i--) {
+			System.out.println(i);
+			
+			try {
+				sleep(1000);
+			} catch (InterruptedException e) {}
+		}
+	}
+}
+
+public class ThreadEx7 {
+	public static void main(String[] args) throws Exception {
+		ThreadEx7_1 th1 = new ThreadEx7_1();
+		th1.start();
+		
+		String input = JOptionPane.showInputDialog("아무 값이나 입력하세요.");
+		System.out.println("입력하신 값은 " + input + "입니다.");
+	}
+}
+
+실행결과
+10
+9
+8
+입력하신 값은 abcd입니다.
+7
+6
+5
+4
+3
+2
+1
+```
 
 ## 쓰레드의 우선순위
+- 쓰레드는 우선순위(priority)라는 속성을 가지고 있는데, 이 우선순위의 값에 따라 쓰레드가 얻는 실행시간이 달라진다.
+- 쓰레드가 수행하는 작업의 중요도에 따라 쓰레드의 우선순위를 서로 다르게 지정하여 특정 쓰레드가 더 많은 작업시간을 갖도록 할 수 있다.
+
+### 쓰레드 우선순위 지정하기
+```
+void setPriority(int newPriority)   // 쓰레드의 우선순위를 지정한 값으로 변경한다. 
+int getPriority()   // 쓰레드와 우선순위를 반환한다.
+
+public static final int MAX_PRIORITY = 10; // 최대 우선순위
+public static final int MIN_PRIORITY = 1;  // 최소 우선순위
+public static final int NORM_PRIORITY = 5;  // 보통 우선순위
+```
+- 쓰레드가 가질 수 있는 우선순위 범위는 1~10이며 숫자가 높을수록 우선순위가 높다
+- 쓰레드의 우선순위는 쓰레드를 생성한 쓰레드로부터 상속받는다.
+- main메서드를 수행하는 쓰레드는 우선순위가 5이므로 main메서드내에서 생성하는 쓰레드의 우선순위는 자동적으로 5가 된다.
+- 쓰레드의 우선순위는 쓰레드를 실행하기 전에 변경할 수 있다.
+
+#### day17/ThreadEx8.java
+```
+package day17;
+
+class ThreadEx8_1 extends Thread {
+	public void run() {
+		for(int i = 0; i < 300; i++) {
+			System.out.print("-");
+			for(int x=0; x < 10000000; x++);
+		}
+	}
+}
+
+class ThreadEx8_2 extends Thread {
+	public void run() {
+		for(int i = 0; i < 300; i++) {
+			System.out.print("|");
+			for(int x=0; x < 10000000; x++);
+		}
+	}
+}
+
+public class ThreadEx8 {
+	public static void main(String[] args) {
+		ThreadEx8_1 th1 = new ThreadEx8_1();
+		ThreadEx8_2 th2 = new ThreadEx8_2();
+		
+		th2.setPriority(7);
+		
+		System.out.println("Priority of th1(-) : " + th1.getPriority());
+		System.out.println("Priority of th2(|) : " + th2.getPriority());
+		th1.start();
+		th2.start();
+	}
+}
+
+실행결과
+Priority of th1(-) : 5
+Priority of th2(|) : 7
+-|-|-------------------------------------------------------------------------|||||||||||||||||||||||||||||||||||||||||||||||||||----------------------------------------------------------||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||----||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||----------------|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||---------------------------------------------------------------------------------------------------------------------------------------------------
+```
+- 우선순위가 높은 th2의 실행시간이 th1에 비해 상당히 늘어난 것을 알 수 있다.
+
 
 ## 쓰레드 그룹(thread group)
+
 
 ## 데몬 쓰레드(daemon thread)
 
@@ -269,6 +464,7 @@ java.lang.Exception
 
 
 ## 쓰레드의 동기화
+
 ### synchronized를 이용한 동기화
 
 ### volatile
