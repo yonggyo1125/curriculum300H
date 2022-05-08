@@ -665,12 +665,238 @@ public class DataOuputStreamEx3 {
 ```
 
 #### day20_21/DataInputStreamEx2.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class DataInputStreamEx2 {
+	public static void main(String[] args) {
+		int sum = 0;
+		int score = 0;
+		
+		FileInputStream fis = null;
+		DataInputStream dis = null;
+		
+		try {
+			fis = new FileInputStream("score.dat");
+			dis = new DataInputStream(fis);
+			while(true) {
+				score = dis.readInt();
+				System.out.println(score);
+				sum += score;
+			}
+		} catch (EOFException e) {
+			System.out.println("점수의 총합은 " + sum + "입니다.");
+		} catch (IOException ie) {
+			ie.printStackTrace();
+		} finally {
+			try {
+				if (dis != null)
+					dis.close();
+			} catch (IOException ie) {
+				ie.printStackTrace();
+			}
+		}
+	}
+}
+
+실행결과
+100
+90
+95
+85
+50
+점수의 총합은 420입니다.
+```
+- DataInputStream의 readInt()와 같이 데이터를 읽는 메서드는 더 이상 읽을 데이터가 없으면 EOFException을 발생시킨다. 그래서 다른 입력 스트림들과는 달리 무한 반복문과 EOFException을 처리하는 catch문을 이용해서 데이터를 읽는다.
+- while문으로 작업을 마친 후에 스트림을 닫아줘야 하는 데, while문이 무한 반복문이기 때문에 finally 블럭에서 스트림을 닫도록 처리하였다.
+- 참조변수 dis가 null일때 close()를 호출하면 NullPointException이 발생하므로 if문을 사용해서 dis가 null인지 체크한 후에 close()를 호출해야 한다. 그리고 'close()'는 IOException을 발생시킬 수 있으므로 try~catch블럭으로 감싸주어야 한다.
 
 
+- JDK1.7부터는 **try-with-resources**문을 이용해서 close()를 직접 호출하지 않아도 자동호출되도록 할 수 있다(AutoCloseable 인터페이스의 close() 구현)
+
+#### day20_21/DataInputStreamEx3.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class DataInputStreamEx3 {
+	public static void main(String[] args) {
+		int sum = 0;
+		int score = 0;
+		
+		try (FileInputStream fis = new FileInputStream("score.dat");
+			DataInputStream dis = new DataInputStream(fis)) {
+			
+			while(true) {
+				score = dis.readInt();
+				System.out.println(score);
+				sum += score;
+			}
+			
+		} catch(EOFException e) {
+			System.out.println("점수의 총합은 " + sum + "입니다.");
+		} catch (IOException ie) {
+			ie.printStackTrace();
+		}
+	}
+}
+
+실행결과
+100
+90
+95
+85
+50
+점수의 총합은 420입니다.
+```
 
 ### SequenceInputStream
+SequenceInputStream은 여러 개의 입력스트림을 연속적으로 연결해서 하나의 스트림으로부터 데이터를 읽는 것과 같이 처리할 수 있도록 도와준다.
+
+#### SequenceInputStream의 생성자
+
+|메서드/생성자|설명|
+|----|------|
+|SequenceInputStream(Enumeration e)|Enumeration에 저장된 순서대로 입력스트립을 하나의 스트림으로 연결한다.|
+|SequenceInputStream(InputStream s1, InputStream s2)|두 개의 입력스트림을 하나로 연결한다.|
+
+#### 사용 예1
+```
+Vector files = new Vector();
+files.add(new FileInputStream("file.001"));
+files.add(new FileInputStream("file.002"));
+SequenceInputStream in = new SequenceInputStream(files.elements());
+```
+
+#### 사용 예2
+```
+FileInputStream file1 = new FileInputStream("file.001");
+FileInputStream file2 = new FileInputStream("file.002");
+SequenceInputStream in = new SequenceInputStream(file1, file2);
+```
+
+#### day20_21/SequenceInputStreamEx.java
+```
+package day20_21;
+
+import java.io.*;
+import java.util.*;
+
+public class SequenceInputStreamEx {
+	public static void main(String[] args) {
+		byte[] arr1 = {0,1,2};
+		byte[] arr2 = {3,4,5};
+		byte[] arr3 = {6,7,8};
+		byte[] outSrc = null;
+		
+		Vector v = new Vector();
+		v.add(new ByteArrayInputStream(arr1));
+		v.add(new ByteArrayInputStream(arr2));
+		v.add(new ByteArrayInputStream(arr3));
+		
+		SequenceInputStream input = new SequenceInputStream(v.elements());
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		
+		int data = 0;
+		
+		try {
+			while((data = input.read()) != -1) {
+				output.write(data); // void write(int b)
+			}
+		} catch (IOException e) {}
+		
+		outSrc = output.toByteArray();
+		
+		System.out.println("Input Source1  :" + Arrays.toString(arr1));
+		System.out.println("Input Source2  :" + Arrays.toString(arr2));
+		System.out.println("Input Source3  :" + Arrays.toString(arr3));
+		System.out.println("Output Source  :" + Arrays.toString(outSrc));
+	}
+}
+
+
+실행결과
+Input Source1  :[0, 1, 2]
+Input Source2  :[3, 4, 5]
+Input Source3  :[6, 7, 8]
+Output Source  :[0, 1, 2, 3, 4, 5, 6, 7, 8]
+```
 
 ### PrintStream
+- PrintStream은 데이터를 기반스트림에 다양한 형태로 출력할 수 있는 print, println, printf 같은 메서드를 오버로딩하여 제공한다.
+- PrintStream은 데이터를 적절한 문자로 출력하는 것이기 때문에 문자기반 스트림의 역할을 수향한다. 그래서 JDK1.1에서 부터 PrintStream보다 향상된 기능의 문자기반 스트림인 PrintWriter가 추가되었으나 그 동안 매우 빈번히 사용되던 System.out이  PrintStream이다 보니 둘 다 사용할 수 밖에 없게 되었다.
+- PrintStream과 PrintWriter는 거의 같은 기능을 가지고 있지만 PrintWriter가 PrintStream에 비해 다양한 언어의 문자를 처리하는데 적합하기 때문에 가능하면 PrintWriter를 사용하는 것이 좋다.
+>PrintStream은 우리가 지금까지 알게 모르게 많이 사용해 왔다. System클래스의 static멤버인 out과 err, 즉 System.out, System.err이 PrintStream이다.
+
+|메서드/생성자|설명|
+|----|------|
+|PrintStream(File file)<br>PrintStream(File file, String csn)<br>PrintStream(OutputStream out)<br>PrintStream(OutputStream out, boolean autoFlush)<br>PrintStream(OutputStream out, boolean autoFlush, String encoding)<br>PrintStream(String fileName)<br>PrintStream(String fileName, String csn)|지정된 출력스트림을 기반으로 하는 PrintStream인스턴스를 생성한다. autuFlush의 값을 true로 하면 println메서드가 호출되거나 개행문자가 출력될 때 자동으로 flush된다. 기본값은 false이다.|
+|boolean checkError()|스트림을 flush하고 에러가 발생했는지를 알려준다.|
+|void print(boolean b)<br>void print(char c)<br>void print(char[] s)<br>void print(double d)<br>void print(float f)<br>void print(int i)<br>void print(long l)<br>void println(Object obj)<br>void println(String s)<br>void println(boolean b)<br>void println(char c)<br>void println(char[] s)<br>void println(double d)<br>void println(float f)<br>void println(int i)<br>void println(long l)<br>void println(Object obj)<br>void println(String s)|인자로 주어진 값을 출력소스에 문자로 출력한다. println메서드는 출력 후 줄바꿈을 하고, print메서드는 줄을 바꾸지 않는다.|
+|void println()|줄바꿈 문서(line separator)를 출력함으로써 줄을 바꾼다.|
+|PrintStream printf(String format, Object... args)|정형화된(formatted) 출력을 가능하게 한다.|
+|protected void setError()|작업 중에 오류가 발생했음을 알린다.(setError()를 호출한 후에 checkError()를 호출하면 true를 반환한다.)|
+
+- print()나 println()을 이용해서 출력하는 중에 PrintStream의 기반 스트림에서 IOException이 발생하면 checkError()를 통해서 인지할 수 있다. println()이나 print()는 예외를 던지지 않고 내부에서 처리하도록 정의하였는데, 그 이유는 println()과 같은 메서드가 매우 자주 사용되는 것이기 때문이다.
+- 만약 println()이 예외를 던지도록 정의되었다면 println()을 사용하는 모든 곳에 try ~ catch문을 사용해야 할 것이다.
+
+- printf()는 JDK1.5부터 추가된 것으로 C언어와 같이 편리한 형식화된 출력을 지원하게 되었다. printf()에 사용할수 있는 옵션은 하기 표를 참고.
+
+#### 정수의 출력에 사용할 수 있는 옵션
+
+|format|설명|결과(int i = 65)|
+|----|----------|------|
+|%d|10진수|65|
+|%o|8진수|101|
+|%x|16진수|41|
+|%c|문자|A|
+|%s|문자열|65|
+|%5d|5자리 숫자. 빈자리는 공백으로 채운다.|   65|
+|%-5d|5자리 숫자. 빈자리는 공백으로 채운다(왼쪽 정렬)|65|
+|%05d|5자리 숫자. 빈자리는 0으로 채운다.|00065|
+
+
+#### 문자열의 출력에 사용할 수 있는 옵션
+
+|format|설명|결과(String str = "ABC")|
+|----|----------|------|
+|%s|문자열(string)|ABC|
+|%5s|5자리 문자열. 빈자리는 공백으로 채운다.|  ABC|
+|%-5s|5자리 문자열. 빈자리는 공백으로 채운다.(왼쪽 정렬)|ABC|
+
+
+#### 실수의 출력에 사용될 수 있는 옵션
+
+|format|설명|결과(float f = 1234.56789f)|
+|----|----------|------|
+|%e|지수형태표현|1.234568e+03|
+|%f|10진수|1234.56789|
+|%3.1f|출력될 자리수를 최소 3자리(소수점 포함) 소수점 이하 1자리(2번째 자리에서 반올림)|1234.6|
+|%8.1f|소수점이상 최소 6자리, 소수점 이하 1자리.<br>출력될 자리수를 최소 8자리(소수점 포함)를 확보한다. 빈자리는 공백으로 채워진다(오른쪽 정렬)|  1234.6|
+|%08.1f|소수점이상 최소 6자리, 소수점 이하 1자리.<br>출력될 자리수를 최소 8자리(소수점 포함)를 확보한다. 빈자리는 0으로 채워진다.|001234.6|
+|%-8.1f|소수점이상 최소 6자리, 소수점 이하 1자리.<br>출력될 자리를 최소 8자리(소수점포함)를 확보한다. 빈자리는 공백으로 채워진다.(왼쪽 정렬)|1234.6|
+
+
+#### 특수문자를 출력하는 옵션
+
+|format|설명|
+|----|----------|
+|\t|탭(tab)|
+|%n|줄바꿈 문자(new line)|
+|%%|%|
+
+
+#### 날짜와 시간의 출력에 사용할 수 있는 옵션
+
+|format|설명|결과|
+|----|----------|------|
+|%tR<br>%tH:%tM|시분(24시간)|21:05<br>21:05|
+|%tT<br>%tH:%tM:%tS|시분초(24시간)|21:05:33<br>21:05:33|
+|%tD<br>%tm/%tD/%ty|월일년|11/16/15<br>11/16/15|
+|%tF<br>%tY-%tm-%td|년월일|2015-11-16<br>2015-11-16|
 
 
 ## 문자기반 스트림
