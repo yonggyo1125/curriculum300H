@@ -64,6 +64,16 @@ bis.read(); // 보조스트림인 BufferedInputStream으로 부터 데이터를 
 
 #### 보조스트림의 종류
 
+|입력|출력|설명|
+|----|----|----------|
+|FilterInputStream|FilterOutputStream|필터를 이용한 입출력 처리|
+|BufferedInputStream|BufferedOutputStream|버퍼를 이용한 입출력 성능향상|
+|DataInputStream|DataOutputStream|int, float와 같은 기본형 단위(primitive type)로 데이터를 처리하는 기능|
+|SequenceInputStream|없음|두 개의 스트림을 하나로 연결|
+|LineNumberInputStream|없음|읽어 온 데이터의 라인 번호를 카운트(JDK1.1부터 LineNumberReader로 대체)|
+|ObjectInputStream|ObjectOutputStream|데이터를 객체단위로 읽고 쓰는데 사용<br>주로 파일을 이용하여 객체 직렬화와 관련있음|
+|없음|PrintStream|버퍼를 이용하여 추가적인 print관련 기능(print, printf, println메서드) 제공|
+|PushbackInputStream|없음|버퍼를 이용해서 읽어 온 데이터를 다시 되돌리는 기능|
 
 
 ### 문자기반 스트림 - Reader, Writer
