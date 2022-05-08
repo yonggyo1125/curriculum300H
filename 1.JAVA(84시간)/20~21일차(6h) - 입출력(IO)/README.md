@@ -942,22 +942,256 @@ public class PrintStreamEx1 {
 
 
 ## 문자기반 스트림
-
+문자 데이터를 다루는데 사용된 다는 것을 제외하고는 바이트기반 스트림과 문자기반 스트림의 사용방법은 거의 같다.
 
 ### Reader와 Writer 
+- 바이트기반 스트림의 조상이 InputStream/OutputStream인 것과 같이 문자기반 스트림에서는 Reader/Writer가 그와 같은 역할을 한다. 
+- Reader/Writer의 메서드에서 char배열을 사용한다는 것 외에는 InputStream/OutputStream의 메서드와 다르지 않다.
+
+#### Reader의 메서드
+
+|메서드|설명|
+|----|----------|
+|abstract void close()|입력스트림을 닫음으로써 사용하고 있던 자원을 반환한다.|
+|void mark(int readlimit)|현재위치를 표시해놓는다. 후에 reset()에 의해서 표시해 놓은 위치로 다시 돌아갈 수 있다.|
+|boolean markSupported()|mark()와 reset()을 지원하는 지를 알려 준다.|
+|int read()|입력소스로부터 하나의 문자를 읽어 온다. char의 범위인 0~65535범위의 정수를 반환하며, 입력스트림의 마지막 데이터에 도달하면 -1을 반환한다.|
+|int read(char[] c)|입력소스로부터 매개변수로 주어진 배열 C의 크기만큼 읽어서 배열 c에 저장한다. 읽어온 데이터의 개수 또는 -1을 반환한다.|
+|abstract int read(char[] c, int off, int len)|입력소스로부터 최대 len개의 문자를 읽어서, 배열 c의 지정된 위치(off)부터 읽은 만큼 저장한다. 읽어 온 데이터의 개수 또는 -1을 반환한다.|
+|int read(CharBuffer target)|입력소스로 부터 읽어서 문자버퍼(target)에 저장한다.|
+|boolean ready()| 입력소스로 부터 데이터를 읽을 준비가 되어있는지 알려 준다.|
+|void reset()|입력소스에서 위치를 마지막으로 mark()가 호출되었던 위치로 되돌린다.|
+|long skip(long n)|현재 위치에서 주어진 문자 수(n)만큼 건너뛴다.|
+
+
+#### Writer의 메서드
+
+|메서드|설명|
+|----|----------|
+|Writer append(char c)|지정된 문자를 출력소스에 출력한다.|
+|Writer append(CharSequence c)|지정된 문자열(CharSequence)를 출력소스에 출력한다.|
+|Writer append(CharSequence c, int start, int end)|지정된 문자열(CharSequence)의 일부를 출력소스에 출력(CharBuffer, String, StringBuffer가 CharSequence를 구현)|
+|abstract void close()|출력스트림을 닫음으로써 사용하고 있던 자원을 반환한다.|
+|abstract void flush()|스트림의 버퍼에 있는 모든 내용을 출력소스에 쓴다(버퍼에 있는 스트림에만 해당 됨)|
+|void write(int b)|주어진 값을 출력소스에 쓴다.|
+|void write(char[] c)|주어진 배열 c에 저장된 모든 내용을 출력소스에 쓴다.|
+|abstract void write(char[] c, int off, int len)|주어진 배열 c에 저장된 내용 중에서 off번째부터 len길이만큼만 출력소스에 쓴다.|
+|void write(String str)|주어진 문자열(str)을 출력소스에 쓴다.|
+|void write(String str, int off, int len)|주어진 문자열(str)의 일부를 출력소스에 쓴다.(off번째 문자부터 len개 만큼의 문자열)|
+
 
 ### FileReader와 FileWriter
+- FileReader/FileWriter는 파일로부터 텍스트데이터를 읽고, 파일을 쓰는데 사용된다.
+- 사용방법은 FileInputStream/FileOutputStream과 거의 같다.
 
-### PipedReader와 PipedWriter
+
+#### day20_21/FileReaderEx1.java
+```
+test.txt
+Hello, 안녕하세요?
+```
+```
+package day20_21;
+
+import java.io.*;
+
+public class FileReaderEx1 {
+	public static void main(String[] args) {
+		try {
+			String fileName = "test.txt";
+			FileInputStream fis = new FileInputStream(fileName);
+			FileReader fr = new FileReader(fileName);
+			
+			int data = 0;
+			// FileInputStream을 이용해서 파일내용을 읽어 화면에 출력한다.
+			while((data = fis.read()) != -1) {
+				System.out.print((char)data);
+			}
+			System.out.println();
+			fis.close();
+			
+			// FileReader를 이용해서 파일내용을 읽어 화면에 출력한다.
+			while((data = fr.read()) != -1) {
+				System.out.print((char)data);
+			}
+			
+			System.out.println();
+			fr.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+실행결과
+Hello, ¾?³???¼¼¿??
+Hello, 안녕하세요?
+```
+>FileInputStream을 사용했을 때는 한글이 깨져 출력이 되지만, FileReader에서는 한글이 정상적으로 출력이 된다.
+
 
 ### StringReader와 StringWriter
+- StringReader/StringWriter는 CharArrayReader/CharArrayWriter와 같이 입출력 대상이 메모리인 스트림이다.
+- StringWriter에 출력되는 데이터는 내부의 StringBuffer에 저장되며 StringWriter의 다음과 같은 메서드를 이용해서 저장된 데이터를 얻을 수 있다.
 
+```
+StringBuffer getBuffer() : StringBuffer에 출력한 데이터가 저장된 StringBuffer를 반환한다.
+String toString() : StringWriter에 출력된 (StringBuffer에 저장된) 문자열을 반환한다.
+```
+- 근본적으로는 String도 char배열이지만, char배열보다는 String으로 처리하는 것이 여러모로 편리한 경우가 더 많다.
+
+#### day20_21/StringReaderWriterEx.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class StringReaderWriterEx {
+	public static void main(String[] args) {
+		String inputData = "ABCD";
+		StringReader input = new StringReader(inputData);
+		StringWriter output = new StringWriter();
+		
+		int data = 0;
+		
+		try {
+			while((data = input.read()) != -1) {
+				output.write(data); // void write(int b)
+			}
+		} catch (IOException e) {}
+		
+		System.out.println("Input Data   :" + inputData);
+		System.out.println("Output Data :" + output.toString());
+		System.out.println("Output Data :" + output.getBuffer().toString());
+	}
+}
+
+
+실행결과
+Input Data   :ABCD
+Output Data :ABCD
+Output Data :ABCD
+```
 
 ## 문자기반의 보조스트림
 
 ### BufferedReader와 BufferedWriter
+- BufferedReader/BufferedWriter는 버퍼를 이용해서 입출력의 효율을 높일 수 있도록 해주는 역할을 한다.
+- 버퍼를 이용하면 입출력의 효율이 비교할 수 없을 정도로 좋아지기 때문에 사용하는 것이 좋다.
+- BufferedReader의 readLine()을 사용하면 데이터를 라인단위로 읽을 수 있다.
+- BufferedWriter는 newLine()이라는 줄바꿈 해주는 메서드를 가지고 있다.
+
+#### day20_21/BufferedReaderEx1.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class BufferedReaderEx1 {
+	public static void main(String[] args) {
+		try {
+			FileReader fr = new FileReader("D:\\javaEx\\lecture\\src\\day20_21\\BufferedReaderEx1.java");
+			BufferedReader br = new BufferedReader(fr);
+			
+			String line = "";
+			int i = 1;
+			while((line = br.readLine()) != null) {
+				// ";"를 포함한 라인을 출력한다.
+				if (line.indexOf(";") != -1) {
+					System.out.println(i + ":" + line);
+				}
+				i++;
+			}
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+실행결과
+1:package day20_21;
+3:import java.io.*;
+8:			FileReader fr = new FileReader("D:\\javaEx\\lecture\\src\\day20_21\\BufferedReaderEx1.java");
+9:			BufferedReader br = new BufferedReader(fr);
+11:			String line = "";
+12:			int i = 1;
+14:				// ";"를 포함한 라인을 출력한다.
+15:				if (line.indexOf(";") != -1) {
+16:					System.out.println(i + ":" + line);
+18:				i++;
+20:			br.close();
+22:			e.printStackTrace();
+```
 
 ### InputStreamReader와 OutputStreamWriter
+- InputStreamReader/OutputStreamReader는 바이트기반 스트림을 문자기반 스트림으로 연결시켜주는 역할을 한다.
+- 바이트기반 스트림의 데이터를 지정된 인코딩의 문자데이터로 변환하는 작업을 수행한다.
+- 인코딩을 지정해 주지 않는다면 OS에서 사용하는 인코딩을 사용해서 파일을 해석해서 보여주게 된다.
+- OS에서 사용하는 인코딩이 아닌 경우(예 - 중국어)는 적절하게 인코딩을 설정하여야 한다.
+
+#### InputStreamReader의 생성자와 메서드
+
+|생성자/메서드|설명|
+|----|----------|
+|InputStreamReader(InputStream in)|OS에서 사용하는 기본 인코딩의 문자로 변환하는 InputStreamReader를 생성한다.|
+|InputStreamReader(InputStream in, String encoding)|지정된 인코딩을 사용하는 InputStreamReader를 생성한다.|
+|String getEncoding()|InputStreamReader의 인코딩을 알려준다.|
+
+
+#### OutputStreamWriter의 생성자와 메서드
+
+|생성자/메서드|설명|
+|----|----------|
+|OutputStreamWriter(OutputStream in)|OS에서 사용하는 기본 인코딩의 문자로 변환하는 OutputStreamWriter를 생성한다.|
+|OutputStreamWriter(OutputStream in, String encoding)|지정된 인코딩을 사용하는 OutputStreamWriter를 생성한다.|
+|String getEncoding()|OutputStreamWriter의 인코딩을 알려준다.|
+
+>시스템 속성에서 sun.jnu.encoding의 값을 보면 OS에서 사용하는 인코딩의 종류를 알 수 있다.
+```
+Properties prop = System.getProperties();
+System.out.println(prop.get("sun.jnu.encoding"));
+```
+
+#### InputStreamReaderEx.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class InputStreamReaderEx {
+	public static void main(String[] args) {
+		String line = "";
+		
+		try {
+			InputStreamReader isr = new InputStreamReader(System.in);
+			BufferedReader br = new BufferedReader(isr);
+			
+			System.out.println("사용중인 OS의 인코딩 :" + isr.getEncoding());
+			
+			do {
+				System.out.print("문장을 입력하세요. 마치시려면 q를 입력하세요.>");
+				line = br.readLine();
+				System.out.println("입력하신 문장 : " + line);
+			} while(!line.equalsIgnoreCase("q"));
+			
+			// br.close() // System.in과 같은 표준 입출력은 닫지 않아도 된다.
+			System.out.println("프로그램을 종료합니다.");
+		} catch (IOException e) {}
+	}
+}
+
+실행결과
+사용중인 OS의 인코딩 :MS949
+문장을 입력하세요. 마치시려면 q를 입력하세요.>안녕하세요.
+입력하신 문장 : 안녕하세요.
+문장을 입력하세요. 마치시려면 q를 입력하세요.>q
+입력하신 문장 : q
+프로그램을 종료합니다.
+```
+> 한글 윈도우즈에서 사용하는 인코딩의 종류는 MS949이다.
+
 
 ## 표준입출력과 File
 
