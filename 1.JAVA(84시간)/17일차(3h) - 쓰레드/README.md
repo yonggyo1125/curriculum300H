@@ -129,8 +129,14 @@ t1.start(); // IllegalThreadStateException 예외발생
 ## start()와 run()
 - main메서드에서 run()을 호출하는 것은 생성된 쓰레드를 실행시키는 것이 아니라 단순히 클래스에 선언된 메서드를 호출하는 것일 뿐이다.
 
+#### main메서드에서 run()을 호출했을 때의 호출스택
+![main메서드에서 run()을 호출했을 때의 호출스택](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/17%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%93%B0%EB%A0%88%EB%93%9C/images/main%EB%A9%94%EC%84%9C%EB%93%9C%EC%97%90%EC%84%9C_run()%ED%98%B8%EC%B6%9C.png)
+
 - 반면에 start()는 새로운 쓰레드가 작업을 실행하는데 필요한 호출스택(call stack)을 생성한 다음에 run()을 호출해서, 생성된 호출 스택에 run()이 첫 번째로 올라가게 한다.
 - 모든 쓰레드는 독립적인 작업을 수행하기 위해 자신만의 호출스택을 필요로 하기 때문에, 새로운 쓰레드를 생성하고 실행시킬 때마다 새로운 호출스택이 생성되고 스레드가 종료되면 작업에 사용된 호출스택은 소멸된다.
+
+#### 새로운 쓰레드를 생성하고 start()를 호출한 후 호출스택의 변화
+![새로운 쓰레드를 생성하고 start()를 호출한 후 호출스택의 변화](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/17%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%93%B0%EB%A0%88%EB%93%9C/images/start()%ED%98%B8%EC%B6%9C%ED%9B%84_%ED%98%B8%EC%B6%9C%EC%8A%A4%ED%83%9D%EB%B3%80%ED%99%94.png)
 
 
 1. main() 메서드에서 쓰레드의  start()를 호출한다.
