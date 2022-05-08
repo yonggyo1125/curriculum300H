@@ -477,7 +477,100 @@ Priority of th2(|) : 7
 
 
 ## 쓰레드 그룹(thread group)
+- 쓰레드 그룹은 서로 관련된 쓰레드를 그룹으로 다루기 위한 것으로, 폴더를 생성해서 관련된 파일을 함께 넣어서 관리하는 것처럼 쓰레드 그룹을 생성해서 쓰레드를 그룹으로 묶어서 관리할 수 있다.
+- 폴더 안에 폴더를 생성할 수 있듯이 쓰레드 그룹에 다른 쓰레드 그룹을 포함시킬 수 있다.
+- 쓰레드 그룹은 보안상의 이유로 도입된 개념으로 자신이 속한 쓰레드 그룹이나 하위 쓰레드 그룹은 변경할 수 있지만 다른 쓰레드 그룹의 쓰레드는 변경할 수 없다.
+- ThreadGroup을 사용해서 생성할 수 있다.
 
+### ThreadGroup의 생성자와 메서드
+
+|생성자 / 메서드|설명|
+|-----|--------|
+|ThreadGroup(String name)|지정된 이름의 새로운 쓰레드 그룹을 생성|
+|ThreadGroup(ThreadGroup parent, String name)|지정된 쓰레드 그룹에 포함되는 새로운 쓰레드 그룹을 생성|
+|int activeCount()|쓰레드 그룹에 포함된 활성상태에 있는 쓰레드의 수를 반환|
+|int activeGroupCount()|쓰레드 그룹에 포함된 활성상태에 있는 쓰레드 그룹의 수를 반환|
+|void checkAccess()|현재 실행중인 쓰레드가 쓰레드 그룹을 변경할 권한이 있는지 체크, 만일 궎란이 없다면 SecurityException을 발생시킨다.|
+|void destroy()|쓰레드 그룹과 하위 쓰레드 그룹까지 모두 삭제한다. 단 쓰레드 그룹이나 하위 쓰레드 그룹은 비어있어야 한다.|
+|int enumerate(Thread[] list)<br>int enumerate(Thread[] list, boolean recurse)<br>int enumerate(ThreadGroup[] list)<br>int enumerate(ThreadGroup[] list, boolean recurse)|쓰레드 그룹에 속한 쓰레드 또는 하위 쓰레드 그룹의 목록을 지정된 배열에 담고 그 개수를 반환.<br>두 번째 매개변수인 recurse의 값을 true로 하면 쓰레드 그룹에 속한 하위 쓰레드 그룹에 쓰레드 또는 쓰레드 그룹까지 배열에 담는다.|
+|int getMaxPriority()|쓰레드 그룹의 최대우선순위를 반환|
+|String getName()|쓰레드 그룹의 이름을 반환|
+|ThreadGroup getParent()|쓰레드 그룹의 상위 쓰레드그룹을 반환|
+|void interrupt()|쓰레드 그룹에 속한 모든 쓰레드를  interrupt|
+|boolean isDaemon()|쓰레드 그룹이 데몬 쓰레드그룹인지 확인|
+|boolean isDestoryed()|쓰레드 그룹이 삭제되었는지 확인|
+|void list()|쓰레드 그룹에 속한 쓰레드와 하위 쓰레드그룹에 대한 정보를 출력|
+|boolean parentOf(ThreadGroup g)|지정된 쓰레드 그룹은 상위 쓰레드그룹인지 확인|
+|void setDaemon(boolean daemon)|쓰레드 그룹을 데몬 쓰레드 그룹으로 설정/해제|
+|void setMaxPriority(int pri)|쓰레드 그룹의 최대우선순위를 설정|
+
+```
+Thread(ThreadGroup group, String name)
+Thread(ThreadGroup group, Runnable target)
+Thread(ThreadGroup group, Runnable target, String name)
+Thread(ThreadGroup group, Runnable target, String name, long stackSize)
+```
+
+- 모든 쓰레드는 반드시 쓰레드 그룹에 포함되어 있어야 하기 때문에 쓰레드 그룹을 지정하하는 생성자를 사용하지 않은 쓰레드는 기본적으로 자신을 생성한 쓰레드와 같은 그룹에 속하게 된다.
+- 자바 애플리케이션이 실행이 되면, JVM은 main과 system이라는 쓰레드 그룹을 만들고 JVM운영에 필요한 쓰레드들을 생성해서 이 쓰레드 그룹을 포함시킨다. 
+- 예를 들면 main메서드를 수행하는 main이라는 이름의 쓰레드는 main쓰레드 그룹에 속하고, 가비지 컬렉션을 수향하는 Finalizer쓰레드는 system쓰레드 그룹에 속한다.
+- 우리가 생성하는 모든 쓰레드 그룹은 main쓰레드 그룹의 하위 쓰레드 그룹이 되며, 쓰레드 그룹을 지정하지 않고 생성한 쓰레드는 자동적으로 main쓰레드 그룹에 속하게 된다.
+
+- 그 외에 Thread의 쓰레드 그룹과 관련된 메서드
+```
+ThreadGroup getThreadGroup()  // 쓰레드 자신이 속한 쓰레드 그룹을 반환한다.
+void uncaughtException(Thread t, Throwable e)  // 쓰레드 그룹의 쓰레드가 처리되지 않은 예외에 의해 실행이 종료되었을 때, JVM에 의해 이 메서드가 자동적으로 호출된다.
+```
+
+#### day17/ThreadEx9.java
+```
+package day17;
+
+public class ThreadEx9 {
+	public static void main(String[] args) {
+		ThreadGroup main = Thread.currentThread().getThreadGroup();
+		ThreadGroup grp1 = new ThreadGroup("Group1");
+		ThreadGroup grp2 = new ThreadGroup("Group2");
+		
+		// ThreadGroup(ThreadGroup parent, String name)
+		ThreadGroup subGrp1 = new ThreadGroup(grp1, "SubGroup1");
+		
+		grp1.setMaxPriority(3); // 쓰레드 그룹 grp1의 최대 우선순위를 3으로 변경
+		
+		Runnable r = new Runnable() {
+			public void run() {
+				try {
+					Thread.sleep(1000); // 쓰레드를 1초간 멈추게 한다.
+				} catch(InterruptedException e) {}
+			}
+		};
+		
+		// Thread(ThreadGroup tg, Runnable r, String name)
+		new Thread(grp1, r, "th1").start();
+		new Thread(subGrp1, r, "th2").start();
+		new Thread(grp2, r, "th3").start();
+		
+		System.out.println(">>List of ThreadGroup : " + main.getName() + ", Active ThreadGroup: " + main.activeGroupCount() + ",  Active Thread: " + main.activeCount());
+		main.list();
+	}	
+}
+
+
+실행결과
+>>List of ThreadGroup : main, Active ThreadGroup: 3,  Active Thread: 4
+java.lang.ThreadGroup[name=main,maxpri=10]
+    Thread[main,5,main]
+    java.lang.ThreadGroup[name=Group1,maxpri=3]
+        Thread[th1,3,Group1]
+        java.lang.ThreadGroup[name=SubGroup1,maxpri=3]
+            Thread[th2,3,SubGroup1]
+    java.lang.ThreadGroup[name=Group2,maxpri=10]
+        Thread[th3,5,Group2]
+
+```
+- 새로 생ㄹ성한 모든 쓰레드 그룹은 main쓰레드 그룹의 하위 쓰레드 그룹으로 포함되어 있다.
+- setMaxPriority()는 쓰레드가 쓰레드 그룹에 추가되이 이전에 호출되어야 한다.
+- 쓰레드 그룹 grp1의 최대우선순위를 3으로 했기 때문에, 후에 여기에 속하게 된 쓰레드 그룹과 쓰레드가 영향을 받았다.
 
 ## 데몬 쓰레드(daemon thread)
 
