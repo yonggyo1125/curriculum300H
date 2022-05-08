@@ -240,6 +240,7 @@ java.lang.Exception
 - 오히려 두 개의 쓰레드로 작업한 시안이 싱글쓰레드로 작업한 시간보다 더 걸리게 되는데, 쓰레드간의 작업 전환(context switching)에 시간이 걸리기 때문이다.
 - 작업 전환을 할 때는 현재 진행 중인 작업의 상태, 다음에 실행할 위치 등의 정보를 저장하고 읽어 오는 시간이 소요된다.
 
+![싱글쓰레드 프로세스와 멀티쓰레드 프로세스의 비교](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/17%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%93%B0%EB%A0%88%EB%93%9C/images/%EC%8B%B1%EA%B8%80%EC%93%B0%EB%A0%88%EB%93%9C_%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%EC%99%80_%EB%A9%80%ED%8B%B0%EC%93%B0%EB%A0%88%EB%93%9C_%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4_%EB%B9%84%EA%B5%90.png)
 
 
 >프로세스 또는 쓰레드간의 작업 전환을 컨텍스트 스위칭(context switching)이라고 한다.
