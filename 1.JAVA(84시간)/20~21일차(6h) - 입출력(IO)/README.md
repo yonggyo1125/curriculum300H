@@ -22,7 +22,49 @@
 
 ### 바이트기반 스트림 - InputStream, OutputStream
 
+바이트 단위로 데이터를 전송하며 입출력 대상에 따라 다음과 같은 입출력 스트림이 있다.
+
+#### 입력스트림과 출력스트림 종류
+
+|입력스트림|출력스트림|입출력 대상의 종류|
+|-----|----|-----|
+|FileInputStream|FileOutputStream|파일|
+|ByteArrayInputStream|ByteArrayOutputStream|메모리(byte배열)|
+|PipedInputStream|PipedOutputStream|프로세스(프로세스간의 통신)|
+|AudioInputStream|AudioOutputStream|오디오장치|
+
+- 모두 InputStream 또는 OutputStream의 자손이며, 각각 읽고 쓰는데 필요한 추상메서드를 자신에 맞게 구현해 놓았다.
+- 자바에서는 **java.io패키지**를 통해서 많은 종류의 입출력 관련 클래스들을 제공하고 있으며, 입출력을 처리할 수 있는 표준화된 방법을 제공함으로써 입출력의 대상이 달라져도 동일한 방법으로 입출력이 가능하기 때문에 프로그래밍을 하기에 편리하다.
+
+#### InputStream과 OutputStream에 정의된 읽기와 쓰기를 수행하는 메서드
+|InputStream|OutputStream|
+|----|----|
+|abstract int read()|abstract void write(int b)|
+|int read(byte[] b)|void write(byte[] b)|
+|int read(byte[] b, int off, int len)|void write(byte[] b, int off, int len)|
+
+>read()의 반환타입이 byte가 아니라 int인 이유는 read()의 반환값의 범위가 0~255와 -1이기 때문이다.
+
 ### 보조스트림
+- 보조스트림은 실제 데이터를 주고 받는 스트림이 아니기 때문에 데이터를 입출력할 수 있는 기능은 없지만, 스트림의 기능을 향상시키거나 새로운 기능을 추가할 수 있다.
+- 따라서 보조스트림만으로는 입출력을 처리할 수 없고, 스트림을 먼저 생성한 다음에 이를 이용해서 보조스트림을 생성해야 한다.
+
+```
+// 먼저 기반 스트림을 생성한다. 
+FileInputStream fis = new FileInputStream("test.txt");
+
+// 기반 스트림을 이용해서 보조스트림을 생성한다.
+BufferedInputStream bis = new BufferedInputStream(fis);
+
+bis.read(); // 보조스트림인 BufferedInputStream으로 부터 데이터를 읽는다.
+```
+
+- 실제 입력기능은 BufferedInputStream과 연결된 FileInputStream이 수향하고, 보조스트림인 BufferedInputStream은 버퍼만 제공한다.
+- 버퍼를 사용한 입출력과 사용하지 않은 입출력간의 성능차이는 상당하므로 대부분의 경우 버퍼를 이용한 보조스트림을 사용한다.
+
+#### 보조스트림의 종류
+
+
 
 ### 문자기반 스트림 - Reader, Writer
 
