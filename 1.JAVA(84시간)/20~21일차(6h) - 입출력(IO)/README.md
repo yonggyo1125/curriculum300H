@@ -898,8 +898,51 @@ Output Source  :[0, 1, 2, 3, 4, 5, 6, 7, 8]
 |%tD<br>%tm/%tD/%ty|월일년|11/16/15<br>11/16/15|
 |%tF<br>%tY-%tm-%td|년월일|2015-11-16<br>2015-11-16|
 
+#### day20_21/PrintStreamEx1.java
+```
+package day20_21;
+
+import java.util.*;
+
+public class PrintStreamEx1 {
+	public static void main(String[] args) {
+		int i = 65;
+		float f = 1234.56789f;
+		
+		Date d = new Date();
+		
+		System.out.printf("문자 %c의 코드는 %d%n", i, i);
+		System.out.printf("%d는 8진수로 %o, 16진수로 %x%n", i, i, i);
+		System.out.printf("%3d%3d%3d\n", 100, 90, 80);
+		System.out.println();
+		System.out.printf("%s%-5s%5s%n", "123", "123", "123");
+		System.out.println();
+		System.out.printf("%-8.1f%8.1f %e%n", f, f, f);
+		System.out.println();
+		System.out.printf("오늘은 %tY년 %tm월 %td일 입니다.%n", d, d, d);
+		System.out.printf("지금은 %tH시 %tM분 %tS초 입니다.%n", d, d, d);
+		System.out.printf("지금은 %1$tH시 %1$tM분 %1$tS초 입니다.%n", d);
+	}
+}
+
+실행결과
+문자 A의 코드는 65
+65는 8진수로 101, 16진수로 41
+100 90 80
+
+123123    123
+
+1234.6    1234.6 1.234568e+03
+
+오늘은 2022년 05월 09일 입니다.
+지금은 00시 43분 04초 입니다.
+지금은 00시 43분 04초 입니다.
+```
+- '숫자$'를 옵션 앞에 붙여 줌으로써 출력된 매개변수를 지정해 줄 수 있다. 예를 들어 '1$'라면 첫 번째 매개변수를 의미한다.
+
 
 ## 문자기반 스트림
+
 
 ### Reader와 Writer 
 
