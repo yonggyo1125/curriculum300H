@@ -75,9 +75,41 @@ bis.read(); // 보조스트림인 BufferedInputStream으로 부터 데이터를 
 |없음|PrintStream|버퍼를 이용하여 추가적인 print관련 기능(print, printf, println메서드) 제공|
 |PushbackInputStream|없음|버퍼를 이용해서 읽어 온 데이터를 다시 되돌리는 기능|
 
-
 ### 문자기반 스트림 - Reader, Writer
+- 바이트 기반은 입출력의 단위가 1byte라는 뜻이며,  2byte인 문자를 처리하는데 어려움이 있다. 이 점을 보완하기 위해 문자기반의 스트림이 제공된다.
+- 문자데이터를 입출력할 때는 바이트기반 스트림대신 문자기반 스트림을 사용한다.
 
+- inputStream -> **Reader**
+- OutputStream -> **Writer**
+
+#### 바이트기반 스트림과 문자기반 스트림의 비교
+
+|바이트기반 스트림|문자기반 스트림|
+|-----|-----|
+|FileInputStream<br>FileOutputStream|FileReader<br>FileWriter|
+|ByteArrayInputStream<br>ByteArrayOutputStream|CharArrayReader<br>CharArrayWriter|
+|PipedInputStream<br>PipedOutputStream|PipedReader<br>PipedWriter|
+|StringBufferInputStream(deprecated)<br>StringBufferOutputStream(deprecated)|StringReader<br>StringWriter|
+
+> StringBufferInputStream, StringBufferOutputStream은 StringReader, StringWriter로 대체되어 더 이상 사용되지 않는다.
+
+- 문자기반 스트림의 이름은 바이트기반 스트림의 이름에서  InputStream을 Reader로 OutputStream은 Writer로만 바꾸면 된다. 
+- 단, ByteArrayInputStream에 대응하는 문자기반 스트림은 char 배열을 사용하는 CharArrayReader이다.
+- 문자기반 스트림에서는 byte배열 대신 char배열을 사용한다.
+
+#### 바이트 기반 스트림과 문자기반 스트림의 읽고 쓰는 메서드
+
+|InputStream|Reader|
+|-----|-----|
+
+|OutputStream|Writer|
+|-----|-----|
+
+
+#### 바이트기반 보조스트림과 문자기반 보조스트림
+
+|바이트기반 보조스트림|문자기반 보조스트림|
+|-----|-----|
 
 ## 바이트기반 스트림
 
