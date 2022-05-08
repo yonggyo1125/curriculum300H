@@ -643,6 +643,31 @@ public class ThreadEx10 implements Runnable {
 
 
 ## 쓰레드의 실행제어
+- 쓰레드 프로그래밍이 어려운 이유는 동기화(synchronizaion)와 스케줄링(scheduling)때문이다.
+- 효율적인 멀티쓰레드 프로그램을 만들기 위해서는 보다 정교한 스케줄링을 통해 프로세스에게 주어진 시간을 여러 쓰레드가 낭비없이 잘 사용하도록 프로그래밍 해야 한다.
+
+### 쓰레드와 스케줄링과 관련된 메서드
+
+|메서드|설명|
+|-----|--------|
+|static void sleep(long millis)<br>static void sleep(long millism int nanos)|지정된 시간(천분의 일초 단위)동안 쓰레드를 일시정지시킨다. 지정한 시간이 지나고 나면, 자동적으로 다시 실행대기상태가 된다.|
+|void join()<br>void join(long millis)<br>void join(long millis, int nanos)|지정된 시간동안 쓰레드가 실행되도록 한다. 지정된 시간이 지나거나 작업이 종료되면 join()을 호출한 쓰레드로 다시 돌아와 실행을 계속한다.|
+|void interrupt()|sleep()이나 join()에 의해 일시정지상태인 쓰레드를 깨워서 실행대기상태로 만든다. 해당 쓰레드에서는 InterruptedException이 발생함으로써 일시정지상태를 벗어나게 된다.|
+|void stop()|쓰레드를 즉시 종료시킨다.|
+|void suspend()|쓰레드를 일시정지시킨다. resume()을 호출하면 다시 실행대기상태가 된다.|
+|void resume()|suspend()에 의해 일시정지상태에 있는 쓰레드를 실행대기상태로 만든다.|
+|static void yield()|실행 중에 자신에게 주어진 실행시간을 다른 쓰레드에게 양보(yield)하고 자신은 실행대기 상태가 된다.|
+> resume(), stop(), suspend()는 쓰레드를 교착상태(dead-lock)로 만들기 쉽기 때문에 deprecated되었다.
+
+### 쓰레드의 상태
+
+|상태|설명|
+|-----|--------|
+|NEW|쓰레드가 생성되고 아직 start()가 호출되지 않은 상태|
+|RUNNABLE|실행 중 또는 실행 가능한 상태|
+|BLOCKED|동기화블럭에 의해서 일시정지된 상태(lock이 풀릴 때까지 기다리는 상태)|
+|WAITING<br>TIMED_WAITING|쓰레드의 작ㅇ버이 종료되지는 않았지만 실행가능하지 않은(unrunnable) 일시정지 상태. TIMED_WAITING은 일시정지시간이 지정된 경우를 의미한다.|
+|TERMINATED|쓰레드의 작업이 종료된 상태|
 
 
 ### sleep(long millis) - 일정시간 동안 쓰레드를 멈추게 한다.
