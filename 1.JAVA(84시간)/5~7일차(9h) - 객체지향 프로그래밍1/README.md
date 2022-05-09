@@ -173,6 +173,101 @@ public class StudentView {
 
 ![함수 정의하기](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/5~7%EC%9D%BC%EC%B0%A8(9h)%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D1/images/%ED%95%A8%EC%88%98%EC%A0%95%EC%9D%98.png)
 
+#### 함수이름
+- 함수 이름은 add라고 썼습니다. 
+- (1) 위치가 함수 이름을 적는 부분입니다. 
+- 함수 이름은 변수 이름처럼 프로그래머가 임의로 만들면 되는데, 함수 기능과 관련있게 만들어야 나중에 호출하거나 이해하기 좋습니다.
+
+#### 매개변수
+- add 함수는 두 값을 더하는 일을 합니다. 
+- 덧셈을 수행하기 위해서는 먼저 함수에 두 값이 입력되어야 합니다.
+- 함수는 넘겨받은 값으로 덧셈을 수행합니다. 이렇게 함수 내부에서 사용할 괄호 안의 변수를 **매개변수**라고 합니다.
+- (2) num1과 num2가 매개변수 입니다.
+
+
+- 경우에 따라서는 **매개변수**가 필요없는 함수도 있습니다.
+```
+int getTenTotal() {
+	int i;
+	int total = 0;
+	for(i = 1; i <= 10; i++) {
+		total += i;
+	}
+	
+	return total;  // 1부터 10까지 더한 값을 반환 
+}
+```
+
+#### return 예약어와 반환형
+- add()함수를 수행한 후 결과 값은 변수 result에 저장됩니다. 
+- result에 저장된 결과 값은 함수를 호출했을 때 반환되는 값이므로 **반환값**이라고 부릅니다.
+- '**이 함수의 결과 값을 반환 합니다.**를 뜻하는 예약어가 **return**입니다.
+- (3) return 예약어를 사용하여 result 값을 반환하는 것 입니다.
+- 반환 값의 자료형을 반환형이라고 하는데 (4) 위치에 써 줍니다. 
+- 이 함수에서 변수 **result**의 반환형은 정수형이므로 (4)위치에 **int**라고 적습니다.
+
+- 경우레 따라서는 **반환값이 없는 함수**도 있습니다.
+- 반환값이 없다고 해서 반환형을 쓰는 (4)위치를 비워두면 오류가 발생합니다. 이 때에는 (4)위치에 **void**라고 씁니다.
+- **void**는 비어있다는 의미로 '**반환할 값이 없다**'는 뜻의 예약어입니다.
+
+```
+void printGreeting(String name) {
+	System.out.println(name + "님 안녕하세요");
+	return; // 반환값 없음 (생략 가능)
+}
+```
+
+- return 예약어는 함수 수향을 끝내고 프로그램 흐름 중에서 호출한 곳으로 다시 되돌아갈 때도 사용할 수 있습니다.
+```
+ void divide(int num1, int num2) {
+	if (num2 == 0) {
+		System.out.println("나누는 수는 0이 될 수 없습니다.");
+		return; // 함수 수행 종료
+	} else {
+		int result = num1 / num2;
+		System.out.println(num1 + "/" + num2 + "=" + result + "입니다.");
+	}
+ }
+```
+- 나누는 수가 0이라면 함수 수행을 하면 안되므로 함수 수향을 종료하는 예약어 return을 사용합니다. 
+- **함수 수행을 종료하는 목적**이므로 return 뒤에 반환값을 적지 않아도 됩니다.
+
+### 함수 호출하고 값 반환하기
+함수를 사용하는 것을 **함수를 호출한다**라고 합니다.
+
+#### day05_07/FunctionTest.java
+```
+package day05_07;
+
+public class FunctionTest {
+	public static void main(String[] args) {
+		int num1 = 10;
+		int num2 = 20;
+		
+		int sum = add(num1, num2); // add() 함수 호출
+		System.out.println(num1 + " + " + num2 + " = " + sum + "입니다.");
+	}
+	
+	// add() 함수
+	public static int add(int n1, int n2) {
+		int result = n1 + n2;
+		return result; // 결과 값 반환
+	}
+}
+
+실행결과
+
+10 + 20 = 30입니다.
+```
+### 매개변수 살펴보기
+- add() 함수를 호출할 때 num1, num2 두개의 변수를 넘겼습니다. 
+- 함수를 구현하는 부분에서는 add(int n1, int n2)와 같이 n1, n2를 사용했습니다. 
+- num1과 n1, num2와 n2는 전혀 상관이 없습니다.
+
+- num1, num2는 main()함수의 변수입니다. add(num1, num2)로 사용하면 add()함수에 두 값을 넘겨줄 수 있습니다.
+- 매개변수 n1, n2는 실제 함수로 넘어온 두 값을 받아 주는 역할입니다. 다시 말해 n1, n2는 add()함수에서 선언한 새로운 변수입니다.
+- 따라서 함수를 호출할 때 사용하는 변수이름과 호출되는 함수에서 사용하는 변수는 서로 다른 변수이므로 이름이 같아도 되고 달라도 상관이 없습니다.
+
 
 
 ## 생성자
