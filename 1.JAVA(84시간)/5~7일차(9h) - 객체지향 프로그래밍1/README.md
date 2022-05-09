@@ -438,9 +438,56 @@ Student studentAhn = new Student();
 - 클래스가 메모리 공간에 생성된 상태를 **인스턴스**라고 합니다.
 - 또한 **생성된 클래스의 인스턴스**를 **객체**라고도 합니다.
 
+![객체_클래스_인스턴스](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/5~7%EC%9D%BC%EC%B0%A8(9h)%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D1/images/%EA%B0%9D%EC%B2%B4_%ED%81%B4%EB%9E%98%EC%8A%A4_%EC%9D%B8%EC%8A%A4%ED%84%B4%EC%8A%A4.png)
+
 
 - 클래스의 생성자를 호출하면 인스턴스가 만들어집니다.
 - **클래스는 하나**이지만, 이 클래스로부터 **여려 개의 각기 다른 인스턴스를 생성**할 수 있습니다.<br>(예 : 어떤 학교에서 학생이라는 추상어는 뜻이 하나이지만, 그 학교에 다니느 학생 개개인은 여러 명인 것과 마찬가지)
+
+
+#### day05_07/StudentTest1.java - 인스턴스 여러개 생성하기 
+```
+package day05_07;
+
+public class StudentTest1 {
+	public static void main(String[] args) {
+
+		Student student1 = new Student();  // 첫 번째 학생 생성 
+		student1.studentName = "안연수"; 
+		System.out.println(student1.getStudentName());
+		
+		Student student2 = new Student();  // 두 번째 학생 생성 
+		student2.studentName = "안승연"; 
+		System.out.println(student2.getStudentName());
+	}
+}
+
+실행결과
+
+안연수
+안승연
+```
+
+#### 참조변수 사용하기
+- 참조변수를 사용하면 인스턴스의 멤버변수와 메서드를 참조하여 사용할 수 있는데 이때 마침표(.)연산자를 사용합니다.
+
+```
+참조변수.멤버변수
+참조변수.메서드
+
+studentAhn.studentName = "안연수";  // 멤버변수 사용
+System.out.println(studentAhn.getStudentName());  // 메서드 사용 
+```
+
+### 인스턴스와 힙 메모리
+- new Student()를 선언하면 Student하나가 생성되는데 각 Student는 StudentID, StudentName등의 멤버변수를 가지고 있습니다.
+- 그런데 이들 변수를 저장할 공간이 있어야 합니다. 이때 사용하는 메모리가 **힙 메모리**(heap memory)입니다. 
+- 클래스 생성자를 하나 호출하면 인스턴스가 힙 메모리에 생성되는 것입니다.
+
+```
+Student studentAhn = new Student();
+```
+
 
 
 ## 생성자
