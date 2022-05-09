@@ -892,6 +892,39 @@ public class MyDateTest2 {
 ### 자신의 메모리를 가리키는 this
 - this는 생성된 인스턴스 스스로를 가리키는 예약어입니다.
 
+#### day05_07/thisex/ThisExample.java
+```
+package day05_07.thisex;
+
+class BirthDay {
+	int day;
+	int month;
+	int year;
+	
+	public void setYear(int year) {
+		this.year = year;  // bDay.year = year;와 같음
+	}
+	
+	public void printThis( ) {
+		System.out.println(this); // System.out.println(bDay);와 같음
+	}
+}
+
+public class ThisExample {
+	public static void main(String[] args) {
+		BirthDay bDay = new BirthDay();
+		bDay.setYear(2000);
+		System.out.println(bDay);
+		bDay.printThis();
+	}
+}
+
+
+실행결과
+
+day05_07.thisex.BirthDay@5e91993f
+day05_07.thisex.BirthDay@5e91993f
+```
 
 - 인스턴스를 가리키는 변수가 참조변수 이며, 참조변수를 출력하면 '**클래스 이름@메모리 주소**' 문자열 값이 나옵니다.
 - 출력 결과를 보면 bDay.printThis()메서드를 호출하여 출력한 this 값이 참조 변수 bDay를 출력한 값과 같습니다.
@@ -900,8 +933,101 @@ public class MyDateTest2 {
 
 ![this 메모리 구성](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/5~7%EC%9D%BC%EC%B0%A8(9h)%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D1/images/this_1.png)
 
+- 위 그림에서 main() 함수는 ThisExample 클래스의 시작 메서드 입니다.
+- 그림을 보면 main() 함수에서 bDay 변수가 가리키는 인스턴스와 BirthDay 클래스의 setYear()메서드에서 this가 가리키는 인스턴스가 같은 곳에 있음을 알 수 있습니다.
+
+### 생성자에서 다른 생성자를 호출하는 this
+- this를 사용해 클래스의 생성자에서 다른 생성자를 호출할 수 있습니다.
+
+#### day05_07/thisex/CallAnotherConst.java
+```
+package day05_07.thisex;
+
+class Person {
+	String name;
+	int age; 
+	
+	Person() {
+		this("이름 없음", 1);  // this를 사용해 Person(String, int) 생성자 호출
+	}
+	
+	Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+}
+
+public class CallAnotherConst {
+	public static void main(String[] args) {
+		Person noName = new Person();
+		System.out.println(noName.name);
+		System.out.println(noName.age);
+	}
+}
+
+실행결과
+
+이름 없음
+1
+```
+
+- this를 사용하여 생성자를 호출하는 코드 이전에 다른 코드를 넣을 수 없습니다. 만약 다른 코드를 넣으면 오류가 발생합니다.
+- 생성자는 클래스가 생성될 때 호출되므로 클래스 생성이 완료되지 않은 시점에 다른 코드가 있다면 오류가 발생할 수 있습니다.
+- 즉, 디폴드 생성자에서 생성이 완료되는 것이 아니라 this를 사용해 다른 생성자를 호출하므로 이때는 this를 활용한 문장이 가장 먼저 와야 합니다.
+
+### 자신의 주소를 반환하는 this
+- this를 사용하여 생성된 클래스 자신의 주소 값을 반환할 수 있습니다.
+- 인스턴스 주소 값을 반환할 때는 this를 사용하고 반환형은 클래스 자료형을 사용합니다.
+
+#### day05_07/thisex/CallAnotherConst.java
+```
+package day05_07.thisex;
+
+class Person {
+	String name;
+	int age; 
+	
+	Person() {
+		this("이름 없음", 1);  // this를 사용해 Person(String, int) 생성자 호출
+	}
+	
+	Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+	
+	// 반환받은 클래스형 
+	Person returnItSelf() {
+		return this; // this 반환
+	}
+}
+
+public class CallAnotherConst {
+	public static void main(String[] args) {
+		Person noName = new Person();
+		System.out.println(noName.name);
+		System.out.println(noName.age);
+		
+		Person p = noName.returnItSelf(); // this 값을 클래스 변수에 대입
+		System.out.println(p);	// noName.returnItSelf()의 반환 값 출력
+		System.out.println(noName); // 참조변수 출력
+	}
+}
+
+
+실행결과
+
+이름 없음
+1
+day05_07.thisex.Person@5e91993f
+day05_07.thisex.Person@5e91993f
+```
+
 
 ## static 변수
+
+### 변수를 여러 클래스에서 공통으로 사용하려면?
+
 
 ## 변수의 유효범위 
 
