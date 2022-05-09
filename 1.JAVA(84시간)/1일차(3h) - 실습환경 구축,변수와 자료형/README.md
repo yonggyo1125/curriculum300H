@@ -64,6 +64,8 @@
 - 부호 비트가 0이면 양수, 1이면 음수를 나타냅니다. 
 - 8비트로 5라는 숫자를 표현하면 다음과 같다.
 
+![부호비트](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/1%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8B%A4%EC%8A%B5%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%B6%95%2C%EB%B3%80%EC%88%98%EC%99%80%20%EC%9E%90%EB%A3%8C%ED%98%95/images/%EB%B6%80%ED%98%B8%EB%B9%84%ED%8A%B8.png)
+
 
 ## 변수란 무엇일까?
 
