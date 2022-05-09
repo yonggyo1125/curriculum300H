@@ -581,13 +581,129 @@ public class Person {
 ```
 
 ### 생성자 만들기
+- 생성자는 주로 멤버변수에 대한 값들을 매개변수로 받아서 인스턴스가 새로 생성될 때 멤버 변수 값들을 초기화하는 역할을 합니다.
+- 즉, 인스턴스가 생성됨과 동시에 멤버변수의 값을 지정하고 인스턴스를 초기화하기 위해 생성자를 직접 구현하여 사용합니다.
 
+#### day05_07/constructor/Person.java
+```
+package day05_07.constructor;
+
+public class Person {
+	String name;
+	float height;
+	float weight;
+	
+	/**
+	 * 사람 이름을 매개변수로 입력받아서
+	 * Person 클래스를 생성하는 생성자
+	 */
+	public Person(String pname) {
+		name = pname;
+	}
+}
+```
+- 새로 만든 생성자는 문자열 String형 매개변수를 하나 입력 받아서 이름을 지정합니다.
+- 그러나 PersonTest.java코드에서 오류가 발생합니다.
+
+#### day05_07/constructor/PersonTest.java
+```
+package day05_07.constructor;
+
+public class PersonTest {
+	public static void main(String[] args) {
+		Person personLee = new Person(); // 오류 발생
+	}
+}
+
+```
+- 자바 컴파일러는 생성자가 하나도 없는 경우에만 디폴트 생성자를 제공합니다. 
+- 프로그래머가 생성자를 직접 추가하면 디폴트 생성자는 만들어지지 않습니다.
+- 따라서 PersonTest커드는 디폴트 생성자가 없어서 오류가 난 것 입니다.
+- 오류를 없애려면 **매개변수가 있는 생성자로 호출**하거나 프로그래머가 **디폴트 생성자를 추가**로 직접 구현하면 됩니다.
+
+#### day05_07/constructor/PersonTest.java
+```
+package day05_07.constructor;
+
+public class Person {
+	String name;
+	float height;
+	float weight;
+	
+	public Person() {} // 디폴트 생성자 직접 추가
+	
+	/**
+	 * 사람 이름을 매개변수로 입력받아서
+	 * Person 클래스를 생성하는 생성자
+	 */
+	public Person(String pname) {
+		name = pname;
+	}
+}
+
+```
+
+### 생성자 오버로드
+- 클래스에서 생성자가 두개 이상 제공되는 경우를 **생성자 오버로드**(constructor overload) 합니다.
+- 필요에 따라 매개변수가 다른 생성자를 여러 개를 만들 수 있습니다.
+- 클래스에 생성자를 여러 개 제공하면 이 클래스를 사용하는 코드에서는 원하는 생성자를 선택해 사용할 수 있습니다.
+- 경우에 따라서는 클래스에서 일부러 디폴트 생성자를 제공하지 않기도 합니다.
+
+> 객체지향 프로그램에서 메서드 이름이 같고 매개변수만 다른 경우를 **오버로드**라고 합니다.
+
+#### day05_07/constructor/Person.java
+```
+package day05_07.constructor;
+
+public class Person {
+	String name;
+	float height;
+	float weight;
+	
+	public Person() {} // 디폴트 생성자 직접 추가
+	
+	/**
+	 * 사람 이름을 매개변수로 입력받아서
+	 * Person 클래스를 생성하는 생성자
+	 */
+	public Person(String pname) {
+		name = pname;
+	}
+	
+	//이름 키, 몸무게를 매개변수로 입력받는 생성자
+	public Person(String pname, float pheight, float pweight) {
+		name = pname;
+		height = pheight;
+		weight = pweight;
+	}
+}
+```
+
+#### day05_07/constructor/PersonTest.java
+```
+package day05_07.constructor;
+
+public class PersonTest2 {
+	public static void main(String[] args) {
+		Person personKim = new Person();
+		personKim.name = "김유신";
+		personKim.weight = 85.5f; 
+		personKim.height = 180.0f;
+		
+		Person personLee = new Person("이순신", 175, 75);
+	}
+}
+```
 
 
 ## 참조 자료형
 
 ## 정보 은닉 
 
+## this 예약어
 
+## static 변수
 
 ## 변수의 유효범위 
+
+## static 응용 - 싱글톤 패턴
