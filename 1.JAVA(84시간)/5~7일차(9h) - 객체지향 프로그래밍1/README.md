@@ -533,6 +533,56 @@ Student student2 = new Student();
 |참조 값|생성된 인스턴스의 메모리 주소 값|
 
 ## 생성자
+#### day05_07/constructor/Person.java
+```
+package day05_07.constructor;
+
+public class Person {
+	String name;
+	float height;
+	float weight;
+}
+```
+
+#### day05_07/constructor/PersonTest.java
+```
+package day05_07.constructor;
+
+public class PersonTest {
+	public static void main(String[] args) {
+		Person personLee = new Person(); // Person()  - 생성자
+	}
+}
+
+```
+
+- 클래스를 생성할 때 사용하는 Person()과 같은 함수를 **생성자**라고 합니다.
+- 생성자가 하는 역할은 인스턴스의 생성과 인스턴스를 생성할 때 멤버 변수나 상수를 초기화하는 것입니다.
+
+### 디폴트 생성자
+- 생성자는 클래스를 생성할 때만 호출합니다.
+- 생성자 이름은 클래스 이름과 같습니다.
+- 생성자는 반환값이 없습니다.
+- 상기 코드에서는 Person() 생성자가 따로 없는데 생성자가 없는 클래스는 클래스파일을 컴파일 할때 자바 컴파일러에서 자동으로 생성자를 만들어 줍니다.
+- 이렇게 자동으로 만들어 주는 생성자를 **디폴트 생성자**(default constructor)라고 합니다.
+- **디폴트 생성자**는 매개변수가 없고 구현코드도 없습니다. 
+
+```
+package day05_07.constructor;
+
+public class Person {
+	String name;
+	float height;
+	float weight;
+	
+	// 자바 컴파일러가 자동으로 제공하는 디폴트 생성자
+	public Person() {} 
+}
+```
+
+### 생성자 만들기
+
+
 
 ## 참조 자료형
 
