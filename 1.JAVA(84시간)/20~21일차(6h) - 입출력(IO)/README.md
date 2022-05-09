@@ -1752,11 +1752,393 @@ CalendarEx4.java
 
 
 ### ObjectInputStream, ObjectOutputStream
+- 직렬화(스트림에 객체를 출력)에는 ObjectOutputStream을 사용하고 역직렬화(스트림으로 부터 객체를 입력)에는 ObjectInputStream을 사용한다.
+- ObjectInputStream과 ObjectOutputStream은 각각 InputStream과 OutputStream을 직접 상속받지만 **기반스트림을 필요로 하는 보조스트림이다.** 
+- 그래서 객체를 생성할 때 입출력(직렬화/역직렬화)할 스트림을 지정해주어야 한다.
+
+```
+ObjectInputStream(InputStream in)
+ObjectOutputStream(OutputStream out)
+```
+
+- 파일에 객체를 저장(직렬화)
+- ObjectOuputStream의 writeObject(Object obj)를 사용해서 객체를 출력하면, 객체가 파일에 직렬화되어 저장된다.
+```
+FileOutputStream fos = new FileOutputStream("objectfile.ser");
+ObjectOutputStream out = new ObjectOutputStream(fos);
+
+out.writeObject(new UserInfo());
+```
+
+- 역직렬화는 직렬화할 때와는 달리 입력스트림을 사용하고 wirteObject(Object obj)대신 readObject()를 사용하여 저장된 데이터를 읽기만 하면 객체로 역직렬화된다.
+- 다만 readObject()의 반환타입이 Object이기 때문에 객체 원래의 타입으로 형변환 해주어야 한다.
+```
+FileInputStream fis = new FileInputStream("objectfile.ser");
+ObjectInputStream in = new ObjectInputStream(fis);
+
+UserInfo info = (UserInfo)in.readObject();
+```
+
+#### ObjectInputStream과  ObjectOutputStream의 메서드
+|ObjectInputStream|ObjectOutputStream|
+|-----|-----|
+|void defaultReadObject()<br>int read()<br>int read(byte[] buf, int off, int len)<br>boolean readBoolean()<br>byte readByte()<br>char readChar()<br>double readDouble()<br>float readFloat()<br>int readInt()<br>long readLong()<br>short readShort()<br>Object readObject()<br>int readUnsignedByte()<br>int readUnsignedShort()<br>Object readUnshared()<br>String readUTF()|void defaultReadObject()<br>void write(byte[] buf)<br>void write(byte[] buf, int off, int len)<br>void write(int val)<br>void writeBoolean(boolean val)<br>void writeByte(int val)<br>void writeBytes(String str)<br>void writeChar(int val)<br>void writeChars(String str)<br>void writeDouble(double val)<br>void writeFloat(float val)<br>void writeInt(int val)<br>void writeLong(long val)<br>void writeObject(Object obj)<br>void writeShort(int val)<br>void writeUnshared(Object obj)<br>void writeUTF(String str)|
+
+- 상기 메서드들은 직렬화와 역직렬화를 직접 구현할 때 주로 사용되며, defaultReadObject()와 defaultWriteObject()는 자동 직렬화를 수행한다.
+- 객체를 직렬화/역직렬화하는 작업은 객체의 모든 인스턴스변수가 참조하고 잇는 모든 객체에 대한 것이기 때문에 상당히 복잡하여 시간도 오래걸린다.
+- readObject()와 writeObject()를 사용한 자동 직렬화가 편리하기는 하지만 직렬화 작업시간을 단축시키려면 직렬화하고자 하는 객체의 클래스에 추가적으로 다음과 같은 2개의 메서드를 직접 구현해주어야 한다.
+
+```
+private void writeObject(ObjectOutputStream out) throws IOException {
+	// write메서드를 사용해서 직렬화를 수행한다.
+}
+
+private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+	// read메서드를 사용해서 역직렬화를 수행한다.
+}
+```
 
 ### 직렬화가 가능한 클래스 만들기 - Serializable, transient
+- 직렬화가 가능한 클래스를 만드는 방법은 클래스가 java.io.Serializable인터페이스를 구현하도록 하면된다.
+
+변경 전 
+```
+public class UserInfo {
+	String name;
+	String password;
+	int age;
+}
+```
+
+변경 후 
+```
+public class UserInfo implements java.io.Serializable {
+	String name;
+	String password;
+	int age;
+}
+```
+
+- Serializable 인터페이스는 아무런 내용도 없는 빈 인터페이이지만, 직렬화를 고려하여 작성한 클래스인지를 판단하는 기준이된다.
+```
+public interface Serializable {}
+```
+
+- Serializable을 구현한 클래스를 상속받는다면 Serializable을 구현하지 않아도 된다. 
+```
+public class SuperUserInfo implements Serializable {
+	String name;
+	String password;
+}
+
+public class UserInfo extends SuperUserInfo {
+	int age;
+}
+```
+
+- 그러나 조상클래스가 Serializable을 구현하지 않았다면 자손클래스를 직렬화할 때 조상클래스에 정의된 인스턴스 변수는 직렬화 대상에서 제외된다.
+```
+public class SuperUserInfo {
+	String name;
+	String password;
+}
+
+public class UserInfo extends SuperUserInfo implements Serializable {
+	int age;
+}
+```
+
+- 모든 클래스의 최고조상인 Object는 Serializable을 구현하지 않았기 때문에 직렬화할 수 없다(Object 객체를 멤버변수로 사용하면 java.io.NotSerializableException이 발생하면서 직렬화에 실패한다.)
+```
+public class UserInfo implements Serializable {
+	String name;
+	String password;
+	int age;
+	
+	Obect obj = new Object(); // Object 객체는 직렬화할 수 없다.
+}
+```
+- 하기 코드에서는 Object이긴 하지만 실제로 저장되는 객체는 직렬화가 가능한 String인스턴스이기 때문에 직렬화가 가능하다.
+- 인스턴스 변수의 탕비이 아닌 실제로 연결된 객체의 종류에 의해서 결정된다는 것
+
+```
+public class UserInfo implements Serializable {
+	String name;
+	String password;
+	int age; 
+	
+	Object obj = new String("abc"); // String은 직렬화될 수 있다.
+}
+```
+
+- 제어자 **transient**를 붙여서 직렬화 대상에서 제외되도록 할 수 있다.
+- **transient**가 붙은 인스턴스 변수의 값은 그 타입의 기본값으로 직렬화된다고 볼 수 있다.
+```
+public class UserInfo implements Serializable {
+	String name;
+	transient String password; // 직렬화 대상에서 제외된다.
+	int age;
+	
+	transient Object obj = Object(); // 직렬화 대상에서 제외된다.
+}
+```
+
+#### day20_21/UserInfo.java
+```
+package day20_21;
+
+import java.io.*;
+
+public class UserInfo implements Serializable {
+	String name;
+	String password;
+	int age;
+	
+	public UserInfo() {
+		this("Unknown", "1111", 0);
+	}
+	
+	public UserInfo(String name, String password, int age) {
+		this.name = name;
+		this.password = password;
+		this.age = age;
+	}
+	
+	public String toString() {
+		return "(" + name + "," + password + "," + age + ")";
+	}
+}
+```
+
+#### day20_21/SerialEx1.java
+```
+package day20_21;
+
+import java.io.*;
+import java.util.ArrayList;
+
+public class SerialEx1 {
+	public static void main(String[] args) {
+		try {
+			String fileName = "UserInfo.ser";
+			FileOutputStream fos = new FileOutputStream(fileName);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			ObjectOutputStream out = new ObjectOutputStream(bos);
+			
+			UserInfo u1 = new UserInfo("JavaMan", "1234", 30);
+			UserInfo u2 = new UserInfo("JavaWoman", "4321", 26);
+			
+			ArrayList<UserInfo> list = new ArrayList<>();
+			list.add(u1);
+			list.add(u2);
+			
+			// 객체를 직렬화 한다.
+			out.writeObject(u1);
+			out.writeObject(u2);
+			out.writeObject(list);
+			out.close();
+			System.out.println("직렬화가 잘 끝났습니다.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+실행결과
+
+직렬화가 잘 끝났습니다.
+```
+>ArrayList와 같은 객체를 직렬화하면 ArrayList에 저장된 모든 객체들과 각 객체의 인스턴스 변수가 참조하고 있는 객체들까지 모두 직렬화된다.
+
+#### day20_21/SerialEx2.java
+```
+package day20_21;
+
+import java.io.*;
+import java.util.ArrayList;
+
+public class SerialEx2 {
+	public static void main(String[] args) {
+		try {
+			String fileName = "UserInfo.ser";
+			FileInputStream fis = new FileInputStream(fileName);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			
+			ObjectInputStream in = new ObjectInputStream(bis);
+			
+			// 객체를 읽을 때는 출력한 순서와 일치해야 한다.
+			UserInfo u1 = (UserInfo)in.readObject();
+			UserInfo u2 = (UserInfo)in.readObject();
+			ArrayList<UserInfo> list = (ArrayList<UserInfo>)in.readObject();
+			
+			System.out.println(u1);
+			System.out.println(u2);
+			System.out.println(list);
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+실행결과
+
+(JavaMan,1234,30)
+(JavaWoman,4321,26)
+[(JavaMan,1234,30), (JavaWoman,4321,26)]
+```
+>주의해야 할 점은 객체를 역직렬화 할 때는 직렬화할 때의 순서와 일치해야 한다는 것이다. 예를 들어 객체 u1, u2, list의 순서로 직렬화 했다면, 역직렬화 할 때도 u1, u2, list의 순서로 처리해야 한다. 그래서 직렬화할 객체가 많을 때는 각 객체를 개별적으로 직렬화하는 것보다 ArrayList와 같은 컬렉션에 저장해서 직렬화하는 것이 좋다.<br>역직렬화할 때 ArrayList 하나만 역직렬화 하면 되므로 역직렬화할 객체의 순서를 고려하지 않아도 되기 때문이다.
+
+#### day20_21/UserInfo2.java
+```
+package day20_21;
+
+import java.io.*;
+
+class SuperUserInfo {
+		String name;
+		String password;
+		
+		SuperUserInfo() {
+			this("Unknown", "1111");
+		}
+		
+		SuperUserInfo(String name, String password) {
+			this.name = name;
+			this.password = password;
+		}
+}
+
+public class UserInfo2 extends SuperUserInfo implements Serializable {
+	int age;
+	
+	public UserInfo2() {
+		this("Unknown", "1111", 0);
+	}
+	
+	public UserInfo2(String name, String password, int age) {
+		super(name, password);
+		this.age = age;
+	}
+	
+	public String toString() {
+		return "(" + name + "," + password + "," + age + ")";
+	}
+	
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeUTF(name);
+		out.writeUTF(password);
+		out.defaultWriteObject();
+	}
+	
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		name = in.readUTF();
+		password = in.readUTF();
+		in.defaultReadObject();
+	}
+}
+```
+
+#### day20_21/SerialEx3.java
+```
+package day20_21;
+
+import java.io.*;
+import java.util.ArrayList;
+
+public class SerialEx3 {
+	public static void main(String[] args) {
+		try {
+			String fileName = "UserInfo2.ser";
+			FileOutputStream fos = new FileOutputStream(fileName);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			ObjectOutputStream out = new ObjectOutputStream(bos);
+			
+			UserInfo2 u1 = new UserInfo2("JavaMan", "1234", 30);
+			UserInfo2 u2 = new UserInfo2("JavaWoman", "4321", 26);
+			
+			ArrayList<UserInfo2> list = new ArrayList<>();
+			list.add(u1);
+			list.add(u2);
+			
+			// 객체를 직렬화 한다.
+			out.writeObject(u1);
+			out.writeObject(u2);
+			out.writeObject(list);
+			out.close();
+			System.out.println("직렬화가 잘 끝났습니다.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+```
+
+#### day20_21/SerialEx4.java
+```
+package day20_21;
+
+import java.io.*;
+import java.util.ArrayList;
+
+public class SerialEx4 {
+	public static void main(String[] args) {
+		try {
+			String fileName = "UserInfo2.ser";
+			FileInputStream fis = new FileInputStream(fileName);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			
+			ObjectInputStream in = new ObjectInputStream(bis);
+			
+			// 객체를 읽을 때는 출력한 순서와 일치해야 한다.
+			UserInfo2 u1 = (UserInfo2)in.readObject();
+			UserInfo2 u2 = (UserInfo2)in.readObject();
+			ArrayList<UserInfo2> list = (ArrayList<UserInfo2>)in.readObject();
+			
+			System.out.println(u1);
+			System.out.println(u2);
+			System.out.println(list);
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+실행결과
+
+(JavaMan,1234,30)
+(JavaWoman,4321,26)
+[(JavaMan,1234,30), (JavaWoman,4321,26)]
+```
+
+- 직렬화 되지 않는 조상으로부터 상속받은 인스턴스변수에 대한 직렬화를 구현한 것이다. 
+- 직렬화될 객체의 클래스에 아래와 같이 writeObject()와 readObject()를 추가해서 조상으로 부터 상속받은 인스턴스변수인 name과 password가 직접 직렬화되도록 해야 한다.
+- 이 메서드들은 직렬화/역직렬화 작업시에 자동적으로 호출된다.
+- defaultWriteObject()는 UserInfo2클래스 자신에 정의된 인스턴스변수 age의 직렬화를 수행한다.
+
 
 ### 직렬화 가능한 클래스의 버전관리
+- 직렬화된 객체를 역직렬화할 때는 직렬화 했을 때와 같은 클래스를 사용해야 한다. 그러나 클래스의 이름이 같더라도 클래스의 내용이 변경된 경우 역직렬화는 실패하며 다음과 같은 예외가 발생한다.
+```
+java.io.InvalidClassException: day20_21.UserInfo2; local class incompatible: stream classdesc serialVersionUID = -2313780759168234882, local class serialVersionUID = -4721494493246995595
+...
 
+```
+- 위 예외의 내용은 직렬화 할 때의 역직렬화 할 때의 클래스의 버전이 같아야 하는데 다르다는 것이다. 
+- 객체가 직렬화될 때 클래스에 정의된 멤버들의 정보를 이용해서 serialVersionUID라는 클래스의 버전을 자동생성해서 직렬화 내용에 포함된다.
+- 그래서 역직렬화 할 때 클래스의 버전을 비교함으로써 직렬화할 때의 클래스의 버전과 일치하는지 확인할 수 있는 것이다.
+- 그러나 static변수나 상수 또는 transient가 붙은 인스턴스변수가 추가되는 경우에는 직렬화에 영향을 미치지 않기 때문에 클래스의 버전을 다르게 인식하도록 할 필요는 없다.
+- 네트웍으로 객체를 직렬화하여 전송하는 경우. 보내는 쪽과 받는 쪽이 모두 같은 버전의 클래스를 가지고 있어야하는데 클래스가 조금만 변경되어도 해당 클래스를 재배포하는 것은 프로그램을 관리하기 어렵게 만든다. 이럴 때는 클래스의 버전을 수동으로 관리해줄 필요가 있다.
+- 클래스의 버전을 수동으로 관리하려면 다음과 같이 serialVersionUID를 추가로 정의해야 한다.
 
-
+```
+public class UserInfo2 extends SuperUserInfo implements Serializable {
+	private static final long serialVersionUID = -2313780759168234882L;
+	int age;
+	
+	...
+}
+```
 
