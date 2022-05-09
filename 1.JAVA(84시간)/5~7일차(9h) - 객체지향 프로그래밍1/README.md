@@ -11,9 +11,13 @@
 ### 생활 속에서 객체 찾아보기
 - 절차 지향 프로그래밍 : 순서대로 일어나는 일을 시간순으로 프로그래밍 하는 것
 
+![절차지향 프로그래밍](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/5~7%EC%9D%BC%EC%B0%A8(9h)%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D1/images/%EC%A0%88%EC%B0%A8%EC%A7%80%ED%96%A5%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D.png)
+
 - 객체 지향 프로그래밍 : 객체를 정의하고 객체 간 협력을 프로그래밍 하는 것
 - 객체지향 프로그램은 먼저 객체를 만들고 객체 사이에 일어나는 일을 구현하는 것
 - 객체지향 프로그래밍을 할 때는 객체를 먼저 정의하고 각 객체가 어떤 기능을 제공하고 객체 간 협력을 어떻게 구현할 것인지를 고민해야 한다.
+
+![객체지향 프로그래밍](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/5~7%EC%9D%BC%EC%B0%A8(9h)%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D1/images/%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D.png)
 
 
 ## 클래스 살펴보기
