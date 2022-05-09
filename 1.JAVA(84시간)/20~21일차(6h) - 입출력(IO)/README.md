@@ -1739,13 +1739,16 @@ CalendarEx4.java
 - 직렬화란 객체를 데이터 스트림으로 만드는 것을 뜻한다.
 - 객체에 저장된 데이터를 스트림에 쓰기(write)위해 연속적인(serial) 데이터로 변환하는 것을 말한다.
 - 반대로 스트림으로부터 데이터를 읽어서 객체를 만드는 것을 역직렬화(deserialization)라고 한다.
+
+![객체의 직렬화와 역직렬화](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/20~21%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9E%85%EC%B6%9C%EB%A0%A5(IO)/images/%EA%B0%9D%EC%B2%B4%EC%9D%98_%EC%A7%81%EB%A0%AC%ED%99%94_%EC%97%AD%EC%A7%81%EB%A0%AC%ED%99%94.png)
+
+
 - 객체는 클래스에 정의된 인스턴스변수의 집합이다. 객체에는 클래스변수나 메서드가 포함되지 않는다. 객체는 오직 인스턴스변수들로만 구성되어 있다.
-
-
 - 그래서 객체를 저장한다는 것은 객체의 모든 인스턴스변수의 값을 저장한다는 것과 같은 의미이다. 
 - 어떤 객체를 저장하고자 한다면, 현재 객체의 모든 인스턴스변수의 값을 저장하기만 하면 된다. 
 - 저장했던 객체를 다시 생성하려면 , 객체를 생성한 후에 저장했던 값을 읽어서 생성한 객체의 인스턴스변수에 저장하면 되는 것이다.
 
+![클래스와 인스턴스](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/20~21%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9E%85%EC%B6%9C%EB%A0%A5(IO)/images/%ED%81%B4%EB%9E%98%EC%8A%A4%EC%9D%98_%EC%9D%B8%EC%8A%A4%ED%84%B4%EC%8A%A4.png)
 
 
 ### ObjectInputStream, ObjectOutputStream
