@@ -898,6 +898,9 @@ public class MyDateTest2 {
 - 즉, 클래스 코드에서 사용하는 **this**는 **생성된 인스턴스 자신**을 가리키는 역할을 합니다.
 - this.year = year; 문장으로 참조하면 **동적메모리에서 생성된 인스턴스 year 변수 위치를 가리키고 그 위치에 매개변수 값을 넣어 주는 것**입니다.
 
+![this 메모리 구성](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/5~7%EC%9D%BC%EC%B0%A8(9h)%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D1/images/this_1.png)
+
+
 ## static 변수
 
 ## 변수의 유효범위 
