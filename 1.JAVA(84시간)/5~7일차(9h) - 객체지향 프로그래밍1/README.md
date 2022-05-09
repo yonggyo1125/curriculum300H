@@ -499,6 +499,7 @@ Student student1 = new Student();
 Student student2 = new Student();
 ```
 - 생성된 두 인스턴스는 당연히 각각 다른 메모리 공간을 차지합니다. 따라서 student1.studentName과 student2.studentName은 서로 다른 값을 가지게 됩니다.
+
 ![인스턴스와 힙 메모리](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/5~7%EC%9D%BC%EC%B0%A8(9h)%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D1/images/%ED%9E%99%EB%A9%94%EB%AA%A8%EB%A6%AC2.png)
 
 - 클래스가 생성될 때마다 인스턴스는 다른 메모리 공간을 차지합니다. 
