@@ -695,10 +695,197 @@ public class PersonTest2 {
 }
 ```
 
-
 ## 참조 자료형
+크기가 정해진 기본 자료형(int, char, float, double 등)으로 선언하는 변수가 있고, 클래스형으로 선언하는 참조 자료형 변수가 있다.\
+
+#### day05_07/reference/Subject.java
+```
+package day05_07.reference;
+
+public class Subject {
+	String subjectName;
+	int scorePoint;
+}
+```
+
+#### day05_07/reference/Student3.java
+```
+package day05_07.reference;
+
+public class Subject3 {
+	int studentID;
+	String studentName;
+	
+	// Subect 참조 자료형을 사용하여 선언
+	Subject korean; 
+	Subject math;
+}
+```
+- 기본자료형 : int studentID
+- 참조자료형 : String studentgName, Subject korean, Subject math
+
 
 ## 정보 은닉 
+- 객체 지향 프로그램에서는 예약어를 사용해 클래스 내부의 변수나 메서드, 생성자에 대한 접근 권한을 지정할 수 있습니다. 
+- 이러한 예약어를 '**접근 제어자**(access modifier)'라고 합니다.
+
+### 접근제어자 정리
+
+|접근 제어자|설명|
+|----|--------|
+|public|외부 클래스 어디에서나 접근할 수 있습니다.|
+|protected|같은 패키지 내부와 상속 관계의 클래스에서만 접근할 수 있고 그 외 클래스에서는 접근할 수 없습니다.|
+|아무것도 없는 경우|default이며 같은 패키지 내부에서만 접근할 수 있습니다.|
+|private|같은 클래스 내부에서만 접근할 수 있습니다.|
+
+
+#### day05_07/hiding/Student.java - private 사용하기
+```
+package day05_07.hiding;
+
+public class Student {
+	int studentID;
+	// studentName 변수를 private으로 선언 
+	private String studentName; 
+	int grade;
+	String address;
+}
+```
+
+#### day05_07/hiding/StudentTest.java - private 사용하기
+```
+package day05_07.hiding;
+
+public class StudentTest {
+	public static void main(String[] args) {
+		Student studentLee = new Student();
+		studentLee.studentName = "이상원"; // 오류발생
+	}
+}
+```
+
+- StudentTest.java파일에 오류가 발생합니다. 
+- studentName 변수의 접근 제어자가 public일 때는 외부 클래스인 StudentTest.java 클래스에서 이 변수에 접근할 수 있었지만, private으로 바뀌면서 외부 클래스의 접근이 허용되지 않기 때문입니다.
+
+
+### get(), set() 메서드
+- private으로 선언한 studentName 변수를 외부 코드에서 사용하려면 public 메서드를 제공해야 한다.
+- public 메서드가 제공되지 않는다면 studentName 변수에 접근할 수 있는 방법은 없습니다.
+- 이때 사용할 수 있는 것이 get(), set()메서드 입니다.
+
+>값을 받는 get() 메서드를 getter, 값을 지정하는 set()메서드를 setter라고도 부릅니다.
+
+#### day05_07/hiding/Student.java
+```
+package day05_07.hiding;
+
+public class Student {
+	int studentID;
+	// studentName 변수를 private으로 선언 
+	private String studentName; 
+	int grade;
+	String address;
+	
+	public String getStudentName() {
+		return studentName;
+	}
+	
+	public void setStudentName(String studentName) {
+		this.studentName = studentName;
+	}
+}
+
+```
+
+- 학생 이름을 받아오거나 지정할 수 있도록 getStudentName()메서드와 setStudentName()메서드를 추가했습니다.
+
+#### day05_07/hiding/StudentTest.java
+```
+package day05_07.hiding;
+
+public class StudentTest {
+	public static void main(String[] args) {
+		Student studentLee = new Student();
+		//studentLee.studentName = "이상원"; // 오류발생
+		
+		// setStudentName() 메서드 활용해 private 변수에 접근 가능
+		studentLee.setStudentName("이상원");
+		
+		System.out.println(studentLee.getStudentName());
+	}
+}
+```
+- studentName 멤버 변수에 이름 값을 직접 대입하는 것이 아니고 setStudentName()메서드를 활용하여 값을 대입할 수 있습니다.
+- 즉 외부 클래스에서 private 변수에 직접 접근할 수는 없지만, public 메서드를 통하면 private변수에 접근할 수 있습니다.
+
+### 정보 은닉이란?
+- 클래스의 멤버 변수를 public으로 선언하면 접근이 제한되지 않으므로 정보의 오류가 발생할 수 있습니다.
+- 이런 경우 오류가 나더라도 그 값이 해당 변수에 대입되지 못하도록 다음과 같이 변수를 private으로 바꾸고 public 메서드를 별도로 제공해야 합니다.
+
+#### day05_07/hiding/MyDate.java
+```
+package day05_07.hiding;
+
+public class MyDate {
+	public int day;
+	public int month;
+	public int year;
+}
+```
+
+#### day05_07/hiding/MyDateTest.java
+```
+package day05_07.hiding;
+
+public class MyDateTest {
+	public static void main(String[] args) {
+		MyDate date = new MyDate();
+		date.month = 2;
+		date.day = 31;
+		date.year = 2018;
+	}
+}
+```
+
+- 이처럼 클래스 내부에서 사용할 변수나 메서서드는 private으로 선언해서 외부에서 접근하지 못하도록 하는 것을 객체 지향에서는 '**정보은닉**(information hiding)'이라고 합니다.
+#### day05_07/hiding/MyDate2.java
+```
+package day05_07.hiding;
+
+public class MyDate2 {
+	private int day;
+	private int month;
+	private int year;
+	
+	public void setDay(int day) {
+		if (month == 2) {
+			if (day < 1 || day > 28) {
+				System.out.println("오류입니다.");
+			} else {
+				this.day = day;
+			}
+		}
+	}
+} 
+```
+
+#### day05_07/hiding/MyDateTest2.java
+```
+package day05_07.hiding;
+
+public class MyDateTest2 {
+	public static void main(String[] args) {
+		MyDate2 date = new MyDate2();
+		
+		date.setYear(2018);
+		date.setMonth(2);
+		date.setDay(31);
+	}
+}
+```
+
+- 정보은닉은 객체지향 프로그래밍의 특징 중에 하나이며 자바에서는 접근 제어자를 사용하여 정보은닉을 구현합니다.
+- 모든 변수를 private으로 선언해야 하는 것은 아니지만, 필요한 경우에는 private으로 선언하여 오류를 막을 수 있습니다.
 
 ## this 예약어
 
