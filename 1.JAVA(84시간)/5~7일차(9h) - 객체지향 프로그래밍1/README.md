@@ -1318,3 +1318,59 @@ public class StudentTest5 {
 
 
 ## static 응용 - 싱글톤 패턴
+- 프로그램을 구현하다 보면 여러개 인스턴스가 필요한 경우도 있고 단 하나의 인스턴스만 필요한 경우도 있습니다.
+- 객체 지향 프로그램에서 인스턴스를 단 하나만 생성하는 디자인 패턴을 **싱글톤 패턴**(singleton pattern)이라고 합니다.
+
+### 싱글톤 패턴으로 회사 클래스 구현하기
+1. 생성자를 private으로 만들기
+	- 생성자가 public 이면 외부에서 인스턴스를 여러개 생성할 수 있습니다.
+	- 따라서 싱글톤 패턴에서는 생성자를 반드시 명시적으로 만들고 그 접근 제어자를 private으로 지정해야 합니다.
+	- 그러면 생성자가 있으므로 컴파일러가 디폴트 생성자를 만들지 않고, 접근 제어자가 private이므로 외부 클래스에서 마음대로 Company 인스턴스를 생성할 수 없게 됩니다.
+	- 즉, Company 클래스 내부에서만 클래스의 생성을 제어할 수 있습니다.
+	
+2. 클래스 내부에 static으로 유일한 인스턴스 생성하기
+	- private으로 선언하여 외부에서 이 인스턴스에 접근하지 못하도록 제한해야 합니다.
+	
+3. 외부에서 참조 할 수 있는 public 메서드 만들기
+	- private으로 선언한 유일한 인스턴스를 외부에서도 사용할 수 있도록 설정해야 합니다.
+	- 이를 위해 public 메서드를 생성합니다. 그리고 유일하게 생성한 인스턴스를 반환해 줍니다.
+	- 이 때 인스턴스를 반환하는 메서드는 반드시 static으로 선언해야 합니다.
+	- 왜냐하면 인스턴스 생성과 상관없이 호출할 수 있어야 하기 때문입니다.
+	
+#### day05_07/singleton/Company.java 
+```
+package day05_07.singleton;
+
+public class Company {
+	
+	private static Company instance = new Company(); 
+	
+	private Company() {}
+	
+	public static Company getInstance() {
+		if (instance == null) {
+			instance = new Company();
+		}
+		
+		return instance;
+	}
+}
+```
+
+#### day05_07/singleton/CompanyTest.java 
+```
+package day05_07.singleton;
+
+public class CompanyTest {
+	public static void main(String[] args) {
+		// 클래스 이름으로 getInstance() 호출하여 참조 변수에 대입
+		Company myCompany1 = Company.getInstance();
+		Company myCompany2 = Company.getInstance();
+		
+		System.out.println(myCompany1 == myCompany1); // 두 변수가 같은 주소인지 확인
+	}
+}
+
+실행결과
+true
+```
