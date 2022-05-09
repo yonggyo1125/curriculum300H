@@ -289,7 +289,159 @@ public class FunctionTest {
 
 - 그림에서 보듯 main() 함수에서 사용하는 num1, num2 변수의 add()함수에서 사용하는 n1, n2변수는 서로 다른 메모리 공간을 사용하므로 이름이 같든 다르든 상관이 없습니다.
 - 이렇게 함수 내부에서만 사용하는 변수를 **지역변수**라고 합니다.
-- **지역변수는 스택메모리에서 생성**됩니다.  [변수의 유효범위 참조]()
+- **지역변수는 스택메모리에서 생성**됩니다.  [변수의 유효범위 참조](https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/5~7%EC%9D%BC%EC%B0%A8(9h)%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D1#%EB%B3%80%EC%88%98%EC%9D%98-%EC%9C%A0%ED%9A%A8%EB%B2%94%EC%9C%84)
+
+### 함수의 장점 
+- 기능을 나누어 코드를 효율적으로 구현할 수 있다.
+- 기능을 분리해서 구현하면 프로그램 코드의 가독성이 좋아진다.
+- 기능별로 함수를 구현해 놓고 같은 기능을 매번 코드로 만들지 않고 그 기능의 함수를 편리하게 호출할 수 있다.(중복되는 코드를 막을 수 있다.)
+- 디버깅 작업을 할 때도 편리하다.(하나의 기능이 하나의 함수로 구현되어 있기 때문에 오류난 기능만 찾아서 수정하면 된다.)
+
+### 클래스 기능을 구현하는 메서드
+- 메서드(method)는 멤버변수를 사용하여 클래스의 기능을 구현한다.
+- 즉, 메서드는 함수에 객체 지향개념이 포함된 용어로 이해하면 된다.
+- 함수의 스택 메모리 사용방법과 함수의 장점등도 모두 메서드에 동일하게 적용된다.
+
+#### day05_07/Student.java
+```
+package day05_07;
+
+public class Student {
+	int studentID; // 학번
+	String studentName; // 학생이름
+	int grade; // 학년
+	String address; // 사는 곳
+	
+	// 학생의 이름을 반환하는 메서드
+	public String getStudentName() {
+		return studentName;
+	}
+	
+	// 학생의 이름을 부여하는 메서드
+	public void setStudentName(String name) {
+		studentName = name;
+	}
+	
+	public void showStudentInfo() {
+		System.out.println(studentName + "," + address); // 이름, 주소 출력
+	}
+}
+```
+
+### 자바의 이름 짓기 규약
+- **클래스 이름** : 파스칼케이스 - 단어의 시작 문자는 모두 대문자, 예) OrderInfo, OrderItems 
+- **메서드 및 멤버변수** : 카멜케이스 - 첫 단어를 제외 단어의 시작문자는 대문자, 예) showStudentInfo
+- **패키지 이름** : 모두 소문자
+- **상수명** : 모두 대문자, 단어와 단어 사이는 언더바(_)로 구분, 예) NO_OF_STUDENT
+
+## 클래스와 인스턴스
+
+### 클래스 사용과 main(), 함수
+```
+public class Student {
+	int studentID; 
+	String studentName; 
+	int grade; 
+	String address; 
+	
+	public String getStudentName() {
+		return studentName;
+	}
+	
+	public void setStudentName(String name) {
+		studentName = name;
+	}
+}
+```
+- 멤버변수는 클래스 속성을 나타냅니다.
+- 메서드는 멤버변수를 이용하여 클래스 기능을 구현합니다.
+
+#### 프로그램을 시작하는 main()함수 
+- main() 함수는 자바 가상 머신(Java Virtual Machine:JVM)이 프로그램을 시작하기 위해 호출하는 함수입니다.
+- 클래스 내부에 만들지만, 클래스의 메서드드는 아닙니다.
+
+##### main()함수에서 클래스를 사용하는 방법
+- 클래스 내부에 main함수를 만드는 것
+```
+package day05_07;
+
+public class Student {
+	int studentID; 
+	String studentName;
+	int grade; 
+	String address; 
+	
+
+	public String getStudentName() {
+		return studentName;
+	}
+	
+	public void setStudentName(String name) {
+		studentName = name;
+	}
+	
+	// main() 함수 
+	public static void main(String[] args) {
+		Student studentAhn = new Student(); // Student 클래스 생성
+		studentAhn.studentName = "안연수";
+		
+		System.out.println(studentAhn.studentName);
+		System.out.println(studentAhn.getStudentName());
+	}
+}
+```
+
+- 외부에 테스트용 클래스를 만들어 사용하는 것
+```
+package day05_07;
+
+public class StudentTest {
+	public static void main(String[] args) {
+		Student studentAhn = new Student(); // Student 클래스 생성
+		studentAhn.studentName = "안승연";
+		
+		System.out.println(studentAhn.studentName);
+		System.out.println(studentAhn.getStudentName());
+	}
+}
+```
+
+- 클래스 내부에 main()함수를 만들면 이 클래스가 프로그램의 시작 클래스가 됩니다.
+
+
+>만약 패키지가 다르다면  import문을 사용해서 함께 사용하기를 원하는 클래스를 불러와야 한다.
+>**클래스 이름이 같아도 패키지가 다르면 다른클래스이다.**<br>
+Student라는 같은 이름의 두 클래스를 하나의 패키지에 구현하면 같은 이름의 클래스가 존재한다고 오류가 날 것입니다. 하지만 패키지가 다르면 문제가 되지 않습니다. 왜냐하면 aaa패키지 하위의  Student 클래스의 실제 이름은 aaa.Student이고, bbb패키지 하위의 Student 클래스의 실제 이름은 bbb.Student이기 때문입니다. 이를 클래스 전체 이름(class full name)이라고 합니다. 따라서 패키지가 다르면 클래스 이름이 같아도 다른 클래스입니다.
+
+### new 예약어로 클래스 생성하기
+- 클래스를 사용하려면 먼저 클래스를 생성해야 합니다.
+```
+클래스형 변수이름 = new 생성자;
+```
+[생성자 참조](https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/5~7%EC%9D%BC%EC%B0%A8(9h)%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D1#%EC%83%9D%EC%84%B1%EC%9E%90)
+
+- 클래스를 생성할 때는 new 예약어를 사용하고 이어서 생성자를 써 줍니다.
+- 클래스 자료형 변수에 변수를 선언하고 new 예약어로 생성자를 호출하여 대입하면 새로운 클래스가 생성됩니다.
+- 클래스가 생성된다는 것은 클래스를 실제 사용할 수 있도록 메모리 공간(힙 메모리)을 할당 받는다는 뜻입니다.
+- 이렇게 실제로 사용할 수 있도록 생성된 클래스를 **인스턴스**라고 합니다.
+- 그리고 인스턴스를 가리키는 클래스형 변수를 **참조변수**라고 합니다.
+
+```
+Student studentAhn = new Student();
+```
+- Student 클래스 자료형으로 studentAhn 변수를 선언하고 new Student();로 Student클래스를 생성하여 studentAhn에 대입한다는 뜻
+- studentAhn을 참조변수라고 하고, 이 변수가 생성된 인스턴스를 가리킵니다.
+
+### 인스턴스와 참조 변수
+#### 객체, 클래스, 인스턴스
+- **객체**란 '의사나 행위가 미치는 대상'이며 이를 코드로 구현한 것이 **클래스**입니다.
+- 클래스가 메모리 공간에 생성된 상태를 **인스턴스**라고 합니다.
+- 또한 **생성된 클래스의 인스턴스**를 **객체**라고도 합니다.
+
+
+- 클래스의 생성자를 호출하면 인스턴스가 만들어집니다.
+- **클래스는 하나**이지만, 이 클래스로부터 **여려 개의 각기 다른 인스턴스를 생성**할 수 있습니다.<br>(예 : 어떤 학교에서 학생이라는 추상어는 뜻이 하나이지만, 그 학교에 다니느 학생 개개인은 여러 명인 것과 마찬가지)
+
 
 ## 생성자
 
