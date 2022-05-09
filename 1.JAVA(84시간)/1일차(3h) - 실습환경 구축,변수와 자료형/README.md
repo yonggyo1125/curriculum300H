@@ -438,3 +438,104 @@ double dnum = n; // int 형 변수 n의 값을 double형 변수 dnum에 대입
 1. 바이트 크기가 작은 자료형에서 큰 자료형으로 형 변환은 자동으로 이루어진다.
 2. 덜 정밀한 자료형에서 더 정밀한 자료형으로 형 변환은 자동으로 이루어진다.
 
+![묵시적 형변환](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/1%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8B%A4%EC%8A%B5%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%B6%95%2C%EB%B3%80%EC%88%98%EC%99%80%20%EC%9E%90%EB%A3%8C%ED%98%95/images/%EB%AC%B5%EC%8B%9C%EC%A0%81%ED%98%95%EB%B3%80%ED%99%98.png)
+
+- 위 그림에서 화살표 방향과 반대로 형 변환을 하려면 강제로 변환해야 합니다. 
+- long형이 8바이트 이고 float형이 4바이트 인데 자동 형 변환이 되는 이유는 **실수가 정수보다 표현 범위가 더 넓고 정밀하기 때문**입니다.
+- 화살표 방향으로 형 변환이 이뤄질 때는 자료 손실이 없지만, 그 반대의 경우에는 자료 손실이 발생할 수 있습니다.
+
+### 묵시적 형변환
+1. 바이트 크기가 작은 자료형에서 큰 자료형으로 대입하는 경우 
+	```
+	byte bNum = 10;
+	int iNum = bNum; // byte형 변수 bNum 값을 int형 변수 iNum에 대입함
+	```
+	
+2. 덜 정밀한 자료형에서 더 정밀한 자료형으로 대입하는 경우
+	```
+	int iNum2 = 20;
+	float fNum = iNum2;
+	```
+	- 두 변수의 크기가 같은 4바이트라도 float형이 더 정밀하게 데이터를 표현할 수 있으므로 실수형인 float로 변환됩니다.
+
+3. 연산중에 자동 변환되는 경우
+	```
+	int iNum = 20;
+	float fNum = iNum;
+	double dNum;
+	dNum = fNum + iNum;
+	```
+	- 바이트 크기가 작은 수에서 큰 수로, 덜 정밀한 수에서 더 정밀한 수로 자료형이 변환되는 경우에 자동 형 변환이 일어납니다.
+	
+#### day01/ImplicitConversion.java
+```
+package day01;
+
+public class ImplicitConversion {
+	public static void main(String[] args) {
+		byte bNum = 10;
+		int iNum = bNum; // byte형 값이 int형 변수로 대입됨
+		
+		System.out.println(bNum);
+		System.out.println(iNum);
+		
+		int iNum2 = 20;
+		float fNum = iNum2; // int형 값이 float형 변수로 대입됨 
+		
+		System.out.println(iNum);
+		System.out.println(fNum);
+		
+		double dNum;
+		dNum = fNum + iNum;
+		System.out.println(dNum);
+	}
+}
+
+실행결과
+10
+10
+10
+20.0
+30.0
+```
+
+### 명시적 형변환
+1. 바이트 크기가 큰 자료형에서 작은 자료형으로 대입하는 경우
+	```
+	int iNum = 10;
+	byte bNum = (byte)iNum; // 강제로 형을 바꾸려면 바꿀 형을 괄호를 써서 명시해야 함
+	```
+	- 표현할 수 있는 범위를 넘는 경우에는 자료 손실이 발생할 수 있습니다.
+	```
+	int iNum = 1000;
+	byte bNum = (byte)iNum; // -24
+	```
+	
+2. 더 정밀한 자료형에서 덜 정밀한 자료형으로 대입하는 경우
+	- 실수 자료형에서 정수 자료형으로 값이 대입되는 경우에도 역시 형 변환을 명시적으로 해주어야 합니다.
+	```
+	double dNum = 3.14;
+	int iNum2 = (int)dNum; // 실수 자료형 double을 정수 자료형 int로 형 변환
+	```
+	
+3. 연산 중 형변환 
+#### day01/ExplicitConversion.java
+```
+package day01;
+
+public class ExplicitConversion {
+	public static void main(String[] args) {
+		double dNum1 = 1.2;
+		float fNum2 = 0.9F;
+		
+		int iNum3 = (int)dNum1 + (int)fNum2; // 두 실수가 각각 형변환되어 더해짐
+		int iNum4 = (int)(dNum1 + fNum2); // 두 실수의 합이 먼저 계산되고 형 변환됨
+		System.out.println(iNum3);
+		System.out.println(iNum4);
+	}
+}
+
+실행결과
+1
+2
+```
