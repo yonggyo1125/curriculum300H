@@ -1034,14 +1034,287 @@ day05_07.thisex.Person@5e91993f
 - static 변수는 자바 뿐만 아니라 다른 언어에서도 비슷한 개념으로 사용하고 있는 변수로서 자바에서는 다른 멤버 변수처럼 클래스 내부에 선언합니다.
 - 변수를 선언할때 다음과 같이 자료형 앞에 static 예약어를 사용합니다.
 
+![static 변수의 정의와 사용방법](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/5~7%EC%9D%BC%EC%B0%A8(9h)%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D1/images/static1.png)
+
+
 - static 변수는 클래스 내부에 선언하지만, 다른 멤버 변수처럼 인스턴스가 생성될 때마다 새로 생성되는 변수가 아닙니다.
 - static 변수는 프로그램이 실행되어 메모리에 올라갔을 때 딱 한번 메모리 공간에 할당됩니다. 
 - 그리고 그 값은 모든 인스턴스가 공유합니다.
+
+![데이터 영역 메모리](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/5~7%EC%9D%BC%EC%B0%A8(9h)%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D1/images/static2.png)
 
 - 일반 멤버변수는 인스턴스가 생성될 때 마다 새로 생성되어 각각 다른 studentName을 가지게 되지만 
 - static으로 선언한 변수는 인스턴스 생성과 상관없이 먼저 생성되고 그 값을 모든 인스턴스가 공유하게 되는 것입니다.
 - 이런 이유 때문에 static 변수를 클래스에 기반한 변수라고 해서 **클래스 변수**(class variable)라고도 합니다.
 
+#### day05_07/staticex/Student.java
+```
+package day05_07.staticex;
+
+public class Student {
+	// static 변수는 인스턴스 생성과 상관없이 먼저 생성됨
+	public static int serialNum = 1000;
+	public int studentID;
+	public String studentName;
+	public int grade;
+	public String address;
+	
+	public String getStudentName() {
+		return studentName;
+	}
+	
+	public void setStudentName(String name) {
+		studentName = name;
+	}
+}
+```
+
+#### day05_07/staticex/StudentTest1.java
+```
+package day05_07.staticex;
+
+public class StudentTest1 {
+	public static void main(String[] args) {
+		Student studentLee = new Student();
+		studentLee.setStudentName("이지원");
+		System.out.println(studentLee.serialNum); // serialNum 변수의 초깃값 출력
+		studentLee.serialNum++; // static 변수 값 증가
+		
+		Student studentSon = new Student();
+		studentSon.setStudentName("손수경");
+		System.out.println(studentSon.serialNum);  //증가된 값 출력
+		System.out.println(studentLee.serialNum); // 증가된 값 출력
+	}
+}
+
+
+실행결과
+1000
+1001
+1001
+```
+- studentLee를 먼저 생성하고 이 참조 변수를 사용하여 전체 인스턴스에서 공통으로 사용하는 serialNum 변수 값을 1씩 증가 시킵니다.
+- 그리고  studentSon을 생성합니다. 생성된 studentSon으로는 아무 연산도 수행하지 않습니다.
+- 그 다음에 studentSon과 studentLee로 serialNum 변수 값을 출력해 보면 둘다 1001로 증가된 serialNum 값이 출력되는 것을 알 수 있습니다.
+- static으로 선언한 serialNum 변수는 모든 인스턴스가 공유하기 때문입니다.
+- 즉, 두 개의 참조 변수가 동일한 변수의 메모리를 가리키고 있다는 것을 알 수 있습니다.
+
+![static 변수 공유](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/5~7%EC%9D%BC%EC%B0%A8(9h)%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D1/images/static3.png)
+
+
+- static변수는 모든 인스턴스가 공유하는 변수이므로 이 변수를 바로 학번으로 사용하면 모든 학생이 동일한 학번 값을 가지게 되므로 학생 고유 번호로써 학번으로 활용할 수 없습니다.
+- 학번은 학생의 고유 번호 이므로 학생의 멤버변수로 선언해 주고, 학생이 한 명 생성될 때마다 증가한 serialNum 값을 studentID에 대입해 주면 이 문제를 해결할 수 있습니다.
+
+#### day05_07/staticex/Student1.java
+```
+package day05_07.staticex;
+
+public class Student1 {
+	public static int serialNum = 1000;
+	public int studentID;
+	public String studentName;
+	public int grade;
+	public String address;
+	
+	public Student1() {
+		serialNum++; // 학생이 생성될 때마다 증가
+		studentID = serialNum;  // 증가된 값을 학번 인스턴스 변수에 부여
+	}
+	
+	public String getStudentName() {
+		return studentName;
+	}
+		
+	public void setStudentName(String name) {
+		studentName = name;
+	}
+}
+```
+
+#### day05_07/staticex/StudentTest2.java
+```
+package day05_07.staticex;
+
+public class StudentTest2 {
+	public static void main(String[] args) {
+		Student1 studentLee = new Student1();
+		studentLee.setStudentName("이지원");
+		System.out.println(studentLee.serialNum);
+		System.out.println(studentLee.studentName + " 학번:" + studentLee.studentID);
+		
+		Student1 studentSon = new Student1();
+		studentSon.setStudentName("손수경");
+		System.out.println(studentSon.serialNum);  
+		System.out.println(studentSon.studentName + " 학번:" + studentSon.studentID);
+	}
+}
+
+
+실행결과
+
+1001
+이지원 학번:1001
+1002
+손수경 학번:1002
+```
+- 학생 인스턴스를 생성할 때 마다 serialNum 변수의 값은 증가합니다. 
+- 그리고 새로 생성되는 학생마다 가지는 studentID 변수에 증가한 serialNum 값을 복사해 주었으므로, 두 학생의 학번은 다릅니다.
+- 이처럼 static 변수는 같은 클래스에서 생성된 인스턴스들이 같은 값을 공유할 수 있으므로, 인스턴스 간에 공통으로 사용할 값이 필요한 경우 사용할 수 있습니다.
+
+### 클래스 변수
+- static 변수는 인스턴스를 생성할 때마다 만들어지는 것이 아니고 클래스를 선언할 때 특정 메모리에 저장되어 모든 인스턴스가 공유하는 변수입니다.
+- static 변수는 인스턴스 생성과는 별개이므로 인스턴스보다 먼저 생성됩니다. 그러므로 인스턴스가 아닌 **클래스 이름으로도 참조하여 사용할 수 있습니다.**
+- 따라서 자바에서는 static 변수를 **클래스 변수**라고도 합니다.
+
+#### day05_07/staticex/StudentTest3.java
+```
+package day05_07.staticex;
+
+public class StudentTest3 {
+	public static void main(String[] args) {
+		Student1 studentLee = new Student1();
+		studentLee.setStudentName("이지원");
+		System.out.println(Student1.serialNum); // serialNum 변수를 직접 클래스 이름으로 참조
+		System.out.println(studentLee.studentName + " 학번:" + studentLee.studentID);
+		
+		Student1 studentSon = new Student1();
+		studentSon.setStudentName("손수경");
+		System.out.println(Student1.serialNum);  // serialNum 변수를 직접 클래스 이름으로 참조
+		System.out.println(studentSon.studentName + " 학번:" + studentSon.studentID);
+	}
+}
+```
+
+- static 변수 serialNum을 studentLee.serialNum과 같이 인스턴스 변수로 참조할 수 도 있습니다. 
+- 하지만 static변수는 인스턴스가 생성되지 않아도 사용할 수 있기 때문에 보통은 Student.serialNum과 같이 클래스 이름과 함께 사용합니다.
+
+- static변수, 정적변수, 클래스변수라는 세가지 용어가 있지만 모두 static변수로 같은 의미이다.
+- 자바에서 static변수를 클래스 변수라고 하는 이유는 인스턴스마다 생성되는 변수가 아니라 클래스에 속해 한 번만 생성되는 변수이고 이를 여러 인스턴스가 공유하기 때문입니다.
+
+
+### 클래스 메서드
+- static 변수를 위한 메서드
+- 이런 메서드를 **static메서드**  또는 **클래스 메서드**라고 합니다.
+
+#### day05_07/staticex/Student2.java
+```
+package day05_07.staticex;
+
+public class Student2 {
+	private static int serialNum = 1000; // private 변수로 변경
+	public int studentID;
+	public String studentName;
+	public int grade;
+	public String address;
+	
+	public Student2() {
+		serialNum++; 
+		studentID = serialNum; 
+	}
+	
+	public String getStudentName() {
+		return studentName;
+	}
+		
+	public void setStudentName(String name) {
+		studentName = name;
+	}
+	
+	// serialNum의 get()메서드
+	public static int getSerialNum() {
+		int i = 10;
+		return serialNum;
+	}
+	
+	// serialNum의 set()메서드
+	public static void setSerialNum(int serialNum) {
+		Student2.serialNum = serialNum;
+	}
+}
+```
+
+#### day05_07/staticex/StudentTest4.java
+```
+package day05_07.staticex;
+
+public class StudentTest4 {
+	public static void main(String[] args) {
+		Student2 studentLee = new Student2();
+		studentLee.setStudentName("이지원");
+		// serialNum 값을 가져오기 위해 get()메서드를 클래스 이름으로 직접 호출
+		System.out.println(Student2.getSerialNum());
+		System.out.println(studentLee.studentName + " 학번:" + studentLee.studentID);
+		
+		Student2 studentSon = new Student2();
+		studentSon.setStudentName("손수경");
+		// serialNum 값을 가져오기 위해 get()메서드를 클래스 이름으로 직접 호출
+		System.out.println(Student2.getSerialNum()); 
+		System.out.println(studentSon.studentName + " 학번:" + studentSon.studentID);
+	}
+}
+```
+
+### 클래스 메서드와 인스턴스 변수
+- 클래스 메서드 내부에서는 인스턴스 변수를 사용할 수 없습니다.
+- 마찬가지로 클래스 메서드 내부에서는 인스턴스 메서드 역시 사용할 수 없습니다.
+- 클래스 변수, 클래스 메서드는 인스턴스가 만들어지기 이전에 존해하므로 인스턴스에 접근할 수 없습니다.
+- 클래스 변수, 클래스 메서드는 인스턴스가 생성되지 않아도 사용할 수 있습니다.
+
+```
+public class Student2 {
+	private static int serialNum = 1000; // private 변수로 변경
+	public int studentID;
+	public String studentName;
+	public int grade;
+	public String address;
+	
+	...
+	public static int getSerialNum() {
+		int i = 10;
+		studentName = "이지원"; // 오류발생
+		return serialNum;
+	}
+	...
+```
+
+#### day05_07/staticex/StudentTest5.java
+```
+package day05_07.staticex;
+
+public class StudentTest5 {
+	public static void main(String[] args) {
+		// 인스턴스 생성 없이 호출 가능
+		System.out.println(Student2.getSerialNum());
+	}
+}
+
+
+실행결과
+
+1000
+```
+
+
 ## 변수의 유효범위 
+
+### 지역변수의 유효범위
+- 지역변수는 함수나 메서드 내부에 선언하기 때문에 함수 밖에서는 사용할 수 없습니다.
+- 스택에서 생성되는 지역변수는 함수가 호출될 때 생성되었다가 함수가 반환되면 할당되었던 메모리 공간이 해제되면서 함께 없어집니다.
+
+### 멤버변수의 유효범위
+- 멤버변수는 인스턴스 변수라고도 합니다.
+- 클래스가 생성될 때 힙(heap)메모리에 생성되는 변수입니다.
+- 멤버변수는 클래스의 어느 메서드에서나 사용할 수 있습니다. 
+- 힙에 생성된 인스턴스가 가비지 컬렉터(garbage collector)에 의해 수거되면 메모리에서 사라집니다.
+
+### static 변수의 유효범위
+- 사용자가 프로그램을 실행하면 메모리 프로그램이 상주합니다.
+- 이때 프로그램 영역 중에 데이터 영역이 있습니다. 이 영역에는 상수나 문자열, static 변수가 생성됩니다.
+- static 변수는 클래스 생성과 상관 없이 데이터 영역 메모리에 생성됩니다.
+- 따라서 인스턴스 변수와 static 변수는 사용하는 메모리가 다릅니다.
+- static 변수는 private이 아니라면 클래스 외부에서도 객체생성과는 무관하게 사용할 수 있습니다.
+- 프로그램 실행이 끝난 뒤에 메모리에서 내려가면  static 변수도 소멸됩니다.
+- static 변수는 프로그램이 시작할 때 부터 끝날 때 까지 메모리에 상주하므로 크기가 너무 큰 변수를 static으로 선언하는것은 좋지 않습니다.
+
 
 ## static 응용 - 싱글톤 패턴
