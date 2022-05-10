@@ -676,3 +676,54 @@ for(초기화식; 조건식; 증감식) {
 - 증감식 : 반복 횟수나 for문에서 사용하는 변수 값을 1만큼 늘리거나 줄입니다.
 
 ### 1부터 5까지 출력하는 프로그램 예시
+![for 문](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/2~3%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%97%B0%EC%82%B0%EC%9E%90%2C%20%EC%A1%B0%EA%B1%B4%EB%AC%B8%2C%20%EB%B0%98%EB%B3%B5%EB%AC%B8/images/for%EB%AC%B8.png)
+
+```
+1. 처음 for문이 시작할 때 출력할 숫자인 num을 1로 초기화합니다
+```
+
+```
+2. 조건식 num <=5를 검사했을 때 num은 1이므로 참입니다.
+3. 조건식이 참이기 때문에 for문의 System.out.println(num);을 수행하고 1을 출력합니다.
+4. 증감식 num++를 수행하여 num값이 2가 됩니다.
+```
+
+```
+2. 조건식 num<=5를 검사했을 때 num값은 2이므로 참입니다.
+3. 조건식이 참이기 때문에 for문의 System.out.println(num);을 수행하고 2을 출력합니다.
+4. 증감식 num++를 수행하여 num값은 3이 됩니다.
+
+
+... 반복...
+```
+
+```
+2. 조건식 num <=5를 검사했을 때 num 값은 6이므로 거짓입니다. for문이 끝납니다.
+```
+
+#### day02_03/loopexample/ForExample1.java
+```
+package day02_03.loopexample;
+
+public class ForExample1 {
+	public static void main(String[] args) {
+		int i;
+		int sum;
+		for (i = 1, sum = 0; i <= 10; i++) {
+			sum += i;
+		}
+		
+		System.out.println("1부터 10까지의 합은 " + sum + "입니다.");
+	}
+}
+
+실행결과
+1부터 10까지의 합은 55입니다.
+```
+
+### for문을 자주 사용하는 이유
+- for문을 가장 많이 사용하는 이유는 반복 횟수를 관리할 수 있기 때문입니다.
+
+
+- while문으로 작성한 코드를 살펴보면 num의 초기화와 조건 비교, 증감식을 따로 구현했습니다.
+- 하지만 for문을 사용하여 구현하면 초기화, 조건비교, 증감식을 한 줄에 쓸 수 있고 가독성도 좋아집니다.
