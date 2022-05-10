@@ -312,9 +312,172 @@ null
 - Book[] library = new Book[5];는 각각의 Book인스턴스 주소 값을 담을 공간 5개를 생성하는 문장입니다.
 - Book 주소값을 담을 공간이 5개 만들어 지고 자동으로 각 공간은 **비어 있다**는 의미의 null 값으로 초기화됩니다.
 
+![객체배열 초기화](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%B0%B0%EC%97%B4/images/%EA%B0%9D%EC%B2%B4%EB%B0%B0%EC%97%B4_%EC%B4%88%EA%B8%B0%ED%99%94.png)
+ 
+#### day04/array/BookArray2.java
+```
+package day04.array;
 
+public class BookArray2 {
+	public static void main(String[] args) {
+		Book[] library = new Book[5];
+		library[0] = new Book("태백산맥", "조정래");
+		library[1] = new Book("데미안", "헤르만 헤세");
+		library[2] = new Book("어떻게 살 것인가", "유시민");
+		library[3] = new Book("토지", "박경리");
+		library[4] = new Book("어린왕자", "생텍쥐페리");
+		
+		for (int i = 0; i < library.length; i++) {
+			library[i].showBookInfo();
+		}
+		
+		for (int i = 0; i < library.length; i++) {
+			System.out.println(library[i]);
+		}
+	}
+}
+
+실행결과
+태백산맥,조정래
+데미안,헤르만 헤세
+어떻게 살 것인가,유시민
+토지,박경리
+어린왕자,생텍쥐페리
+day04.array.Book@5e91993f
+day04.array.Book@1c4af82c
+day04.array.Book@379619aa
+day04.array.Book@cac736f
+day04.array.Book@5e265ba4
+```
+ 
  
 ### 배열 복사하기
+배열을 복사하는 방법은 두 가지 있습니다.
+1. 기존 배열과 배열 길이가 같거나 더 긴 배열을 만들고 for문을 사용하여 각 요소 값을 반복해서 복사하는 방법
+2. System.arraycopy() 메서드를 사용하는 방법
+
+#### System.arraycopy(src, srcPos, dest, destPos, length)
+
+|매개변수|설명|
+|-----|--------|
+|src|복사할 배열 이름|
+|srcPos|복사할 배열의 첫 번째 위치|
+|dest|복사해서 붙여 넣을 대상 배열 이름|
+|destPos|복사해서 대상 배열에 붙여 넣기를 시작할 첫 번째 위치|
+|length|src에서 dest로 자료를 복사할 요소 개수|
+
+#### day04/array/ArrayCopy.java
+```
+package day04.array;
+
+public class ArrayCopy {
+	public static void main(String[] args) {
+		int[] array1 = {10, 20, 30, 40, 50};
+		int[] array2 = {1,2,3,4,5};
+		
+		System.arraycopy(array1, 0, array2, 1, 4);
+		for(int i = 0; i < array2.length; i++) {
+			System.out.println(array2[i]);
+		}
+	}
+}
+
+실행결과
+1
+10
+20
+30
+40
+
+```
+
+#### 객체 배열 복사하기
+#### day04/array/ObjectCopy1.java
+```
+package day04.array;
+
+public class ObjectCopy1 {
+	public static void main(String[] args) {
+		Book[] bookArray1 = new Book[3];
+		Book[] bookArray2 = new Book[3];
+		
+		bookArray1[0] = new Book("태백산맥", "조정래");
+		bookArray1[1] = new Book("데미안", "헤르만 헤세");
+		bookArray1[2] = new Book("어떻게 살 것인가", "유시민");
+		System.arraycopy(bookArray1, 0, bookArray2, 0, 3);
+		
+		for (int i = 0; i < bookArray2.length; i++) {
+			bookArray2[i].showBookInfo();
+		}
+	}
+}
+
+실행결과
+태백산맥,조정래
+데미안,헤르만 헤세
+어떻게 살 것인가,유시민
+```
+- 위 예제 코드의 출력 결과를 보면 bookArray1 배열에서 bookArray2 배열로 요소 값이 잘 복사된 것을 알 수 있습니다. 
+- 한가지 의문점은 bookArray2 배열의 인스턴스를 따로 만들지 않았는데, 각 요소 값이 잘 출력되고 있습니다. 
+- 객체 배열을 사용하려면 꼭 인스턴스를 생생해서 넣어야 하는데, 예제코드는 의문점이 생길 수 있습니다.
+
+#### 얕은 복사
+#### day04/array/ObjectCopy2.java
+```
+package day04.array;
+
+public class ObjectCopy2 {
+	public static void main(String[] args) {
+		Book[] bookArray1 = new Book[3];
+		Book[] bookArray2 = new Book[3];
+		
+		bookArray1[0] = new Book("태백산맥", "조정래");
+		bookArray1[1] = new Book("데미안", "헤르만 헤세");
+		bookArray1[2] = new Book("어떻게 살 것인가", "유시민");
+		System.arraycopy(bookArray1, 0, bookArray2, 0, 3);
+		
+		for (int i = 0; i < bookArray2.length; i++) {
+			bookArray2[i].showBookInfo();
+		}
+		
+		// bookArray1 배열의 첫 번째 요소 값 변경
+		bookArray1[0].setBookName("나목");
+		bookArray1[0].setAuthor("박완서");
+		
+		System.out.println("=== bookArray1 ===");
+		for (int i = 0; i < bookArray1.length; i++) {
+			bookArray1[i].showBookInfo();
+		}
+		
+		System.out.println("=== bookArray2 ===");
+		for (int i = 0; i < bookArray2.length; i++) {
+			bookArray2[i].showBookInfo(); // bookArray2 배열 요소의 값도 변경되어 출력
+		}
+	}
+}
+
+실행결과
+태백산맥,조정래
+데미안,헤르만 헤세
+어떻게 살 것인가,유시민
+=== bookArray1 ===
+나목,박완서
+데미안,헤르만 헤세
+어떻게 살 것인가,유시민
+=== bookArray2 ===
+나목,박완서
+데미안,헤르만 헤세
+어떻게 살 것인가,유시민
+```
+- bookArray1 배열 요소 값을 변경했는데 bookArray2배열 요소 값도 변경된 것을 알 수 있습니다.
+- 그 이유는 객체 배열의 요소에 저장된 값은 인스턴스 자체가 아니고 인스턴스의 주소 값이기 때문입니다.
+- 객체 배열을 복사할 때 인스턴스를 따로 생성하는 게 아니라 기존 인스턴스의 주소 값만 복사합ㄴ디ㅏ.
+- 결국 두 배열의 서로 다른 요소가 같은 인스턴스를 가리키고 있으므로 복사되는 배열의 인스턴스 값이 변경되면 두 배열 모두 영향을 받는 것입니다.
+
+
+
+- 이와 같은 복사를 주소 값만 복사한다고 해서 **얕은 복사(sallow copy)**라고 합니다.
+
 
 ### 향상된 for문과 배열
 
