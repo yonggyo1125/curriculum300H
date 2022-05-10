@@ -724,6 +724,134 @@ public class ForExample1 {
 ### for문을 자주 사용하는 이유
 - for문을 가장 많이 사용하는 이유는 반복 횟수를 관리할 수 있기 때문입니다.
 
+![for문과 while문 비교](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/2~3%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%97%B0%EC%82%B0%EC%9E%90%2C%20%EC%A1%B0%EA%B1%B4%EB%AC%B8%2C%20%EB%B0%98%EB%B3%B5%EB%AC%B8/images/for%EB%AC%B8%EA%B3%BC%20while%EB%AC%B8%20%EB%B9%84%EA%B5%90.png)
 
 - while문으로 작성한 코드를 살펴보면 num의 초기화와 조건 비교, 증감식을 따로 구현했습니다.
 - 하지만 for문을 사용하여 구현하면 초기화, 조건비교, 증감식을 한 줄에 쓸 수 있고 가독성도 좋아집니다.
+- for문은 배열과 함께 자주 사용합니다. 배열은 자료형이 순서대로 모여있는 구조인데, 배열 순서를 나타내느 색인은 항상 0부터 시작합니다. 따라서 배열의 전체 요소 개수가 n개일 때, 요소 위치는 n-1번째로 표현할 수 있습니다. 
+- 이러한 배열의 특성과 증감에 따른 반복을 표현하는 데 적합한 for문의 특성 때문에 for문과 배열을 함께 자주 사용하는 것입니다.
+
+## for문 요소 생략하기
+#### 초기화식 생략
+```
+int = 0; 
+for ( ; i < 5; i++) {
+	...
+}
+```
+
+#### 조건식 생략 
+```
+for(i = 0;  ; i++) {
+	sum += i;
+	if (sum > 200) break;
+}
+```
+
+#### 증감식 생략
+```
+for(i = 0; i < 5;  ) {
+	...
+	i = (++i) % 10;
+}
+```
+
+#### 요소 모두 생략
+모든 요소를 생략하고 무한 반복하는 경우에 사용합니다.
+for ( ;  ; ) {
+	...
+}
+	
+## 중첩된 반복문
+
+#### day02_03/loopexample/NestedLoop.java 
+```
+package day02_03.loopexample;
+
+public class NestedLoop {
+	public static void main(String[] args) {
+		int dan;
+		int times;
+		
+		for (dan = 2; dan <= 9; dan++) { // 2단부터 9단까지 반복하는 외부 반복문 
+			for (times = 1; times <= 9; times++) { // 각 단에서 1~9를 곱하는 내부 반복문
+				System.out.println(dan + "X" + times + " = " + dan * times);
+			}
+			System.out.println();
+		}
+	}
+}
+```
+
+## continue문 
+- continue문은 반복문과 함께 쓰입니다. 반복문 안에서 continue문을 만나면 이후의 문장은 수행하지 않고 for문의 처음으로 돌아가 증감식을 수행합니다.
+- 반복 건너뛰기
+
+#### day02_03/loopexample/ContinueExample.java 
+```
+package day02_03.loopexample;
+
+public class ContinueExample {
+	public static void main(String[] args) {
+		int total = 0;
+		int num;
+		
+		for(num = 1; num <= 100; num++) {
+			if (num % 2 == 0) {
+				continue;
+			}
+			
+			total += num;
+		}
+		
+		System.out.println("1부터 100까지의 홀수의 합은: " + total + "입니다.");
+	}
+}
+
+수업결과
+1부터 100까지의 홀수의 합은: 2500입니다.
+```
+
+## break문 
+반복문에서 break문을 사용하면 그 지점에서 더 이상 수행문을 반복하지 않고 반복문을 빠져나옵니다.
+
+#### day02_03/loopexample/BreakExample2.java
+```
+package day02_03.loopexample;
+
+public class BreakExample {
+	public static void main(String[] args) {
+		int sum = 0;
+		int num = 0;
+		
+		for (num = 0; ; num++) {
+			sum += num;
+			if (sum >= 100)
+				break;
+		}
+		
+		System.out.println("num : " + num);
+		System.out.println("sum : " + sum);
+		
+		sum = 0;
+		num = 0;
+		while(true) {
+			sum += num;
+			if (sum >= 100) {
+				break;
+			}
+			
+			num++;
+		}
+		
+		System.out.println("num : " + num);
+		System.out.println("sum : " + sum);
+	}
+}
+
+실행결과
+num : 14
+sum : 105
+num : 14
+sum : 105
+```
