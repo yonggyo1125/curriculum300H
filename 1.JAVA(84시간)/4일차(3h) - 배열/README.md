@@ -582,6 +582,42 @@ Python
 - 다차원 배열은 평면이나 공간 개념을 구현하는 데 사용합니다.
 
 ### 이차원 배열
-다음은 2행 3열의 이차원 배열을 선언하는 코드의 논리적 구조입니다.
+- 다음은 2행 3열의 이차원 배열을 선언하는 코드의 논리적 구조입니다.
 
+![2차원 배열](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%B0%B0%EC%97%B4/images/2%EC%B0%A8%EC%9B%90%EB%B0%B0%EC%97%B41.png)
+
+- 배열의 모든 요소를 참조하려면 각 행을 기준으로 열 값을 순회하면 됩니다. 
+-이차원 배열을 초기화하려면 다음처럼 행과 열 개수에 맞추어서 중괄호 {}안에 콤마(,)로 구분해서 값을 적습니다. 
+- 이렇게 이차원 배열을 초기화하면 괄호 안에 적은 6개의 값이 순서대로 arr 배열의 각 요소에 저장됩니다.
+
+![2차원 배열](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%B0%B0%EC%97%B4/images/2%EC%B0%A8%EC%9B%90%EB%B0%B0%EC%97%B42.png)
+
+#### day04/array/TwoDimension.java
+```
+package day04.array;
+
+public class TwoDimension {
+	public static void main(String[] args) {
+		int[][] arr = {{1,2,3}, {4,5,6}}; // 2차원 배열 선언과 동시에 초기화
+		
+		for(int i = 0; i < arr.length; i++) { // 행 
+			for(int j = 0; j < arr[i].length; j++) { // 열
+				System.out.println(arr[i][j]);
+			}
+			System.out.println();
+		}
+	}
+}
+
+실행결과
+1
+2
+3
+
+4
+5
+6
+```
+
+- 중첩 for문은 배열 인덱스용으로 i, j 두 변수를 사용하는데 i는 행을. j는 열을 가리킵니다. 전체 배열 길이인 arr.length는 행의 개수를 각 행의 길이 arr[i].length는 열의 개수를 나타냅니다.
 
