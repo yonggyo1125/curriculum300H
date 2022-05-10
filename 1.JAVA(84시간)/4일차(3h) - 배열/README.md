@@ -110,12 +110,210 @@ public class ArrayTest {
 10
 ```
 
+- int[] num = new int[] {1,2,3,4,5,6,7,8,9,10} :  int형 num을 선언하고 1부터 10까지의 값으로 초기화하였다.
+
+![배열 선언 및 초기화](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%B0%B0%EC%97%B4/images/%EB%B0%B0%EC%97%B4_%EC%84%A0%EC%96%B8_%EC%B4%88%EA%B8%B0%ED%99%94.png)
+
+- 배열 요소를 하나씩 가져와 출력하기 위해 for 반복문을 사용했습니다. 배열의 첫 번째 요소 **인덱스는 0부터 시작**합니다.
+
+>**0부터 9까지 반복이면 조건식을 i<=9로 쓰는 게 더 좋은것이 아닌가?**<br> i<=9 보다는 i < 10으로 하는것이 더 직관적입니다. 왜냐하면 10이 배열의 길이이므로 10으로 쓰는 것이 훨씬 직관적이기 떄문입니다. 배열 객체의 속성인 length를 사용하면 배열의  길이를 쉽게 알 수 있습니다.
+
+- 자바의 배열은 배열의 길이를 나타내는 **length 속성**을 가집니다. 
+- 자바에서 배열 길이는 처음에 선언한 배열의 전체 요소 개수를 의미합니다. 전체 길이를 알고 싶은 배열 이름 뒤에 마침표(.) 연산자를 붙이고 length 속성을 쓰면 배열 길이를 반환합니다. 
+- for문의 조건에서 얼만큼 반복할지 결정해야 하는데, 배열 요소 끝까지 반복하기 위해 배열 전체 길이(length)를 넣습니다, 따라서 num.length 값은 10이 됩니다.
+- 이렇게 배열 전체 길이만큼 수행문을 반복해야 할 때는 숫자를 직접 사용하는 것보다 **length 속성**을 사용하는 것이 좋습니다.
+
+
+
+#### 전체 배열 길이롸 유효한 값 
+우리가 배열을 사용할 때 처음 선언한 배열 길이만큼 값을 저장해서 사용하는 경우는 많지 않습니다. 따라서 **전체 배열의 길이와 현재 배열에 유효한 값이 저장되어 있는 배열 요소의 개수가 같다고 혼동하면 안된다.**
+
+#### day04/array/ArrayTest2.java
+```
+package day04.array;
+
+public class ArrayTest2 {
+	public static void main(String[] args) {
+		double[] data = new double[5];
+		
+		data[0] = 10.0;  // 첫 번째 요소에 값 10.0 대입
+		data[1] = 20.0;  // 두 번째 요소에 값 20.0 대입 
+		data[2] = 30.0; // 세 번째 요소에 값 30.0 대입
+		
+		for(int i = 0; i < data.length; i++) {
+			System.out.println(data[i]);
+		}
+	}
+}
+
+실행결과
+10.0
+20.0
+30.0
+0.0
+0.0
+```
+
+- 자바에서 정수 배열과 실수 배열을 별도로 초기화하지 않고 선언하면 배열의 요소 값은 0으로 초기화됩니다.
+- for문에서 i가 0부터 배열 길이인 data.length 미만까지 반복하여 배열에 저장된 요소 값을 출력합니다.
+- 배열의 네 번째 요소와 다섯 번째 요소에는 값을 저장하지 않았기 때문에 0이 출력되는 것을 알 수 있습니다.
+- 즉, 배열의 세 번째 요소까지만 유효한 값이 저장되었습니다.
+
+#### day04/array/ArrayTest3.java
+```
+package day04.array;
+
+public class ArrayTest3 {
+	public static void main(String[] args) {
+		double[] data = new double[5];
+		int size = 0; //유효한 값이 지정된 배열 요소 개수를 저장하 변수 선언
+		
+		//  값을 저장한 후 size 변수 값 증가
+		data[0] = 10.0; size++; 
+		data[1] = 20.0; size++;
+		data[2] = 30.0; size++; 
+		
+		// 유효한 값이 저장된 배열 요소 개수만큼 반복문 실행
+		for(int i = 0; i < size; i++) {
+			System.out.println(data[i]);
+		}
+	}
+}
+
+실행결과
+10.0
+20.0
+30.0
+```
+- 유효한 값이 저장된 배열 요소 개수를 저장할 size 변수를 선언했습니다. 
+- 배열 요소에 순서대로 값을 저장할 때마다 size 변수의 값을 하나씩 증가시킵니다. 
+- 즉, 유효한 값을 저장하고 있는 배열 요소의 개수를 알 수 있습니다.
 
 
 ### 문자 저장 배열 만들기
+문자 자료형 배열을 만들고 알파벳 대문자 A부터 Z까지 저장한 후 각 요소 값을 알파벳 문자와 정수 값(아스키 코드 값)으로 출력해 보겠습니다. 문자 자료형 배열은 char[]로 선언해야 합니다.
+
+#### day04/array/CharArray.java
+```
+package day04.array;
+
+public class CharArray {
+	public static void main(String[] args) {
+		char[] alphabets = new char[26];
+		char ch = 'A';
+		
+		for(int i = 0; i < alphabets.length; i++, ch++) {
+			alphabets[i] = ch; // 아스키 값으로 각 요소에 저장
+		}
+		
+		for(int i = 0; i < alphabets.length; i++) {
+			System.out.println(alphabets[i] + "," + (int)alphabets[i]);
+		}
+	}
+}
+
+
+실행결과
+A,65
+B,66
+C,67
+D,68
+E,69
+F,70
+G,71
+H,72
+I,73
+J,74
+K,75
+L,76
+M,77
+N,78
+O,79
+P,80
+Q,81
+R,82
+S,83
+T,84
+U,85
+V,86
+W,87
+X,88
+Y,89
+Z,90
+```
 
 ### 객체 배열 사용하기
+- 동일한 기본 자료형(int 등)변수 여러 개를 배열로 사용할 수 있듯이 참조 자료형 변수도 여러 개를 배열로 사용할 수 있습니다.
+- 객체배열은 int나 char등 기본 자료형 배열과 사용방법이 조금 다릅니다.
 
+#### day04/array/Book.java
+```
+package day04.array;
+
+public class Book {
+	private String bookName;
+	private String author;
+	
+	public Book() {} // 디폴트 생성자
+	
+	public Book(String bookName, String author) {
+		this.bookName = bookName;
+		this.author = author;
+	}
+	
+	public String getBookName() {
+		return bookName;
+	}
+	
+	public void setBookName(String bookName) {
+		this.bookName = bookName;
+	}
+	
+	public String getAuthor() {
+		return author;
+	}
+	
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+	
+	public void showBookInfo() {
+		System.out.println(bookName + "," + author);
+	}
+}
+```
+
+Book 클래스는 책 이름과 저자를 멤버 변수로 가지는 클래스 입니다 .디폴드 생성자 외에도 책 이름과 저자 이름을 받는 생성자를 하나 더 구현했습니다.
+
+
+#### day04/array/BookArray.java
+```
+package day04.array;
+
+public class BookArray {
+	public static void main(String[] args) {
+		Book[] library = new Book[5];  // Book 클래스형으로 객체 배열 생성
+		
+		for (int i = 0; i < library.length; i++) {
+			System.out.println(library[i]);
+		}
+	}
+}
+
+실행결과
+null
+null
+null
+null
+null
+```
+
+- Book[] library = new Book[5]; 문장을 보면 Book 인스턴스 5개가 생성된 것처럼 보이나 Book 인스턴스 5개가 바로 생성되는 것은 아닙니다. 이때 만들어 지는 것은 인스턴스 주소를 담을 공간 입니다. 
+- Book[] library = new Book[5];는 각각의 Book인스턴스 주소 값을 담을 공간 5개를 생성하는 문장입니다.
+- Book 주소값을 담을 공간이 5개 만들어 지고 자동으로 각 공간은 **비어 있다**는 의미의 null 값으로 초기화됩니다.
+
+
+ 
 ### 배열 복사하기
 
 ### 향상된 for문과 배열
