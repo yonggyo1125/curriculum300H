@@ -33,6 +33,8 @@ class B extends A {
 
 ### 상속을 사용하여 고객 관리 프로그램 구현하기
 
+#### day08_10/inheritance/Customer.java
+
 
 ## 상속에서 클래스 생성과 형 변환
 

@@ -1,3 +1,12 @@
+## 카카오 오픈채팅
+- 문의 답변 및 공지사항 전달을 위해 오픈채팅을 개설합니다.
+- [코리아IT인천 - 웹&앱 개발자 과정(저녁반)](https://open.kakao.com/o/gpdRDAfe)
+
+## 학습시 질문사항
+- 학습시 문의 사항은 Issues에 올려 주시면 확인 후 답변 드립니다.
+- [질의응답](https://github.com/yonggyo1125/curriculum300H/issues/1)
+
+
 # JAVA 과정(84시간)
 * 1일차(3h)
 	- 오리엔테이션
