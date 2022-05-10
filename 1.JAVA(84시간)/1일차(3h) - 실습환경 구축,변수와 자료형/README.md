@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1rA1I9xadimigr0uJKLrzoMbhpdZ_VRDH?usp=sharing)
+
 # 실습환경 구축하기
 
 ## 자바 설치하기
