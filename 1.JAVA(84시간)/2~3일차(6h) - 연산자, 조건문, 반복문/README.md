@@ -560,3 +560,119 @@ public class SwitchCase2 {
 * * * 
 # 반복문 
 
+#### day02_03/loopexample/BasicLoop.java
+```
+package day02_03.loopexample;
+
+public class BasicLoop {
+	public static void main(String[] args) {
+		int num = 1;
+		num += 2;
+		num += 3;
+		num += 4;
+		num += 5;
+		num += 6;
+		num += 7;
+		num += 8;
+		num += 9;
+		num += 10;
+		
+		System.out.println("1부터 10까지의 합은 " + num + " 입니다.");
+	}
+}
+
+실행결과
+1부터 10까지의 합은 55 입니다.
+```
+
+- 상기 코드는 1~10까지 더하여 합을 구하는데 효율적이지 않습니다. 
+- 반복되는 일을 효율적으로 처리하기 위해 사용하는 것이 **반복문** 입니다.
+
+
+## while문
+```
+while(조건식) {
+	수행문1;  // 조건식이 참인 동안 반복 수행 
+}
+```
+#### day02_03/loopexample/WhileExample1.java
+```
+package day02_03.loopexample;
+
+public class WhileExample1 {
+	public static void main(String[] args) {
+		int num = 1;
+		int sum = 0;
+		
+		while(num <= 10) { // num값이 10보다 작거나 같을 동인
+			sum += num; // 합계를 뜻하는 sum에 num을 더하고 
+			num++; // num에 1씩 더해 나감 
+		}
+		System.out.println("1부터 10까지의 합은 " + sum + "입니다.");
+	}
+}
+
+실행결과
+1부터 10까지의 합은 55입니다.
+```
+
+### while문이 무한히 반복되는 경우
+```
+while(true) {
+	...
+}
+```
+- while문의 구조를 보면 조건식이 참이면 반복합니다.
+- while문을 상기 코드와 같이 사용하면 조건이 항상 **참**이 되어 **무한 반복**합니다. 
+
+
+## do-while문
+- while문은 조건을 먼저 검사하기 때문에 조건식이 맞기 않으면 반복 수행이 한 번도 일어나지 않습니다.
+- do-while문은 {}안의 문장을 무조건 한 번 수행한 후에 조건식을 검사합니다. 즉, 조건이 만족하는지 여부를 마지막에 검사하는 것입니다.
+- 중괄호 안의 문장을 반드시 한 번 이상 수행해야 할 때 while문 대신 do-while문을 사용합니다.
+
+```
+do {
+	수행문1;
+	...
+} while(조건식);
+```
+
+#### day02_03/loopexample/DoWhileExample.java
+```
+package day02_03.loopexample;
+
+public class DoWhileExample {
+	public static void main(String[] args) {
+		int num = 1;
+		int sum = 0;
+		
+		do {
+			// 주어진 조건이 참이 아니더라도 무조건 한 번 수행함
+			sum += num;
+			num++;
+		} while(num <= 10);
+		
+		System.out.println("1부터 10까지의 합은 " + sum + "입니다.");
+	}
+}
+
+실행결과
+1부터 10까지의 합은 55입니다.
+```
+
+## for문 
+- 반복문 중에서 가장 많이 사용하는 반복문이 for문 입니다.
+- for문은 반복문을 구현하는데 필요한 여러 요소(변수의 초기화식, 조건식, 증감식)를 함께 작성하여야 하므로 while문이나 do-while문 보다 구조가 조금 더 복잡합니다.
+
+### for문의 기본구조
+```
+for(초기화식; 조건식; 증감식) {
+	수행문;
+}
+```
+- 초기화식 : for문이 시작할 때 딱 한번만 수행하며 사용할 변수를 초기화합니다.
+- 조건식 : 언제까지 반복수행할 것인지 구현합니다.
+- 증감식 : 반복 횟수나 for문에서 사용하는 변수 값을 1만큼 늘리거나 줄입니다.
+
+### 1부터 5까지 출력하는 프로그램 예시
