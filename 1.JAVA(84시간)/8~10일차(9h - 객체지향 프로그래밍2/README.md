@@ -34,7 +34,60 @@ class B extends A {
 ### 상속을 사용하여 고객 관리 프로그램 구현하기
 
 #### day08_10/inheritance/Customer.java
+```
+package day08_10.inheritance;
 
+public class Customer {
+	
+	// 멤버 변수
+	private int CustomerID; // 고객 아이디
+	private String customerName; // 고객 이름
+	private String customerGrade; // 고객 등급
+	int bonusPoint; // 보너스 포인트
+	double bonusRatio; // 적립비율
+	
+	// 디폴트 생성자
+	public Customer() {
+		customerGrade = "SILVER"; // 기본 등급
+		bonusRatio = 0.01; // 보너스 포인트 기본 적립 비율
+	}
+	
+	public int calcPrice(int price) {
+		bonusPoint += price * bonusRatio; // 보너스 포인트 계산
+		return price;
+	}
+	
+	public String showCustomerInfo() {
+		return customerName + " 님의 등급은 " + customerGrade + "이며, 보너스 포인트는" + bonusPoint + "입니다."; 
+	}
+}
+```
+- 예제에서 사용한 멤버변수를 살펴보면 다음과 같습니다.
+
+|멤버변수|설명|
+|customerID|고객 아이디|
+|customerName|고객 이름|
+|customerGrade|고객 등급<br>기본 생성자에서 지정되는 기본 등급은 SILVER입니다.|
+|bonusPoint|고객의 보너스 포인트<br>- 고객이 제품을 구매할 경우 누적되는 보너스 포인트입니다.|
+|bonusRatio|보너스 포인트 적립 비율<br>- 고객이 제품을 구매할 때 구매 금액의 일정 비율이 보너스 포인트로 적립됩니다.<br>- 기본 생성자에서 지정되는 적립 비율은 1%입니다. 즉, 10,000원짜리를 사면 100원이 적립됩니다.|
+
+- 모든 멤버 변수를 반드시 private으로 선언할 필요는 없습니다. 필요에 따라서 멤버 변수나 메서드를 외부에 노출하지 않을 목적일 때 private으로 선언합니다. 
+
+|메서드|설명|
+|Customer()|기본 생성자입니다. 고객 한 명이 새로 생성되면 CustomerGrade는 SILVER이고, bonusRatio는 1%로 지정합니다.|
+|calcPrice(int price)|제품에 대해 지불해야 하는 금액을 계산하여 반환합니다. 할인되지 않는 경우 가격을 그대로 반환합니다. 그리고 가격에 대해 보너스 포인트 비율을 적용하여 보너스 포인트를 적립합니다.|
+|showCustomerInfo()|고객 정보를 출력합니다. 고객 이름과 등급, 현재 적립된 포인트를 보여줍니다.|
+
+#### 새로운 고객 등급이 필요한 경우
+```
+예제 시나리오
+
+고객이 점점 늘어나고 판매도 많아지고 보니 단골 고객이 생겼습니다. 단골 고객은 회사 매출에 많은 기여를 하는 우수 고객입니다. 이 우수 고객에게 좋은 혜택을 주고 싶습니다. 우수 고객은 VIP이고, 다음과 같은 혜택을 제공합니다.
+
+- 제품을 살 때는 항상 10% 할인해 줍니다.
+- 보너스 포인트를 5% 적립해 줍니다.
+- 담당 전문 상담원을 배정해 줍니다.
+```
 
 ## 상속에서 클래스 생성과 형 변환
 
