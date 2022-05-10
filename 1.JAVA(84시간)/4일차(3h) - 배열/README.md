@@ -621,3 +621,4 @@ public class TwoDimension {
 
 - 중첩 for문은 배열 인덱스용으로 i, j 두 변수를 사용하는데 i는 행을. j는 열을 가리킵니다. 전체 배열 길이인 arr.length는 행의 개수를 각 행의 길이 arr[i].length는 열의 개수를 나타냅니다.
 
+![2차원 배열](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%B0%B0%EC%97%B4/images/2%EC%B0%A8%EC%9B%90%EB%B0%B0%EC%97%B43.png)
