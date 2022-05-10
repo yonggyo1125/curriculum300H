@@ -9,7 +9,7 @@
 ### 클래스의 상속
 - B 클래스가 A 클래스에서 상속 받는다고 할 때 다음과 같은 그림으로 나타낼 수 있습니다.
 
-![상속1]()
+![상속1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%83%81%EC%86%8D1.png)
 
 - 클래스 간 상속을 표현할 때는 위 그림에 표현한 것 처럼 상속받는 클래스에서 상속하는 클래스로 화살표가 갑니다. 
 - 부모 클래스(parent class)를 '상위클래스 또는 조상클래스', 자식 클래스를 '하위 클래스' 등으로 부르기도 합니다.
