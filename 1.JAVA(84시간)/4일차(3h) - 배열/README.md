@@ -474,13 +474,114 @@ public class ObjectCopy2 {
 - 객체 배열을 복사할 때 인스턴스를 따로 생성하는 게 아니라 기존 인스턴스의 주소 값만 복사합ㄴ디ㅏ.
 - 결국 두 배열의 서로 다른 요소가 같은 인스턴스를 가리키고 있으므로 복사되는 배열의 인스턴스 값이 변경되면 두 배열 모두 영향을 받는 것입니다.
 
+![얕은복사](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%B0%B0%EC%97%B4/images/%EC%96%95%EC%9D%80%EB%B3%B5%EC%82%AC.png)
 
 
 - 이와 같은 복사를 주소 값만 복사한다고 해서 **얕은 복사(sallow copy)**라고 합니다.
 
+#### 깊은 복사
+- 반복문을 사용하건 System.arraycopy() 메서드를 사용하건 객체 배열을 복사하면 항상 인스턴스의 주소가 복사됩니다.
+- 대부분의 경우는 이렇게 해도 문제가 없지만, 인스턴스를 따로 관리하고 싶다면 직접 인스턴스를 만들고 그 값을 복사해야 합니다. 이를 **깊은 복사(deep copy)**라고 합니다.
+
+#### day04/array/ObjectCopy3.java
+```
+package day04.array;
+
+public class ObjectCopy3 {
+	public static void main(String[] args) {
+		Book[] bookArray1 = new Book[3];
+		Book[] bookArray2 = new Book[3];
+		
+		bookArray1[0] = new Book("태백산맥", "조정래");
+		bookArray1[1] = new Book("데미안", "헤르만 헤세");
+		bookArray1[2] = new Book("어떻게 살 것인가", "유시민");
+		System.arraycopy(bookArray1, 0, bookArray2, 0, 3);
+		
+		bookArray2[0] = new Book();
+		bookArray2[1] = new Book();
+		bookArray2[2] = new Book();
+		
+		// bookArray1 배열 요소를 새로 생성한 bookArray2 배열 인스턴스에 복사
+		for (int i = 0; i < bookArray1.length; i++) {
+			bookArray2[i].setBookName(bookArray1[i].getBookName());
+			bookArray2[i].setAuthor(bookArray1[i].getAuthor());
+		}
+		
+		for (int i = 0; i < bookArray2.length; i++) {
+			bookArray2[i].showBookInfo();
+		}
+		
+		// bookArray1 배열의 첫 번째 요소 값 변경
+		bookArray1[0].setBookName("나목");
+		bookArray1[0].setAuthor("박완서");
+				
+		System.out.println("=== bookArray1 ===");
+		for (int i = 0; i < bookArray1.length; i++) {
+			bookArray1[i].showBookInfo();
+		}
+				
+		System.out.println("=== bookArray2 ===");
+		for (int i = 0; i < bookArray2.length; i++) {
+			bookArray2[i].showBookInfo(); // bookArray2 배열 요소의 값도 변경되어 출
+		}
+	}
+}
+
+실행결과
+태백산맥,조정래
+데미안,헤르만 헤세
+어떻게 살 것인가,유시민
+=== bookArray1 ===
+나목,박완서
+데미안,헤르만 헤세
+어떻게 살 것인가,유시민
+=== bookArray2 ===
+태백산맥,조정래
+데미안,헤르만 헤세
+어떻게 살 것인가,유시민
+```
+
+![깊은 복사](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%B0%B0%EC%97%B4/images/%EA%B9%8A%EC%9D%80%EB%B3%B5%EC%82%AC.png)
+
 
 ### 향상된 for문과 배열
+- JDK1.5부터 제공되는 향상된 for문(enhanced for loop)은 배열의 처음부터 끝까지 모든 요소를 참조할 때 사용하는 편리한 반복문 입니다.
+- 향상된 for문은 배열 요소 값을 순서대로 하나씩 가져와서 변수에 대입합니다.
+- 따로 초기화와 종료 조건이 없기 때문에 모든 **배열의 시작 요소부터 끝 요소까지 실행**합니다.
+
+```
+for(변수 : 배열) {
+	반복 실행문;
+}
+```
+
+#### day04/array/EnhancedForLoop.java
+```
+package day04.array;
+
+public class EnhancedForLoop {
+	public static void main(String[] args) {
+		String[] strArray = {"Java", "Android", "C", "JavaScript", "Python"};
+		
+		for(String lang : strArray) {
+			System.out.println(lang);
+		}
+	}
+}
+
+실행결과
+Java
+Android
+C
+JavaScript
+Python
+```
 
 ## 다차원배열
+- 이차원 이상으로 구현한 배열을 **다차원 배열**
+- 다차원 배열은 평면이나 공간 개념을 구현하는 데 사용합니다.
 
-## 배열 응용 프로그램
+### 이차원 배열
+다음은 2행 3열의 이차원 배열을 선언하는 코드의 논리적 구조입니다.
+
+
