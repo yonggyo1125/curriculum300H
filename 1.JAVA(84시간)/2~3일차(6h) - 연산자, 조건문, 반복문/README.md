@@ -22,13 +22,84 @@ int age = 24;  // 나의를 의미하는 age 변수에 값 24를 대입함
 ```
 - 오른쪽 변수 값이나 식의 연산 결과를 왼쪽 변수에 대입합니다.
 
-
 ## 부호 연산자
+- 부호연산자는 +, - 두 가지가 있습니다.
+- 더하기, 빼기 연산에 쓰는 이항 연산자이면서 부호를 나타내는 단항 연산자로 사용합니다.
+
+|연산자|기능|연산 예|
+|----|-----|-----|
+|+|변수나 상수 값을 양수로 만듭니다.|+3|
+|-|변수나 상수 값을 음수로 만듭니다.|-3|
+
+```
+int num = 10;
+
+System.out.println(+num); // 값 10이 그대로 출력됨
+System.out.println(-num); // 값 10에 -가 붙어서 -10이 출력되지만 num 값이 실제로 바뀌지는 않음.
+System.out.println(num); // 값 10이 그대로 출력됨
+
+num = -num; // num 값을 음수로 바꿔서 다시 num으로 대입함
+System.out.println(num); // 값 -10이 출력됨 
+```
 
 ## 산술 연산자
+- 사칙 연산에 사용하는 연산자가 산술 연산자 입니다.
+
+|연산자|기능|연산 예|
+|----|-----|-----|
+|+|두 항을 더합니다.|5 + 3|
+|-|앞에 있는 항에서 뒤에 있는 항을 뺍니다.|5 - 3|
+|\*|두 항을 곱합니다.|5 \* 3|
+|/|앞에 있는 항에서 뒤에 있는 항을 나누어 몫을 구합니다.|5 / 3|
+|%|앞에 있는 항에서 뒤에 있는 항을 나누어 나머지는 구합니다.|5 % 3|
+
+### 산술 연산자의 우선순위
+- 산술 연산자의 우선순위는 일반 수학의 산술연산과 같습니다.
+
+#### day02_03/operator/OperationEx1.java 
+```
+package day02_03.operator;
+
+public class OperationEx1 {
+	public static void main(String[] args) {
+		int mathScore = 90;
+		int engScore = 70;
+		
+		int totalScore = mathScore + engScore; // 총점 구하기
+		System.out.println(totalScore);
+		
+		double avgScore = totalScore / 2.0; // 평균 구하기
+		System.out.println(avgScore);
+	}
+}
+
+실행결과
+160
+80.0
+```
 
 
-## 증가 감소 연산자
+## 증가감소 연산자
+- 증가,감소 연산자는 단항 연산자 입니다.
+- 연산자 앞이나 뒤에 사용하며 값을 1만큼 늘리거나 1만큼 줄입니다.
+
+|연산자|기능|연산 예|
+|----|-----|-----|
+|++|항의 값에 1을 더합니다.|val = ++num; // 먼저 num에 값이 1 증가한 후 val변수에 대입<br>val = num++; // val 변수에 기존 num 값을 먼저 대입한 후 값 1 증가|
+|--|항의 값에서 1을 뺍니다.|val = --num; // 먼저 num값이 1 감소한 후 val 변수에 대입<br>val = num--; // var 변수에 기존 num 값을 먼저 대입한 후 num값 1 감소|
+
+```
+int value = 10;
+int num = ++value; // num에 11이 대입됨
+```
+
+```
+int value = 10;
+int num = value++; // num에 10이 대입됨
+```
+
+### day02_03/operator/OperationEx2.java
+
 
 ## 관계 연산자
 
