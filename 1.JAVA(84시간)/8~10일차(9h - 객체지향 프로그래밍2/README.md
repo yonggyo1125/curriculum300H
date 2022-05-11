@@ -82,16 +82,250 @@ public class Customer {
 ```
 예제 시나리오
 
-고객이 점점 늘어나고 판매도 많아지고 보니 단골 고객이 생겼습니다. 단골 고객은 회사 매출에 많은 기여를 하는 우수 고객입니다. 이 우수 고객에게 좋은 혜택을 주고 싶습니다. 우수 고객은 VIP이고, 다음과 같은 혜택을 제공합니다.
+고객이 점점 늘어나고 판매도 많아지고 보니 단골 고객이 생겼습니다. 
+단골 고객은 회사 매출에 많은 기여를 하는 우수 고객입니다. 
+이 우수 고객에게 좋은 혜택을 주고 싶습니다. 
+우수 고객은 VIP이고, 다음과 같은 혜택을 제공합니다.
 
 - 제품을 살 때는 항상 10% 할인해 줍니다.
 - 보너스 포인트를 5% 적립해 줍니다.
 - 담당 전문 상담원을 배정해 줍니다.
 ```
+- Customer 클래스에 일반 곡개의 속성과 기능이 이미 구현되어 있기 때문에 VIPCustomer 클래스는 Customer 클래스를 상속받고 VIP고객에게 필요한 추가 속성과 기능을 구현하는 것 입니다.
+
+#### day08_10/inheritance/VIPCustomer.java
+```
+package day08_10.inheritance;
+
+// VIPCustomer 클래스는 Customer 클래스를 상속받음
+public class VIPCustomer extends Customer { 
+	private int agentID; // VIP 고객 상담원 아이디
+	double saleRatio; // 할인율
+	
+	public VIPCustomer() {
+		customerGrade = "VIP"; // 상위 클래스가 private변수 이므로 오류 발생 
+		bonusRatio = 0.05;
+		saleRatio = 0.1;
+	}
+	
+	public int getAgentID() {
+		return agentID;
+	}
+}
+```
+- 간단하게 상속을 통해서 Customer의 멤버변수와 메서드를 공유하는 VIPCustomer  클래스를 작성하였습니다.
+- Customer 클래스에 이미 선언되어 있는 customerID, customerName, customerGrade, bonusPoint, bonusRatio 멤버 변수와 calcPrice(), showCustomerInfo()메서드는 상속을 받아서 사용할 것이기 때문에 구현하지 않았습니다.
+- 그러나 customerGrade변수에 오류가 발생합니다. 상위 클래스에서 customerGrade는 private 변수이고 외부 클래스에서는 이 변수를 사용할 수 없습니다.
+
+#### 상위 클래스 변수를 사용하기 위한 protected 예약어
+- 상위 클래스에 선언한 customerGrade가 private 변수이기 때문에 오류가 발생합니다.
+- 상위 클래스에 작성한 변수나 메서드 중 외부 클래스에서 사용할 수 없지만 하위 클래스에서 사용할 수 있도록 지정하는 예약어가 protected 입니다. protected로 변경을 하면 하위 클래스에서는 접근할 수 있게 됩니다.
+- 즉, protected는 상속된 하위 클래스를 제외한 나머지 외부 클래스에서는 private과 동일한 역할을 합니다.
+
+#### day08_10/inheritance/Customer.java
+```
+package day08_10.inheritance;
+
+public class Customer {
+	
+	// 멤버 변수
+	protected int CustomerID; // 고객 아이디
+	protected String customerName; // 고객 이름
+	protected String customerGrade; // 고객 등급
+	int bonusPoint; // 보너스 포인트
+	double bonusRatio; // 적립비율
+	
+	// 디폴트 생성자
+	public Customer() {
+		customerGrade = "SILVER"; // 기본 등급
+		bonusRatio = 0.01; // 보너스 포인트 기본 적립 비율
+	}
+	
+	public int calcPrice(int price) {
+		bonusPoint += price * bonusRatio; // 보너스 포인트 계산
+		return price;
+	}
+	
+	public String showCustomerInfo() {
+		return customerName + " 님의 등급은 " + customerGrade + "이며, 보너스 포인트는" + bonusPoint + "입니다."; 
+	}
+
+	public int getCustomerID() {
+		return CustomerID;
+	}
+
+	public void setCustomerID(int customerID) {
+		CustomerID = customerID;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getCustomerGrade() {
+		return customerGrade;
+	}
+
+	public void setCustomerGrade(String customerGrade) {
+		this.customerGrade = customerGrade;
+	}
+}
+```
+- Customer클래스에 있는 private 변수를 다른 하위 클래스에서도 사용할 수 있도록 모두 protected로 변경하였습니다.
+- protected로 선언한 customerID, customerName, customerGrade 변수를 사용하기 위해 get(), set()메서드를 추가 하였습니다.
+- protected 예약어로 선언한 변수는 외부 클래스 private 변수처럼 get() 메서드를 사용해 값을 가져올 수 있고, set() 메서드를 사용해 값을 지정할 수 있습니다.
+- Customer클래스를 상속받은 VIPCustomer 클래스는 protected로 선언한 변수를 상속받게 되고, 나머지 public 메서드도 상속받아 사용할 수 있습니다. 상기 코드와 같이 protected로 선언하면 VIPCustomer 부분의 오류는 사라집니다.
+
+#### day08_10/inheritance/CustomerTest1.java
+```
+package day08_10.inheritance;
+
+public class CustomerTest1 {
+	public static void main(String[] args) {
+		Customer customerLee = new Customer();
+		// CustomerID와 customerName은 protected 변수이므로 set() 메서드 호출
+		customerLee.setCustomerID(10010);
+		customerLee.setCustomerName("이순신");
+		customerLee.bonusPoint = 1000;
+		System.out.println(customerLee.showCustomerInfo());
+		
+		VIPCustomer customerKim = new VIPCustomer();
+		// CustomerID와 customerName은 protected 변수이므로 set() 메서드 호출
+		customerKim.setCustomerID(10020);
+		customerKim.setCustomerName("김유신");
+		customerKim.bonusPoint = 10000;
+		System.out.println(customerKim.showCustomerInfo());
+	}
+}
+
+실행결과
+
+이순신 님의 등급은 SILVER이며, 보너스 포인트는1000입니다.
+김유신 님의 등급은 VIP이며, 보너스 포인트는10000입니다.
+```
 
 ## 상속에서 클래스 생성과 형 변환
+- 하위 클래스가 생성될 때는 상위 클래스의 생성자가 먼저 호출됩니다.
+- 상속관계에서 클래스의 생성과정을 살펴보면 하위클래스가 상위클래스의 변수와 메서드를 사용할 수 있는 이유와 하위클래스가 상위클래스의 자료형으로 형 변환을 할 수 있는 이유를 이해할 수 있습니다.
+
+### 하위 클래스가 생성되는 과정 
+- 상속을 받은 하위 클래스는 상위클래스의 변수와 메서드를 사용할 수 있습니다. 
+- 즉, CustomerTest예제를 살펴보면 VIPCustomer 클래스로 선언한 customerKim 인스턴스는 상속받은 상위 클래스의 변수를 자기 것 처럼 사용할 수 있습니다.
+- 변수를 사용할 수 있다는 것은 그 변수를 저장하고 있는 메모리가 존재한다는 뜻입니다.
+- 그런데 VIPCustomer 클래스의 코드를 보면 해당 변수가 존재하지 않습니다. 단순히 Customer 클래를 상속받았을 뿐 입니다.
+- 여기에서 상속된 하위 클래스가 생성되는 과정을 다시 생각해 볼 필요가 있습니다.
+- 테스트를 하기 위해 Customer와 VIPCustomer 클래스 생성자에 출력문을 추가하겠습니다.
+
+#### day08_10/inheritance/Customer.java
+```
+package day08_10.inheritance;
+
+public class Customer {
+	
+	// 멤버 변수
+	protected int CustomerID; // 고객 아이디
+	protected String customerName; // 고객 이름
+	protected String customerGrade; // 고객 등급
+	int bonusPoint; // 보너스 포인트
+	double bonusRatio; // 적립비율
+	
+	// 디폴트 생성자
+	public Customer() {
+		customerGrade = "SILVER"; // 기본 등급
+		bonusRatio = 0.01; // 보너스 포인트 기본 적립 비율
+		
+		// 상위 클래스 생성할 때 콘솔 출력문
+		System.out.println("Customer() 생성자 호출"); 
+	}
+	
+	public int calcPrice(int price) {
+		bonusPoint += price * bonusRatio; // 보너스 포인트 계산
+		return price;
+	}
+	
+	public String showCustomerInfo() {
+		return customerName + " 님의 등급은 " + customerGrade + "이며, 보너스 포인트는" + bonusPoint + "입니다."; 
+	}
+
+	public int getCustomerID() {
+		return CustomerID;
+	}
+
+	public void setCustomerID(int customerID) {
+		CustomerID = customerID;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getCustomerGrade() {
+		return customerGrade;
+	}
+
+	public void setCustomerGrade(String customerGrade) {
+		this.customerGrade = customerGrade;
+	}
+}
+```
+
+#### day08_10/inheritance/VIPCustomer.java
+```
+package day08_10.inheritance;
+
+// VIPCustomer 클래스는 Customer 클래스를 상속받음
+public class VIPCustomer extends Customer { 
+	private int agentID; // VIP 고객 상담원 아이디
+	double saleRatio; // 할인율
+	
+	public VIPCustomer() {
+		customerGrade = "VIP"; // 상위 클래스가 private변수 이므로 오류 발생 
+		bonusRatio = 0.05;
+		saleRatio = 0.1;
+		
+		// 하위 클래스를 생설할 때 콘솔 출력문
+		System.out.println("VIPCustomer() 생성자 호출");
+	}
+	
+	public int getAgentID() {
+		return agentID;
+	}
+}
+```
+
+#### day08_10/inheritance/CustomerTest2.java
+```
+package day08_10.inheritance;
+
+public class CustomerTest2 {
+	public static void main(String[] args) {
+		VIPCustomer customerKim = new VIPCustomer(); // 하위 클래스 생성
+		customerKim.setCustomerID(1020);
+		customerKim.setCustomerName("김유신");
+		customerKim.bonusPoint = 10000;
+		System.out.println(customerKim.showCustomerInfo());
+	}
+}
+
+실행결과
+Customer() 생성자 호출
+VIPCustomer() 생성자 호출
+김유신 님의 등급은 VIP이며, 보너스 포인트는10000입니다.
+```
+- 상위클래의 Customer() 생성자가 먼저 호출되고 그 다음에 VIPCustomer()가 호출되는 것을 알 수 있습니다.
+- 상위 클래스를 상속받은 하위 클래스가 생성될 때는 반드시 상위 클래스의 생성자가 먼저 호출됩니다. 그리고 상위클래스의 생성자가 호출될 때 상위 클래스의 멤버 변수가 메모리에 생성되는 것입니다.
 
 
+- 상위 클래스의 변수가 메모리에서 먼저 생성이 되기 때문에 하위 클래스에서도 이 값들을 모두 사용할 수 있습니다.
+- private 변수도 동일하게 상위클래스에서 생성이 되지만, 단지 하위 클래스에서 접근할 수 없다는 점을 제외하고는 동일합니다.
 
 ## 메서드 오버라이딩
 
