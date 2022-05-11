@@ -331,6 +331,32 @@ VIPCustomer() 생성자 호출
 
 ### 부모를 부르는 예약어 super
 
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%83%81%EC%86%8D4.png'>
+
+- super예약어는 하위클래스에서 상위 클래스로 접근할 때 사용합니다.
+- 하위 클래스는 **상위클래스의 주소**, 즉 참조 값을 알고 있습니다. 이 참조 값을 가지고 있는 예약어가 바로 **super**입니다.
+- this가 자기 자신의 참조 값을 가지고 있다는 것과 같다고 생각하면 됩니다.
+- 또한 **super**는 **상위 클래스의 생성자를 호출**하는 데도 사용합니다.
+
+
+#### 상위 클래스 생성자 호출하기
+- CustomerTest2.java의 예제에서 VIPCustomer만 생성 하였는데, Customer 상위 클래스도 생성된 것을 알 수 있습니다.
+- 하위 클래스 생성자만 호출했는데 상위 클래스의 생성자가 호출되는 이유는 **하위 클래스 생성자에서 ** **super**()**를 자동으로 호출하기 때문입니다.** 
+- **super()를 호출하면 상위 클래스의 디폴트 생성자가 호출됩니다.**
+
+```
+public VIPCustomer() 
+	super();  // 컴파일러가 자동으로 초가하는 코드(상위클래스의 Customer()가 호출됨)
+	CustomerGrade = "VIP";
+	bonusRatio = 0.05;
+	saleRatio = 0.1;
+	
+	System.out.println("VIPCustomer() 생성자 호출");
+}
+```
+
+#### super 예약어로 매개변수가 있는 생성자 호출하기
+
 
 
 ## 메서드 오버라이딩
