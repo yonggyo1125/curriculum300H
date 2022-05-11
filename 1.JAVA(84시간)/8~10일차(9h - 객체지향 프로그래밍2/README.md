@@ -323,7 +323,7 @@ VIPCustomer() 생성자 호출
 - 상위클래의 Customer() 생성자가 먼저 호출되고 그 다음에 VIPCustomer()가 호출되는 것을 알 수 있습니다.
 - 상위 클래스를 상속받은 하위 클래스가 생성될 때는 반드시 상위 클래스의 생성자가 먼저 호출됩니다. 그리고 상위클래스의 생성자가 호출될 때 상위 클래스의 멤버 변수가 메모리에 생성되는 것입니다.
 
-![상속 생성자 호출](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%83%81%EC%86%8D_%EC%83%9D%EC%84%B1%EC%9E%90%ED%98%B8%EC%B6%9C.png)
+![상속생성자호출](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%83%81%EC%86%8D3.png
 
 - **상위 클래스의 변수가 메모리에서 먼저 생성**이 되기 때문에 하위 클래스에서도 이 값들을 모두 사용할 수 있습니다.
 - private 변수도 동일하게 상위클래스에서 생성이 되지만, 단지 하위 클래스에서 접근할 수 없다는 점을 제외하고는 동일합니다.
