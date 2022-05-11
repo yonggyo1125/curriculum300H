@@ -1,4 +1,8 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/16zO3HIK_tugNUUsvt5-Qp2yt1zCR0aD6?usp=sharing)
+
 # 연산자
+
 ## 항과 연산자
 - 연산에 사용하는 기호를 **연산자**(operator)라고 합니다.
 - 연산에 사용하는 값을 **항**(operand)라고 합니다.
