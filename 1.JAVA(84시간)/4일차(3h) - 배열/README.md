@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/10yXq3LwKg3fWNpranL7S0hjHaDfQQigy?usp=sharing)
+
 # 배열
 
 ## 배열이란?
@@ -125,7 +128,7 @@ public class ArrayTest {
 
 
 
-#### 전체 배열 길이롸 유효한 값 
+#### 전체 배열 길이와 유효한 값 
 우리가 배열을 사용할 때 처음 선언한 배열 길이만큼 값을 저장해서 사용하는 경우는 많지 않습니다. 따라서 **전체 배열의 길이와 현재 배열에 유효한 값이 저장되어 있는 배열 요소의 개수가 같다고 혼동하면 안된다.**
 
 #### day04/array/ArrayTest2.java
