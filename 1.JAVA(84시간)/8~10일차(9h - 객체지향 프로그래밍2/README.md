@@ -383,10 +383,107 @@ public VIPCustomer()
 	}
 ...
 ```
-
+- 그런데 이렇게 Customer 클래스의 디폴트 생성자를 없애고 새로운 생성자를 작성하면, Customer 클래스를 상속받은 VIPCustomer 클래스에서 오류가 발생합니다.
 <img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%83%81%EC%86%8D5.png'>
 
 <img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%83%81%EC%86%8D6.png'>
+
+- 이 오류 메세지는 묵시적으로 호출될 디폴트 생성자 Customer()가 정의되지 않았기 때문에, 반드시 명시적으로 다른 생성자를 호출해야 한다는 뜻 입니다.
+
+> 하위 클래스가 생성될 때는 상위 클래스의 디폴트 생성자를 호출하는 super()가 자동으로 생성됩니다.
+```
+public Customer(int customerID, String customerName) {
+	super();  
+	-> 컴파일시에 super()가 자동생성되고 상위클래스의 디폴트 생상저 Customer()가 호출되는데 
+	-> Customer 클래스에는 디폴트 생성자 Customer()가 없으므로 오류가 발생합니다.
+	...
+}
+```
+
+- Customer 클래스를 새로 생성할 때 고객 ID와 고객 이름을 반드시 지정하여 생성하기로 했으니 VIPCustomer 클래스를 생성할 때도 이 값이 필요합니다.
+- 그리고 VIP 고객만을 위한 상담원 ID도 지정합니다.
+- 기존 VIPCustomer 클래스의 디폴트 생성자도 지우거나 주석처리한 후 필요한 매개변수를 포함하는 생성자를 새로 작성합니다.
+
+#### day08_10/inheritance/VIPCustomer.java
+```
+...
+public VIPCustomer(int customerID, String customerName, int agentId) {
+	super(customerID, customerName);
+	customerGrade = "VIP";
+	bonusRatio = 0.05;
+	saleRatio = 0.1;
+		
+	this.agentID = agentID;
+		
+	// 하위 클래스를 생설할 때 콘솔 출력문
+	System.out.println("VIPCustomer() 생성자 호출");
+}
+...
+```
+- 새로운 생성자는 고객 ID, 고객 이름, 상담원 ID를 매개변수로 받습니다. 
+- super 예약어는 상위클래스의 생성자를 호출하는 역할을 하며, 3행의 super(customerID, customerName); 문장으로 상위 클래스 생성자를 호출합니다.
+- super()를 통해 Customer(int customerID, String customerName) 상위 클래스 생성자를 호출하고 코드 순서대로 멤버 변수가 초기화 됩니다.
+- 상위 클래스 생성자 호출이 끝나면 VIPCustomer 하위 클래스 생성자 내부 코드 수행이 마무리됩니다.
+
+#### day08_10/inheritance/CustomerTest2.java
+```
+package day08_10.inheritance;
+
+public class CustomerTest2 {
+	public static void main(String[] args) {
+		VIPCustomer customerKim = new VIPCustomer(1020, "김유신", 1000);
+		customerKim.bonusPoint = 10000;
+		System.out.println(customerKim.showCustomerInfo());
+	}
+}
+
+
+실행결과
+
+Customer(int, String) 생성자 호출
+VIPCustomer() 생성자 호출
+김유신 님의 등급은 VIP이며, 보너스 포인트는10000입니다
+```
+- VIP 등급인 김유신 고객을 생성할 때는 상위클래스 생성자를 먼저 호출한 후 하위 클래스 생성자 코드 수행이 정상적으로 마무리 되는 것을 알 수 있습니다.
+
+
+#### 상위 클래스의 멤버 변수나 메서드를 참조하는 super
+- 상위 클래스에 선언된 멤버 변수나 메서드를 하위 클래스에서 참조할 때도 super를 사용합니다.
+- this를 사용하여 자신의 멤버에 접근했던 것과 비슷합니다.
+- 예를 들어 VIPCustomer 클래스의 showVIPInfo() 메서드에 상위 클래스의 showCustomerInfo() 메서드를 참조해 담당 상담원 아이디를 추가로 출력하고자 할때 다음과 같이 구현할 수 있습니다.
+```
+public String showVIPInfo() {
+	return super.showCustomerInfo() + "담당 상담원 아이디는 " + agentID + "입니다.";
+}
+```
+
+- super 예약어는 상위 클래스의 참조 값을 가지고 있으므로 위 코드 처럼 사용하면 고객 정보를 출력하는 showCustomerInfo() 메서드를 새로 구현하지 않고 상위 클래스의 구현 내용을 활용할 수 있습니다.
+- 물론 위 코드의 showVIPInfo() 메서드에서는 굳이 show.showCustomerInfo()라고 호출하지 않고 그냥 showCustomerInfo()라고 호출해도 됩니다.
+- 메서드 오버라이딩에서 자세하게 설명을 하겠지만 하위클래스가 상위클래스와 동일한 이름의 메서드를 구현하는 경우도 있습니다. 이러한 경우 하위 클래스에서 동일한 이름의 상위 클래스 메서드를 가리킬 때 super.showCustomerInfo()라고 써야 합니다.
+
+### 상위 클래스로 묵시적 클래스 형 변환
+- 상속을 공부하면서 이해해야 하는 중요한 관계가 클래스 간의 형 변환입니다.
+- Customer와 VIPCustomer의 관계를 생각해보면, 개념 면에서 보면 상위 클래스인 Customer가 VIPCustomer보다 일반적인 개념이고, 기능면에서 보면 VIPCustomer가 Customer보다 기능 이 더 많습니다. 왜냐하면 상속받은 클래스는 상위 클래스의 기능을 모두 사용할 수 있고 추가로 많은 기능을 구현하기 때문입니다.
+
+- 따라서 VIPCustomer는 VIPCustomer형 이면서 동시에 Customer 형이기도 합니다.
+- 즉, VIPCustomer 클래스로 인스턴스를 생성할 때 이 인스턴스의 자료형을 Customer형으로 클래스 형 변환하여 선언할 수 있습니다. 왜냐하면 VIPCustomer 클래스는 Customer 클래스를 상속받았기 때문입니다.
+
+> 클래스형과 클래스의 자료형, 인스턴스형과 인스턴스의 자료형은 모두 비슷한 의미로 사용하는 용어입니다.
+> 이러한 클래스 형 변환을 업캐스팅(upcasting)이라고도 합니다.
+
+```
+Customer vc = new VIPCustomer();
+
+Customer - 선언된 클래스형(상위 클래스형)
+VIPCustomer - 생성된 인스턴스의 클래스형(하위 클래스 형)
+```
+
+- 반대로 Customer로 인스턴스를 생성할 때 VIPCustomer형으로 선언할 수는 없습니다. 상위 클래스인 Customer가 VIPCustomer 클래스의 기능을 다 가지고 있는 것은 아니기 때문입니다. 요약하면 **모든 하위 클래스는 상위 클래스 자료형으로 형변환 될 수 있지만 그 역은 성립하지 않습니다.**
+
+
+#### 형 변환된 vc가 가리키는 것 
+
+
 
 ## 메서드 오버라이딩
 
