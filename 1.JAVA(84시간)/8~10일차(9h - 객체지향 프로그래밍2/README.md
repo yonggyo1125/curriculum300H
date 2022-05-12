@@ -356,7 +356,33 @@ public VIPCustomer()
 ```
 
 #### super 예약어로 매개변수가 있는 생성자 호출하기
+- Customer 클래스를 생성할 때 고객 ID와 이름을 반드시 지정해야 한다고 합니다. 이런 경우에 set() 메서드로 값을 지정하는 것이 아니고, 새로운 생성자를 만들어서 매개변수로 값을 전달받을 수도 있습니다.
+- 즉, 디폴트 생성자가 아닌 매개변수가 있는 생성자를 직접 구현해야 합니다.
+- 다음과 같이 Customer 클래스에 새로운 생성자를 추가하고, 기존의 디폴트 생성자는 삭제하거나 주석 처리해 보겠씁니다.
 
+#### day08_10/inheritance/Customer.java
+```
+...
+// 디폴트 생성자
+	/**
+	public Customer() {
+		customerGrade = "SILVER"; // 기본 등급
+		bonusRatio = 0.01; // 보너스 포인트 기본 적립 비율
+		
+		// 상위 클래스 생성할 때 콘솔 출력문
+		System.out.println("Customer() 생성자 호출"); 
+	}
+	*/
+	
+	public Customer(int customerID, String customerName) {
+		this.customerID = customerID;
+		this.customerName = customerName;
+		customerGrade = "SILVER";
+		bonusRatio = 0.01;
+		System.out.println("Customer(int, String) 생성자 호출");
+	}
+...
+```
 
 
 ## 메서드 오버라이딩
