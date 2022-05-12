@@ -315,7 +315,7 @@ else {
 
 #### day02_03/ifexample/IfExample1.java
 ```
-package day01.ifexample;
+package day02_03.ifexample;
 
 public class IfExample1 {
 	public static void main(String[] args) {
@@ -350,7 +350,7 @@ if (조건식2) {
 
 #### day02_03/ifexample/IfExample2.java
 ```
-package day01.ifexample;
+package day02_03.ifexample;
 
 public class IfExample2 {
 	public static void main(String[] args) {
@@ -384,7 +384,7 @@ public class IfExample2 {
 
 #### day02_03/ifexample/IfExample3.java
 ```
-package day01.ifexample;
+package day02_03.ifexample;
 
 public class IfExample3 {
 	public static void main(String[] args) {
@@ -481,7 +481,7 @@ switch(조건) {
 ```
 #### day02_03/ifexample/SwitchCase1.java 
 ```
-package day01.ifexample;
+package day02_03.ifexample;
 
 public class SwitchCase1 {
 	public static void main(String[] args) {
@@ -534,7 +534,7 @@ if (medal.equals("Gold")) {
 
 #### day02_03/ifexample/SwitchCase2.java 
 ```
-package day01.ifexample;
+package day02_03.ifexample;
 
 public class SwitchCase2 {
 	public static void main(String[] args) {
