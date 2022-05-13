@@ -516,6 +516,8 @@ public int calcPrice(int price) {
 - 하위클래스 VIPCustomer에서 calPrice() 메서드를 재정의했습니다. 
 - 상위 클래스의 calPrice()에서드와 매개변수의 자료형 및 개수가 같고, 반환형도 int형으로 같습니다. 다만 할인율을 계산하여 정가에서 뺀 후 세일가격을 반환하도록 코드가 변경되었습니다.
 
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%83%81%EC%86%8D10.png'>
+
 - 상위 클래스의 메서드를 재정의 할떄는 메서드 이름을 직접 써도 되고, 이클립스의 기능을 활용할 수 있습니다.
 - 코드에서 오른쪽 마우스 버튼을 누르고 \[Source -> Override/Implement Methods...\]을 누르면 다음과 같은 화면이 나옵니다.
 
