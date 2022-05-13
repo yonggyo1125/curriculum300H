@@ -493,8 +493,35 @@ VIPCustomer - 생성된 인스턴스의 클래스형(하위 클래스 형)
 
 - 하위 클래스의 인스턴스가 상위 클래스로 형 변환되는 과정이 묵시적으로 이루어진다. - <a href='https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2#%EB%8B%A4%ED%98%95%EC%84%B1'>다형성 참조</a>
 
-
 ## 메서드 오버라이딩
+- 상위 클래스에 젖의한 메서드가 하위 클래스에서 구현할 내용과 맞지 않을 경우 하위 클래스에서 이 메서드를 재정의할 수 있습니다.
+- 이를 메서드 오버라이딩(method overriding)이라고 합니다.
+- 오버라이딩을 하려면 반환형, 메서드 이름, 매개 변수, 매개변수 자료형이 반드시 같아야 합니다.
+- 그렇지 않다면 재정의한 메서드를 기존 메서드와 다른 메서드로 인식합니다.
+
+#### VIP 고객 클래스의 제품 가격 메서드 재정의하기
+- VIPCustomer 클래스에서 calPrice() 메서드를 재정의해 봅시다.
+
+#### day08_10/inheritance/VIPCustomer.java
+```
+...
+@Override
+public int calcPrice(int price) {
+	bonusPoint += price * bonusRatio;
+		
+	return price - (int)(price * saleRatio); // 할인된 가격을 계산하여 반환
+}
+...
+```
+- 하위클래스 VIPCustomer에서 calPrice() 메서드를 재정의했습니다. 
+- 상위 클래스의 calPrice()에서드와 매개변수의 자료형 및 개수가 같고, 반환형도 int형으로 같습니다. 다만 할인율을 계산하여 정가에서 뺀 후 세일가격을 반환하도록 코드가 변경되었습니다.
+
+- 상위 클래스의 메서드를 재정의 할떄는 메서드 이름을 직접 써도 되고, 이클립스의 기능을 활용할 수 있습니다.
+- 코드에서 오른쪽 마우스 버튼을 누르고 \[Source -> Override/Implement Methods...\]을 누르면 다음과 같은 화면이 나옵니다.
+
+
+
+- 상위 클래스 Customer의 메서드 중에서 재정의 할 메서드를 선택할 수 있습니다.
 
 ## 다형성
 
