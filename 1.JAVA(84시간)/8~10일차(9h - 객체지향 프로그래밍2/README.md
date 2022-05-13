@@ -575,6 +575,36 @@ vc.calcPrice(10000);
 - 선언한 클래스형이 아닌 생성된 인스턴스의 메서드를 호출하는 것, 이렇게 메서드가 호출되는 기술을 '**가상 메서드**(virtual method)'라 합니다.
 
 ### 가상 메서드
+- 자바의 클래스는 멤버변수와 메서드로 이루어져 있습니다. 클래스를 생성하여 인스턴스가 만들어 지면 멤버변수는 힙 메모리에 위치합니다.
+- 그러나 변수가 사용하는 메모리와 메서드가 사용하는 메모리는 다릅니다.
+- 변수는 인스턴스가 생성될 떄마다 생성되지만 실행해야 할 명령 집합이기 때문에 인스턴스가 달라도 같은 로직을 수행합니다.
+- 즉, 같은 객체의 인스턴스를 여러 개 생성한다고 해서 메서드도 여러 개 생성되지 않습니다.
+
+#### day08_10/virtualfunction/TestA.java
+```
+package day08_10.virtualfunction;
+
+public class TestA {
+	int num;
+	
+	void aaa() {
+		System.out.println("aaa() 출력");
+	}
+	
+	public static void main(String[] args) {
+		TestA a1 = new TestA();
+		a1.aaa();
+		TestA a2 = new TestA();
+		a2.aaa();
+	}
+}
+
+실행결과
+
+aaa() 출력
+aaa() 출력
+```
+- 상기 코드가 실행되는 메모리 상태를 그림으로 그리면 다음과 같습니다.
 
 
 ## 다형성
