@@ -516,14 +516,66 @@ public int calcPrice(int price) {
 - 하위클래스 VIPCustomer에서 calPrice() 메서드를 재정의했습니다. 
 - 상위 클래스의 calPrice()에서드와 매개변수의 자료형 및 개수가 같고, 반환형도 int형으로 같습니다. 다만 할인율을 계산하여 정가에서 뺀 후 세일가격을 반환하도록 코드가 변경되었습니다.
 
-<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%83%81%EC%86%8D10.png'>
-
 - 상위 클래스의 메서드를 재정의 할떄는 메서드 이름을 직접 써도 되고, 이클립스의 기능을 활용할 수 있습니다.
 - 코드에서 오른쪽 마우스 버튼을 누르고 \[Source -> Override/Implement Methods...\]을 누르면 다음과 같은 화면이 나옵니다.
 
-
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%83%81%EC%86%8D10.png'>
 
 - 상위 클래스 Customer의 메서드 중에서 재정의 할 메서드를 선택할 수 있습니다.
+
+> <a href='https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/16%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%97%B4%EA%B1%B0%ED%98%95%2C%20%EC%95%A0%EB%84%88%ED%85%8C%EC%9D%B4%EC%85%98' target='_blank'>애너테이션(Annotation)</a><br>애너테이션은 영어로는 주석이라는 의미 입니다. @기호와 함께 사용하며, '@애노테이션 이름'으로 표현합니다. 자바에서 제공하는 **애너테이션은 컴파일러에게 특정한 정보를 제공해 주는 역할**을 합니다. 예를 들어 **@Override는 이 메서드가 재정의된 메서드임을 컴파일러에게 알려줍니다.** 만약 메서드의 선언부가 다르다면 컴파일된 오류가 발생하여 프로그래머의 실수를 막아 줍니다. 이렇게 미리 정의되어 있는 애너테이션을 표준 애너테이션이라고 합니다. 
+
+#### 주로 사용하는 표준애너테이션
+
+|애노테이션|설명|
+|-----|--------|
+|@Override|재정의된 메서드라는 정보 제공|
+|@FunctionalInterface|함수형 인터페이스라는 정보 제공|
+|@Deprecated|이후 버전에서 사용되지 않을 수 있는 변수, 메서드에 사용됨|
+@SuppressWarnings|특정 경고가 나타나지 않도록 함|
+
+
+#### day08_10/inheritance/OverrideTest1.java
+```
+package day08_10.inheritance;
+
+public class OverrideTest1 {
+
+	public static void main(String[] args) {
+		Customer customerLee = new Customer(10010, "이순신");
+		customerLee.bonusPoint = 1000;
+		
+		VIPCustomer customerKim = new VIPCustomer(10020, "김유신", 12345);
+		customerKim.bonusPoint = 10000;
+		
+		int price = 10000;
+		System.out.println(customerLee.getCustomerName() + " 님이 지불해야 하는 금액은 " + customerLee.calcPrice(price) + "원 입니다.");
+		System.out.println(customerKim.getCustomerName() + " 님이 지불해야 하는 금액은 " + customerKim.calcPrice(price) + "원 입니다.");
+	}
+}
+
+실행결과
+
+이순신 님이 지불해야 하는 금액은 10000원 입니다.
+김유신 님이 지불해야 하는 금액은 9000원 입니다.
+```
+
+### 묵시적 형변환과 메서드 재정의
+```
+Customer vc = new VIPCustomer("10030", "나몰라", 2000);
+vc.calcPrice(10000);
+```
+
+- 묵시적 형 변환에 의해 VIPCustomer가 Customer형으로 변환되었습니다.
+- 그리고 나서 calcPrice() 메서드가 호출되었습니다. 
+-  calcPrice()는 하위 클래스에서 재정의된 메서드이며 Customer 클래스와 VIPCustomer 클래스에 모두 존재합니다. 
+- Customer형으로 선언되었다고 하더라도 vc.calcPrice(10000)은 **VIPCustomer에서 재정의된 메서드가 호출**됩니다.<br>(**멤버 변수와 메서드는 선언한 클래스형에 따라 호출됩니다.**)
+
+- 상위 클래스와 하위 클래스에 같은 이름의 메서드가 존재할 때 호출되는 메서드는 인스턴스에 따라 결정됩니다.
+- 선언한 클래스형이 아닌 생성된 인스턴스의 메서드를 호출하는 것, 이렇게 메서드가 호출되는 기술을 '**가상 메서드**(virtual method)'라 합니다.
+
+### 가상 메서드
+
 
 ## 다형성
 
