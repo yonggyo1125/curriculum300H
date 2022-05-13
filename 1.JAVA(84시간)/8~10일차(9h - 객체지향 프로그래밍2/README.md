@@ -605,6 +605,55 @@ aaa() 출력
 aaa() 출력
 ```
 - 상기 코드가 실행되는 메모리 상태를 그림으로 그리면 다음과 같습니다.
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EA%B0%80%EC%83%81%EB%A9%94%EC%84%9C%EB%93%9C1.png'>
+
+- main() 함수가 실행되면 지역 변수는 스택 메모리에 위치합니다.
+- 각 참조 변수 a1, a2가 가리키는 인스턴스는 힙 메모리에 생성됩니다.
+- 메서드의 명령 집합은 **메서드 영역**(코드 영역)에 위치합니다.
+- 우리가 메서드를 호출하면 메서드 영역의 주소를 참조하여 명령이 실행됩니다. 따라서 인스턴스가 달라도 동일한 메서드가 호출됩니다.
+
+#### 가상 메서드의 원리 
+- 일반적으로 프로그램에서 메서드를 호출한다는 것은 그 메서드의 명령 집합이 있는 메모리 위치를 참조하여 명령을 실행하는 것입니다. 
+- 그런데 가상메서드의 경우에는 **가상 메서드 테이블**이 만들어집니다.
+- 가상메서드 테이블은 **각 메서드 이름**과 **실제 메모리 주소**가 짝을 이루고 있습니다.
+- 어떤 메서드가 호출되면 이 테이블에서 주소 값을 찾아서 해당 메서드의 명령을 수행합니다.
+
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EA%B0%80%EC%83%81%EB%A9%94%EC%84%9C%EB%93%9C2.png'>
+
+- calcPrice() 메서드는 두 클래스에서 서로 다른 메서드 주소를 가지고 있습니다. 이렇게 재정의된 메서드는 실제 인스턴스에 해당하는 메서드가 호출됩니다.
+- showCustomerInfo()와 같이 재정의되지 않은 메서드인 경우는 메서드 주소가 같으며 상위 클래스의 메서드가 호출됩니다.
+
+#### day08_10/inheritance/OverrideTest3.java
+```
+package day08_10.inheritance;
+
+public class OverrideTest3 {
+	public static void main(String[] args) {
+		int price = 10000;
+		
+		Customer customerLee = new Customer(10010, "이순신");
+		System.out.println(customerLee.getCustomerName() + " 님이 지불해야 하는 금액은" + customerLee.calcPrice(price) + "원 입니다.");
+		
+		VIPCustomer customerKim = new VIPCustomer(10020, "김유신", 12345);
+		System.out.println(customerKim.getCustomerName() + " 님이 지불해야 하는 금액은 " + customerKim.calcPrice(price) + "원 입니다.");
+		
+		Customer vc = new VIPCustomer(10030, "나몰라", 2000);
+		System.out.println(vc.getCustomerName() + " 님이 지불해야 하는 금액은" + vc.calcPrice(10000) + " 원 입니다.");
+	}
+}
+
+실행결과
+
+이순신 님이 지불해야 하는 금액은10000원 입니다.
+김유신 님이 지불해야 하는 금액은 9000원 입니다.
+나몰라 님이 지불해야 하는 금액은9000 원 입니다.
+```
+- VIPCustomer로 생성하고  Customer형으로 변환한 vc는 원래 Customer형 메서드가 호출되는 것이 맞지만, 가상 메서드 방식에 의해 VIPCustomer 인스턴스의 메서드가 호출되어 할인가격 9,000원이 출력됩니다.
+
+
+- 상위 클래스(Customer)에서 선언한 calcPrice() 메서드가 있고 이를 하위클래스(VIPCustomer)에서 재정의한 상태에서 하위 클래스 인스턴스(vc)가 상위 클래스로 형 변환이 되었습니다.
+- 이때 vc.calcPrice()가 호출되면, vc 변수를 선언할 때 사용한 자료형(Customer)의 메서드가 호출되는 것이 아니라 생성된 인스턴스(VIPCustomer)의 메서드가 호출됩니다.
+- 이를 **가상 메서드**라고 합니다. **자바의 모든 메서드는 가상메서드**입니다.
 
 
 ## 다형성
