@@ -1708,6 +1708,7 @@ public interface Sell {
 
 Buy 인터페이스에 추상  메서드 buy()가 선언되어 있고, Sell 인터페이스에 추상 메서드 sell()이 선언되어 있습니다. Customer 클래스가 두 인터페이스를 구현하는 코드는 다음과 같습니다.
 
+#### day08_10/interfaceex/Customer.java
 ```
 package day08_10.interfaceex;
 
@@ -1728,6 +1729,8 @@ public class Customer implements Buy, Sell {
 - 인터페이스는 구현 코드나 멤버 변수를 가지지 않기 때문에 여러개를 동시에 구현할 수 있습니다.
 - 두 인터페이스에 이름이 같은 메서드가 선언되었다고 해도 구현은 클래스에서 이루어지므로, 어떤 메서드를 호출해야 하는지 모호하지 않습니다.
 - 이렇게 두 인터페이스를 구현한 Customer 클래스는 Buy형이자 Sell형 이기도 합니다.
+
+#### day08_10/interfaceex/CustomerTest.java
 ```
 package day08_10.interfaceex;
 
@@ -1769,8 +1772,214 @@ public class CustomerTest {
 
 - 그러나 **디폴트 메서드**는 인스턴스를 생성해야 호출할 수 있는 메서드이기 때문에 다음처럼 **이름이 같은 디폴트 메서드가 두 인터페이스에 있으면 문제가 됩니다.**
 
+#### day08_10/interfaceex/Buy.java
+```
+package day08_10.interfaceex;
 
-- 위 오류 메세지는 디폴트 메서드가 중복되었으니 두 인터페이스를 구현하는 Customer클래스에서 재저으이하라는 뜻 입니다.
+public interface Buy {
+	void buy();
+	
+	default void order() {
+			System.out.println("구매 주문");
+	}
+}
+
+```
+#### day08_10/interfaceex/Sell.java
+```
+package day08_10.interfaceex;
+
+public interface Sell {
+	void sell();
+	
+	default void order() {
+		System.out.println("판매 주문");
+	}
+}
+```
+
+- 위 오류 메세지는 디폴트 메서드가 중복되었으니 두 인터페이스를 구현하는 Customer클래스에서 재정의하라는 뜻 입니다.
+#### day08_10/interfaceex/Customer.java
+```
+package day08_10.interfaceex;
+
+public class Customer implements Buy, Sell {
+	...
+	// 디폴트 메서드 order()를 Customer 클래스에서 재정의함
+	@Override
+	public void order() {
+		System.out.println("고객 판매 주문");
+	}
+}
+```
+- Customer 클래스에서 **디폴트 메서드를 재정의**하면, Customer 클래스를 생성하여 사용할때 재정의된 메서드가 호출됩니다.
+#### day08_10/interfaceex/CustomerTest.java
+```
+package day08_10.interfaceex;
+
+public class CustomerTest {
+	public static void main(String[] args) {
+		Customer customer = new Customer();
+		
+		Buy buyer = customer;
+		buyer.buy();
+		buyer.order(); // 재정의된 메서드 호출됨 
+		
+		Sell seller = customer;
+		seller.sell();
+		seller.order(); // 재정의된 메서드 호출됨 
+		
+		if (seller instanceof Customer) {
+			Customer customer2 = (Customer)seller; 
+			customer2.buy();
+			customer2.sell();
+			customer2.order(); // 재정의된 메서드 호출됨
+		}
+	}
+}
+
+실행결과
+
+구매하기
+고객 판매 주문
+판매하기
+고객 판매 주문
+구매하기
+판매하기
+고객 판매 주문
+```
+- customer가 Buy형으로 변환되고 buyer.order()를 호출하면 Buy에 구현한 디폴트 메서드가 아닌  Customer 클래스에 재 정의한 메서드가 호출됩니다.
+- **자바 가상메서드 원리와 동일**합니다.
+
+### 인터페이스 상속하기
+- 인터페이스 간ㅇ네도 상속이 가능합니다.
+- 인터페이스 간 상속은 구현 코드를 통해 기능을 상속하는 것이 아니므로 형 상속(type inheritance)이라고 부릅니다.
+- 클래스의 경우에는 하나의 클래스만 상속받을 수 있지만, **인터페이스는 여러 개를 동시에 상속받을 수 있습니다.**
+- 한 인터페이스가 여러 인터페이스를 상속받으면, 상속받은 인터페이스는 **상위 인터페이스에 선언한 추상 메서드를 모두 가지게 됩니다.**
+
+#### day08_10/interfaceex/X.java
+```
+package day08_10.interfaceex;
+
+public interface X {
+	void x();
+}
+```
+
+#### day08_10/interfaceex/Y.java
+```
+package day08_10.interfaceex;
+
+public interface Y {
+	void y();
+}
+```
+
+#### day08_10/interfaceex/MyInterface.java
+```
+package day08_10.interfaceex;
+
+public interface MyInterface extends X, Y {
+	void myMethod();
+}
+
+```
+
+#### day08_10/interfaceex/MyClass.java
+```
+package day08_10.interfaceex;
+
+public class MyClass implements MyInterface {
+
+	// X 인터페이스에서 상속받은 x() 메서드 구현 
+	@Override
+	public void x() {
+		System.out.println("x()");
+	}
+
+	// Y 인터페이스에서 상속받은 y() 메서드 구현
+	@Override
+	public void y() {
+		System.out.println("y()");
+	}
+
+	@Override
+	public void myMethod() {
+		System.out.println("myMethod()");
+	}
+}
+```
+
+#### day08_10/interfaceex/MyClassTest.java
+```
+package day08_10.interfaceex;
+
+public class MyClassTest {
+	public static void main(String[] args) {
+		MyClass mClass = new MyClass();
+		
+		// 상위 인터페이스 X형으로 대입하면
+		// X에 선언한 메서드만 호출 가능
+		X xClass = mClass;
+		xClass.x();
+		
+		// 상위 인터페이스 Y형으로 대입하면
+		// Y에 선언한 메서드만 호출 가능
+		Y yClass = mClass;
+		yClass.y();
+		
+		// 구현할 인터페이스형 변수에 대입하면 
+		// 인터페이스가 상속한 모든 메서드 호출 가능 
+		MyInterface iClass = mClass;
+		iClass.myMethod();
+		iClass.x();
+		iClass.y();
+		
+	}
+}
+
+실행결과
+
+x()
+y()
+myMethod()
+x()
+y()
+```
+### 인터페이스 구현과 클래스 상속 함께 쓰기
+- 생성한 클래스는 상위 인터페이스 형으로 변환할 수 있습니다.
+- 다만 상위 인터페이스로 형 변환을 하면 인터페이스에 선언한 메서드만 호출할 수 있습니다.
+- 예제를 보면 mClass가 MyClass로 생성되었어도, X 인터페이스형으로 선언된 xClass에 대입되면 xClass가 호출할 수 있는 메서드는 X의 메서드인 x() 뿐 입니다.
+- 인터페이스를 정의할 때 기능상 계층구조가 필요한 경우 상속을 사용하기도 합니다.
+
+
+### 인터페이스 구현과 클래스 상속 함께 쓰기
+- 한 클래스에서 클래스 상속과 인터페이스 구현을 모두 할 수 도 있습니다.
+
+#### day08_10/interfaceex/Shop.java
+```
+package day08_10.interfaceex;
+
+public class Shop {
+	public void shopInfo() {
+		System.out.println("shopInfo()");
+	}
+}
+```
+#### day08_10/interfaceex/Customer.java
+```
+package day08_10.interfaceex;
+
+public class Customer extends Shop implements Buy, Sell {
+	...
+}
+```
+
+### 실무에서 인터페이스를 사용하는 경우
+- 인터페이스는 클래스가 제공할 기능을 선언하고 설계하는 것입니다.
+- 만약 여러 클래스가 같은 메서드를 서로 다르게 구현한다면, 우선 인터페이스에 메서드를 선언한 다음 인터페이스를 구현한 각 클래스에서 같은 메서드에 대해 다양한 기능을 구현하면 됩니다.
+- 이것이 바로 인터페이스를 이용한 다형성의 구현입니다.
+- 인터페이스를 잘 정의하는 것이 확장성 있는 프로그램을 만드는 시작입니다.
 
 
 * * * 
