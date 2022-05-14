@@ -1987,13 +1987,336 @@ public class Customer extends Shop implements Buy, Sell {
 # 내부 클래스
 
 ## 내부 클래스 정의와 유형
+- 내부 클래스(inner class)는 말 그대로 **클래스 내부에 선언한 클래스**입니다. 
+- 내부에 클래스를 선언하는 이유는 대개 이 클래스와 외부 클래스가 밀접한 관련이 있기 때문입니다.
+- 또한 그 밖의 다른 클래스와 협력할 일이 없는 경우에 내부 클래스를 선언해서 사용합니다.
+
+```
+class ABC { // 외부 클래스
+	class In { // 인스턴스 내부 클래스
+	
+	}
+	
+	static class Sin { // 정적 내부 클래스
+	
+	}
+	
+	public void abc() {
+		class Local { // 지역 내부 클래스
+		
+		}
+	}
+}
+```
 
 ## 인스턴스 내부 클래스
+- 인스턴스 내부 클래스(Instance Inner Class)는 인스턴스 변수를 선언할 때와 같은 위치에 선언하며, 외부 클래스 내부에서만 생성하여 사용하는 객체를 선언할 때 씁니다.
+- 인스턴스 내부 클래스는 외부 클래스 생성 후 생성됩니다.
+- 따라서 외부 클래스를 먼저 생성하지 않고 인스턴스 내부 클래스를 사용할 수는 없습니다. 이는 이후 설명하는 정적 내부 클래스와 다른 점입니다.
+
+#### day08_10/innerclass/InnerTest.java
+```
+package day08_10.innerclass;
+
+class OutClass { // 외부 클래스
+	private int num = 10; // 외부 클래스 private 변수
+	private static int sNum = 20; // 외부 클래스 정적 변수
+	
+	private InClass inClass; // 내부 클래스 자료형 변수를 먼저 선언
+	
+	 // 외부 클래스 디폴트 생성자, 외부 클래스가
+	// 생성된 후 내부 클래스 생성 가능
+	public OutClass() {
+		inClass = new InClass();
+	}
+	
+	class InClass { // 인스턴스 내부 클래스 
+		int inNum = 100;  // 내부 클래스의 인스턴스 변수
+		// JDK15까지는 인스턴스 내부 클래스에 정적변수 선언이 불가능, JDK16부터는 가능
+		//static int sInNum = 200;
+		
+		void inTest() {
+			System.out.println("OutClass num = " + num + "(외부 클래스의 인스턴스 변수)");
+			System.out.println("OutClass sNum = " + sNum + "(외부 클래스의 정적 변수)");
+		}
+		
+		//JDK15까지는 인스턴스 내부 클래스에 정적메서드 선언이 불가능, JDK16부터는 가능
+		//static void sTest() {
+		//}
+	}
+	
+	public void usingClass() {
+		inClass.inTest();
+	}
+}
+
+public class InnerTest {
+	public static void main(String[] args) {
+		OutClass outClass = new OutClass();
+		System.out.println("외부 클래스 이용하여 내부 클래스 기능 호출");
+		outClass.usingClass(); // 내부 클래스 기능 호출
+	}
+}
+
+실행 결과
+
+외부 클래스 이용하여 내부 클래스 기능 호출
+OutClass num = 10(외부 클래스의 인스턴스 변수)
+OutClass sNum = 20(외부 클래스의 정적 변수)
+```
+- 외부 클래스를 먼저 생성해야 내부 클래스를 사용할 수 있습니다.
+- 클래스의 생성과 상관없이 사용할 수 있는 정적 변수는 인스턴스 내부 클래스에서 선언할 수 없습니다(JDK15버전까지, JDK16버전 이후 가능)
+- 마찬가지 이유로 정적 메서드도 인스턴스 내부 클래스에서 선언할 수 없습니다.
+
 
 ## 정적 내부 클래스
+- 내부 클래스가 외부 클래스 생성과 무관하게 사용할 수 있어야 하고, 정적 변수도 사용할 수 있어야 한다면 정적 내부 클래스를 사용하면 됩니다.
+- 정적 내부 클래스는 인스턴스 내부 클래스처럼 외부 클래스의 멤버 변수와 같은 위치에 정의하며 **static 예약어**를 함께 사용합니다.
+
+#### day08_10/innerclass/InnerTest.java
+```
+package day08_10.innerclass;
+
+class OutClass { // 외부 클래스
+	private int num = 10; // 외부 클래스 private 변수
+	private static int sNum = 20; // 외부 클래스 정적 변수
+	
+	private InClass inClass; // 내부 클래스 자료형 변수를 먼저 선언
+	
+	static class InStaticClass { // 정적 내부 클래스 
+		int inNum = 100; // 정적 내부 클래스의 인스턴스 변수
+		static int sInNum = 200; // 정적 내부 클래스의 정적 변수
+		
+		// 정적 내부 클래스의 일반 메서드
+		void inTest() {
+			//num += 10; // 외부 클래스의 인스턴스 변수는 사용할 수 없다.
+			System.out.println("InStaticClass inNum = " + inNum + "(내부 클래스의 인스턴스 변수 사용)");
+			System.out.println("InStaticClass sInNum = " + sInNum + "(내부 클래스의 정적 변수 사용)");
+			System.out.println("OutClass sNum = " + inNum + "(외부 클래스의 정적 변수 사용)");
+		}
+		
+		// 정적 내부 클래스의 정적 메서드
+		static void sTest() {
+			// 외부 클래스와 내부 클래스의 인스턴스 변수는 사용할 수 없다.
+			//num += 10;
+			//inNum += 10
+			System.out.println("OutClass sNum = " + sNum + "(외부 클래스의 정적 변수 사용)");
+			System.out.println("InStaticClass sInNum = " + sInNum + "(내부 클래스의 정적 변수 사용)");
+			
+		}
+	}
+	...
+}
+
+public class InnerTest {
+	public static void main(String[] args) {
+		...
+		OutClass.InStaticClass sInClass = new OutClass.InStaticClass();
+		System.out.println("정적 내부 클래스 일반 메서드 호출");
+		sInClass.inTest();
+		System.out.println();
+		System.out.println("정적 내부 클래스의 정적 메서드 호출");
+		OutClass.InStaticClass.sTest();
+	}
+}
+
+실행결과
+
+외부 클래스 이용하여 내부 클래스 기능 호출
+OutClass num = 10(외부 클래스의 인스턴스 변수)
+OutClass sNum = 20(외부 클래스의 정적 변수)
+정적 내부 클래스 일반 메서드 호출
+InStaticClass inNum = 100(내부 클래스의 인스턴스 변수 사용)
+InStaticClass sInNum = 200(내부 클래스의 정적 변수 사용)
+OutClass sNum = 100(외부 클래스의 정적 변수 사용)
+
+정적 내부 클래스의 정적 메서드 호출
+OutClass sNum = 20(외부 클래스의 정적 변수 사용)
+InStaticClass sInNum = 200(내부 클래스의 정적 변수 사용)
+```
+
+- 정적 메서드에서는 인스턴스 변수를 사용할 수 없습니다. 따라서 정적 내부 클래스에서도 외부 클래스의 인스턴스 변수는 사용할 수 없습니다.
+- 내부 클래스를 만들고 외부 클래스와 무관하게 다른 클래스에서도 사용하려면 정적 내부 클래스를 생성하면 됩니다.
+- 하지만 정적 내부 클래스를 private으로 선언했다면 이것 역시 다른 클래스에서 사용할 수 없습니다.
+
+<table>
+	<thead>
+		<tr>
+			<th>정적 내부 클래스 메서드</th>
+			<th>변수 유형</th>
+			<th>사용 가능 여부</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td rowspan='4'>일반 메서드<br>void inTest()</td>
+			<td>외부 클래스의 인스턴스 변수(num)</td>
+			<td>X</td>
+		</tr>
+		<tr>
+			<td>외부 클래스의 정적변수(sNum)</td>
+			<td>O</td>
+		<tr>
+		<tr>
+			<td>정적 내부 클래스의 인스턴스 변수(inNum)</td>
+			<td>O</td>
+		</tr>
+		<tr>
+			<td>정적 내부 클래스의 정적 변수(sInNum)</td>
+			<td>O</td>
+		</tr>
+		<tr>
+			<td rowspan='4'>정적 메서드<br>static void sTest()</td>
+			<td>외부 클래스의 인스턴스 변수(num)</td>
+			<td>X</td>
+		</tr>
+		<tr>
+			<td>외부 클래스의 정적변수(sNum)</td>
+			<td>O</td>
+		<tr>
+		<tr>
+			<td>정적 내부 클래스의 인스턴스 변수(inNum)</td>
+			<td>X</td>
+		</tr>
+		<tr>
+			<td>정적 내부 클래스의 정적 변수(sInNum)</td>
+			<td>O</td>
+		</tr>
+	</tbody>
+</table>
+
 
 ## 지역 내부 클래스
+- 지역 내부 클래스는 지역 변수 처럼 메서드 내부에 클래스를 정의하여 사용하는 것을 말합니다.
+- 따라서 이 클래스는 메서드 안에서만 사용할 수 있습니다.
+
+#### day08_10/innerclass/LocalInnerTest.java
+```
+package day08_10.innerclass;
+
+class Outer {
+	int outNum = 100;
+	static int sNum = 200;
+	
+	Runnable getRunnable(int i) {
+		int num = 100; // 지역변수
+		
+		class MyRunnable implements Runnable { // 지역 내부 클래스
+			int localNum = 10; // 지역 내부 클래스의 인스턴스 변수
+			
+			@Override
+			public void run() {
+				//num = 200; 지역변수는 상수로 바뀌므로 값을 변경할 수 없어 오류 발생
+				//i = 100; // 매개변수도 지역변수처럼 상수로 바뀌므로 값을 변경할 수 없어 오류 발생 
+				
+				System.out.println("i = " + i);
+				System.out.println("num = " + num);
+				System.out.println("localNum = " + localNum);
+				System.out.println("outNum = " + outNum + "(외부 클래스 인스턴스 변수)");
+				System.out.println("Outer.sNum = " + Outer.sNum + "(외부 클래스 정적 변수)");
+			}
+		}
+		
+		return new MyRunnable();
+	}
+}
+
+public class LocalInnerTest {
+	public static void main(String[] args) {
+		Outer out = new Outer();
+		Runnable runner = out.getRunnable(10); // 메서드 호출
+		runner.run();
+	}
+}
+
+
+실행결과
+
+i = 10
+num = 100
+localNum = 10
+outNum = 100(외부 클래스 인스턴스 변수)
+Outer.sNum = 200(외부 클래스 정적 변수)
+```
+- 메서드 안에 정의한 MyRunnable 클래스가 바로 지역 내부 클래스 입니다.
+- LocalInnerTest클래스의 Outer 클래스를 생성한 후 Runnable형 객체로 getRunnable()을 호출합니다.
+- 즉 MyRunnable 메서드 호출을 통해 생성된 객체를 반환받아야 합ㄴ디ㅏ.
+
+#### 지역 내부 클래스에서 지역변수 유효성 
+- 지역 변수는 메서드가 호출될 때 스택 메모리에서 생성되고 메서드의 수행이 끝나면 메모리에서 사라집니다.
+- 지역 내부 클래스에 포함된 getRunnable() 메서드의 매개변수 i와 메서드 내부에 선언한 변수 num은 지역변수 입니다.
+```
+Outer out = new Outer();
+Runnable runner = out.getRunnable(10); // getRunnable() 메서드의 호출이 끝남
+runner.run(); // run()이 실행되면서 getRunnable() 메서드의 지역 변수가 사용됨
+```
+
+- run() 메서드는 getRunnable() 메서드의 지역 변수 i와 num을 사용합니다. 
+- 그런데 지역 내부 클래스를 가지고 있는 getRunnable() 메서드 호출이 끝난 후에도 run() 메서드가 정상적으로 호출됩니다.
+- 이는 getRunnable() 메서드 호출이 끝나고 스택 메모리에서 지워진 변수를 이후에 또 참조 할 수 있다는 것 입니다.
+- 즉, 지역 내부 클래스에서 사용하는 지역 변수는 상수로 처리됩니다.
+- 상수로 처리하기 위해 JDK1.7까지는 final 예약어를 꼭 함께 써야 했으나, JDK1.8 부터는 직접 써 주지 않아도 코드를 컴파일 하면 final 예약어가 자동으로 추가 됩니다.
+- 그러므로 num과 i 변수 값을 다른 값으로 바꾸려고 하면 오류가 발생합니다.
+- 지역 내부 클래스에서 사용하는 메서드의 지역변수는 모두 상수로 바뀝니다.
 
 ## 익명 내부 클래스
+- 클래스 이름을 사용하지 않는 클래스가 있습니다. 이런 클래스를 익명 클래스라고 부릅니다.
+
+#### day08_10/innerclass/AnonymousInnerTest.java
+```
+package day08_10.innerclass;
+
+class Outer2 {
+	Runnable getRunnable(int i) {
+		int num = 100;
+		
+		return new Runnable() { // 익명 내부 클래스  Runnable 인터페이스 생성 
+			@Override
+			public void run() {
+				// 지역변수는 상수화 되므로 변경 불가
+				//num = 200; 
+				//i = 10;
+				
+				System.out.println(i);
+				System.out.println(num);
+			}
+		}; // 클래스 끝에 ;를 씀
+	}
+	
+	Runnable runner = new Runnable() { // 익명 내부 클래스를 변수에 대입
+		@Override
+		public void run() {
+			System.out.println("Runnable의 구현된 익명 클래스 변수");
+		}
+	}; // 클래스 끝에 ;를 씀
+}
+
+public class AnonymousInnerTest {
+	public static void main(String[] args) {
+		Outer2 out = new Outer2();
+		Runnable runnable = out.getRunnable(10);
+		runnable.run();
+		out.runner.run();
+	}
+}
+
+실행결과
+
+10
+100
+Runnable의 구현된 익명 클래스 변수
+```
+- 익명 내부 클래스는 단 하나의 인터페이스 또는 단 하나의 추상 클래스를 바로 생성할 수 있습니다.
+- Runnable 인터페이스를 생성할 수 있으려면 인터페이스 몸체가 필요합니다.
+- Runnable 인터페이스에서 반드시 구현해야 하는 run()메서드가 포함되어 있습니다. 마지막에 세미콜론(;)을 사용해서 익명 내부 클래스가 끝났다는 것을 알려줍니다.
+
+- 정리하면 익명 내부 클래스는 변수에 직접 대입하는 경우도 있고 메서드 내부에서 인터페이스나 추상 클래스를 구현하는 경우도 있습니다.
+- 이때 사용하는 **지역변수는 상수화**되므로 **메서드 호출이 끝난 후에도 사용할 수 있습니다.**
 
 
+|종류|구현위치|사용할 수 있는 외부 클래스 변수|생성방법|
+|-----|-----|-----|-----|
+|인스턴스 내부 클래스|외부 클래스 멤버 변수와 동일|외부 인스턴스 변수<br>외부 전역 변수|외부 클래스를 먼저 만든 후 내부 클래스 생성|
+|정적 내부 클래스|외부 클래스 멤버 변수와 동일|외부 전역 변수|외부 클래스와 무관하게 생성|
+|지역 내부 클래스|메서드 내부에 구현|외부 인스턴스 변수<br>외부 전역 변수|메서드를 호출할 때 생성|
+|익명 내부 클래스|메서드 내부에 구현<br>변수에 대입하여 직접 구현|외부 인스턴스 변수<br>외부 전역 변수|메서드를 호출할 떄 생성되거나, 인터페이스 타입 변수에 대입할 때 new 예약어를 사용하여 생성|
