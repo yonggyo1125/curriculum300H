@@ -650,6 +650,7 @@ public class OverrideTest3 {
 ```
 - VIPCustomer로 생성하고  Customer형으로 변환한 vc는 원래 Customer형 메서드가 호출되는 것이 맞지만, 가상 메서드 방식에 의해 VIPCustomer 인스턴스의 메서드가 호출되어 할인가격 9,000원이 출력됩니다.
 
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EA%B0%80%EC%83%81%EB%A9%94%EC%84%9C%EB%93%9C3.png'>
 
 - 상위 클래스(Customer)에서 선언한 calcPrice() 메서드가 있고 이를 하위클래스(VIPCustomer)에서 재정의한 상태에서 하위 클래스 인스턴스(vc)가 상위 클래스로 형 변환이 되었습니다.
 - 이때 vc.calcPrice()가 호출되면, vc 변수를 선언할 때 사용한 자료형(Customer)의 메서드가 호출되는 것이 아니라 생성된 인스턴스(VIPCustomer)의 메서드가 호출됩니다.
@@ -657,6 +658,68 @@ public class OverrideTest3 {
 
 
 ## 다형성
+
+### 다형성이란?
+- 다형성이란 하나의 코드가 여러 자료형으로 구현되어 실행되는 것을 말합니다.
+
+> 다형성은 추상 클래스, 인터페이스에서 구현됩니다. 또한 안드로이드, 스트링 등 자바 기반의 프레임워크에서 응용할 수 있는 객체 지향 프로그래밍의 중요한 개념입니다.
+
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EB%8B%A4%ED%98%95%EC%84%B11.png'>
+
+#### day08_10/polymorphism/AnimalTest1.java
+```
+package day08_10.polymorphism;
+
+class Animal {
+	public void move( ) {
+		System.out.println("동물이 움직입니다.");
+	}
+}
+
+class Human extends Animal {
+	public void move() {
+		System.out.println("사람이 두 발로 걷습니다.");
+	}
+}
+
+class Tiger extends Animal {
+	public void move() {
+		System.out.println("호랑이가 네 발로 뜁니다.");
+	}
+}
+
+class Eagle extends Animal {
+	public void move() {
+		System.out.println("독수리가 하늘을 납니다.");
+	}
+}
+
+public class AnimalTest1 {
+	public static void main(String[] args) {
+		AnimalTest1 aTest = new AnimalTest1();
+		aTest.moveAnimal(new Human());
+		aTest.moveAnimal(new Tiger());
+		aTest.moveAnimal(new Eagle());
+	}
+	
+	public void moveAnimal(Animal animal) {
+		animal.move();
+	}
+}
+
+실행결과
+
+사람이 두 발로 걷습니다.
+호랑이가 네 발로 뜁니다.
+독수리가 하늘을 납니다.
+```
+- 테스트를 하기 위해 AnimalTest1 클래스에 moveAnimal(); 메서드를 만들었습니다. 이 메서드는 어떤 인스턴스가 매개변수로 넘어와도 모두 Animal형으로 변환합니다.
+- 예) Animal ani = new Human();
+- Animal에서 상속받은 클래스가 매개변수로 넘어오면 모두 Animal형으로 변환되므로 animal.move() 메서드를 호출할 수 있습니다.
+- 가상 메서드의 원리에 따라 animal.move가 아닌 매개변수로 넘어온 실제 인스턴스의 메서드입니다.
+- animal.move() 코드는 변함이 없지만 어떤 매개변수가 넘어왔느냐에 따라 출력문이 달라집니다. 이것이 다형성 입니다.
+
+
 
 ## 다형성 활용하기
 
