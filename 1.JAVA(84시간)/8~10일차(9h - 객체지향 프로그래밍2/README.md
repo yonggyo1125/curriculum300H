@@ -719,6 +719,153 @@ public class AnimalTest1 {
 - 가상 메서드의 원리에 따라 animal.move가 아닌 매개변수로 넘어온 실제 인스턴스의 메서드입니다.
 - animal.move() 코드는 변함이 없지만 어떤 매개변수가 넘어왔느냐에 따라 출력문이 달라집니다. 이것이 다형성 입니다.
 
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EB%8B%A4%ED%98%95%EC%84%B12.png'>
+
+### 다형성의 장점 
+다형성을 활용한 프로그램의 확장성 
+	- 상위 클래스에서 공통 부분의 메서드를 제공하고, 하위 클래스에서는 그에 기반한 추가 요소를 덧붙여 구현하면 코드 양도 줄어들고 유지보수도 편리합니다.
+	- 필요에 따라 상속받은 모든 클래스를 하나의 상위 클래스로 처리할 수 있고 다형성에 의해 각 클래스의 여러 가지 구현을 실행 할 수 있으므로 프로그램을 쉽게 확장할 수 있습니다.
+	- 다형성을 잘 활용하면 유연하면서도 구조화된 코드를 구현하여 확장성 있고 유지보수하기 좋은 프로그램을 개발할 수 있습니다.
+	
+#### day08_10/polymorphism/Customer.java - 다형성을 활용해 VIP 고객 클래스 완성하기
+```
+package day08_10.polymorphism;
+
+public class Customer {
+	protected int customerID;
+	protected String customerName;
+	protected String customerGrade;
+	int bonusPoint;
+	double bonusRatio;
+	
+	public Customer()
+	{
+		//  고객 등급과 보너스 포인트 적립률 지정 함수 호출
+		initCustomer(); 
+	}
+
+	public Customer(int customerID, String customerName){
+		this.customerID = customerID;
+		this.customerName = customerName;
+		
+		// 고객 등급과 보너스 포인트 적립률 지정 함수 호출
+		initCustomer();
+	}
+	
+	// 생성자에서만 호출하는 메서드이므로 private으로 선언
+	// 멤버 변수의 초기화 부분
+	private void initCustomer()
+	{
+		customerGrade = "SILVER";
+		bonusRatio = 0.01;	
+	}
+	
+	public int calcPrice(int price){
+		bonusPoint += price * bonusRatio;
+		return price;
+	}
+	
+	public String showCustomerInfo(){
+		return customerName + " 님의 등급은 " + customerGrade + "이며, 보너스 포인트는 " + bonusPoint + "점입니다.";  
+	}
+	
+	public int getCustomerID() {
+		return customerID;
+	}
+
+	public void setCustomerID(int customerID) {
+		this.customerID = customerID;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getCustomerGrade() {
+		return customerGrade;
+	}
+
+	public void setCustomerGrade(String customerGrade) {
+		this.customerGrade = customerGrade;
+	}
+}
+```
+- 기존 Customer 클래스와 달라진 점은 initCustomer() 메서드가 있습니다.
+- 이; 메서드는 클래스의 멤버 변수를 초기화하는데, Customer 클래스를 생성하는 두 생성자에서 공통으로 사용하는 코드이므로 메서드로 분리하여 호출했습니다.
+
+### day08_10/polymorphism/VIPCustomer.java - 다형성을 활용해 VIP 고객 클래스 완성하기
+```
+package day08_10.polymorphism;
+
+public class VIPCustomer extends Customer {
+	private int agentID;
+	double saleRatio;
+	
+	public VIPCustomer(int customerID, String customerName, int agentID){
+		super(customerID, customerName);
+	
+		customerGrade = "VIP";
+		bonusRatio = 0.05;
+		saleRatio = 0.1;
+		this.agentID = agentID;
+	}
+	
+	// 지불 가격 메서드 재정의
+	public int calcPrice(int price){
+		bonusPoint += price * bonusRatio;
+		return price - (int)(price * saleRatio);
+	}
+	
+	// 고객 정보 출력 메서드 재정의
+	public String showCustomerInfo(){
+		return super.showCustomerInfo() + " 담당 상담원 번호는 " + agentID + "입니다";  
+	}
+
+	public int getAgentID(){
+		return agentID;
+	}
+}
+```
+- VIPCustomer 클래스에서 calcPrice() 메서드와 showCustomerInfo() 메서드를 재정의했습니다.
+- 일반 고객 클래스에서 calcPrice()메서드는 정가를 그대로 반환했지만, VIPCustomer 클래스에서는 할인율을 반영한 지불 가격을 반환합니다. 또 일반 고객 클래스에서, showCustomerInfo()메서드는 고객 등급과 이름만 출력했지만 VIPCustomer 클래스에서는 담당 상담원 번호까지 출력합니다.
+
+### day08_10/polymorphism/CustomerTest.java - 다형성을 활용해 VIP 고객 클래스 완성하기
+```
+package day08_10.polymorphism;
+
+public class CustomerTest {
+	public static void main(String[] args) {
+		Customer customerLee = new Customer();
+		customerLee.setCustomerID(10010);
+		customerLee.setCustomerName("이순신");
+		customerLee.bonusPoint = 1000;
+		System.out.println(customerLee.showCustomerInfo());
+		
+		// VIPCustomer를 Customer형으로 선언
+		Customer customerKim = new VIPCustomer(10020, "김유신", 12345);
+		customerKim.bonusPoint = 1000;
+		System.out.println(customerKim.showCustomerInfo());
+		
+		
+		System.out.println("====== 할인율과 보너스 포인트 계산 =======");
+		
+		int price = 10000;
+		int leePrice = customerLee.calcPrice(price);
+		int kimPrice = customerKim.calcPrice(price);
+		System.out.println(customerLee.getCustomerName() +" 님이 " + leePrice + "원 지불하셨습니다.");
+		System.out.println(customerLee.showCustomerInfo());
+		System.out.println(customerKim.getCustomerName() +" 님이 " + kimPrice + "원 지불하셨습니다.");
+		System.out.println(customerKim.showCustomerInfo());
+	}
+}
+```
+- 출력 결과를 보면 10,000원 짜라 상품을 구입했을 때 등급에 따라 다른 할인율과 포인트 적립이 이루어지는 것을 알 수 있습니다.
+- 그런데 여기에서 customerLee와 customerKim은 모두 Customer형으로 선언되었고, 고객의 자료형은 Customer형으로 동일하지만 할인율과 보너스 포인트는 각 인스턴스의 메서드에 맞게 계산되었습니다.
+- 즉, 상속 관계에 있는 상위 클래스와 하위 클래스는 같은 상위 클래스 자료형으로 선언되어 생성할 수 있지만 재정의된 메서드는 각각 호출될 뿐만 아니라 이름이 같은 메서드가 서로 다른 역할을 구현하고 있음을 알 수 있습니다.
 
 
 ## 다형성 활용하기
