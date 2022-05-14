@@ -33,7 +33,7 @@
 |PipedInputStream|PipedOutputStream|프로세스(프로세스간의 통신)|
 |AudioInputStream|AudioOutputStream|오디오장치|
 
-- 모두 InputStream 또는 OutputStream의 자손이며, 각각 읽고 쓰는데 필요한 추상메서드를 자신에 맞게 구현해 놓았다.
+- 모두 InputStream 또는 OutputStream의 하위 클래스이며, 각각 읽고 쓰는데 필요한 추상메서드를 자신에 맞게 구현해 놓았다.
 - 자바에서는 **java.io패키지**를 통해서 많은 종류의 입출력 관련 클래스들을 제공하고 있으며, 입출력을 처리할 수 있는 표준화된 방법을 제공함으로써 입출력의 대상이 달라져도 동일한 방법으로 입출력이 가능하기 때문에 프로그래밍을 하기에 편리하다.
 
 #### InputStream과 OutputStream에 정의된 읽기와 쓰기를 수행하는 메서드
@@ -121,7 +121,7 @@ bis.read(); // 보조스트림인 BufferedInputStream으로 부터 데이터를 
 ## 바이트기반 스트림
 
 ### InputStream과 OutputStream
-InputStream과 OutputStream은 모든 바이트기반의 스트림의 조상이며 다음과 같은 메서드가 선언되어 있다.
+InputStream과 OutputStream은 모든 바이트기반의 스트림의 상위 인터페이스이며 다음과 같은 메서드가 선언되어 있다.
 
 #### InputStream 메서드 
 
@@ -131,7 +131,7 @@ InputStream과 OutputStream은 모든 바이트기반의 스트림의 조상이�
 |void close()|스트림을 닫음으로써 사용하고 있던 자원을 반환한다.|
 |void mark(int readlimit)|현재위치를 표시해 놓는다. 후에 reset()에 의해서 표시해 놓은 위치로 다시 돌아갈 수 있다. readlimit은 되돌아갈 수 있는 byte의 수이다.|
 |boolean markSupported()|mark()와 resest()을 지원하는지를 알려준다.mark()와 reset()기능을 지원하는 것은 선택적이므로 mark()와 reset()을 사용하기 전에 markSupported()를 호출해서 지원여부를 확인해야 한다.|
-|abstract int read()|1 byte를 읽어 온다(0~255사이의 값). 더 이상 읽어올 데이터가 없으면 -1을 반환한다. abstract메서드라서 InputStream의 자손들은 자신의 상황에 알맞게 구현해야 한다.|
+|abstract int read()|1 byte를 읽어 온다(0~255사이의 값). 더 이상 읽어올 데이터가 없으면 -1을 반환한다. abstract메서드라서 InputStream의 하위클래스들은 자신의 상황에 알맞게 구현해야 한다.|
 |int read(byte[] b)|배열 b의 크기만큼 읽어서 배열을 채우고 읽어 온 데이터의 수를 반환한다. 반환하는 값은 항상 배열의 크기보다 작거나 같다.|
 |int read(byte[] b, int off, int len)|최대 len개의 byte를 읽어서, 배열 b의 지정된 위치(off)부터 저장한다. 실제로 읽어 올 수 있는 데이터가 len개보다 적을 수 있다.|
 |void reset()|스트림에서의 위치를 마지막으로 mark()이 호출되었던 위치로 되돌린다.|
@@ -437,7 +437,7 @@ java day20_21/FileCopy.java day20_21/FileCopy.java D:\javaEx\lecture\src\day20_2
 ## 바이트기반의 보조스트림
 
 ### FilterInputStream과 FilterOutputStream
-- FilterInputStream/FilterOutputStream은 InputStream/OutputStream의 자손이면서 모든 보조스트림의 조상이다.
+- FilterInputStream/FilterOutputStream은 InputStream/OutputStream의 하위 클래스이면서 모든 보조스트림의 상위 클래스이다.
 - 보조스트림은 자체적으로 입출력을 수행할 수 없기 때문에 기반스트림을 필요로 한다.
 ```
 protected FilterInputStream(InputStream in)
@@ -445,13 +445,13 @@ public FilterOutputStream(OutputStream out)
 ```
 
 - FilterInputStream/FilterOutputStream의 모든 메서드는 단순히 기반스트림의 메서드를 그대로 호출할 뿐 FilterInputStream/FilterOutputStream자체로는 아무런 일도 하지 않는다. 
-- FilterInputStream/FilterOutputStream은 상속을 통해 원하는 작업을 수행하도록 읽고 쓰는 메서드를 오버라이딩해야 한다.
+- FilterInputStream/FilterOutputStream은 상속을 통해 원하는 작업을 수행하도록 읽고 쓰는 메서드를 재정의해야 한다.
 
-- 생성자 FilterInputStream(InputStream in)은 접근제어가가 protected이기 때문에 FilterInputStream의 인스턴스를 생성해서 사용할 수 없고 상속을 통해서 오버라이딩 되어야 한다. 
+- 생성자 FilterInputStream(InputStream in)은 접근제어가가 protected이기 때문에 FilterInputStream의 인스턴스를 생성해서 사용할 수 없고 상속을 통해서 재정의 되어야 한다. 
 -FilterInputStream/FilterOutputStream을 상속받아서 기반스트림에 보조기능을 추가한 보조스트림 클래스는 다음과 같다.
 
-- **FilterInputStream의 자손** : BufferedInputStream, DataInputStream, PushbackInputStream 등 
-- **FilterOutputStream의 자손** : BufferedOutputStream, DataOutputStream, PrintStream 등
+- **FilterInputStream의 하위클래스** : BufferedInputStream, DataInputStream, PushbackInputStream 등 
+- **FilterOutputStream의 하위클래스** : BufferedOutputStream, DataOutputStream, PrintStream 등
 
 
 ### BufferedInputStream과 BufferedOutputStream
@@ -508,7 +508,7 @@ public class BufferedOutputStreamEx1 {
 ```
 
 ### DataInputStream과 DataOutputStream
-- DataInputStream/DataOutputStream도 각각 FilterInputStream/FilterOutputStream의 자손이며 DataInputStream은 DataInput인터페이스를, DataOutputStream은 DataOutput인터페이스를 각각 구현하였기 때문에, 데이터를 읽고 쓰는데 있어서 byte단위가 아닌, 8가지 기본 자료형의 단위로 읽고 쓸 수 있다는 장점이 있다.
+- DataInputStream/DataOutputStream도 각각 FilterInputStream/FilterOutputStream의 하위클래스이며 DataInputStream은 DataInput인터페이스를, DataOutputStream은 DataOutput인터페이스를 각각 구현하였기 때문에, 데이터를 읽고 쓰는데 있어서 byte단위가 아닌, 8가지 기본 자료형의 단위로 읽고 쓸 수 있다는 장점이 있다.
 - DataOutputStream이 출력하는 형식은 각 기본 자료형 값을 16진수로 표현하여 저장한다. 예를 들어 int값을 출력한다면 4byte의 16진수로 출력된다.
 - 각 자료형의 크기가 다르므로, 출력한 데이터를 다시 읽어 올 때는 출력했을 때의 순서를 염두에 두어야 한다.
 
@@ -945,7 +945,7 @@ public class PrintStreamEx1 {
 문자 데이터를 다루는데 사용된 다는 것을 제외하고는 바이트기반 스트림과 문자기반 스트림의 사용방법은 거의 같다.
 
 ### Reader와 Writer 
-- 바이트기반 스트림의 조상이 InputStream/OutputStream인 것과 같이 문자기반 스트림에서는 Reader/Writer가 그와 같은 역할을 한다. 
+- 바이트기반 스트림의 상위 인터페이스가 InputStream/OutputStream인 것과 같이 문자기반 스트림에서는 Reader/Writer가 그와 같은 역할을 한다. 
 - Reader/Writer의 메서드에서 char배열을 사용한다는 것 외에는 InputStream/OutputStream의 메서드와 다르지 않다.
 
 #### Reader의 메서드
@@ -1473,7 +1473,7 @@ sum : 410
 |File(URI uri)|지정된 uri로 파일을 생성|
 |String getName()|파일이름을 String으로 반환|
 |String getPath()|파일의 경로(path)를 String으로 반환|
-|String getAbsolutePath()<br>File getAbsoluteFile()|파일의 조상 디렉토리를 String으로 반환<br>파일의 조상 디렉토리를 File로 반환|
+|String getAbsolutePath()<br>File getAbsoluteFile()|파일의 상위 디렉토리를 String으로 반환<br>파일의 상위 디렉토리를 File로 반환|
 |String getCanonicalPath()<br>File getCanonicalFile()|파일의 정규경로를 String으로 반환<br>파일의 정규경로를 File로 반환|
 
 
@@ -1836,7 +1836,7 @@ public class UserInfo extends SuperUserInfo {
 }
 ```
 
-- 그러나 조상클래스가 Serializable을 구현하지 않았다면 자손클래스를 직렬화할 때 조상클래스에 정의된 인스턴스 변수는 직렬화 대상에서 제외된다.
+- 그러나 상위클래스가 Serializable을 구현하지 않았다면 하위클래스를 직렬화할 때 상위클래스에 정의된 인스턴스 변수는 직렬화 대상에서 제외된다.
 ```
 public class SuperUserInfo {
 	String name;
@@ -1848,7 +1848,7 @@ public class UserInfo extends SuperUserInfo implements Serializable {
 }
 ```
 
-- 모든 클래스의 최고조상인 Object는 Serializable을 구현하지 않았기 때문에 직렬화할 수 없다(Object 객체를 멤버변수로 사용하면 java.io.NotSerializableException이 발생하면서 직렬화에 실패한다.)
+- 모든 클래스의 가장상위 클래스인 Object는 Serializable을 구현하지 않았기 때문에 직렬화할 수 없다(Object 객체를 멤버변수로 사용하면 java.io.NotSerializableException이 발생하면서 직렬화에 실패한다.)
 ```
 public class UserInfo implements Serializable {
 	String name;
@@ -2113,8 +2113,8 @@ public class SerialEx4 {
 [(JavaMan,1234,30), (JavaWoman,4321,26)]
 ```
 
-- 직렬화 되지 않는 조상으로부터 상속받은 인스턴스변수에 대한 직렬화를 구현한 것이다. 
-- 직렬화될 객체의 클래스에 아래와 같이 writeObject()와 readObject()를 추가해서 조상으로 부터 상속받은 인스턴스변수인 name과 password가 직접 직렬화되도록 해야 한다.
+- 직렬화 되지 않는 상위 클래스로 부터 상속받은 인스턴스변수에 대한 직렬화를 구현한 것이다. 
+- 직렬화될 객체의 클래스에 아래와 같이 writeObject()와 readObject()를 추가해서 상위 클래스로 부터 상속받은 인스턴스변수인 name과 password가 직접 직렬화되도록 해야 한다.
 - 이 메서드들은 직렬화/역직렬화 작업시에 자동적으로 호출된다.
 - defaultWriteObject()는 UserInfo2클래스 자신에 정의된 인스턴스변수 age의 직렬화를 수행한다.
 

@@ -6,5 +6,5 @@ class Parent {
 
 public class AnnotationEx1 extends Parent{
 	@Override
-	void parentmethod() {} // 조상 메서드의 이름을 잘못 적음
+	void parentmethod() {} // 상위 클래스의 메서드의 이름을 잘못 적음
 }

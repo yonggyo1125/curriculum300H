@@ -102,7 +102,7 @@ public class DecimalFormatEx2 {
 
 ## SimpleDateFormat
 - Date와 Calendar를 사용해서 날짜 데이터를 원하는 형태로 다양하게 출력하는 것은 불편하고 복잡하나, SimpleDateFormat을 사용하면 이러한 문제들이 간단하게 해결된다. 
-- DateFormat은 추상클래스로 SimpleDateFormat의 조상이다. DateFormat는 추상클래스이므로 인스턴스를 생성하기 위해서는 getDateInstance()와 같은 static메서드를 이용해야 한다. getDateInstance()에 의해서 반환되는 것은 DateFormat을 상속받아 완전하게 구현한 SimpleDateFormat인스턴스이다.
+- DateFormat은 추상클래스로 SimpleDateFormat의 상위 클래스이다. DateFormat는 추상클래스이므로 인스턴스를 생성하기 위해서는 getDateInstance()와 같은 static메서드를 이용해야 한다. getDateInstance()에 의해서 반환되는 것은 DateFormat을 상속받아 완전하게 구현한 SimpleDateFormat인스턴스이다.
 
 ### SimpleDateFormat의 패턴에 사용되는 기호
 |기호|의미|보기|
@@ -959,7 +959,7 @@ System.out.println(time); // 12:00
 |NANOS|10억분의 일초|
 
 ### 날짜와 시간의 비교 - isAfter(), isBefore(), isEqual()
-- LocalDate와 LocalTime도 compareTo()가 적절하게 오버라이딩 되어 있어, 하기와 같이 compareTo()로 비교할 수 있다.
+- LocalDate와 LocalTime도 compareTo()가 적절하게 재정의 되어 있어, 하기와 같이 compareTo()로 비교할 수 있다.
 ```
 int result = date1.compareTo(date2); // 같으면 0, date1이 이전이면 -1, 이후면 1
 ```

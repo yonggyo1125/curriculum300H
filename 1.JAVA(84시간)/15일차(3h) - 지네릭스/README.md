@@ -132,13 +132,13 @@ Box<Grape> grapeBox = new Box<Grape>(); // OK, Grape 객체만 저장가능
 Box<Apple> appleBox = new Box<Apple>(); // OK
 Box<Apple> appleBox = new Box<Grape>(); // 에러
 
-Apple이 Fruit의 자손이라고 가정
+Apple이 Fruit의 하위 클래스라고 가정
 Box<Fruit> appleBox = new Box<Apple>(); // 에러. 대입된 타입이 다르다.
 ```
 
 - 두 지네릭 클래스의 타입이 상속관계에 있고, 대입된 타입이 같을 때는 가능하다.
 ```
-FruitBox는 Box의 자손이라고 가정
+FruitBox는 Box의 하위 클래스라고 가정
 
 Box<Apple> appleBox = new FruitBox<Apple>(); // OK. 다형성 
 ```
@@ -148,7 +148,7 @@ Box<Apple> appleBox = new Box<Apple>();
 Box<Apple> appleBox = new Box<>(); 
 ```
 
-- 타입 매개변수가 조상 클래스인 배열 또는 컬렉션 프레임워크에서는 자손 클래스를 추가할 수 있다(다형성)
+- 타입 매개변수가 상위 클래스인 배열 또는 컬렉션 프레임워크에서는 하위 클래스를 추가할 수 있다(다형성)
 ```
 Box<Fruit> fruitBox = new Box<Fruit>();
 fruitBox.add(new Fruit()); // OK
@@ -243,21 +243,21 @@ public class FruitBoxEx1 {
 타입 문자로 사용할 타입을 명시하면 한 종류의 타입만 저장할 수 있도록 제한할 수 있지만, 여전히 모든 종류의 타입을 지정할 수 있는 것에는 변함이 없다.
 타입 매개변수 T에 지정할 수 있는 타입의 종류를 제한할 수 있는 방법이 있다.
 
-- **extends** 를 사용하면, 특정 타입의 자손들만 대입할 수 있게 제한 할 수 있다.
+- **extends** 를 사용하면, 특정 타입의 하위클래스만 대입할 수 있게 제한 할 수 있다.
 ``` 
-class FruitBox<T extends Fruit> { // Fruit의 자손만 타입으로 지정가능
+class FruitBox<T extends Fruit> { // Fruit의 하위클래스만 타입으로 지정가능
 	ArrayList<T> list = new ArrayList<T>();
 	...
 }
 ```
 ```
 FruitBox<Apple> appleBox = new FruitBox<Apple>(); // OK
-FruitBox<Toy> toyBox = new FruitBox<Toy>(); // 에러. Toy는 Fruit의 자손이 아님
+FruitBox<Toy> toyBox = new FruitBox<Toy>(); // 에러. Toy는 Fruit의 하위클래스가 아님
 ```
 ```
 FruitBox<Fruit> fruitbox = new FruitBox<Fruit>();
-fruitBox.add(new Apple()); // OK. Apple이 Fruit의 자손
-fruitBox.add(new Grape()); // OK. Grape가 Fruit의 자손
+fruitBox.add(new Apple()); // OK. Apple이 Fruit의 하위클래스
+fruitBox.add(new Grape()); // OK. Grape가 Fruit의 하위클래스
 ```
 - 만약 클래스가 아니라 인터페이스를 구현해야 한다는 제약이 필요하다면, 이때에도 **extends**를 사용한다.
 ```
@@ -265,11 +265,11 @@ interface Eatable {}
 class FruitBox<T extends Eatable> { ... }
 ```
 
-- 클래스 Fruit의 자손이면서 Eatable  인터페이스도 구현해야 한다면 아래와 같이 **&**기호로 연결한다.
+- 클래스 Fruit의 하위 클래스이면서 Eatable  인터페이스도 구현해야 한다면 아래와 같이 **&**기호로 연결한다.
 ```
 class FruitBox<T extends Fruit & Eatable> { ... }
 
-FruitBox에는 Fruit의 자손이면서 Eatable을 구현한 클래스만 타입 매개변수 T에 대입될 수 있다.
+FruitBox에는 Fruit의 하위클래스면서 Eatable을 구현한 클래스만 타입 매개변수 T에 대입될 수 있다.
 ```
 
 #### day15/fruitboxex2/Box.java
@@ -341,7 +341,7 @@ public class FruitBoxEx2 {
 		fruitBox.add(new Apple());
 		fruitBox.add(new Grape());
 		appleBox.add(new Apple());
-		//appleBox.add(new Grape()); // 에러, Grape는 Apple의 자손이 아님
+		//appleBox.add(new Grape()); // 에러, Grape는 Apple의 하위클래스가 아님
 		grapeBox.add(new Grape());
 		
 		System.out.println("fruitBox-" + fruitBox);
@@ -399,8 +399,8 @@ static Juice makeJuice(FruitBox<Apple> box) {
 
 - **와일드 카드**는 기호 **?**로 표현하는데, 와일드 카드는 어떠한 타입도 될 수 있다.
 - **?**만으로는 Object타입과 다를 게 없으므로, 다음과 같이 'extends'와 'super'로 상한(upper bound)와 하한(lower bound)를 제한할 수 있다.
-	- **<? extends T>** : 와일드 카드의 상한 제한. T와 그 자손들만 가능
-	- **<? super T>** : 와일드 카드의 하한 제한. T와 그 조상들만 가능
+	- **<? extends T>** : 와일드 카드의 상한 제한. T와 그 하위 클래스/인터페이스들만 가능
+	- **<? super T>** : 와일드 카드의 하한 제한. T와 그 상위 클래스/인터페이스들만 가능
 	- **<?>** : 제한 없음. 모든 타입이 가능. <? extends Object>와 동일 
 - 지네릭 클래스와 달리 와일드 카드에는 '&'를 사용할 수 없다. 즉, <? extends T & E>와 같이 할 수 없다.
 

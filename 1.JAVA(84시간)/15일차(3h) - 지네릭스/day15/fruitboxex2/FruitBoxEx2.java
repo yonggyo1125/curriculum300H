@@ -12,7 +12,7 @@ public class FruitBoxEx2 {
 		fruitBox.add(new Apple());
 		fruitBox.add(new Grape());
 		appleBox.add(new Apple());
-		//appleBox.add(new Grape()); // 에러, Grape는 Apple의 자손이 아님
+		//appleBox.add(new Grape()); // 에러, Grape는 Apple의 하위클래스가 아님
 		grapeBox.add(new Grape());
 		
 		System.out.println("fruitBox-" + fruitBox);

@@ -415,7 +415,7 @@ Optional<Student> stu = stuStream.filter(s->s.getTotalScore() <= 10).findFirst()
 Optional<T> reduce(BinaryOperator<T> accumulator)
 T reduce(T identity, BinaryOperator<T> accumulator)
 ```
-**참고** BinaryOperator<T>는 BiFunction의 자손이며 BiFunction<T,T,T>와 동등하다.
+**참고** BinaryOperator<T>는 BiFunction의 하위 인터페이스이며 BiFunction<T,T,T>와 동등하다.
 
 - 최종연산 count(), sum(), max(), min() 등은 내부적으로 모두 reduce()를 이용해서 작성된 것이다.
 ```
@@ -496,7 +496,7 @@ IntStream에는 매개변수 3개짜리 collect()만 정의되어 있으므로 �
 ### 문자열 결합 - joining()
 - 문자열 스트림의 모든 요소를 하나의 문자열로 연결해서 반한다.
 - 구분자를 지정할 수 있고, 접두사와 접미사도 지정가능하다.
-- 스트림의 요소가 String이나 StringBuffer 처럼 CharSequence의 자손인 경우에만 결합이 가능하다 
+- 스트림의 요소가 String이나 StringBuffer 처럼 CharSequence의 하위 인터페이스인 경우에만 결합이 가능하다 
 - 스트림의 요소가 문자열이 아닌 경우에는 먼저 map()을 이용해서 스트림의 요소를 문자열로 변환해야 한다.
 ```
 String studentNames = stuStream.map(Student::getName).collect(Collectors.joining());

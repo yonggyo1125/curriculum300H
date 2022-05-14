@@ -27,7 +27,7 @@
 ```
 1. Thread 클래스를 상속
 class MyThread extends Thread {
-	// Thread 클래스의 run()을 오버라이딩
+	// Thread 클래스의 run()을 재정의
 	public void run() {   
 		// 작업내용
 	}
@@ -58,7 +58,7 @@ package day17;
 class ThreadEx1_1 extends Thread {
 	public void run() {
 		for(int i = 0; i < 5; i++) {
-			System.out.println(getName()); // 조상인 Thread의 getName()을 호출
+			System.out.println(getName()); // 상위 클래스인 Thread의 getName()을 호출
 		}
 	}
 }
@@ -98,7 +98,7 @@ Thread-0
 Thread-0
 ```
 
-- Thread클래스를 상속받으면, 자손 클래스에서 조상인 Thread클래스의 메서드를 직접 호출할 수 있지만, Runnable을 구현하면 Thread클래스의 static메서드인 currentThread()를 호출하여 스레드에 대한 참조를 얻어와야만 호출이 가능하다.
+- Thread클래스를 상속받으면, 하위 클래스에서 상위 클래스인 Thread클래스의 메서드를 직접 호출할 수 있지만, Runnable을 구현하면 Thread클래스의 static메서드인 currentThread()를 호출하여 스레드에 대한 참조를 얻어와야만 호출이 가능하다.
 ```
 static Thread currentThread() : 현재 실행중인 쓰레드의 참조를 반환한다.
 String getName() : 쓰레드의 이름을 반환한다.

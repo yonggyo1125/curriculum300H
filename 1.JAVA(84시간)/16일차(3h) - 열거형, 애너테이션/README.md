@@ -64,7 +64,7 @@ class Unit {
 	}
 ```
 
-### 모든 열거형의 조상 - java.lang.Enum
+### 모든 열거형의 상위 클래스 - java.lang.Enum
 ```
 Direction[] dArr = Direction.values();
 
@@ -74,7 +74,7 @@ for(Direction d : dArr) {
 ```
 - values()는 열거형의 모든 상수를 배열에 담아서 반환한다.
 - 이 메서드는 모든 열거형이 가지고 있는 것으로 컴파일러가 자동으로 추가해 준다.
-- ordinal()은 모든 열거형의 조상인 java.lang.Enum 클래스에 정의된 것으로 열거형 상수가 정의된 순서(0부터 시작)를 정수로 반환한다
+- ordinal()은 모든 열거형의 상위 클래스인 java.lang.Enum 클래스에 정의된 것으로 열거형 상수가 정의된 순서(0부터 시작)를 정수로 반환한다
 
 #### Enum 클래스에 정의된 메서드
 
@@ -365,7 +365,7 @@ public void method() {
 
 |애너테이션|설명|
 |------|----------|
-|@Override|컴파일러에게 오버라이딩하는 메서드라는 것을 알린다.|
+|@Override|컴파일러에게 재정의 하는 메서드라는 것을 알린다.|
 |@Deprecated|앞으로 사용되지 않을 것을 권장하는 대상에게 붙인다.|
 |@SuppressWarnings|컴파일러의 특정 경고메세지가 나타나지 않게 해준다.|
 |@SafeVarargs|지네릭스 타입의 가변인자에 사용한다.(JDK1.7)|
@@ -373,16 +373,16 @@ public void method() {
 |@Native|native메서드에서 참조되는 상수 앞에 붙인다.(JDK1.8)|
 |@Target\*|애너테이션이 적용 가능한 대상을 지정하는데 사용한다.|
 |@Documented\*|애너테이션 정보가 @javadoc으로 작성된 문서에 포함되게 한다.|
-|@Inherited\*|애너테이션이 자손 클래스에 상속되도록 한다.|
+|@Inherited\*|애너테이션이 하위 클래스에 상속되도록 한다.|
 |@Retention\*|애너테이션이 유지되는 범위를 지정하는데 사용한다.|
 |@Repeatable\*|애너테이션을 반복해서 적용할 수 있게 한다.(JDK1.8)|
 
 
 ## 표준 애너테이션
 - 메서드 앞에만 붙일 수 있는 에너테이션 
-- 조상의 메서드를 오버라이딩 하는 것이라는 걸 컴파일러에게 알려주는 역할을 한다.
-- 오버라이딩 할 떄 메서드 앞에 '@Override'라고 애너테이션을 붙이면, 컴파일러가 같은 이름의 메서드가 조상에 있는지 확인하고 없으면 에러메세지를 출력한다.
-- 오버라이딩할 때 메서드 앞에 '@Override'를 붙이는 것이 필수는 아니지만 알아내기 어려운 실수를 미연에 방지해 주므로 붙이는 것이 좋다.
+- 상위클래스의 메서드를 재정의 하는 것이라는 걸 컴파일러에게 알려주는 역할을 한다.
+- 재정의할 떄 메서드 앞에 '@Override'라고 애너테이션을 붙이면, 컴파일러가 같은 이름의 메서드가 상위 클래스에 있는지 확인하고 없으면 에러메세지를 출력한다.
+- 재정의할 때 메서드 앞에 '@Override'를 붙이는 것이 필수는 아니지만 알아내기 어려운 실수를 미연에 방지해 주므로 붙이는 것이 좋다.
 
 
 ### @Override
@@ -396,7 +396,7 @@ class Parent {
 
 public class AnnotationEx1 extends Parent{
 	@Override
-	void parentmethod() {} // 조상 메서드의 이름을 잘못 적음
+	void parentmethod() {} // 상위클래스 메서드의 이름을 잘못 적음
 }
 
 컴파일 결과
@@ -638,11 +638,11 @@ public @interface FunctionalInterface {}
 ```
 
 ### @Inherited
-- 애너테이션을 자손 클래스에 상속되도록 한다,
-- "@Inherited"가 붙은 애너테이션을 조상 클래스에 붙이면, 자손 클래스도 이 애너테이션이 붙은 것과 같이 인식된다.
+- 애너테이션을 하위 클래스에 상속되도록 한다,
+- "@Inherited"가 붙은 애너테이션을 상위 클래스에 붙이면, 하위 클래스도 이 애너테이션이 붙은 것과 같이 인식된다.
 
 ```
-@Inherited // @SuperAnno가 자손까지 영향 미치게
+@Inherited // @SuperAnno가 하위클래스까지 영향 미치게
 @interface SuperAnno {}
 
 @SuperAnno
@@ -808,7 +808,7 @@ class NewClass { ... }
 ```
 
 ### java.lang.annotation.Annotation
-- 모든 애너테이션의 조상은 Annotation이다. 그러나 애너테이션은 상속이 허용되지 않으므로 명시적으로 Annotation을 조상으로 지정할 수 없다.
+- 모든 애너테이션의 상위 클래스는 Annotation이다. 그러나 애너테이션은 상속이 허용되지 않으므로 명시적으로 Annotation을 상위 클래스로 지정할 수 없다.
 ```
 @interface TestInfo extends Annotation { // 에러. 허용되지 않는 표현
 	int count();
@@ -818,7 +818,7 @@ class NewClass { ... }
 ```
 
 - Annotation은 애너테이션이 아니라 일반적인 인터페이스로 정의되어 있다.
-- 모든 애너테이션의 조상인 Annotation인터페이스가 하기와 같이 정의되어 있으므로, 모든 애너테이션 객체에 대해 equals(), hashCode(), toString()과 같은 메서드를 호출할 수 있다.
+- 모든 애너테이션의 상위 클래스인 Annotation인터페이스가 하기와 같이 정의되어 있으므로, 모든 애너테이션 객체에 대해 equals(), hashCode(), toString()과 같은 메서드를 호출할 수 있다.
 ```
 package java.lang.annotation;
 

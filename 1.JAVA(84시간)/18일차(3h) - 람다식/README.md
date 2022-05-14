@@ -210,12 +210,12 @@ public class MyCalculatorReturnTest {
 #### UnaryOperator와 BinaryOperator
 - Function의 변형이다
 - 매개변수의 타입과 반환타입의 타입이 모두 일치한다.
-- UnaryOperator와 BinaryOperator의 조상은 각각 Function, BiFunction이다.
+- UnaryOperator와 BinaryOperator의 상위 인터페이스는 각각 Function, BiFunction이다.
 
 |함수형 인터페이스|메서드|설명|
 |----|-----|-----|
-|UnaryOperator<T>|T apply(T t)|Function의 자손, Function과 달리 매개변수와 결과의 타입이 같다.|
-|BinaryOperator<T>|T apply(T t, T t)|BiFunction의 자손, BiFunction과 달리 매개변수와 결과 타입이 같다.|
+|UnaryOperator<T>|T apply(T t)|Function의 하위 인터페이스, Function과 달리 매개변수와 결과의 타입이 같다.|
+|BinaryOperator<T>|T apply(T t, T t)|BiFunction의 하위 인터페이스, BiFunction과 달리 매개변수와 결과 타입이 같다.|
 
 ```
 예제...

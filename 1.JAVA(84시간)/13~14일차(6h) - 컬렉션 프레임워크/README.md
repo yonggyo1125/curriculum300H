@@ -30,7 +30,7 @@
 
 
 ### Collection인터페이스
-- Collection은 List와 Set의 조상 인터페이스 이다.
+- Collection은 List와 Set의 상위 인터페이스 이다.
 - Collection 인터페이스는 컬렉션 클래스에 저장된 데이터를 읽고, 추가하고, 삭제하는 등 컬렉션을 다루는데 가장 기본이적인 메서드들을 정의하고 있다.
 
 #### Collection 인터페이스에 정의된 메서드
@@ -165,7 +165,7 @@ public class ArraList extends AbstractList implements List, RandomAccess, Clonea
 }
 ```
 - ArrayList는 elementData라는 이름의 Object 배열을 멤버변수로 선언하고 있다.
-- 선언된 배열의 타입이 모든 객체의 최상위 조상인 Object이기 때문에 모든 종류의 객체를 담을 수 있다.
+- 선언된 배열의 타입이 모든 객체의 최상위 상위 클래스인 Object이기 때문에 모든 종류의 객체를 담을 수 있다.
 
 ### ArrayList의 생성자와 메서드
 
@@ -686,7 +686,7 @@ public class PriorityQueueEx {
 
 ### Deque(Double-Ended Queue)
 - Queue의 변형으로 한 쪽 끝으로만 추가/삭제할 수 있는 Queue와 달리 Deque는 양쪽 끝에 추가/삭제가 가능하다.
-- Deque의 조상은 Queue이며, 구현체로는 ArrayDeque와 LinkedList등이 있다.
+- Deque의 상위 인터페이스는 Queue이며, 구현체로는 ArrayDeque와 LinkedList등이 있다.
 - Deque는 Stack과 Queue를 합쳐놓은 것과 같으며 Stack으로 사용할 수도 있고, Queue로 사용할 수도 있다.
 
 ![Queue와 Deque](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC/images/%ED%81%90_%EB%8D%B1.png)
@@ -699,7 +699,7 @@ public class PriorityQueueEx {
 ### Iterator
 - 컬렉션 프레임워크에서는 컬렉션에 저장된 요소들을 읽어오는 방법을 표준화하였다.
 - 컬렉션에 저장된 각 요소에 접근하는 기능을 가진 Iterator인터페이스를 정의하고, Collection 인터페이스에는 Iterator(Iterator를 구현한 클래스의 인스턴스)를 반환하는 iterator()를 정의하고 있다.
-- iterator()는 Collection인터페이스에 정의된 메서드이므로 Collection 인터페이스의 자손인 List와 Set에도 포함되어 있으며, 각 컬렉션의 특징에 알맞게 작성되어 있다.
+- iterator()는 Collection인터페이스에 정의된 메서드이므로 Collection 인터페이스의 하위 인터페이스인 List와 Set에도 포함되어 있으며, 각 컬렉션의 특징에 알맞게 작성되어 있다.
 - 컬렉션 클래스에 대해 iterator()를 호출하여 Iterator를 얻은 다음 반복문, 주로 while문을 사용해서 컬렉션 클래스의 요소를 읽어 올 수 있다.
 
 #### Iterator 인터페이스 메서드
@@ -1178,8 +1178,8 @@ public class HashSetEx2 {
 
 
 ### equals()와 hashCode()
-- HashSet의 add메서드는 새로운 요소를 추가하기 전에 기존에 저장된 요소와 같은 것인지 판별하기 위해서 추가하려는 요소의 equals()와 hashCode()를 호출하기 때문에 equals()와 hashCode()를 목적에 맞게 오버라이딩 해야 한다.
-- 오버라이딩 하지 않는다면, 기본 equals()와 hashCode()는 모든 클래스의 조상인 Object에 정의되어 있는 메서드 이며, hashCode()은 생성된 인스턴스의 주소이며, equals()역시 동일한 주소일때 true를 반환한다. 
+- HashSet의 add메서드는 새로운 요소를 추가하기 전에 기존에 저장된 요소와 같은 것인지 판별하기 위해서 추가하려는 요소의 equals()와 hashCode()를 호출하기 때문에 equals()와 hashCode()를 목적에 맞게 재정의 해야 한다.
+- 재정의 하지 않는다면, 기본 equals()와 hashCode()는 모든 클래스의 상위 클래스인 Object에 정의되어 있는 메서드 이며, hashCode()은 생성된 인스턴스의 주소이며, equals()역시 동일한 주소일때 true를 반환한다. 
 - 인스턴스의 동일 여부가 아닌 논리적인 동일성으로 중복을 판단하기 위해서는 equals()와 hashCode()를 재정의한다.
 
 

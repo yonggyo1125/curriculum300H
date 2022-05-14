@@ -3,7 +3,7 @@ package day17;
 class ThreadEx1_1 extends Thread {
 	public void run() {
 		for(int i = 0; i < 5; i++) {
-			System.out.println(getName()); // 조상인 Thread의 getName()을 호출
+			System.out.println(getName()); // 상위 클래스인 Thread의 getName()을 호출
 		}
 	}
 }
