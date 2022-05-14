@@ -867,14 +867,143 @@ public class CustomerTest {
 - 그런데 여기에서 customerLee와 customerKim은 모두 Customer형으로 선언되었고, 고객의 자료형은 Customer형으로 동일하지만 할인율과 보너스 포인트는 각 인스턴스의 메서드에 맞게 계산되었습니다.
 - 즉, 상속 관계에 있는 상위 클래스와 하위 클래스는 같은 상위 클래스 자료형으로 선언되어 생성할 수 있지만 재정의된 메서드는 각각 호출될 뿐만 아니라 이름이 같은 메서드가 서로 다른 역할을 구현하고 있음을 알 수 있습니다.
 
-
 ## 다운 캐스팅과 instanceof 
 
 ### 하위 클래스로 형 변환, 다운 캐스팅
 
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EB%8B%A4%ED%98%95%EC%84%B13.png'>
 
+- 위와 같은 계층 구조에서 상위 클래스를 자료형으로 선언하는 Animal ani = new Human(); 코드를 쓸 수 있습니다.
+- 이때 생성된 인스턴스 Human은 Animal형 입니다. 이렇게 Animal형으로 형 변환이 이루어진 경우에는 Animal 클래스에서 선언한 메서드와 멤버 변수만 사용할 수 있습니다.
+- 다시 말해 Human 클래스에 더 많은 메서드가 구현되어 있고 다양한 멤버 변수가 있다고 하더라도 자료형이 Animal형인 상태에서는 사용할 수가 없습니다. 따라서 필요에 따라 다시 원래 인스턴스의 자료형(여기에서는 Human 형)으로 되돌아가야 하는 경우가 있습니다. 이렇게 상위 클래스로 형 변환 되었던 하위 클래스를 다시 원해 자료형으로 형 변환하는 것을 다운 캐스팅(down casting)이라고 합니다.
+
+### instanceof
+- 상속 관계를 생각해보면 모든 인간은 동물이지만 모든 동물이 인간은 아닙니다. 따라서 다운 캐스팅을 하기 전에 상위 클래스로 형 변환된 인스턴스의 원래 자료형을 확인해야 변환할 때 오류를 막을 수 있습니다. 
+- 이를 확인하는 예약어가 바로 instanceof입니다.
+```
+Animal hAnimal = new Human();
+if (hAnimal instanceof Human) { // hAnimal 인스턴스 자료형이 Human형이라면
+	Human human = (Human)hAnimal; // 인스턴스 hAnimal을 Human형으로 다운 캐스팅
+}
+```
+- instanceof 예약어는 왼쪽에 있는 변수의 원래 인스턴스형이 오른쪽 클래스 자료형인가를 확인합니다. 
+- instanceof의 반환 값이 true이면 다운 캐스팅을 하는데, 이때는 Human human = (Human)hAnimal; 문장과 같이 명시적으로 자료형을 써 주어야 합니다.
+- 상위 클래스로는 묵시적으로 형 변환이 되지만, 하위 클래스로 형 변환을 할 떄는 명시적으로 해야 합니다.
+- 만약 instanceof로 인스턴스형을 확인하지 않으면 오류가 발생할 수 있습니다.
+- 참조 변수의 원래 인스턴스형을 정확히 확인하고 다운 캐스팅을 해야 안전하며 이때 instanceof를 사용합니다.
+
+#### day08_10/polymorphism/AnimalTest.java
+```
+package day08_10.polymorphism.instance_of;
+
+import java.util.ArrayList;
+
+import java.util.ArrayList;
+
+class Animal{
+	public void move()
+	{
+		System.out.println("동물이 움직입니다.");
+	}
+}
+
+class Human extends Animal{
+	public void move()
+	{
+		System.out.println("사람이 두 발로 걷습니다. ");
+	}
+	
+	public void readBook()
+	{
+		System.out.println("사람이 책을 읽습니다. ");
+	}
+}
+
+class Tiger extends Animal{
+	public void move()
+	{
+		System.out.println("호랑이가 네 발로 뜁니다. ");
+	}
+	
+	public void hunting() 
+	{
+		System.out.println("호랑이가 사냥을 합니다. ");
+	}
+}
+
+class Eagle extends Animal{
+	public void move()
+	{
+		System.out.println("독수리가 하늘을 납니다 ");
+	}
+	
+	public void flying() 
+	{
+		System.out.print("독수리가 날개를 쭉 펴고 멀리 날아갑니다");
+	}
+}
+
+public class AnimalTest {
+	ArrayList<Animal> aniList = new ArrayList<Animal>();
+
+	public static void main(String[] args) {
+		AnimalTest aTest = new AnimalTest();
+		aTest.addAnimal();
+		System.out.println("원래 타입으로 다운 캐스팅 ");
+		aTest.testCasting();
+
+	}
+	
+	public void addAnimal()
+	{
+		aniList.add(new Human());    //ArrayList에 추가되면서 Animal형으로 형 변환
+		aniList.add(new Tiger());
+		aniList.add(new Eagle());
+		
+		for(Animal ani : aniList){     // 배열의 요소들을 Animal형으로 꺼내서 move 호출하면
+			ani.move();              // 오버라이딩된 함수가 호출 됨
+		}
+	}
+
+	public void testCasting()
+	{
+		for(int i=0; i<aniList.size(); i++){  //모든 배열 항목들을 하나씩 돌면서
+			
+			Animal ani = aniList.get(i);        // 일단 Shape 타입으로 가져옴
+			if(ani instanceof Human){       //Circle이면
+				Human h = (Human)ani;      //Circle형으로 다운 캐스팅
+				h.readBook();
+			}
+			else if(ani instanceof Tiger){  
+				Tiger t = (Tiger)ani;
+				t.hunting();
+			}
+			else if(ani instanceof Eagle){
+				Eagle e = (Eagle)ani;
+				e.flying();
+			}
+			else{
+				System.out.println("지원되지 않는 타입입니다.");
+			}
+		}
+	}
+}
+
+실행결과
+
+사람이 두 발로 걷습니다. 
+호랑이가 네 발로 뜁니다. 
+독수리가 하늘을 납니다 
+원래 타입으로 다운 캐스팅 
+사람이 책을 읽습니다. 
+호랑이가 사냥을 합니다. 
+독수리가 날개를 쭉 펴고 멀리 날아갑니다
+```
 * * * 
+
 # 추상 클래스
+
+
 
 ## 추상 클래스
 
