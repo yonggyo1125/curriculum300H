@@ -1070,8 +1070,8 @@ public class Computer {
 
 <img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%B6%94%EC%83%81%ED%81%B4%EB%9E%98%EC%8A%A42.png'>
 
-1. add body - 몸체 부분을 작성하시오.
-2. Change Computer display to 'abstract' - 이 메서드를 추상 메서드로  바꾸시오.
+- add body - 몸체 부분을 작성하시오.
+- Change Computer display to 'abstract' - 이 메서드를 추상 메서드로  바꾸시오.
 
 ```
 package day08_10.abstractex;
@@ -1086,12 +1086,36 @@ public class Computer { // 오류 발생
 - 이번에는 메서드와 클래스 이름에 모두 오류가 표시됩니다.
 - 추상 메서드가 속한 클래스를 추상 클래스로 선언하지 않았기 때문입니다.
 
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%B6%94%EC%83%81%ED%81%B4%EB%9E%98%EC%8A%A43.png'>
+
+- Remove 'abstract' modifier - 메서드에서 abstract 예약어를 제거하세요.
+- Make type 'Computer' abstract - Computer 클래스를 추상 클래스로 만드세요.
+
+```
+package day08_10.abstractex;
+
+public abstract class Computer {  
+	public abstract void display(); // 더이상 오류 없음
+	public abstract void typing(); // 더이상 오류 없음 
+	...
+}
+```
+- Computer 클래스를 이와 같이 구현한 의미
+	- Computer 클래스를 상속받는 클래스 중 turnOn()과 turnOff() 구현 코드는 공통이다. 
+	- 하지만 display()와 typing()은 하위 클래스에 따라 구현이 달라질 수 있다.
+	- 그래서 Computer에서는 구현하지 않고, 이 두 메서드 구현에 대한 책임을 상속받는 클래스에 위임한다.
+- Computer 클래스의 추상 메서드는 추상 클래스를 상속받은 DeskTop과 NoteBook에서 실제로 구현하게 됩니다. 이 클래스의 상위 클래스는 하위 클래스도 공통으로 사용할 메서드를 구현하고, 하위 클래스마다 다르게 구현할 메서드는 추상 메서드로 선언해 두는 것입니다.
+
+#### day08_10/abstractex/DeskTop.java
+```
+package day08_10.abstractex;
+
+public class DeskTop extends Computer { // 오류 발생
+	
+}
+```
 
 
-
-## 템플릿 메서드
-
-## 템플릿 메서드 응용하기
 
 ## final 예약어
 
