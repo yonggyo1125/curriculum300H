@@ -423,7 +423,7 @@ public class IfExample3 {
 
 if-else문
 ```
-if (a < b)
+if (a > b)
 	max = a;
 else 
 	max = b;
