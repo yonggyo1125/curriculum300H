@@ -1459,12 +1459,234 @@ Calc 인터페이스를 구현하였습니다.
 ```
 
 ### 인터페이스 구현과 형변환(다형성)
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A42.png'>
 
+- Calculator 클래스는 인터페이스에서 선언한 추상 메서드 중 일부 메서드만 구현했으므로 추상 클래스 입니다.
+- 이를 상속받은 CompleteCalc 클래스는  Calculator 클래스에서 구현하지 않은 나머지 추상 메서드를 모두 구현하고 showInfo()메서드를 추가로 구현 했습니다.
 
+- 상속 관계에서 하위 클래스는 상위클래스 자료형으로 묵시적으로 형 변환할 수 있다고 했습니다. 인터페이스도 마찬가지 입니다.
+- CompleteCalc 클래스는 상위 클래스인 Calculator형이면서, Calc 인터페이스를 구현하였으므로 Calc형이기도 합니다. 따라서 별다른 조치 없이 다음처럼 Calc형으로 선언한 변수에 대입할 수 있습니다.
+
+```
+Calc calc = new CompleteCalc();
+```
+
+- calc 변수가 사용할 수 있는 메서드 목록에  Calc에서 선언한 추상 메서드 add(), subtract(), times(), divide()는 있지만 CompleteCalc 클래스에서 추가로 구현한 showInfo() 메서드는 Calc 인터페이스에 선언한 메서드뿐 입니다.
+- 정리하면, 인터페이스를 구현한 클래스가 있을 때 그 클래스는 해당 인터페이스형으로 묵시적 형변환이 이루어지며, 형 변환되었을 때 사용할 수 있는 메서드는 인터페이스에서 선언한 메서드뿐입니다.
+
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A43.png'>
 
 ## 인터페이스의 요소 살펴보기
+### 인터페이스 상수
+- 인터페이스는 추상 메서드로 이루어지므로 인스턴스를 생성할 수 없으며, 멤버 변수도 사용할 수 없습니다.
+- 그런데 인터페이스에 다음 코드와 같이 변수를 선언해도 오류가 발생하지 않습니다. 
+```
+public interface Calc {
+	double PI = 3.14;
+	int ERROR = -99999999;
+	...
+}
+```
+- 그 이유는 인터페이스에 선언한 변수를 컴파일하면 상수로 변환되기 때문입니다.
+- Calc 인터페이스에 선언한 변수 PI를 컴파일하면 public static final double PI = 3.14, 즉 상수 3.14로 변환 됩니다.
+- 그리고 int형 변수 ERROR 역시 public static final int ERROR = -99999999로 변환되어 상수로 취급됩니다.
+
+### 디폴트 메서드와 정적 메서드
+- JDK1.7까지는 인터페이스에서 추상 메서드와 상수, 이 두 가지 요소만 선언해서 사용할 수 있었습니다. 그런데 어떤 인터페이스를 구현한 여러 클래스에서 사용할 메서드가 클래스마다 같은 기능을 제공하는 경우가 있었습니다. JDK1.7까지는 기능이 같다고 해도 인터페이스에서 코드를 구현할 수 없으므로 추상 메서드를 선언하고 각 클래스마다 똑간이 그 기능을 반복해 구현해야 해서 굉장히 번거로웠습니다. 또한 클래스를 생성하지 않아도 사용할 수 있는 메서드(정적 메서드)가 필요한 경우가 있는데, 인터페이스만으로는 메서드를 호출할 수가 없어 불편했었습니다.
+- JDK1.8부터 이런 부분에서 인터페이스의 활용성을 높이기 위해 디폴트 메서드와 정적메서드 기능을 제공합니다.
+- **디폴트 메서드** : 인터페이스에서 구현 코드까지 작성한 메서드 입니다. 인터페이스를 구현한 클래스에 기본적으로 제공할 메서드 입니다.
+- **정적 메서드** : 인스턴스 생성과 상관없이 사용할 수 있는 메서드 입니다.
+
+- 디폴트 메서드나 정적 메서드를 추가했다고 해서 인스턴스를 생성할 수 있는 것은 아닙니다.
+
+### 디폴트 메서드
+- 디폴트 메서드란 말 그대로 기본으로 제공되는 메서드입니다. 
+- 디폴트 메서드는 인터페이에서 구현하지만, 이후 인터페이스를 구현한 클래스가 생성되면 그 클래스에서 사용할 기본 기능입니다.
+- 디폴트 메서드를 선언할 때는 **default 예약어**를 사용합니다.
+
+#### day08_10/interfaceex/Calc.java
+```
+package day08_10.interfaceex;
+
+public interface Calc {
+	// 인터페이스에서 선언한 변수는 컴파일 과정에서 상수로 변환됨
+	double PI = 3.14;
+	int ERROR = -9999999;
+	
+	// 인터페이스에서 선언한 메서드는 컴파일 과정에서 추상 메서드로 변환됨
+	int add(int num1, int num2);
+	int subtract(int num1, int num2);
+	int times(int num1, int num2);
+	int divide(int num1, int num2);
+	
+	default void description() {
+		System.out.println("정수 계산기를 구현합니다.");
+	}
+}
+```
+
+#### day08_10/interfaceex/CalculatorTest.java
+```
+package day08_10.interfaceex;
+
+public class CalculatorTest {
+	public static void main(String[] args) {
+		int num1 = 10;
+		int num2 = 5;
+		
+		CompleteCalc calc = new CompleteCalc();
+		System.out.println(calc.add(num1, num2));
+		System.out.println(calc.subtract(num1, num2));
+		System.out.println(calc.times(num1, num2));
+		System.out.println(calc.divide(num1, num2));
+		calc.showInfo();
+		calc.description(); // 디폴트 메서드 호출
+	}
+}
+```
+- 디폴트 메서드는 인터페이스에 이미 구현되어 있으므로 인터페이스를 구현한 추상 클래스 Calculator나 추상 클래스를 상속받은 CompleteCalc 클래스에서 코드를 구현할 필요가 없습니다.
+
+#### 디폴트 메서드 재정의하기
+- 이미 인터페이스에 구현되어 있는 디폴트 메서드가 새로 생성한 클래스에서 원하는 기능과 맞지 않는다면, 하위 클래스에서 디폴트 메서드를 재정의 할 수 있습니다.
+```
+public class CompleteCalc extends Calculator {
+	...
+	@Override
+	public void description() {
+		// TODO Auto-generated method stub
+		super.description();
+	}
+}
+```
+
+- super.description()은 인터페이스에 선언한 메서드를 의미합니다. 
+- 이 코드를 사용하지 않을 거라면 지우고 새 코드를 작성하면 됩니다. 이제 CompleteCalc 클래스로 인스턴스를 생성하여 호출하면 재정의된 메서드가 호출됩니다.
+
+### 정적 메서드
+- 정적 메서드는 static 예약어를 사용하여 선언하며 클래스 생성과 무관하게 사용할 수 있습니다.
+- 정적 메서드를 사용할 때는 인터페이스 이름으로 직접 참조하여 사용합니다.
+
+#### day08_10/interfaceex/Calc.java
+```
+package day08_10.interfaceex;
+
+public interface Calc {
+	...
+	// 인터페이스에 정적 메서드 total() 구현
+	static int total(int[] arr) {
+		int total = 0;
+		
+		for(int i : arr) {
+			total += i;
+		}
+		
+		return total;
+	}
+}
+```
+#### day08_10/interfaceex/CalculatorTest.java
+```
+package day08_10.interfaceex;
+
+public class CalculatorTest {
+	public static void main(String[] args) {
+		int num1 = 10;
+		int num2 = 5;
+		
+		CompleteCalc calc = new CompleteCalc();
+		System.out.println(calc.add(num1, num2));
+		System.out.println(calc.subtract(num1, num2));
+		System.out.println(calc.times(num1, num2));
+		System.out.println(calc.divide(num1, num2));
+		calc.showInfo();
+		calc.description(); // 디폴트 메서드 호출
+		
+		int[] arr = {1, 2, 3, 4, 5};
+		System.out.println(Calc.total(arr));
+	}
+}
+
+실행결과
+
+0
+0
+50
+2
+Calc 인터페이스를 구현하였습니다.
+정수 계산기를 구현합니다.
+15
+```
+
+### private 메서드
+- 자바 9부터 인터페이스에 private 메서드를 구현할 수 있습니다.
+- private 메서드는 인터페이스를 구현한 클래스에서 사용하거나 재정의할 수 없습니다.
+- 기존에 구현된 코드를 변경하지 않고 인터페이스를 구현한 클래스에서 공통으로 사용하는 경우에 private 메서드로 구현하면 코드의 재사용성을 높일 수 있습니다.
+- 추상메서드에는 private 예약어는 사용할 수 없지만, static 예약어는 함께 사용할 수 있습니다.
+
+#### day08_10/interfaceex/Calc.java
+```
+package day08_10.interfaceex;
+
+public interface Calc {
+	// 인터페이스에서 선언한 변수는 컴파일 과정에서 상수로 변환됨
+	double PI = 3.14;
+	int ERROR = -9999999;
+	
+	// 인터페이스에서 선언한 메서드는 컴파일 과정에서 추상 메서드로 변환됨
+	int add(int num1, int num2);
+	int subtract(int num1, int num2);
+	int times(int num1, int num2);
+	int divide(int num1, int num2);
+	
+	default void description() {
+		System.out.println("정수 계산기를 구현합니다.");
+		// 디폴트 메서드에서 private 메서드 호출
+		myMethod();
+	}
+	
+	// 인터페이스에 정적 메서드 total() 구현
+	static int total(int[] arr) {
+		int total = 0;
+		
+		for(int i : arr) {
+			total += i;
+		}
+		// 정적 메서드에서 private static 메서드 호출
+		myStaticMethod(); 
+		return total;
+	}
+	
+	// private 메서드
+	private void myMethod() {
+		System.out.println("private 메서드 입니다.");
+	}
+	
+	// private static 메서드
+	private static void myStaticMethod() {
+		System.out.println("private static 메서드입니다.");
+	}
+}
+
+CalculatorTest 클래스 실행 결과
+
+0
+0
+50
+2
+Calc 인터페이스를 구현하였습니다.
+정수 계산기를 구현합니다.
+private 메서드 입니다.
+private static 메서드입니다.
+15
+```
 
 ## 인터페이스 활용하기
+
+### 한 클래스가 여러 인터페이스를 구현하는 경우
+- 한 클래스가 여러 클래스를 상속받으면 메서드 호출이 모호해지는 문제가 발생할 수 있습니다.
+- 하지만 인터페이스는 한 클래스가 여러 인터페이스를 구현할 수 있습니다.
+
+
 
 * * * 
 # 내부 클래스
