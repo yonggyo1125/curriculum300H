@@ -1115,14 +1115,263 @@ public class DeskTop extends Computer { // 오류 발생
 }
 ```
 
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%B6%94%EC%83%81%ED%81%B4%EB%9E%98%EC%8A%A44.png'>
 
+- 상속받은 DeskTop 클래스에 빨간색 줄로 오류 표시가 보입니다. 
+	- Add unimplemented methods - 구현되지 않은 메서드를 구현하시오.
+	- Make type 'DeskTop' abstract - DeskTop 클래스를 추상 클래스로 만드시오.
+
+- 원래 Computer는 추상 클래스입니다. 추상 클래스를 상속받은 추상 클래스가 가진 메서드를 상속받습니다. 따라서 상속받은 클래스는 추상 메서드를 포함합니다.
+- 그렇기 때문에 추상메서드를 모두 구현하든가 아니면 DeskTop도 추상 클래스로 만들든가 둘 중 하나를 해야 합니다.
+- 즉, 추상 클래스를 상속받은 하위 클래스는 **구현되지 않은 추상 메서드를 모두 구현**해야 **구체적인 클래스**가 됩니다.
+
+- Add unimplemented methods 옵션을 눌러보면 비어있던 클래스에 다음과 같은 코드가 생성이 됩니다.
+```
+...
+@Override
+	public void display() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void typing() {
+		// TODO Auto-generated method stub
+		
+	} 
+...
+```
+- 주석 부분을 제거하고 다음과 같이 몸체 코드를 작성합니다.
+#### day08_10/abstractex/DeskTop.java
+```
+package day08_10.abstractex;
+
+public class DeskTop extends Computer {
+
+	@Override
+	public void display() {
+		// 추상 메서드의 몸체 코드 작성
+		System.out.println("DeskTop display()"); 
+		
+	}
+
+	@Override
+	public void typing() {
+		// 추상 메서드의 몸체 코드 작성
+		System.out.println("DeskTop typing()");
+		
+	} 
+}
+```
+
+#### day08_10/abstractex/NoteBook.java
+```
+package day08_10.abstractex;
+
+public abstract class NoteBook extends Computer {
+	@Override
+	public void display() {
+		System.out.println("NoteBook display()");
+	}
+}
+```
+- 이 클래스에서는 상속받은 추상 메서드를 모두 구현하지 않고 display() 하나만 구현하였습니다.
+- NoteBook 클래스는 추상메서드를 여전히 하나 가지고 있기 때문에 추상 클래스가 됩니다.
+- NoteBook을 상속받은 MyNoteBook 클래스는 다음과 같이 구현할 수 있습니다.
+
+```
+package day08_10.abstractex;
+
+public class MyNoteBook extends NoteBook {
+	@Override
+	public void typing() {
+		System.out.println("MyNoteBook typing()");
+	}
+}
+
+```
+
+####  모든 추상 메서드를 구현한 클래스를 구현한 abstract 예약어를 사용한다면?
+```
+package day08_10.abstractex;
+
+public abstract class AbstractTV {
+	public void turnOn() {
+		System.out.println("전원을 켭니다.");
+	}
+	
+	public void turnOff() {
+		System.out.println("전원을 끕니다.");
+	}
+}
+```
+- AbstractTV 클래스는 모든 추상메서드를 구현한 클래스입니다. 하지만 이것으로는 완벽한 TV기능이 구현된 것이 아니고 TV의 **공통 기능만 구현해 놓은 것**입니다.
+- 이 클래스는 **생성해서 사용할 목적이 아닌 상속만을 위해 만든 추상클래스**입니다. 이 경우에 **new 예약어로 인스턴스를 생성할 수 없습니다.**
+
+### 추상 클래스를 만드는 이유
+#### day08_10/abstractex/ComputerTest.java
+```
+package day08_10.abstractex;
+
+public class ComputerTest {
+	public static void main(String[] args) {
+		Computer c1 = new Computer(); // 클래스를 인스턴스로 생성할 수 없음
+		Computer c2 = new DeskTop();
+		Computer c3 = new NoteBook(); // 클래스를 인스턴스로 생성할 수 없음
+		Computer c4 = new MyNoteBook();
+	}
+}
+
+```
+- Computer 클래스형 인스턴스를 4개 생성했습니다. 그러나 Computer와 NoteBook에서 오류가 납니다.
+- 오류 메세지를 확인해 보면 Computer클래스와 NoteBook 클래스를 인스턴스로 생성할 수 없다고 나옵니다.
+
+1. 추상 클래스는 인스턴스로 생성할 수 없다.
+	- 추상 클래스는 모든 메서드가 구현되지 않았으므로 인스턴스로 생성할 수 없습니다.
+
+2. 추상 클래스에서 구현하는 메서드
+	- 생성할 수 없는 추상 클래스는 상속을 하기 위해 만든 클래스입니다. 
+	- 추상클래스에는 추상메서드와 구현된 메서드가 함께 사용 될 수 있습니다.
+	- 구현된 메서드는 하위 클래스에서도 사용할 즉, **하위 클래스에서도 구현 내용을 공유할 메서드를 구현**합니다.
+	- 실제 하위 클래스에서 내용을 각각 다르게 구현해야 한다면, 구현 내용을 추상 메서드로 남겨 두고 하위 클래스에 구현을 위임하는 것입니다.
+	
+	- **구현된 메서드** : 하위 클래스에서 공통으로 사용할 구현 코드, 하위 클래스에서 재정의할 수도 있음.
+	- **추상 메서드** : 하위 클래스가 어떤 클래스냐에 따라 구현 코드가 달라짐 
+	
+- 앞에서 구현한 Computer 클래스에서 turnOn()과 turnOff()의 구현은 하위 클래스에서 공유할 수 있지만 display()와 typing()의 구현 내용은 NoteBook인지 DeskTop인지에 따라 달라지므로 Computer 클래스에서는 구현하지 않은 것입니다.
+
+### 추상클래스와 다형성
+- DestkTop은 상위 클래스인 Computer의 클래스 자료형으로 선언하고 대입될 수 있습니다. 마찬가지로 MyNoteBook역시 상위 클래스인 Computer의 클래스 자료형으로 선언하고 대입될 수 있습니다.
+- 상위 클래스인 추상 클래스는 하위에 구현된 여러 클래스를 하나의 자료형(상위 클래스 자료형)으로 선언하거나 대입할 수 있습니다.
+- 추상 클래스에 선언된 메서드를 호출하면 가상 메서드에 의해 각 클래스에 구현된 기능이 호출됩니다. 
+- 즉, 하나의 코드가 다양한 자료형을 대상으로 동작하는 다형성을 활용할 수 있습니다.
 
 ## final 예약어
+- final은 **마지막**이라는 의미입니다.
+- 즉, **마지막으로 정한 것이니 더 이상 수정할 수 없다**는 뜻입니다.
+- 자바 프로그램에서는 **final 예약어**는 **변수, 메서드, 클래스**에 사용할 수 있습니다.
+
+|사용 위치|설명|
+|----|-------|
+|변수|final 변수는 **상수**를 의미합니다.|
+|메서드|final 메서드는 하위 클래스에서 **재정의할 수 없습니다.**|
+|클래스|final 클래스는 **상속할 수 없습니다.**|
+
+### 상수를 의미하는 final 변수
+#### day08_10/finalex/Constant.java
+```
+package day08_10.finalex;
+
+public class Constant {
+	int num = 10;
+	final int NUM = 100; // 상수 선언 
+	
+	public static void main(String[] args) {
+		Constant cons = new Constant();
+		cons.num = 50;
+		//cons.NUM = 200; // 상ㄹ수에 값을 대입하면 오류 발생 
+		
+		System.out.println(cons.num);
+		System.out.println(cons.NUM);
+	}
+}
+```
+#### 여러 자바 파일에서 공유하는 상수 값 정의하기
+- 하나의 자바 파일에서만 사용하는 상수 값은 해당 파일 안에서 정의해서 사용할 수 있습니다. 그러나 프로젝트를 하다 보면 **여러 파일에서 똑같이 공유해야 하는 상수** 값도 있습니다.
+- 자바로 프로젝트를 진행할 때 여러 파일에서 공유해 하는 상수 값은 한 파일에 모아 **public static final로 선언하여 사용**할 수 있습니다.
+
+#### day08_10/finalex/Define.java
+```
+package day08_10.finalex;
+
+public class Define {
+	public static final int MIN = 1;
+	public static final int MAX = 99999;
+	public static final int ENG = 1001;
+	public static final int MATH = 2001;
+	public static final double PI = 3.14;
+	public static final String GOOD_MORNING = "Good Morning!";
+}
+```
+
+#### day08_10/finalex/UsingDefine.java
+```
+package day08_10.finalex;
+
+public class UsingDefine {
+	public static void main(String[] args) { 
+		// static으로 선언했으므로 인스턴스를 생성하지않고 클래스 이름으로 참조 가능
+		System.out.println(Define.GOOD_MORNING);
+		System.out.println("최소값은 " + Define.MIN + "입니다.");
+		System.out.println("최대값은 " + Define.MAX + "입니다.");
+		System.out.println("수학 과목 코드 값은 " + Define.MATH + "입니다.");
+		System.out.println("영어 과목 코드 값은 " + Define.ENG + "입니다.");
+	}
+}
+
+실행결과
+
+Good Morning!
+최소값은 1입니다.
+최대값은 99999입니다.
+수학 과목 코드 값은 2001입니다.
+영어 과목 코드 값은 1001입니다.
+```
+
+### 상속할 수 없는 final 클래스
+클래스를 final로 선언하면 상속할 수 없습니다.
+
+### 재정의 할 수 없은 final 메서드
+메서드를 final로 선언하면 하위클래스에서 재정의 할 수 없습니다.
 
 * * * 
 # 인터페이스
 
 ## 인터페이스란?
+### 구현 코드가 없는 인터페이스
+- 인터페이스(interface)는 클래스 혹은 프로그램이 제공하는 기능을 명시적으로 선언하는 역할을 합니다.
+- 인터페이스는 추상 메서드와 상수로만 이루어져 있습니다. 
+- 구현된 코드가 없기 때문에 인스턴스를 생성할 수 없습니다.
+
+#### 인터페이스 만들기
+- 이클립스에서 인터페이스를 만들려면 패키지에서 마우스 오른쪽버튼을 클릭하고 **New -> Interface**를 클릭
+- Name 항목에 만들려는 목적에 맞는 인터페이스 이름을 입력하고 **Finish**를 클릭하면 인터페이스가 만들어집니다.
+
+#### day08_10/interfaceex/Calc.java
+```
+package day08_10.interfaceex;
+
+public interface Calc {
+	// 인터페이스에서 선언한 변수는 컴파일 과정에서 상수로 변환됨
+	double PI = 3.14;
+	int ERROR = -9999999;
+	
+	// 인터페이스에서 선언한 메서드는 컴파일 과정에서 추상 메서드로 변환됨
+	int add(int num1, int num2);
+	int subtract(int num1, int num2);
+	int times(int num1, int num2);
+	int divide(int num1, int num2);
+}
+```
+- 이 인터페이스는 계산기를 만들기 위해 선언한 코드 입니다.
+- Calc 인터페이스에는 원주율을 뜻하는 PI 변수와 오류가 났을 때 사용할 ERROR 변수, 그리고 사칙연산을 수행하기 위해 add(), subtract(), times(), divide()메서드를 선언했습니다.
+- 인터페이스에 선언된 메서드는 모두 구현코드가 없는 추상메서드 입니다.
+- **메서드**는 public abstract 예약어를 명시적으로 쓰지 않아도 컴파일 과정에서 **자동으로 추상메서드로 변환**됩니다.
+- **인터페이스에 선언한 변수**는 모두 컴파일 과정에서 **값이 변하지 않는 상수로 자동 변환**됩니다. public static final 예약어를 쓰지 않아도 무조건 상수로 인식합니다.
+
+### 클래스에서 인터페이스 구현하기
+- 인터페이스를 클래스가 사용하는 것을 **클래스에서 인터페이스를 구현한다(implements)**라고 표현합니다.
+- 인터페이스에서는 인터페이스에 선언한 기능을 클래스가 구현한다는 의미로 **implements 예약어**를 사용합니다.
+
+#### day08_10/interfaceex/Calculator.java
+```
+package day08_10.interfaceex;
+
+public class Calculator implements Calc {  // 오류 발생 
+
+}
+```
+
 
 ## 인터페이스와 다형성
 
