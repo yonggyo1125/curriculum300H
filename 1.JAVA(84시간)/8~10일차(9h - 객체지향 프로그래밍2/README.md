@@ -1686,9 +1686,95 @@ private static 메서드입니다.
 - 한 클래스가 여러 클래스를 상속받으면 메서드 호출이 모호해지는 문제가 발생할 수 있습니다.
 - 하지만 인터페이스는 한 클래스가 여러 인터페이스를 구현할 수 있습니다.
 
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A44.png'>
+
+#### day08_10/interfaceex/Buy.java
+```
+package day08_10.interfaceex;
+
+public interface Buy {
+	void buy();
+}
+```
+
+#### day08_10/interfaceex/Sell.java
+```
+package day08_10.interfaceex;
+
+public interface Sell {
+	void sell();
+}
+```
+
+Buy 인터페이스에 추상  메서드 buy()가 선언되어 있고, Sell 인터페이스에 추상 메서드 sell()이 선언되어 있습니다. Customer 클래스가 두 인터페이스를 구현하는 코드는 다음과 같습니다.
+
+```
+package day08_10.interfaceex;
+
+// Customer 클래스는 Buy와 Sell 인터페이스를 모두 구현함 
+public class Customer implements Buy, Sell {
+
+	@Override
+	public void sell() {
+		System.out.println("판매하기");
+	}
+
+	@Override
+	public void buy() {
+		System.out.println("구매하기");
+	}
+}
+```
+- 인터페이스는 구현 코드나 멤버 변수를 가지지 않기 때문에 여러개를 동시에 구현할 수 있습니다.
+- 두 인터페이스에 이름이 같은 메서드가 선언되었다고 해도 구현은 클래스에서 이루어지므로, 어떤 메서드를 호출해야 하는지 모호하지 않습니다.
+- 이렇게 두 인터페이스를 구현한 Customer 클래스는 Buy형이자 Sell형 이기도 합니다.
+```
+package day08_10.interfaceex;
+
+public class CustomerTest {
+	public static void main(String[] args) {
+		Customer customer = new Customer();
+		
+		// Customer 클래스형인 customer를 Buy 인터페이스형인 buyer에 대입하여 형 변환,
+		// buyer는 Buy 인터페이스의 메서드만 호출 가능 
+		Buy buyer = customer;
+		buyer.buy();
+		
+		// Customer 클래스형인 customer를 Sell 인터페이스형인 seller에 대입하여 형 변환, 
+		// seller는 Sell 인터페이스의 메서드만 호출 가능 
+		Sell seller = customer;
+		seller.sell();
+		
+		if (seller instanceof Customer) {
+			// seller를 하위 클래스형인 Customer로 다시 형 변환
+			Customer customer2 = (Customer)seller; 
+			customer2.buy();
+			customer2.sell();
+		}
+	}
+}
+
+실행결과
+
+구매하기
+판매하기
+구매하기
+판매하기
+```
+- Buy buyer = customer; 처럼 customer를 Buy 인터페이스형 변수에 대입하면 형 변환이 일어나 Buy 인터페이스에 선언한 메서드만 호출할 수 있습니다.
+- Sell형으로 변환될 때도 마찬가지 입니다. 또한 상속 관계에서와 마찬가지로 원래의 인스턴스 자료형으로 다운 캐스팅하기 위해서는 instanceof를 사용하여 본래 인스턴스 자료형으로 안전하게 변환할 수 있습니다.
+
+### 두 인터페이스의 디폴트 메서드가 중복되는 경우
+- **정적 메서드**는 인스턴스 생성과 상관없이 사용할 수 있습니다. Customer 클래스가 Buy, Sell 두 인터페이스를 구현하고 Buy 인터페이스와 Sell 인터페이스에 똑같은 pay() 정적 메서드가 있다고 할때, Buy.pay()와 Sell.pay()로 특정하여 호출할 수 있기 때문에 문제가 되지 않습니다.
+
+- 그러나 **디폴트 메서드**는 인스턴스를 생성해야 호출할 수 있는 메서드이기 때문에 다음처럼 **이름이 같은 디폴트 메서드가 두 인터페이스에 있으면 문제가 됩니다.**
+
+
+- 위 오류 메세지는 디폴트 메서드가 중복되었으니 두 인터페이스를 구현하는 Customer클래스에서 재저으이하라는 뜻 입니다.
 
 
 * * * 
+
 # 내부 클래스
 
 ## 내부 클래스 정의와 유형
