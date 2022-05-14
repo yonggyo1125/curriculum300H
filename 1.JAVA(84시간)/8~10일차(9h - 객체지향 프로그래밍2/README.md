@@ -1068,6 +1068,25 @@ public class Computer {
 - 그러면 완전하게 구현되지 않은 두 추상메서드에서 오류가 발생합니다.
 - display()나 typing() 위에 마우스를 올리면 오류를 해결할 수 있는 방법으로 다음 두가지를 제시합니다.
 
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%B6%94%EC%83%81%ED%81%B4%EB%9E%98%EC%8A%A42.png'>
+
+1. add body - 몸체 부분을 작성하시오.
+2. Change Computer display to 'abstract' - 이 메서드를 추상 메서드로  바꾸시오.
+
+```
+package day08_10.abstractex;
+
+public class Computer { // 오류 발생 
+	public abstract void display(); // 오류가 남아 있음
+	public abstract void typing(); // 오류가 남아 있음 
+	
+	...
+}
+```
+- 이번에는 메서드와 클래스 이름에 모두 오류가 표시됩니다.
+- 추상 메서드가 속한 클래스를 추상 클래스로 선언하지 않았기 때문입니다.
+
+
 
 
 ## 템플릿 메서드
