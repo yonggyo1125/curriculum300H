@@ -1001,6 +1001,8 @@ public class AnimalTest {
 
 # 추상 클래스
 
+## 추상 클래스
+
 ### 추상 클래스란?
 - 추상적이라는 것은 구체이지 않고 막연한 것을 뜻합니다.
 - **어떤 클래스가 추상적이다**라는 말은 **구체적인 않은 클래스** 라는 뜻 입니다.
@@ -1037,10 +1039,36 @@ int add(int num1, int num1);
 - 자바에서 사용하는 메서드 역시 마찬가지로 **메서드를 선언한다는 것은 메서드가 해야 할 일을 명시해 두는 것입니다.**
 
 ### 추상 클래스 구현하기
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%B6%94%EC%83%81%ED%81%B4%EB%9E%98%EC%8A%A41.png'>
+>추상 클래스, 추상 메서드는 기울임꼴로 표시
+
+- Computer 클래스는 추상클래스 입니다.
+- 컴퓨터 종류에는 데스크톱과 노트북이 있습니다. 그리고 노트북의 종류에는 MyNoteBook이 있습니다.
+- Computer 클래스는 추상 클래스이며 이를 상속받은 두 클래스 중 DeskTop 클래스는 일반 클래스이고 NoteBook 클래스는 추상 클래스입니다. 마지막으로 NoteBook 클래스를 상속받은 MyNoteBook 클래스도 일반 클래스 입니다.
+- display()와 typing()은 추상 메서드이고 turnOn()과 turnOff()는 구현코드가 있는 메서드입니다.
+
+#### day08_10/abstractex/Computer.java
+```
+package day08_10.abstractex;
+
+public class Computer {
+	public void display(); // 오류 발생 
+	public void typing(); // 오류 발생
+	
+	public void turnOn() {
+		System.out.println("전원을 켭니다.");
+	}
+	
+	public void turnOff() {
+		System.out.println("전원을 끕니다.");
+	}
+}
+```
+- Computer 클래스 내부에 추상 메서드 display()와 typing()을 선언하고, 구현 메서드 turnOn()과 turnOff()를 작성합니다.
+- 그러면 완전하게 구현되지 않은 두 추상메서드에서 오류가 발생합니다.
+- display()나 typing() 위에 마우스를 올리면 오류를 해결할 수 있는 방법으로 다음 두가지를 제시합니다.
 
 
-
-## 추상 클래스
 
 ## 템플릿 메서드
 
