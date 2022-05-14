@@ -2156,7 +2156,7 @@ InStaticClass sInNum = 200(내부 클래스의 정적 변수 사용)
 		<tr>
 			<td>외부 클래스의 정적변수(sNum)</td>
 			<td>O</td>
-		<tr>
+		</tr>
 		<tr>
 			<td>정적 내부 클래스의 인스턴스 변수(inNum)</td>
 			<td>O</td>
