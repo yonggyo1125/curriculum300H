@@ -1371,9 +1371,96 @@ public class Calculator implements Calc {  // 오류 발생
 
 }
 ```
+- 그러나 상기 코드는 다음과 같은 오류가 표시됩니다.
+<img src='https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/8~10%EC%9D%BC%EC%B0%A8(9h%20-%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D2/images/%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4.png'>
+- Add unimplemented methods - 추상 메서드를 구현하시오.
+- Make type 'Calculator' abstract - Calculator 클래스를 추상 클래스로 만드시오.
+
+- Calculator 클래스에서 Calc 인터페이스를 구현한다고 했으므로 Calculator 클래스는 추상 메서드 4개(add(), subtract(), times(), divide() 메서드)를 포함합니다. 
+- 이 추상 메서드를 구현하지 않으면 Calculator 클래스도 추상 클래스가 됩니다.
+- 위 두 오류 메세지는 Calc 인터페이스에 포함된 추상 메서드를 구현하거나 Calculator 클래스를 추상 클래스로 만들라는 의미 입니다.
+
+- Add unimplemented method 옵션을 클릭하여 Calc인터페이스에 선언된 4개 추상 메서드 중 add()와 substract() 2개만 구현하여 추상 클래스를 만들어 보겠습니다.
+
+#### day08_10/interfaceex/Calculator.java
+```
+package day08_10.interfaceex;
+
+public abstract class Calculator implements Calc {
+
+	@Override
+	public int add(int num1, int num2) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int subtract(int num1, int num2) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+}
+```
+- 추상 메서드 times()와 divide()를 구현하지 않았으므로 Calculator는 추상 클래스 입니다.
+
+### 클래스 완성하고 실행하기
+- 아직 구현하지 않은 times()와 divide() 추상 메서드를 이 클래스에서 구현합니다.
+
+#### day08_10/interfaceex/CompleteCalc.java
+```
+package day08_10.interfaceex;
+
+public class CompleteCalc extends Calculator {
+	@Override
+	public int times(int num1, int num2) {
+		return num1 * num2;
+	}
+
+	@Override
+	public int divide(int num1, int num2) {
+		if (num2 != 0)
+			return num1/num2;
+		else 
+			return Calc.ERROR; // num2가 0, 즉 나누는 수가 0인 경우에 대해 오류 반환
+	}
+	
+	// CompleteCalc에서 추가로 구현한 메서드
+	public void showInfo() {
+		System.out.println("Calc 인터페이스를 구현하였습니다.");
+	}
+}
+```
+
+#### day08_10/interfaceex/CalculatorTest.java
+```
+package day08_10.interfaceex;
+
+public class CalculatorTest {
+	public static void main(String[] args) {
+		int num1 = 10;
+		int num2 = 5;
+		
+		CompleteCalc calc = new CompleteCalc();
+		System.out.println(calc.add(num1, num2));
+		System.out.println(calc.subtract(num1, num2));
+		System.out.println(calc.times(num1, num2));
+		System.out.println(calc.divide(num1, num2));
+		calc.showInfo();
+	}
+}
+
+실행결과
+
+0
+0
+50
+2
+Calc 인터페이스를 구현하였습니다.
+```
+
+### 인터페이스 구현과 형변환(다형성)
 
 
-## 인터페이스와 다형성
 
 ## 인터페이스의 요소 살펴보기
 
