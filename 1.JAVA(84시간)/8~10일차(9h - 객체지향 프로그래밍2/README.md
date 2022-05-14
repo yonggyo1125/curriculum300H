@@ -898,8 +898,6 @@ package day08_10.polymorphism.instance_of;
 
 import java.util.ArrayList;
 
-import java.util.ArrayList;
-
 class Animal{
 	public void move()
 	{
