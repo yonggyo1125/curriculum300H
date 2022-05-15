@@ -836,7 +836,23 @@ studentSang의 실제 주소값 :474675244
 - hashCode() 메서드를 재정의했을 때 실제 인스턴스 주소 값은 System.indentityHashCode() 메서드를 사용하면 알 수 있습니다. studentLee와 studentSang은 실제 메모리 주소 값은 다릅니다. 즉, 논리적으로는 같지만 실제로는 다른 인스턴스 입니다.
 
 ## String 클래스
+### String을 선언하는 두 가지 방법
+- 자바에서는 문자열을 사용할 수 있도록 String 클래스를 제공합니다.
+- String을 사용할 때 문자열을 생성자의 매개변수로 하여 생성하는 방식과 이미 생성된 문자열 상수를 가리키는 방식이 있습니다.
 
+```
+String str1 = new String("abc"); // 생성자의 매개변수로 문자열 생성
+String str2 = "test"; // 문자열 상수를 가리키는 방식
+```
+- 내부적으로 두 가지 방식은 큰 차이가 있습니다.
+- new 예약어를 사용하여 객체를 생성하는 경우는 "abc" 문자열을 위한 메모리가 할당되고 새로운 객체가 생성됩니다.
+- 하지만 str2 = "test"와 같이 생성자를 이용하지 않고 바로 문자열 상수를 가리키는 경우에는 str2가 기존에 만들어져 있던 "test"라는 문자열 상수의 메모리 주소를 가리키게 됩니다.
+- 따라서 String str3 = "test" 코드를 작성하면 str2와 str3는 주소 값이 같게 됩니다.
+
+
+
+- test나 10, 20 등과 같이 프로그램에서 사용되는 상수값을 저장하는 공간을 <b>상수 풀(constant pool)</b> 이라고 합니다. [상수와 리터럴 참조]
+(https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/1%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8B%A4%EC%8A%B5%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%B6%95%2C%EB%B3%80%EC%88%98%EC%99%80%20%EC%9E%90%EB%A3%8C%ED%98%95#%EC%83%81%EC%88%98%EC%99%80-%EB%A6%AC%ED%84%B0%EB%9F%B4)
 
 ## Wrapper 클래스
 
