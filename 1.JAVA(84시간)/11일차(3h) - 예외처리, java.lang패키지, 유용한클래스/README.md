@@ -1394,6 +1394,101 @@ public class RandomEx2 {
 
 
 ## 정규식(Regular Expression) - java.util.regex패키지
+- 정규식이란 텍스트 데이터 중에서 원하는 조건(패턴, pattern)과 일치하는 문자열을 찾아 내기 위해 사용하는 것으로 미리 정의된 기호와 문자를 이용해서 작성한 문자열을 말한다.
+- 원래  Unix에서 사용하던 것이고 Perl의 강력한 기능이었는데, 요즘은 Java를 비롯해 다양한 언어에서 지원하고 있다.
+- 정규식을 이용하면 많은 양의 텍스트 파일 중에서 원하는 데이터를 손쉽게 뽑아낼 수도 있고 입력된 데이터가 형식에 맞는지 체크할 수 도 있다. 예를 들면 html문서에서 전화번호나 이메일 주소만을 바로 추출한다던가, 입력한 비밀번호가 숫자와 영문자의 조합으로 되어 있는지 확인할 수도 있다.
+
+### 정규표현식 패턴
+
+|정규식 패턴|설명|
+|----|------|
+|abc|문자열을 포함한다|
+|\[abc\]|문자클래스 - 문자집합안에 특정 문자 한개|
+|\[^abc\]|부정문자클래스 : 문자 집합안의 특정 문자 한개|
+|\[a-z\]|두 문자 사이의 모든 문자|
+|.|줄 바꿈 문자를 제외한 문자 한개|
+|\d|모든 숫자\[0-9\]와 같음|
+|\D|숫자를 제외한 모든 문자 한개 \[^0-9\]와 같음|
+|\w|임의의 영어 단어 문자(알파벳, 숫자, 언더스코어) 한개|
+|\W|영어단어 문자(알파벳, 숫자, 언더스코어)를 제외한 문자 한개|
+|\s|모든 공백 문자 한 개|
+|\S|공백문자가 아닌 문자 한개|
+|x{2,4}|x를 최소 2번, 최대 4번 반복|
+|x{2,}|x를 2번 잇ㅇ 반복|
+|x?|x를 한번 이하 반복|
+|x+|x를 한번 이상 반복|
+|x\* |x를 0번 이상 반복|
+|(x)|x를 그룹화(부분 정규 표현식)|
+|^|문자열의 시작 위치|
+|$|문자열의 마지막 위치|
+|x\|y\|z| x,y,z 중 하나(선택)|
+
+#### day11/utils/RegularEx1.java
+```
+package day11.utils;
+
+import java.util.regex.*;
+
+public class RegularEx1 {
+	public static void main(String[] args) {
+		String[] data = {"bat", "baby", "bonus", "cA", "ca", "co", "c.", "c0", "car", "combat", "date", "disc"};
+		Pattern p = Pattern.compile("c[a-z]*");
+		
+		for (int i = 0; i < data.length; i++) {
+			Matcher m = p.matcher(data[i]);
+			if (m.matches()) {
+				System.out.print(data[i] + ",");
+			}
+		}
+	}
+}
+
+실행결과
+
+ca,co,car,combat,
+```
+1. 정규식을 매개변수로 Pattern클래스의 static 메서드인 Pattern compile(String regex)을 호출하여 Pattern인스턴스를 얻는다.
+```
+Pattern p = Pattern.compile("c[a-z]*");
+```
+2. 정규식으로 비교할 대상을 매개변수로 Pattern클래스의 Matcher matcher(CharSequence input)를 호출해서 Matcher인스턴스를 얻는다.
+```
+Matcher m = p.matcher(data[i]);
+```
+3. Matcher인스턴스에 boolean matches()를 호출해서 정규식에 부합하는지 확인한다.
+```
+if (m.matches()) {
+	...
+}
+```
+> CharSequence는 인터페이스로 이를 구현한 클래스는 CharBuffer, String, StringBuffer가 있다.
+
+#### day11/utils/RegularEx2.java
+```
+package day11.utils;
+
+import java.util.regex.*;
+
+public class RegularEx2 {
+	public static void main(String[] args) {
+		String source = "HP:011-1111-1111, HOME:02-999-9999 ";
+		String pattern = "(0\\d{1,2})-(\\d{3,4})-(\\d{4})";
+		
+		Pattern p = Pattern.compile(pattern);
+		Matcher m = p.matcher(source);
+		
+		int i = 0; 
+		while(m.find()) {
+			System.out.println(++i + ": " + m.group() + " -> " + m.group(1) + ", " + m.group(2) + ", " + m.group(3));
+		}
+	}
+}
+
+실행결과
+
+1: 011-1111-1111 -> 011, 1111, 1111
+2: 02-999-9999 -> 02, 999, 9999
+```
 
 ## java.util.Scanner 클래스
 - Scanner는 화면, 파일, 문자열과 같은 입력소스로 부터 문자데이터를 읽어오는데 도움을 줄 목적으로 JDK1.5부터 추가되었다. 
