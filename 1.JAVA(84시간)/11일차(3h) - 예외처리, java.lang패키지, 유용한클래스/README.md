@@ -1235,16 +1235,348 @@ Class pClass = Class.forName(className);
 * * * 
 # 유용한 클래스
 
-## java.util.Objects 클래스
+## java.lang.Math 클래스
+- 임의의 수
+	- random() : 0~1사이의 임의의 실수를 반환
+	
+- 올림, 버림 반올림 
+	- ceil(double a)  : 올림
+	- floor(double a) : 버림
+	- round(double a) : 반올림
+	
+- 절대값 :  abs()
 
+#### day11/utils/RandomEx1.java
+```
+package day11.utils;
+
+public class RandomEx1 {
+	final static int RECORD_NUM = 10; // 생성할 레코드의 수를 정한다.
+	final static String TABLE_NAME = "TEST_TABLE";
+	final static String[] CODE1 = {"010", "011", "017", "018", "019"};
+	final static String[] CODE2 = {"남자", "여자"};
+	final static String[] CODE3 = {"10대", "20대", "30대", "40대", "50대"};
+	
+	public static void main(String[] args) { 
+		for (int i = 0; i < RECORD_NUM; i++) {
+			System.out.println(" INSERT INTO " + TABLE_NAME + " VALUES ('"
+							+ getRandArr(CODE1)+ "','" 
+							+ getRandArr(CODE2) + "','"
+							+ getRandArr(CODE3) + "','"
+							+ getRand(100, 200) // 100~200 사이의 값을 얻는다.
+							+ "');");		
+		}
+	}
+	
+	public static String getRandArr(String[] arr) {
+		return arr[getRand(arr.length - 1)]; // 배열에 저장된 값 중 하나를 반환한다.
+	}
+	
+	public static int getRand(int n) { 
+		return getRand(0, n); 
+	}
+	
+	public static int getRand(int from, int to) {
+		return (int)(Math.random() * (Math.abs(to-from))) + Math.min(from, to);
+	}
+}
+
+
+실행결과
+
+ INSERT INTO TEST_TABLE VALUES ('018','남자','20대','135');
+ INSERT INTO TEST_TABLE VALUES ('018','남자','20대','105');
+ INSERT INTO TEST_TABLE VALUES ('017','남자','30대','141');
+ INSERT INTO TEST_TABLE VALUES ('010','남자','30대','135');
+ INSERT INTO TEST_TABLE VALUES ('011','남자','30대','135');
+ INSERT INTO TEST_TABLE VALUES ('017','남자','20대','109');
+ INSERT INTO TEST_TABLE VALUES ('010','남자','20대','136');
+ INSERT INTO TEST_TABLE VALUES ('018','남자','30대','112');
+ INSERT INTO TEST_TABLE VALUES ('010','남자','30대','130');
+ INSERT INTO TEST_TABLE VALUES ('010','남자','10대','147');
+```
+
+ ## java.util.Objects 클래스
+	Object 클래스의 보조 클래스로 Object를 다루는 유용한 메서드를 제공합니다.
+	```
+	static int hashCode(Object o) // 객체의 해시코드 조회 및 생성
+	static int hash(Object... values) // 해시코드 생성
+	```
+	
+	```
+	static boolean equals(Object a, Object b); // 두 객체를 비교
+	static boolean deepEquals(Object a, Object b); // 두 객체를 재귀적으로 비교(다차원 배열 비교 가능 )
+	```
+	
 ## java.util.Random 클래스
+- 난수를 얻는 방법은 Math.random()을 사용하는 방법이 있습니다. 이 외에도 Random 클래스를 사용하면 난수를 얻을 수 있습니다.
+- Math.random()은 내부적으로 Random의 인스턴스를 생성해서 사용하는 것이므로 둘 중에서 편한 것을 사용하면 된다.
+- 다음 두 코드는 동일합니다.
+```
+double randNum = Math.random();
+double randNum = new Random().nextDouble(); // 위 문장과 동일 
+```
+
+- 만약 1~6 사이의 정수를 난수로 얻고자 할 때는 다음과 같다.
+```
+int num = (int)(Math.random() \* 6) + 1;
+int num = new Random().nextInt(6) + 1; // 
+```
+	
+- Math.random()과 Random의 가장 큰 차이점은 종자값(seed)을 설정할 수 있다는 것이다. 종자값이 같은 Random인스턴스들은 항상 같은 난수를 같은 순서대로 반환하다.
+- 종자값은 난수를 만드는 공식에 사용되는 값으로 같은 공식에 같은 값을 넣으면 같은 결과를 얻는 것처럼 같은 종자값을 넣으면 같은 난수를 얻게된다.
+
+### Random 클래스의 생성자와 메서드
+- 생성자 Random()은 아래와 같이 종자값을 System.currentTimeMillis()로 하기 때문에 실행할 때마다 얻는 난수가 달라진다.
+> System.cyrrentTimeMillis()는 현재시간을 천분의 1초단위로 변환해서 반환한다.
+
+```
+public Random() {
+	this(System.currentTimeMillis());  // Random(long seed)를 호출한다.
+}
+```
+
+### Random의 생성자와 메서드
+
+|메서드|설명|
+|-----|--------|
+|Random()|System 현재 시간을 종자값(seed)로 이용하는 Random인스턴스를 생성한다.|
+|Random(long seed)|매개변수 seed를 종자값으로 하는 Random인스턴스를 생성한다.|
+|boolean nextBoolean()|boolean 타입의 난수를 반환한다.|
+|void nextBytes(byte[] bytes)|bytes배열에 byte타입의 난수를 채워서 반환한다.|
+|double nextDouble()|double타입의 난수를 반환한다.(0.0 \<= x \< 1.0)|
+|float nextFloat()|float 타입의 난수를 반환한다.(0.0 \<= x \<1.0)|
+|int nextInt()|int타입의 난수를 반환한다(int의 범위)|
+|long nextLong()|long타입의 난수를 반환한다.(long의 범위)|
+|void setSeed(long seed)|종자값을 주어진 값(seed)으로 변경한다.|
+
+#### day11/utils/RandomEx2.java
+```
+package day11.utils;
+
+import java.util.Random;
+
+public class RandomEx2 {
+	public static void main(String[] args) {
+		Random rand = new Random(1);
+		Random rand2 = new Random(1);
+		
+		System.out.println("= rand =");
+		for (int i = 0; i < 5; i++) {
+			System.out.println(i + ":" + rand.nextInt());
+		}
+		
+		System.out.println();
+		System.out.println("= rand2 =");
+		for (int i = 0; i < 5; i++) {
+			System.out.println(i + ":" + rand2.nextInt());
+		}
+	}
+}
+
+실행결과
+
+= rand =
+0:-1155869325
+1:431529176
+2:1761283695
+3:1749940626
+4:892128508
+
+= rand2 =
+0:-1155869325
+1:431529176
+2:1761283695
+3:1749940626
+4:892128508
+```
+
 
 ## 정규식(Regular Expression) - java.util.regex패키지
 
 ## java.util.Scanner 클래스
+- Scanner는 화면, 파일, 문자열과 같은 입력소스로 부터 문자데이터를 읽어오는데 도움을 줄 목적으로 JDK1.5부터 추가되었다. 
+- Scanner에는 다음과 같은 생성자를 지원하기 때문에 다양한 입력소스로 부터 데이터를 읽을 수 있다.
+```
+Scanner(String source)
+Scanner(File source)
+Scanner(InputStream source)
+Scanner(Readable source)
+Scanner(ReadableByteChannel source)
+Scanner(Path source)
+```
+
+- 또한 Scanner는 정규식 표현(Regular expression)을 이용한 라인단위 검색을 지원하며 구분자(delimiter)에도 정규식 표현을 사용할 수 있어서 복잡한 형태의 구분자도 처리가 가능하다.
+```
+Scanner useDelimiter(Pattern pattern)
+Scanner useDelimiter(String pattern)
+```
+
+- 입력받을 값이 숫자라면 nextLine() 대신 nextInt() 또는 nextLong()과 같은 메서드를 사용할 수 있다. 
+- Scanner에서는 이와 같은 메서드를 제공함으로써 입력받은 문자를 다시 변환하는 수고를 덜어준다.
+
+```
+boolean nextBoolean()
+byte nextByte()
+short nextShort()
+int nextInt()
+long nextLong()
+double nextDouble()
+float nextFloat()
+String nextLine()
+```
+
+#### day11/utils/ScannerEx1.java
+```
+package day11.utils;
+
+import java.util.*;
+
+public class ScannerEx1 {
+	public static void main(String[] args) {
+		Scanner s = new Scanner(System.in);
+		String[] argArr = null;
+		
+		while(true) {
+			String prompt = ">>";
+			System.out.print(prompt);
+			
+			// 화면으로부터 라인단위로 입력받는다.
+			String input = s.nextLine();
+			
+			input = input.trim(); // 입력받은 값에서 불필요한 앞뒤 공백을 제거한다.
+			argArr = input.split(" +"); // 입력받은 내용을 공백(1개 이상의) 으로 구분자로 자른다
+			 
+			String command = argArr[0].trim();
+			
+			if ("".equals(command)) 
+				continue;
+			
+			// 명령어를 소문자로 바꾼다.
+			command = command.toLowerCase();
+			
+			// q또는 Q를 입력하면 실행종료한다.
+			if (command.equals("q")) {
+				System.exit(0);
+			} else {
+				for(int i = 0; i < argArr.length; i++) {
+					System.out.println(argArr[i]);
+				}
+			}
+		}
+	}
+}
+```
+
+#### day11/utils/ScannerEx2.java
+```
+data2.txt
+
+100
+200
+300
+400
+500
+```
+```
+package day11.utils;
+
+import java.util.Scanner;
+import java.io.File;
+import java.io.IOException;
+
+public class ScannerEx2 {
+	public static void main(String[] args) throws IOException {
+		Scanner sc = new Scanner(new File("data2.txt"));
+		int sum = 0;
+		int cnt = 0;
+		
+		while(sc.hasNextInt()) {
+			sum += sc.nextInt();
+			cnt++;
+		}
+		
+		System.out.println("sum=" + sum);
+		System.out.println("average=" + (double)sum/cnt);
+	}
+}
+
+실행결과
+
+sum=1500
+average=300.0
+```
 
 ## java.util.StringTokenizer 클래스
+- StringTokenizer는 긴 문자열을 지정된 구분자(delimiter)를 기준으로 토큰(token)이라는 여러 개의 문자열로 잘라내는 데 사용됩니다.
+- StringTokenizer를 이용하는 방법 이외에는 아래와 같이 String의 split(String regex)이나 Scanner의 useDelimiter(String pattern)를 사용할 수도 있지만, 이 두가지 방법은 정규식 표현(Regular expression)을 사용해야하므로 정규식 표현에 익숙하지 않은 경우 StringTokenizer를 사용하는 것이 간단하면서도 명확한 결과를 얻을 수 있다.
+- 그러나  StringTokenizer는 구분자로 단 하나의 문자 밖에 사용하지 못하기 때문에 보다 복잡한 형태의 구분자로 문자열을 나누어야 할 때는 어쩔 수 없이 정규식을 사용하는 메서드를 사용해야 할 것이다.
 
-## java.math.BigInteger 클래스
+#### StringTokenizer의 생성자와 메서드
 
-## java.math.BigDecimal 클래스
+|생성자 / 메서드|설명|
+|-----|--------|
+|StringTokenizer(String str, String delim)|문자열(str)을 지정된 구분자(delim)로 나누는 StringTokenizer를 생성한다. returnDelims의 값을 true로 하면 구분자도 토큰으로 간주된다.|
+|StringTokenizer(String str, String delimi, boolean return Delims)|문자열(str)을 지정된 구분자(delim)로 나누는 StringTokenizer를 생성한다. returnDelims의 값을 true로 하면 구분자도 토큰으로 간주된다.|
+|int countTokens()|전체 토큰의 수를 반환한다.|
+|boolean hasMoreTokens()|토큰이 남아있는지 알려준다.||
+|String nextToken()|다음 토큰을 반환한다.|
+
+
+#### day11/utils/StringTokenizerEx1.java
+```
+package day11.utils;
+
+import java.util.*;
+public class StringTokenizerEx1 {
+	public static void main(String[] args) {
+		String source = "100,200,300,400";
+		StringTokenizer st = new StringTokenizer(source, ",");
+		 
+		while(st.hasMoreTokens()) {
+			System.out.println(st.nextToken());
+		}
+	}
+}
+
+실행결과
+
+100
+200
+300
+400
+```
+
+#### day11/utils/StringTokenizerEx2.java
+```
+package day11.utils;
+
+import java.util.*;
+
+public class StringTokenizerEx2 {
+	public static void main(String[] args) {
+		String expression = "x=100+(200+100)/2";
+		StringTokenizer st = new StringTokenizer(expression, "+-*/=()", true);
+		
+		while(st.hasMoreTokens()) {
+			System.out.println(st.nextToken());
+		}
+	}
+}
+
+실행결과
+
+x
+=
+100
++
+(
+200
++
+100
+)
+/
+2
+```
+단 한 문자의 구분자만 사용할 수 있기 때문에, "+-\*/=\(\)"전체가 하나의 구분자가 아니라 각각의 문자가 모두 구분자라는 것에 주의해야한다.
+> 만일 구분자가 두 문자 이상이라면, Scanner나 String 클래스의 split메서드를 사용해야 한다.
