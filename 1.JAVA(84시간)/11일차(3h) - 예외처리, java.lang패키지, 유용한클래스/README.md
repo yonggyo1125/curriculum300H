@@ -265,6 +265,31 @@ public class AutoCloseObjTest {
 
 ##  예외 처리 미루기
 
+### 예외 처리를 미루는 throws 사용하기
+- 예외를 해당 메서드에서 처리하지 않고 미룬 후 메서드를 호출하여 사용하는 부분에서 예외를 처리하는 방법
+
+#### day11/exception/ThrowsException.java
+```
+package day11.exception;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+public class ThrowsException {
+	public Class loadClass(String fileName, String className) throws FileNotFoundException, ClassNotFoundException {
+		FileInputStream fis = new FileInputStream(fileName); // FileNotFoundException 발생 가능
+		Class c = Class.forName(className); // ClassNotFoundException 발생 가능
+		return c;
+	}
+	public static void main(String[] args) {
+		ThrowsException test = new ThrowsException();
+		test.loadClass("a.txt", "java.lang.String"); // 메서드 호출할 때 예외처리함
+	}
+}
+
+
+```
+
 ## 사용자 정의 예외
 
 
