@@ -466,7 +466,142 @@ class Student extends Object {
 ```
 
 #### String 클래스 JavaDoc 예시
+![기본클래스1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/11%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC%2C%20java.lang%ED%8C%A8%ED%82%A4%EC%A7%80%2C%20%EC%9C%A0%EC%9A%A9%ED%95%9C%ED%81%B4%EB%9E%98%EC%8A%A4/images/%EA%B8%B0%EB%B3%B8%ED%81%B4%EB%9E%98%EC%8A%A41.png)
 
+- **java.lang.Object** : 최상위 클래스
+- java.lang.String : JavaDoc에서 검색한 클래스
+
+- JavaDoc을 보니 String 클래스 역시 Object 클래스를 상속받았음을 알 수 있습니다.
+- 모든 클래스가 **Object 클래스를 상속**받았으므로 **Object의 메서드를 사용할 수 있고, 재정의 할 수도 있고, Object형으로 변환할 수 도 있습니다.**
+- 자바로 프로그래밍을 하다 보면 클래스가 Object형으로 변환되는 경우도 있고, Object에서 원래 클래스형으로 다운 캐스팅되는 경우도 있습니다.
+
+
+#### Object 클래스에 정의된 메서드
+
+|메서드|설명|
+|-----|--------|
+|String toString()|객체를 문자열로 표현하여 반환합니다. 재정의하여 객체에 대한 설명이나 특정 멤버 변수 값을 반환합니다.|
+|boolean equals(Object obj)|두 인스턴스가 동일한지 여부를 반환합니다. 재정의하여 논리적으로 동일한 인스턴스임을 정의할 수 있습니다.|
+|int hashCode()|객체의 해시 코드 값을 반환합니다.|
+|Object clone()|객체를 복제하여 동일한 멤버 변수 값을 가진 새로운 인스턴스를 생성합니다.|
+|Class getClass()|객체의 Class 클래스를 반환합니다.|
+|void finalize()|인스턴스가 힙 메모리에서 제거될 때 가비지 컬렉터(GC)에 의해 호출되는 메서드입니다. 네트워크 연결 해제, 열려 있는 파일 스트림 해제 등을 구현합니다.|
+|void wait()|멀티스레드 프로그램에서 사용하는 메서드입니다. 쓰레드를 **기다리는 상태**(non runnable)로 만듭니다.|
+|void notify()|wait() 메서드에 의해 기다리고 있는 쓰레드(non runnable 상태)를 **실행 가능한 상태**(runnable)로 가져옵니다.|
+
+- Object 메서드 중에는 재정의 할 수 있는 메서드도 있고 그렇지 않은 메서드도 있습니다.
+- Object 메서드 중에서 final 예약어로 선언된 메서드는 자바 쓰레드에서 사용하거나 클래스를 로딩하는 등 자바 가상 머신과 관련된 메서드이기 때문에 재정의할 수 없습니다.|
+
+### toString() 메서드
+- Object 클래스에서 기본으로 제공하는 toString() 메서드는 이름 처럼 객체 정보를 문자열(String)로 바꾸어 줍니다.
+- Object 클래스를 상속받은 모든 클래스는 toString()을 재정의할 수 있습니다.
+- String이나 Integer 등 여러 JDK 클래스에는 toString() 메서드가 이미 재정의 되어 있습니다.
+
+#### Object 클래스의 toString() 메서드
+- toString() 메서드는 인스턴스 정보를 문자열로 변환하는 메서드 입니다.
+- toString() 메서드의 원형은 생성된 인스턴스 클래스의 이름과 주소 값을 보여줍니다.
+
+#### day11/object/ToStringEx.java
+```
+package day11.object;
+
+class Book {
+	int bookNumber;
+	String bookTitle;
+	
+	Book(int bookNumber, String bookTitle) {
+		this.bookNumber = bookNumber;
+		this.bookTitle = bookTitle;
+	}
+}
+
+public class ToStringEx {
+	public static void main(String[] args) {
+		Book book1 = new Book(200, "개미");
+		
+		 // 클래스 정보(클래스 이름, 주소 값)
+		System.out.println(book1);
+		
+		// toString())) 메서드로 인스턴스 정보(클래스 이름, 주소 값)를 보여 줌
+		System.out.println(book1.toString());
+	}
+}
+
+실행결과
+
+day11.object.Book@5e91993f
+day11.object.Book@5e91993f
+```
+- System.out.println() 출력문에 참조 변수를 넣으면 인스턴스 정보가 출력되는데, 이 때 자동으로 호출되는 메서드가 toString() 입니다.
+- 여기에서 호출되는 toString()은 Book클래스의 메서드가 아닌 **Object 클래스의 메서드** 입니다.
+- Object 클래스의 toString()메서드 원형은 다음과 같습니다.
+```
+getClass().getName() + '@' + Integer.toHexString(hashCode())
+```
+- **클래스 이름@해시 코드 값** 입니다. 즉, 클래스의 이름과 16진수 해시 코드 값이 출력됩니다.
+
+#### String과 Integer클래스의 toString() 메서드
+
+```
+String str = new String("test");
+System.out.println(str); // test 출력됨
+Integer i1 = new Integer(100);
+System.out.println(i1); // 100 출력됨
+```
+- 두 클래스의 출력 결과는 **클래스이름@해시코드 값**이 아니라 문자열 값 test, 정수값 100이 각각 출력됩니다.
+- 그 이유는 String과 Integer 클래스는 toString() 메서드를 미리 재정의해 두었기 때문입니다.
+- JDK에서 제공하는 클래스 중에는 toString() 메서드를 미리 재정의한 클래스가 많습니다.
+- toString() 메서드가 재정의된 클래스는 '클래스의 이름@해시코드 값'을 출력하는 toString() 메서드의 원형이 아닌 **재정의된 메서드**가 호출되는 것입니다.
+
+#### day11/object/ToStringEx.java
+```
+package day11.object;
+
+class Book {
+	int bookNumber;
+	String bookTitle;
+	
+	Book(int bookNumber, String bookTitle) {
+		this.bookNumber = bookNumber;
+		this.bookTitle = bookTitle;
+	}
+	
+	@Override
+	public String toString() { // toString() 메서드 재정의
+		return bookTitle + "," + bookNumber;
+	}
+}
+
+public class ToStringEx {
+	public static void main(String[] args) {
+		Book book1 = new Book(200, "개미");
+		
+		 // 클래스 정보(클래스 이름, 주소 값)
+		System.out.println(book1);
+		
+		// toString())) 메서드로 인스턴스 정보(클래스 이름, 주소 값)를 보여 줌
+		System.out.println(book1.toString());
+	}
+}
+
+실행결과
+
+개미,200
+개미,200
+```
+
+### equals() 메서드
+- equals() 메서드의 원래 기능은 두 인스턴스의 주소 값을 비교하여 boolean 값(true/false)을 반환해 주는 것입니다.
+- 주소 값이 같다면 당연히 같은 인스턴스 입니다. 그런데 서로 다은 주소 값을 가질 때도 같은 인스턴스라고 정의할 수 있는 경우가 있습니다.
+- 물리적 동일성(인스턴스 메모리 주소가 같음)뿐 아니라 <b>논리적 동일성(논리적으로 두 인스턴스가 같음)을 구현할 때도 equals() 메서드를 재정의</b>하여 사용합니다.
+
+#### Object 클래스의 equals() 메서드
+- 두 인스턴스가 물리적으로 같다는 것은, 두 인스턴스의 주소 값이 같은 경우를 말합니다. 즉, 두 변수가 같은 메모리 주소를 가리키고 있다는 뜻 입니다.
+```
+Student studentLee = new Student(100, "이상원");
+Student studentLee2 = studentLee; // 주소 복사
+```
+- 두 변수는 다음 그림과 같이 동일한 인스턴스를 가리킵니다. 이 때 equals()메서드를 이용해 두 변수를 비교하면 동일하다는 결과가 나옵니다.
 
 
 ## String 클래스
