@@ -189,7 +189,79 @@ java.io.FileNotFoundException: a.txt (지정된 파일을 찾을 수 없습니�
 - AutoCloseable 인터페이스에는 close() 메서드가 있고 이를 구현한 클래스는 close()를 명시적으로 호출하지 않아도 close() 메서드 부분이 호출됩니다.
 
 #### FileInputStream의 JavaDoc 예시 
+![예외처리3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/11%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC%2C%20java.lang%ED%8C%A8%ED%82%A4%EC%A7%80%2C%20%EC%9C%A0%EC%9A%A9%ED%95%9C%ED%81%B4%EB%9E%98%EC%8A%A4/images/%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC3.png)
 
+- FileInputStream 클래스는 Closeable과 AutoCloseable 인터페이스를 구현했습니다. 
+- JDK1.7부터는 try-with-resources 문법을 사용하면 FileInputStream을 사용할 때 close()를 명시적으로 호출하지 않아도 정상적인 경우와 예외가 발생한 경우 모두 close()메서드가 호출됩니다.
+- FileInputStream 이외에 네트워크(Socket)와 데이터베이스(Connection) 관련 클래스도 AutoCloseable 인터페이스를 구현하고 있습니다.
+
+>AutoCloseable  인터페이스를 구현한 클래스가 무엇이 있는지 궁금하다면 JavaDoc에서 AutoCloseable Interface를 찾아보세요.
+
+#### day11/exception/AutoCloseObj.java
+```
+package day11.exception;
+
+public class AutoCloseObj implements AutoCloseable {
+	@Override
+	public void close() throws Exception {
+		System.out.println("리소스가 close() 되었습니다.");
+	}
+}
+```
+- AutoCloseable 인터페이스는 반드시 close() 메서드를 구현해야 합니다.
+
+#### day11/exception/AutoCloseTest.java
+```
+package day11.exception;
+
+public class AutoCloseTest {
+	public static void main(String[] args) {
+		try (AutoCloseObj obj = new AutoCloseObj()) { // 사용할 리소스 선언
+			
+		} catch(Exception e) {
+			System.out.println("예외 부분 입니다.");
+		}
+	}
+}
+
+실행결과
+
+리소스가 close() 되었습니다.
+```
+- try-with-resources문을 사용할 때 try문의 괄호() 안에 리소스를 선언합니다.
+- 이 예제는 예외가 발생하지 않고 정상 종료 되는데 출력 결과를 보면 close() 메서드가 호출되어 **리소스가 close() 되었습니다.** 문장이 출력 됩ㄴ디ㅏ.
+- 리소스를 여러개 생성해야 한다면 세미 콜론(;)으로 구분합니다.
+```
+try(A a = new A(); B b = new B()) {
+	...
+} catch(Exception e) {
+	...
+}
+```
+
+#### day11/exception/AutoCloseObjTest.java
+```
+package day11.exception;
+
+public class AutoCloseObjTest {
+	public static void main(String[] args) {
+		try (AutoCloseObj obj = new AutoCloseObj()) { // 사용할 리소스 선언
+			throw new Exception(); // 강제 예외 발생
+		} catch(Exception e) {
+			System.out.println("예외 부분 입니다.");
+		}
+	}
+}
+
+
+실행결과
+
+리소스가 close() 되었습니다.
+예외 부분 입니다.
+```
+- 강제로 예외를 발생시키면 catch 블록이 수행됩니다.
+- 출력 결과를 보면 리소스의 close() 메서드가 먼저 호출되고 예외 블록 부분이 수행되는 것을 알 수 있습니다.
+- 이처럼 try-with-resources문을 사용하면 close() 메서드를 명시적으로 호출하지 않아도 정상 종료된 경우와 예외가 발생한 경우 모두 리소스가 잘 해제 됩니다.
 
 ##  예외 처리 미루기
 
