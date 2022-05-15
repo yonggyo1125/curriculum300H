@@ -1298,6 +1298,7 @@ public class RandomEx1 {
 
  ## java.util.Objects 클래스
 	Object 클래스의 보조 클래스로 Object를 다루는 유용한 메서드를 제공합니다.
+	
 	```
 	static int hashCode(Object o) // 객체의 해시코드 조회 및 생성
 	static int hash(Object... values) // 해시코드 생성
