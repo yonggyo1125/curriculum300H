@@ -749,9 +749,94 @@ studentLee와 studentSang은 동일합니다.
 
 
 ### hashCode() 메서드
+- 해시(hash)는 정보를 저장하거나 검색할 때 사용하는 자료구조 입니다.
+- 정보를 어디에 저장할 것인지, 어디서 가져올 것인지 해시 함수를 사용하여 구현합니다.
+- 해시 함수는 객체의 특정 정보(키 값)를 매개변수 값으로 넣으면 그 객체가 저장되어야 할 위치나 저장된 해시 테이블 주소(위치)를 반환합니다.
+- 따라서 객체 정보를 알면 해당 객체의 위치를 빠르게 검색할 수 있습니다.
+- 해시 함수(java.util.Objects.hash(key))는 개발하는 프로그램에 따라 다르게 구현됩니다.
 
+- 자바에서는 인스턴스를 힙 메모리에 생성하여 관리할 떄 해시 알고리즘을 사용합니다.
+```
+hashCode = java.util.Objects.hash(key); // 객체의 해시 코드 값(메모리 위치 값)이 반환됨
+```
+- 자바에서는 두 인스턴스가 같다면 hashCode() 메서드에서 반환하는 해시 코드 값이 같아야 합니다. 따라서 논리적으로 같은 두 객체도 같은 해시 코드 값을 반환하도록 hashCode() 메서드를 재정의해야 합니다. 다시 말해, equals()  메서드를 재정의 했다면 hashCode() 메서드도 재정의해야 합니다.
+
+#### String과 Integer 클래스의 hashCode() 메서드
+- String 클래스와 Integer 클래스의 equals() 메서드는 재정의되어 있습니다. 마찬가지로 hashCode() 메서드도 함께 재정의되어 있습니다.
+
+```
+package day11.object;
+
+public class HashCodeTest {
+	public static void main(String[] args) {
+
+		String str1 = new String("abc");
+		String str2 = new String("abc");
+		
+		// abc 문자열의 해시 코드 값 출력
+		System.out.println(str1.hashCode());
+		System.out.println(str2.hashCode());
+		
+		Integer i1 = new Integer(100);
+		Integer i2 = new Integer(100);
+		
+		// Integer(100)의 해시코드 값 출력
+		System.out.println(i1.hashCode());
+		System.out.println(i2.hashCode());
+	}
+}
+
+실행결과
+
+96354
+96354
+100
+100
+```
+- String 클래스는 같은 문자열을 가진 경우 즉, equals() 메서드의 결과 같이 true인 경우 hashCode() 메서드는 동일한 해시 코드 값을 반환합니다.
+- Integer 클래스의 hashCode() 메서드는 정수 값을 반환하도록 재정의되어 있습니다.
+
+#### day11/object/EqualsTest.java - Student 클래스에서 hashCode()메서드 재정의
+```
+package day11.object;
+
+class Student{
+	...
+	@Override
+	public int hashCode() {
+		return studentId;
+	}
+}
+
+public class EqualsTest {
+	public static void main(String[] args) {
+		...
+		System.out.println("studentLee의 hashCode :" +studentLee.hashCode());
+		System.out.println("studentSang의 hashCode :" +studentSang.hashCode());
+		
+		System.out.println("studentLee의 실제 주소값 :"+ System.identityHashCode(studentLee));
+		System.out.println("studentSang의 실제 주소값 :"+ System.identityHashCode(studentSang));
+	}
+}
+
+실행결과
+
+studentLee와 studentLee2의 주소는 같습니다.
+studentLee와 studentLee2는 동일합니다.
+studentLee와 studentSang의 주소는 다릅니다.
+studentLee와 studentSang은 동일합니다.
+studentLee의 hashCode :100
+studentSang의 hashCode :100
+studentLee의 실제 주소값 :1586600255
+studentSang의 실제 주소값 :474675244
+```
+
+- 출력 결과를 보면 studentLee, studentSang은 학번이 같기 때문에 논리적으로 같은지 확인하는 equals() 메서드 출력 값이 true 입니다.
+- 또한 같은 해시 코드 값을 반환하고 있습니다.
+- hashCode() 메서드를 재정의했을 때 실제 인스턴스 주소 값은 System.indentityHashCode() 메서드를 사용하면 알 수 있습니다. studentLee와 studentSang은 실제 메모리 주소 값은 다릅니다. 즉, 논리적으로는 같지만 실제로는 다른 인스턴스 입니다.
 
 ## String 클래스
+
 
 ## Wrapper 클래스
 
