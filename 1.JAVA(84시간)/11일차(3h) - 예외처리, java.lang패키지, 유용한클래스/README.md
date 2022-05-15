@@ -438,72 +438,43 @@ public class IDFormatTest {
 * * * 
 
 # java.lang 패키지
+- java.lang 패키지에는 기본적으로 많이 사용하는 클래스들이 포함되어 있습니다.
+- 예를 들면 String, Integer와 같은 클래스는 java.lang 패키지에 속해 있고, String 클래스의 전체 이름은 java.lang.String이고 Integer 클래스의 전체 이름은 java.lang.Integer입니다.
+- 외부 패키지에 선언한 클래스를 사용할 때는 import문으로 클래스가 어느 패키지에 속해 있는지 선언해야 하나 String 클래스를 쓰면서 import java.lang.String; 문장을 쓴 적이 없습니다.
+- java.lang 패키지는 컴파일 할 때 import java.lang.\*; 문장이 자동으로 추가되어 java.lang 패키지 하위 클래스를 모두 사용할 수 있으므로 직접 써 줄 필요가 없습니다.
+- 즉, import문을 직접 쓰지 않아도 java.lang 패키지의 모든 하위 클래스를 참조할 수 있습니다.
 
 ## Object 클래스
+- Object 클래스는 **모든 자바 클래스의 최상위 클래스** 입니다.
+- 다시 말하면 모든 클래스는 Object 클래스로 부터 상속을 받습니다.
+- 우리가 클래스를 만들 때 Object를 상속받는 코드를 작성한 적이 없는데, Object 클래스의 상속을 의미하는 **extends Object가 컴파일 과정에서 자동으로 쓰입니다.**
 
-### equals(Object obj)
+- 코드를 작성할 때
+```
+class Student {
+	int studentID;
+	String studentName;
+}
+```
 
-### hashCode()
+- 컴파일러가 변환 
+```
+class Student extends Object {
+	int studentID;
+	String studentName;
+}
+```
 
-### toString()
-
-### clone()
-
-### 공변 반환타입
-
-### 얕은 복사와 깊은 복사
+#### String 클래스 JavaDoc 예시
 
 
-### Class 객체를 얻는 방법
 
 ## String 클래스
 
-### 변경 불가능한(immutable)클래스
+## Wrapper 클래스
 
-### 문자열의 비교
+## Class 클래스
 
-### 문자열 리터럴
-
-### 빈 문자열(empty string)
-
-### String클래스의 생성자와 메서드
-
-### join()과 StringJointer
-
-### 문자 인코딩 변환
-
-### String.format()
-
-### 기본형 값을 String으로 변환
-
-### String을 기본형 값으로 변환
-
-## StringBuffer클래스와 StringBuilder 클래스
-
-### StringBuffer 생성자
-
-### StringBuffer의 변경
-
-### StringBuffer의 비교
-
-### StringBuffer클래스의 생성자와 메서드
-
-### StringBuilder란? 
-
-
-## Math클래스
-
-### 올림, 버림, 반올림
-
-### Math클래스의 메서드
-
-## 래퍼(wrapper) 클래스
-
-### Number클래스
-
-### 문자열을 숫자로 변환하기
-
-### 오토박싱 & 언박싱(autoboxing & unboxing)
 
 
 * * * 
