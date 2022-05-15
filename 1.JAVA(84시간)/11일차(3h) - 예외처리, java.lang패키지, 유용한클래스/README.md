@@ -849,10 +849,88 @@ String str2 = "test"; // 문자열 상수를 가리키는 방식
 - 하지만 str2 = "test"와 같이 생성자를 이용하지 않고 바로 문자열 상수를 가리키는 경우에는 str2가 기존에 만들어져 있던 "test"라는 문자열 상수의 메모리 주소를 가리키게 됩니다.
 - 따라서 String str3 = "test" 코드를 작성하면 str2와 str3는 주소 값이 같게 됩니다.
 
-
+![기본클래스4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/11%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC%2C%20java.lang%ED%8C%A8%ED%82%A4%EC%A7%80%2C%20%EC%9C%A0%EC%9A%A9%ED%95%9C%ED%81%B4%EB%9E%98%EC%8A%A4/images/%EA%B8%B0%EB%B3%B8%ED%81%B4%EB%9E%98%EC%8A%A44.png)
 
 - test나 10, 20 등과 같이 프로그램에서 사용되는 상수값을 저장하는 공간을 <b>상수 풀(constant pool)</b> 이라고 합니다. [상수와 리터럴 참조]
 (https://github.com/yonggyo1125/curriculum300H/tree/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/1%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8B%A4%EC%8A%B5%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%B6%95%2C%EB%B3%80%EC%88%98%EC%99%80%20%EC%9E%90%EB%A3%8C%ED%98%95#%EC%83%81%EC%88%98%EC%99%80-%EB%A6%AC%ED%84%B0%EB%9F%B4)
+
+
+#### day11/string/StringTest1.java
+```
+package day11.string;
+
+public class StringTest1 {
+	public static void main(String[] args) {
+
+		String str1 = new String("abc");
+		String str2 = new String("abc");
+		
+		System.out.println(str1 == str2);    //false
+		System.out.println(str1.equals(str2)); //true
+	
+		String str3 = "abc";
+		String str4 = "abc";
+	
+		System.out.println(str3 == str4);  //true
+		System.out.println(str3.equals(str4)); //true
+	}
+}
+
+실행결과
+
+false
+true
+true
+true
+```
+- 문자열 상수를 바로 가리키는 경우에는 주소 값이 같음을 알 수 있습니다.
+
+### String 클래스의 final char[] 변수
+- 다른 프로그래밍 언어는 문자열을 구현할 때 일반적으로 char[] 배열을 사용합니다.
+- 자바는 String클래스를 제공해 char[] 배열을 직접 구현하지 않고도 편리하게 문자열을 사용할 수 있습니다.<br>(JDK12 이후 byte[] 배열로 변경됨)
+```
+public final class String
+    implements java.io.Serializable, Comparable<String>, CharSequence,
+               Constable, ConstantDesc {
+
+	...
+    @Stable
+    private final byte[] value;
+	...
+```
+
+- String 클래스의 구현 내용을 보면 private final char value[]라고 선언된 char형 배열이 있습니다. 
+- 프로그램에서 String s = new String("abc")라고 쓰면 abc는 String 클래스의 value 변수에 저장됩니다. 그런데 이 변수는 **final로 선언**되어 있습니다.
+- **final은 문자열을 변경할 수 없다**는 뜻입니다. 따라서 **한번 생성된 문자열은 변경되지 않습니다.**
+- 이런 문자열의 특징을 <b>문자열은 불변(immutable)한다</b>라고 합니다.
+- 프로그램에서 두 개의 문자열을 연결하면 둘 중에 하나의 문자열이 변경되는 것이 아니라 두 문자열이 연결된 새로운 문자열이 생성됩니다.
+
+#### day11/string/StringTest2.java
+```
+package day11.string;
+
+public class StringTest2 {
+	public static void main(String[] args) {
+
+		String javaStr = new String("java");
+		String androidStr = new String("android");
+		System.out.println(javaStr);
+		System.out.println("처음 문자열 주소 값: "+ System.identityHashCode(javaStr));
+		
+		javaStr = javaStr.concat(androidStr); //java 와 android 문자열의 연결
+		
+		System.out.println(javaStr);
+		System.out.println("연결된 문자열 주소 값: " +System.identityHashCode(javaStr));
+	}
+}
+
+실행결과
+
+java
+처음 문자열 주소 값: 1651191114
+javaandroid
+연결된 문자열 주소 값: 1586600255
+```
 
 ## Wrapper 클래스
 
