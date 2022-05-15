@@ -932,6 +932,59 @@ javaandroid
 연결된 문자열 주소 값: 1586600255
 ```
 
+- 두 개의 문자열 "java"와 "android"를 생성했습니다. 그리고 두 문자열을 연결하는 concat() 메서드를 호출했습니다.
+- javaStr 변수 출력 결과를 보면 "javaandroid"로 연결되어 잘 출력되고 있습니다. 
+- 이 결과만 보면 "java" 문자열에 "android"문자열이 연결된 것 같지만, <b>문자열은 불편(immutable)하므로 javaStr 변수 값 자체가 변하는 것이 아니라 새로운 문자열이 생성</b>된 것입니다.
+
+![기본클래스5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/11%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC%2C%20java.lang%ED%8C%A8%ED%82%A4%EC%A7%80%2C%20%EC%9C%A0%EC%9A%A9%ED%95%9C%ED%81%B4%EB%9E%98%EC%8A%A4/images/%EA%B8%B0%EB%B3%B8%ED%81%B4%EB%9E%98%EC%8A%A45.png)
+
+### StringBuffer와 StringBuilder 클래스 활용하기
+- 프로그램을 만들다 보면 문자열을 변경하거나 연결해야 할 떄가 많습니다. 
+- 그런데 String 클래스는 한번 생성되면 그 내부의 문자열이 변경되지 않기 때문에 String 클래스를 사용하여 문자열을 계속 연결하거나 변경하는 프로그램을 작성하면 메모리가 많이 낭비됩니다.
+- 이 문제를 해결하는 것이 바로 **StringBuffer**와 **StringBuilder** 클래스 입니다.
+
+- StringBuffer와 StringBuilder는 <b>내부에 변경가능한 ( final이 아닌) char[](JDK12에서 byte[]로 변경)를 변수</b>로 가지고 있습니다. 
+- 이 두 클래스를 사용하여 문자열을 연결하면 기존에 사용하던 char[] 배열이 확장되므로 추가 메모리를 사용하지 않습니다.
+- 따라서 문자열을 연결하거나 변경할 경우 두 클래스 중 하나를 사용하면 됩니다. 
+- 두 클래스의 차이는 여러 작업(쓰레드)이 동시에 문자열을 변경하려 할 때 문자열이 안전하게 변경되도록 보장해 주는가 그렇지 않은가의 차이 입니다.
+
+- StringBuffer 클래스는 문자열이 안전하게 변경되도록 보장하지만, StringBuilder 클래스는 보장 되지 않습니다.
+- 프로그램에서 따로 쓰레드를 생성하는 멀티쓰레드 프로그램이 아니라면 StringBuilder를 사용하는 것이 싱행 속도가 좀 더 빠릅니다.
+
+#### day11/string/StringBuilderTest.java
+```
+package day11.string;
+
+public class StringBuilderTest {
+	public static void main(String[] args) {
+		
+		String javaStr = new String("Java");
+		System.out.println("javaStr 문자열 주소 :" +System.identityHashCode(javaStr));//처음 생성된 메모리 주소
+		
+		StringBuilder buffer = new StringBuilder(javaStr); //String으로 부터 StringBuilder생성
+		System.out.println("연산 전 buffer 메모리 주소:" + System.identityHashCode(buffer));//buffer 메모리 주소
+		buffer.append(" and");                // 문자열 추가
+		buffer.append(" android");            // 문자열 추가
+		buffer.append(" programming is fun!!!"); //문자열 추가
+		System.out.println("연산 후 buffer 메모리 주소:" + System.identityHashCode(buffer));//buffer 메모리 주소
+		
+		javaStr = buffer.toString(); //String 클래스로 반환
+		System.out.println(javaStr);
+		System.out.println("새로 만들어진 javaStr 문자열 주소 :" +System.identityHashCode(javaStr)); //새로 생성된 메모리 주소
+
+	}
+}
+
+실행결과
+
+javaStr 문자열 주소 :1651191114
+연산 전 buffer 메모리 주소:1586600255
+연산 후 buffer 메모리 주소:1586600255
+Java and android programming is fun!!!
+새로 만들어진 javaStr 문자열 주소 :474675244
+```
+
+
 ## Wrapper 클래스
 
 ## Class 클래스
