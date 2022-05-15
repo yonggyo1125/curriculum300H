@@ -602,6 +602,153 @@ Student studentLee = new Student(100, "이상원");
 Student studentLee2 = studentLee; // 주소 복사
 ```
 - 두 변수는 다음 그림과 같이 동일한 인스턴스를 가리킵니다. 이 때 equals()메서드를 이용해 두 변수를 비교하면 동일하다는 결과가 나옵니다.
+![기본클래스2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/11%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC%2C%20java.lang%ED%8C%A8%ED%82%A4%EC%A7%80%2C%20%EC%9C%A0%EC%9A%A9%ED%95%9C%ED%81%B4%EB%9E%98%EC%8A%A4/images/%EA%B8%B0%EB%B3%B8%ED%81%B4%EB%9E%98%EC%8A%A42.png)
+
+
+```
+Student studentLee = new Student(100, "이상원");
+Student studentLee2 = studentLee;
+Student studentSang = new Student(100, "이상원");
+```
+- 위 코드를 표현한 그림은 다음과 같습니다.
+
+![기본클래스3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/11%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC%2C%20java.lang%ED%8C%A8%ED%82%A4%EC%A7%80%2C%20%EC%9C%A0%EC%9A%A9%ED%95%9C%ED%81%B4%EB%9E%98%EC%8A%A4/images/%EA%B8%B0%EB%B3%B8%ED%81%B4%EB%9E%98%EC%8A%A43.png)
+
+- studentLee, studentLee2가 가리키는 인스턴스와 studentSang이 가리키는 인스턴스는 서로 다른 주소를 가지고 있지만, 저장된 학생의 정보는 같습니다. 이런 경우 논리적으로는 studentLee, studentLee2와 studentSang을 같은 학생으로 처리하는 것이 맞을 것 입니다.
+
+#### day11/object/EqualsTest.java
+```
+package day11.object;
+
+class Student{
+	
+	int studentId;
+	String studentName;
+	
+	public Student(int studentId, String studentName){
+		this.studentId = studentId;
+		this.studentName = studentName;
+	}
+	
+	public String toString(){
+		return studentId + "," + studentName;
+	}
+}
+
+public class EqualsTest {
+
+	public static void main(String[] args) {
+
+		Student studentLee = new Student(100, "이상원");
+		Student studentLee2 = studentLee; // 주소 복사 
+		Student studentSang = new Student(100, "이상원");
+
+		// 동일한 주소의 두 인스턴스 비교 
+		if(studentLee == studentLee2) // == 기호로 비교 
+			System.out.println("studentLee와 studentLee2의 주소는 같습니다.");
+		else
+			System.out.println("studentLee와 studentLee2의 주소는 다릅니다.");
+		
+		if(studentLee.equals(studentLee2)) // equals() 메서드로 비교 
+			System.out.println("studentLee와 studentLee2는 동일합니다.");
+		else
+			System.out.println("studentLee와 studentLee2는 동일하지 않습니다.");
+		
+		
+		// 동일인이지만 인스턴스의 주소가 다른 경우 
+		if(studentLee == studentSang) // == 기호로 비교 
+			System.out.println("studentLee와 studentSang의 주소는 같습니다.");
+		else
+			System.out.println("studentLee와 studentSang의 주소는 다릅니다.");
+		
+		if(studentLee.equals(studentSang)) // equals() 메서드로 비교ㅕ
+			System.out.println("studentLee와 studentSang은 동일합니다.");
+		else
+			System.out.println("studentLee와 studentSang은 동일하지 않습니다.");  
+	
+	}
+}
+
+실행결과
+
+studentLee와 studentLee2의 주소는 같습니다.
+studentLee와 studentLee2는 동일합니다.
+studentLee와 studentSang의 주소는 다릅니다.
+studentLee와 studentSang은 동일하지 않습니다.
+```
+- Object의 equals() 메서드의 원래 기능은 두 인스턴스의 주소를 비교하는 것입니다. 따라서 같은 주소인 경우만 equals() 메서드의 결과가 true가 됩니다.
+- 두 인스턴스가 있을 때 ==는 단순히 물리적으로 같은 메모리 주소인지 여부를 확인할 수 있고, Object의 equals() 메서드는 재정의를 하여 논리적으로 같은 인스턴스인지(메모리 주소가 다르더라도 같은 학생인지) 확인하도록 구현할 수 있습니다.
+
+#### String과 Integer 클래스의 equals() 메서드
+- JDK에서 제공하는 String 클래스와 Integer 클래스에는 equals() 메서드가 이미 재정의 되어 있습니다. 
+
+#### day11/object/StringEquals.java
+```
+package day11.object;
+
+public class StringEquals {
+	public static void main(String[] args) {
+
+		String str1 = new String("abc");
+		String str2 = new String("abc");
+		
+		System.out.println(str1 == str2);  // 두 스트링 인스턴스의 주소 값은 다름
+		System.out.println(str1.equals(str2)); // String 클래스의 equals 메소드가 재정의 됨
+		
+		Integer i1 = new Integer(100); // Integer 보다는 Integer.valueOf 사용 -> 인스턴스 주소는 같은 값에 대해 동일 
+		Integer i2 = new Integer(100);
+		
+		System.out.println(i1 == i2);   // 두 정수 인스턴스의 주소 값은 다름 
+		System.out.println(i1.equals(i2)); // Integer 클래스의 equals 메소드가 재정의 됨
+	}
+}
+
+실행결과
+
+false
+true
+false
+true
+```
+- 코드의 내용을 보면 str1과 str2는 서로 다른 인스턴스를 가리키기 때문에 str1 == str2의 결과는 false 입니다.  하지만 String 클래스의 equals() 메서드는 같은 문자열의 경우 true를, 그렇지 않은 경우 false를 반환하도록 **재정의**되어 있습니다.
+- 두 문자열은 "abc"로 같은 값을 가지므로 str1.equals(str2)의 반환 값은 true입니다.
+- Integer 클래스의 경우도 정수 값이 같은 경우 true를 반환하도록 equals() 메서드가 재정의되어 있습니다.
+
+#### day11/object/EqualsTest.java - Student 클래스에서 equals() 메서드 직접 재정의 하기
+```
+package day11.object;
+
+class Student{
+	...
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Student){
+			Student std = (Student)obj;
+			// 학생의 학번이 같으면 true 반환
+			if( studentId == std.studentId)
+				return true;
+			else return false;
+		}
+		return false;
+	}
+}
+...
+
+실행결과
+
+studentLee와 studentLee2의 주소는 같습니다.
+studentLee와 studentLee2는 동일합니다.
+studentLee와 studentSang의 주소는 다릅니다.
+studentLee와 studentSang은 동일합니다.
+
+```
+- equals() 메서드를 재정의하였습니다. 
+- equals() 메서드의 매개변수는 Object형 입니다. 비교될 객체가 Object형으로 전달되면 instanceof를 사용하여 매개변수의 원래 자료형이 Student인지 확인합니다.
+- this의 학번과 매개변수로 전달된 객체의 학번이 같으면 true를 반환합니다.
+- equals() 메서드를 재정의한 후 출력 결과를 보면 studentLee와 studentSang은 서로 다른 메모리 주소에 존재하는 인스턴스이므로 == 연산의 결과 값은 false를 반환하지만, 학번이 같으므로 equals()는 true를 반환합니다.
+
+
+### hashCode() 메서드
 
 
 ## String 클래스
