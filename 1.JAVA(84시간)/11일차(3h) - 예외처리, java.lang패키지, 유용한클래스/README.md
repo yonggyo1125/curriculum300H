@@ -298,7 +298,7 @@ public class ThrowsException {
 - **Add throws declaration** 
 	- main() 함수 선언 부분에 throws FileNotFoundException, ClassNotFoundException을 추가하고 예외 처리를 미룬다는 뜻 입니다. 
 	- main() 함수에서 미룬 예외 처리는 main()  함수를 호출하는 자바 가상 머신으로 보내집니다.즉, 예외를 처리하는 것이 아니라 대부분의 프로그램이 비정사아 종료 됩니다.
-- ** Surround with try/multi-catch** - 여러 예외를 한꺼번에 처리하기
+- <b>Surround with try/multi-catch</b> - 여러 예외를 한꺼번에 처리하기
 	```
 	public static void main(String[] args) {
 		ThrowsException test = new ThrowsException();
