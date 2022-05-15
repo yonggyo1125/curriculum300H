@@ -1297,17 +1297,17 @@ public class RandomEx1 {
 ```
 
  ## java.util.Objects 클래스
-	Object 클래스의 보조 클래스로 Object를 다루는 유용한 메서드를 제공합니다.
+Object 클래스의 보조 클래스로 Object를 다루는 유용한 메서드를 제공합니다.
 	
-	```
+```
 	static int hashCode(Object o) // 객체의 해시코드 조회 및 생성
 	static int hash(Object... values) // 해시코드 생성
-	```
+```
 	
-	```
+```
 	static boolean equals(Object a, Object b); // 두 객체를 비교
 	static boolean deepEquals(Object a, Object b); // 두 객체를 재귀적으로 비교(다차원 배열 비교 가능 )
-	```
+```
 	
 ## java.util.Random 클래스
 - 난수를 얻는 방법은 Math.random()을 사용하는 방법이 있습니다. 이 외에도 Random 클래스를 사용하면 난수를 얻을 수 있습니다.
