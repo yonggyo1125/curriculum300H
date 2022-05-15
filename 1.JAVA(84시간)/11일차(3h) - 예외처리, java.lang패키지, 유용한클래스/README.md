@@ -984,6 +984,12 @@ Java and android programming is fun!!!
 새로 만들어진 javaStr 문자열 주소 :474675244
 ```
 
+![기본클래스6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/11%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC%2C%20java.lang%ED%8C%A8%ED%82%A4%EC%A7%80%2C%20%EC%9C%A0%EC%9A%A9%ED%95%9C%ED%81%B4%EB%9E%98%EC%8A%A4/images/%EA%B8%B0%EB%B3%B8%ED%81%B4%EB%9E%98%EC%8A%A46.png)
+
+- StringBuilder 클래스를 새엇ㅇ하고 여기에 문자열을 추가(append) 합니다. 
+- 그러면 append() 메러드가 실행될 때마다 **메모리가 새로 생성되는 것이 아니라, 하나의 메모리에 계속 연결되는 것**을 해시 코드 값을 통해 알 수 있습니다.
+- 연산 전 메모리 주소와 연산 후 메모리 주소가 같기 때문입니다. 
+- 문자열을 변경한 후에 buffer에 toString() 메서드를 호출하면 다시 문자열로 반환할 수 있습니다.
 
 ## Wrapper 클래스
 
