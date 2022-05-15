@@ -991,11 +991,224 @@ Java and android programming is fun!!!
 - 연산 전 메모리 주소와 연산 후 메모리 주소가 같기 때문입니다. 
 - 문자열을 변경한 후에 buffer에 toString() 메서드를 호출하면 다시 문자열로 반환할 수 있습니다.
 
+
 ## Wrapper 클래스
+### 기본 자료형을 위한 클래스
+- 지금까지 정수를 사용할 때 기본형인 int를 사용했습니다. 그런데 정수를 객체형으로 사용해야 하는 경우가 있습니다. 예) 매개변수가 객체거나 반환값이 객체인 경우
+```
+public void setValue(Integer i) { ... } // 객체를 매개변수로 받는 경우
+public Integer returnValue() { ... } // 반환 값이 객체인 경우
+```
+- 이를 위해 자바에서는 **기본 자료형 처럼 사용할 수 있는 클래스를 제공**합니다. 이러한 클래스를 기본 자료형을 감쌌다는 의미로 **Wrapper 클래스**라고 합니다.
+
+#### Wrapper 클래스의 종류
+
+|기본형|Wrapper 클래스|
+|----|-----|
+|boolean|Boolean|
+|byte|Byte|
+|char|Character|
+|short|Short|
+|int|Integer|
+|long|Long|
+|float|Float|
+|double|Double|
+
+- 가장 대표적인 Integer 클래스를 통해 Wrapper 클래스의 사용법을 알아봅니다. 다른 클래스도 사용 방법이 크게 다르지 않으므로 Integer클래스 기준으로 익혀 두시면 됩니다.
+
+### Integer 클래스 사용하기
+- int 자료형을 감싼 클래스
+- Integer 클래스의 생성자는 다름과 같이 특정 정수를 매개변수로 받는 경우와 문자열을 받는 경우 두 가지가 있습니다.
+```
+Integer(int value) { ... } // 특정 정수를 매개변수로 받는 경우
+Integer(String s) { ... } // 특정 문자열을 매개변수로 받는 경우 
+```
+- Integer 클래스는 int 자료형과 특성이 그대로 구현되어 있습니다. 사용 가능한 최대값과 최솟값이 static 변수로 정의되어 있습니다.
+- 대부분의  Wrapper 클래스가 위 Integer 클래스의 정의와 크게 다르지 않습니다. 
+- Integer 클래스는 멤버 변수로 기본 자료형 int를 가지고 있고, int 값을 객체로 활용할 수 있는 여러 메서드를 제공합니다.
+- int value는 final 변수 이며, 한번 생성되면 변경할 수 없습니다.
+
+
+#### Integer 클래스의 메서드
+- intValue()  : Integer 클래스 내부의 int 자료형 값을 가져오기 위해 사용
+```
+Integer iValue = new Integer(100);
+int myValue = iValue.intValue(); // int값 가져오기 myValue 값을 출력하면 100이 출력됨
+```
+
+- valueOf() 정적 메서드 : 정수나 문자열을 바로 Integer 클래스로 반환받을 수 있습니다.
+```
+Integer number1 = Integer.valueOf("100");
+Integer number2 = Integer.valueOf(100);
+```
+
+- parseInt() : 문자열이 어떤 숫자를 나타낼 때, 문자열에서 int 값을 바로 가져와서 반환할 수 있습니다.
+```
+int num = Integer.parseInt("100");
+```
+
+- 다른 Wrapper 클래스의 사용방법도 비슷합니다.
+
+### 오토박싱과 언박싱
+- 어떤 정수 값을 사용할 때 int로 선언하는 경우와 Integer로 선언하는 경우는 전혀 다릅니다.
+- int는 기본 자료형 4바이트지만 Integer는 클래스이기 때문에 인스턴로 생성하려면 생성자를 호출하고 정수 값을 인수로 넣어야 합니다. 이처럼 기본 자료형과 Wrapper 클래스는 같은 값을 나타내지만, 그 쓰임새과 특성이 전혀 다릅니다.
+- JDK1.5 이전에는 기본 자료형과 Wrapper 클래스형을 함께 연산하기 위해 둘 중 하나의 형태로 일치시켜야 했습니다. 예를 들어 Integer와 int형으로 선언한 두 값을 더한다면 Integer에서 intValue() 메서드를 사욜해 정수 값을 꺼내거나 int형으로 선언된 변수의 값을 Integer로 만들어 연산해야 했습니다. 
+- 하지만 JDK1.5부터는 다음과 같이 변환 없이 사용할 수 있습니다.
+
+```
+Integer num1 = new Integer(100);
+int num2 = 200;
+int sum = num + num2;  // num은 num.intValue()로 변환(언박싱)
+Integer num3 = num2;  // num2는 Integer.valueOf(num2)로 변환(오토박싱)
+```
+- <b>오토박싱(autoboxing)</b> : 기본형을 객체형으로 바꾸는 것
+- <b>언박싱(unboxing)</b> : 객체를 기본형으로 꺼내는 것 
+- 이는 자바의 연산 방식이 변경된 것이 아니라 컴파일러가 변경하는 것입니다. 따라서 객체의 형 변환에 신경 쓰지 않고 편리하게 프로그래밍 할 수 있습니다.
 
 ## Class 클래스
+- 자바의 모든 클래스와 인터페이스는 컴파일되고 나면 class 파일로 생성됩니다. 
+- 예를 들어 a.java 파일이 컴파일되면 a.class 파일이 생성되고, 이 class 파일에는 클래스나 인터페이스에 대한 변수,  메서드, 생성자 등의 정보가 들어 있습니다.
+- Class 클래스는 컴파일된 class파일에 저장된 클래스나 인터페이스 정보를 가져오는 데 사용합니다.
 
+### Class 클래스란?
+모르는 클래스의 정보를 사용할 경우 우리가 클래스의 정보를 직접 찾아야 합니다. 이때 Class 클래스를 활용합니다.
 
+### Class 클래스를 선언하고 클래스 정보를 가져오는 방법
+1. Object 클래스의 getClass() 메서드 사용하기
+```
+String s = new String();
+Class c = s.getClass(); // getClass() 메서드 반환형은 Class 
+```
+
+2. 클래스 파일 이름을 Class 변수에 직접 대입하기
+```
+Class c = String.class;
+```
+
+3. Class.forName("클래스 이름") 메서드 사용하기
+```
+Class c = Class.forName("java.lang.String");
+```
+
+- 1번의 경우 Object에 선언한 getClass() 메서드는 모든 클래스가 사용할 수 있는 메서드입니다. 이 메서드를 사용하려면 이미 생성된 인스턴스가 있어야 합니다.
+- 2,3번의 경우에는 컴파일된 클래스 파일이 있다면 클래스 이름만으로 Class 클래스를 반환받습니다.
+
+#### day11/classex/Person.java
+```
+package day11.classex;
+
+public class Person {
+	private String name;
+	private int age;
+	
+
+	public Person(){}
+	
+	public Person(String name){
+		this.name = name;
+	}
+	
+	public Person(String name, int age){
+		this.name = name;
+		this.age = age;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+}
+```
+#### day11/classex/ClassTest.java
+```
+package day11.classex;
+
+public class ClassTest {
+	public static void main(String[] args) throws ClassNotFoundException {
+
+		Person person = new Person();
+		Class pClass1 = person.getClass();  //Object 의 getClass() 메소드 사용
+		System.out.println(pClass1.getName());
+
+		Class pClass2 = Person.class;    // 직접 class 파일 대입
+		System.out.println(pClass2.getName());
+		
+		Class pClass3 = Class.forName("day11.classex.Person"); // 클래스 이름으로 가져오기 
+		System.out.println(pClass3.getName());           //이름과 일치하는 클래스가 없는경우 ClassNotFoundException 발생함
+	}
+}
+
+실행결과
+
+day11.classex.Person
+day11.classex.Person
+day11.classex.Person
+```
+
+- Class 클래스를 통하여 클래스 정보를 알 수 있습니다.
+
+### Class 클래스를 활용해 클래스 정보 알아보기
+#### day11/classex/StringClassTest.java
+```
+package day11.classex;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+public class StringClassTest {
+	public static void main(String[] args) throws ClassNotFoundException {
+
+		Class strClass = Class.forName("java.lang.String");
+		
+		Constructor[] cons = strClass.getConstructors();
+		for(Constructor c : cons){
+			System.out.println(c);
+		}
+		System.out.println();
+		Field[] fields = strClass.getFields();
+		for(Field f : fields){
+			System.out.println(f);
+		}
+		System.out.println();
+		Method[] methods = strClass.getMethods();
+		for(Method m : methods){
+			System.out.println(m);
+		}
+	}
+}
+
+실행결과
+
+public java.lang.String(java.lang.StringBuffer)
+public java.lang.String(java.lang.StringBuilder)
+public java.lang.String(byte[],int,int,java.nio.charset.Charset)
+public java.lang.String(byte[],java.lang.String) throws java.io.UnsupportedEncodingException
+public java.lang.String(byte[],java.nio.charset.Charset)
+public java.lang.String(byte[],int,int)
+public java.lang.String(byte[])
+public java.lang.String(char[],int,int)
+public java.lang.String(char[])
+public java.lang.String(java.lang.String)
+public java.lang.String()
+public java.lang.String(byte[],int,int,java.lang.String) throws java.io.UnsupportedEncodingException
+public java.lang.String(byte[],int)
+public java.lang.String(byte[],int,int,int)
+public java.lang.String(int[],int,int)
+
+...
+```
 
 * * * 
 # 유용한 클래스
