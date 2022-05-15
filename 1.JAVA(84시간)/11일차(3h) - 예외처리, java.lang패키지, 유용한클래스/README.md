@@ -286,14 +286,156 @@ public class ThrowsException {
 		test.loadClass("a.txt", "java.lang.String"); // 메서드 호출할 때 예외처리함
 	}
 }
-
-
 ```
 
-## 사용자 정의 예외
+#### throws를 활용하여 예외처리 미루기
+- 예외를 처리하지 않고 미룬다고 선언하면, 그 메서드를 호출하여 사용하는 부분에서 예외 처리를 해야 합니다.
 
+![예외처리4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/11%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC%2C%20java.lang%ED%8C%A8%ED%82%A4%EC%A7%80%2C%20%EC%9C%A0%EC%9A%A9%ED%95%9C%ED%81%B4%EB%9E%98%EC%8A%A4/images/%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC4.png)
+
+![예외처리5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/11%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC%2C%20java.lang%ED%8C%A8%ED%82%A4%EC%A7%80%2C%20%EC%9C%A0%EC%9A%A9%ED%95%9C%ED%81%B4%EB%9E%98%EC%8A%A4/images/%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC5.png)
+
+- **Add throws declaration** 
+	- main() 함수 선언 부분에 throws FileNotFoundException, ClassNotFoundException을 추가하고 예외 처리를 미룬다는 뜻 입니다. 
+	- main() 함수에서 미룬 예외 처리는 main()  함수를 호출하는 자바 가상 머신으로 보내집니다.즉, 예외를 처리하는 것이 아니라 대부분의 프로그램이 비정사아 종료 됩니다.
+- ** Surround with try/multi-catch** - 여러 예외를 한꺼번에 처리하기
+	```
+	public static void main(String[] args) {
+		ThrowsException test = new ThrowsException();
+		try {
+			test.loadClass("a.txt", "java.lang.String");
+		} catch (FileNotFoundException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+	```
+
+- **Surround with try/catch** - 예외를 상황마다 처리하기
+	```
+	...
+	public static void main(String[] args) {
+		ThrowsException test = new ThrowsException();
+		try {
+			test.loadClass("a.txt", "java.lang.String");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+	...
+	```
+
+- 예외가 발생한 메서드에서 그 예외를 바로 처리할 것인지, 아니면 미루어서 그 메서드를 호출하여 사용하는 부분에서 처리할 것인지는 만들고자 하는 프로그램 상황에 따라 다를 수 있습니다.
+- 만약 어떤 메서드가 다른 여러 코드에서 호출되어 사용된다면 메서드를 호출하는 부분에서 예외처리를 하도록 미루는 것이 합리적입니다.
+
+### 다중 예외 처리
+- 어떤 예외가 발생할지 미리 알수 없지만 모든 예외 상황을 처리하고자 한다면 맨 마지막 부분에 Exception 클래스를 활용하여 catch 블록을 추가합니다.
+
+#### day11/exception/ThrowsException.java
+```
+package day11.exception;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+public class ThrowsException {
+	public Class loadClass(String fileName, String className) throws FileNotFoundException, ClassNotFoundException {
+		FileInputStream fis = new FileInputStream(fileName); // FileNotFoundException 발생 가능
+		Class c = Class.forName(className); // ClassNotFoundException 발생 가능
+		return c;
+	}
+	public static void main(String[] args) {
+		ThrowsException test = new ThrowsException();
+		try {
+			test.loadClass("a.txt", "java.lang.String");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (Exception e) { // Exception  클래스로 그 외 예외 상황 처리
+			e.printStackTrace();
+		}
+	}
+}
+```
+- Exception 클래스는 모든 예외 클래스의 최상위 클래스 입니다. 따라서 다른 catch 블록에서 선언한 것 이외의 예외가 발생하더라도 Exception 클래스로 자동 형 변환 됩니다(다형성).
+- 가장 처음 Exception이 catch  구간에 있다면 모든 예외가 이 구간으로 유입이 되어 적절한 처리가 되지 않습니다. 따라서 기본 예외 처리를 하는 **Exception 클래스 블록은 여러 예외  처리 블록의 가장 아래 놓여야 합니다.**
+
+## 사용자 정의 예외
+- 사용자 정의 예외 클래스를 구현할 때는 기존 JDK에서 제공하는 예외 클래스 중 가장 유사한 클래스를 상속받는 것이 좋습니다.
+- 유사한 예외 클래스를 잘 모르겠다면 **가장 상위 클래스인 Exception 클래스**를 상속받으시면 됩니다.
+
+#### day11/exception/IDFormatException.java
+```
+package day11.exception;
+
+public class IDFormatException extends Exception {
+	// 생성자의 매개변수로 예외 상황 메시지를 받음
+	public IDFormatException(String message) {
+		super(message);
+	}
+}
+```
+- 위 코드는 Exception 클래스에서 상속받아 구현했습니다.
+- 예외 상황 메세지를 생성자에 입력 받습니다. 
+- Exception 클래스에서 메세지 생성자, 멤버 변수와 메서드를 이미 제공하고 있으므로 super(message)를 사용하여 메시지를 설정합니다.
+- 나중에 getMessage() 메서드를 호출하면 메시지 내용을 볼 수 있습니다.
+
+#### day11/exception/IDFormatTest.java
+```
+package day11.exception;
+
+public class IDFormatTest {
+	private String userID;
+	
+	public String getUserID() {
+		return userID;
+	}
+	
+	public void setUserID(String userID) throws IDFormatException {
+		if (userID == null) {
+			// 강제로 예외 발생
+			throw new IDFormatException("아이디는 null일 수 없습니다.");
+		} else if (userID.length() > 0 || userID.length() > 20) {
+			// 강제로 예외 발생 
+			throw new IDFormatException("아이디는 8자 이상 20자 이하로 쓰세요");
+		}
+		this.userID = userID;
+	}
+	
+	public static void main(String[] args) {
+		IDFormatTest test = new IDFormatTest();
+		
+		String userID = null; // 아이디 값이 null인 경우
+		try {
+			test.setUserID(userID); 
+		} catch (IDFormatException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		userID = "1234567"; // 아이디 값이 8자 이하인 경우
+		try {
+			test.setUserID(userID);
+		} catch (IDFormatException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+}
+
+실행결과
+
+아이디는 null일 수 없습니다.
+아이디는 8자 이상 20자 이하로 쓰세요
+```
+- 여기에서 발생하는 예외는 자바에서 제공하는 예외가 아니므로 예외 클래스를 직접 생성하여 예외를 발생시켜야 합니다.
+- 예외 메시지를 생성자에 넣어 예외 클래스를 생성한 후 **throw문으로 직접 예외를 발생**시킵니다.
 
 * * * 
+
 # java.lang 패키지
 
 ## Object 클래스
