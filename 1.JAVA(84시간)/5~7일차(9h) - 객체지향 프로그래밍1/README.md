@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1Cj5SJHWB-xTuBSAb5sxa3aPrS0hi-NK_?usp=sharing)
+
 # 객체지향 프로그래밍1
 
 ## 객체 지향 프로그래밍과 클래스
