@@ -1,8 +1,211 @@
 # 네트워킹
 
+## InetAddress
+자바에서는 IP주소를 다루기 위한 클래스로 InetAddress를 제공하며 다음과 같은 메서드가 정의되어 있다.
+
+#### InetAddress 메서드 
+
+|메서드|설명|
+|-----|------|
+|byte[] getAddress()|IP주소를 byte배열로 반환한다.|
+|static InetAddress[]<br>getAllByName(String host)|도메인명(host)에 지정된 모든 호스트의 IP주소를 배열에 담아 반환한다.|
+|static InetAddress getByAddress(byte[] addr)|byte배열을 통해 IP주소를 얻는다.|
+|static InetAddress getBytName(String host)|도메인명(host)을 통해 IP주소를 얻는다.|
+|String getCanonicalHostName()|FQDN(fully qualified domain name)을 반환한다.|
+|String getHostAddress()|호스트의 IP주소를 반환한다.|
+|String getHostName()|호스트의 이름을 반환한다.|
+|static InetAddress getLocalHost()|지역호스트의 IP주소를 반환한다.|
+|boolean isMulticaseAddress()|IP주소가 멀티캐스트 주소인지 알려준다.|
+|boolean isLoopbackAddress()|IP주소가 loopback 주소(127.0.0.1)인지 알려준다.|
+
+#### day22/network/Ex1.java
+```
+package day22.network;
+
+import java.net.*;
+import java.util.*;
+
+public class Ex1 {
+	public static void main(String[] args) {
+		InetAddress ip = null;
+		InetAddress[] ipArr = null;
+		
+		try {
+			ip = InetAddress.getByName("www.naver.com");
+			System.out.println("getHostName() :" + ip.getHostName());
+			System.out.println("getHostAddress() :" + ip.getHostAddress());
+			System.out.println("toString() :" + ip.toString());
+			
+			byte[] ipAddr = ip.getAddress();
+			System.out.println("getAddress() :" + Arrays.toString(ipAddr));
+			
+			String result = "";
+			for(int i = 0; i < ipAddr.length; i++) {
+				result += (ipAddr[i] < 0) ? ipAddr[i] + 256 : ipAddr[i];
+				result += ".";
+			}
+			System.out.println("getAddress()+256 :" + result);
+			System.out.println();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			ip = InetAddress.getLocalHost();
+			System.out.println("getHostName() :" + ip.getHostName());
+			System.out.println("getHostAddress() :" + ip.getHostAddress());
+			System.out.println();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			ipArr = InetAddress.getAllByName("www.naver.com");
+			
+			for(int i = 0; i < ipArr.length; i++) {
+				System.out.println("ipArr[" + i + "] :" + ipArr[i]);
+			}
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+실행결과
+
+getHostName() :www.naver.com
+getHostAddress() :223.130.200.107
+toString() :www.naver.com/223.130.200.107
+getAddress() :[-33, -126, -56, 107]
+getAddress()+256 :223.130.200.107.
+
+getHostName() :DESKTOP-FJAINEU
+getHostAddress() :192.168.1.2
+
+ipArr[0] :www.naver.com/223.130.200.107
+ipArr[1] :www.naver.com/223.130.195.200
+```
+
 ## URL(Uniform Resource Location)
+- URL은 인터텟에 존재하는 여러 서버들이 제공하는 자원에 접근할 수 있는 주소를 표현하기 위한 것으로 <b>프로토콜://호스트명:포트번호/경로명/파일명?쿼리스트링#참조</b>의 형태로 이루어져 있다.
+
+> URL에서 포트번호, 쿼리스트링, 참조는 생략할 수 있다.
+```
+http://dm.n-mk.kr:80/board/list.html?referer=kim#index1
+
+프로토콜 - 자원에 접근하기 위해 서버와 통신하는데 사용되는 통신규역(http)
+호스트명 - 자원을 제공하는 서버의 이름(dm.n-mk.kr)
+포트번호 - 통신에서 사용되는 서버의 포트번호(80)
+경로명 - 접근하려는 자원이 저장된 서버상의 위치(/board/)
+파일명 - 접근하려는 자원의 이름(list.html)
+쿼리스트링(query) - URL에서 '?'이후의 부분(referer=kim)
+참조(anchor) - URL에서 '#'이후의 부분(index1)
+```
+> HTTP프로토콜에서는 80번 포트를 사용하기 때문에 URL에서 포트번호를 생략하는 경우 80번으로 간주한다. 각 프로토콜에 따라 통신에 사용하는 포트번호가 다르며 생략되면 각 프로토콜의 기본 포트가 사용된다.
+
+#### URL의 메서드
+
+|메서드|설명|
+|-----|------|
+|URL(String sepc)|지정된 문자열 정보의 URL 객체를 생성한다.|
+|URL(String protocol, String host, String file)|지정된 값으로 구성된 URL객체를 생성한다.|
+|URL(String protocol, String host, String port, String file)|지정된 값으로 구성된 URL객체를 생성한다.|
+|String getAuthority()|호스트명과 포트를 문자열로 반환한다.|
+|Object getContent()|URL의 Content객체를 반환한다.|
+|Object getCOntent(Class[] classes)|URL의  Content객체를 반환한다.|
+|Object getContent(Class[] classes)|URL의 COntent객체를 반환한다.|
+|int getDefaultPort()|URL의 기본 포트를 반환한다.|
+|String getFile()|파일명을 반환한다.|
+|String getHost()|호스트명을 반환한다.|
+|String getPath()|경로명을 반환한다.|
+|int getPort()|포트를 반환한다.|
+|String getProtocol()|프로토콜을 반환한다.|
+|String getQuery()|쿼리스트링을 반환한다.|
+|String getRef()|참조(anchor)를 반환한다.|
+|String getUserInfo()|사용자정보를 반환한다.|
+|URLConnection openConnection()|URL과 연결된 URLConnection을 얻는다.|
+|URLConnection openConnection(Proxy proxy)|URL과 연결된 URLConnection을 얻는다.|
+|InputStream openStream()|URL과 연결된 URLConnection의  InputStream을 얻는다.|
+|boolean sameFile(URL other)|두 URL이 서로 같은 것인지 알려준다.|
+|void set(String protocol, String host, int port, String authority, String userInfo, String path, String query, String ref)|URL 객체의 속성을 지정된 값으로 설정한다.|
+|String toExternalForm()|URL을 문자열로 변환하여 반환한다.|
+|URI toURI()|URL을 URI로 변환하여 반환한다.|
+ 
+#### day22/network/Ex2.java
+```
+package day22.network;
+
+import java.io.IOException;
+import java.net.*;
+
+public class Ex2 {
+	public static void main(String[] args) throws IOException, URISyntaxException {
+		URL url = new URL("http://dm.n-mk.kr:80/board/list.html?referer=kim#index1");
+		
+		System.out.println("url.getAuthority():" + url.getAuthority());
+		System.out.println("url.getContent():" + url.getContent());
+		System.out.println("url.getDefaultPort():" + url.getDefaultPort());
+		System.out.println("url.getPort():" + url.getPort());
+		System.out.println("url.getFile():" + url.getFile());
+		System.out.println("url.getHost():" + url.getHost());
+		System.out.println("url.getPath():" + url.getPath());
+		System.out.println("url.getProtocol():" + url.getProtocol());
+		System.out.println("url.getQuery():" + url.getQuery());
+		System.out.println("url.getRef():" + url.getRef());
+		System.out.println("url.getUserInfo():" + url.getUserInfo());
+		System.out.println("url.toExternalForm():" + url.toExternalForm());
+		System.out.println("url.toURI():" + url.toURI());
+	}
+}
+
+실행결과
+
+url.getAuthority():dm.n-mk.kr:80
+url.getContent():sun.net.www.protocol.http.HttpURLConnection$HttpInputStream@1efbd816
+url.getDefaultPort():80
+url.getPort():80
+url.getFile():/board/list.html?referer=kim
+url.getHost():dm.n-mk.kr
+url.getPath():/board/list.html
+url.getProtocol():http
+url.getQuery():referer=kim
+url.getRef():index1
+url.getUserInfo():null
+url.toExternalForm():http://dm.n-mk.kr:80/board/list.html?referer=kim#index1
+url.toURI():http://dm.n-mk.kr:80/board/list.html?referer=kim#index1
+```
 
 ## URLConnection 
+- URLConnection은 어플리케이션과 URL간의 통신연결을 나타내는 클래스의 최상위 클래스로 추상클래스이다. URLConnection을 상속받아 구현한 클래스로는 상위 클래스로 추상클래스이다. 
+- URLConnection을 상속받아 구현한 클래스로는 HttpURLConnection과 JarURLConnection이 있으며,
+- URL의 프로토콜이 http 프로토콜이라면 openConnection()은 HttpURLConnection을 반환한다. 
+- URLConnection을 사용해서 연결하고자 하는 자원에 접근하고 읽고 쓰기를 할 수 있다.
+
+### URLConnection의 메서드
+
+|메서드|설명|
+|-----|------|
+|void addRequestProperty(String key, String value)|지정된 키와 값을 RequestProperty에 추가한다. 기존에 같은 키가 있어도 값을 덮어 쓰지 않는다.|
+|void connect()|URL에 지정된 자원에 대한 통신연결을 연다.|
+|boolean getAllowUserInteraction()|UserInteraction의 허용여부를 반환한다.|
+|int getConnectTimeout()|연결종료시간을 천분의 일초로 반환한다.|
+|Object getContent()|Content객체를 반환한다.|
+|Object getContent(Class[] classes)|Content 객체를 반환한다.|
+|String getContentEncoding()|Content의 인코딩을 반환한다.|
+|int getContentLength()|Content의 크기를 반환한다.|
+|String getContentType()|Content의 type을 반환한다.|
+|int getDate()|헤더(header)의 date필드의 값을 반환한다.|
+|boolean getDefaultAllowUserInteraction()|defaultAllowUserInteraction의 값을 반환한다.|
+|String getDefaultRequestProperty(String key)|RequestProperty에서 지정된 키의 디폴트값을 얻는다.|
+|boolean getDefaultUserCaches()|useCache의 디폴트 값을 얻는다.|
+|boolean getDoInput()|doInput필드 값을 얻는다.|
+|boolean getDoOutput()|doOutput필드 값을 얻는다.|
+|long getExpiration()|자원(URL)의 만료일자를 얻는다.(천분의 일초단위)|
+|FileNameMap getFileNameMap()|FileNameMap(mimetable)을 반환한다.|
+|String getHeaderField(int n)|헤더의 n번째 필드를 읽어온다.|
+
+
+
 
 *** 
 # 사용자 인터페이스
