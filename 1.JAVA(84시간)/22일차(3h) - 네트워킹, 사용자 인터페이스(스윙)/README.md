@@ -203,9 +203,127 @@ url.toURI():http://dm.n-mk.kr:80/board/list.html?referer=kim#index1
 |long getExpiration()|자원(URL)의 만료일자를 얻는다.(천분의 일초단위)|
 |FileNameMap getFileNameMap()|FileNameMap(mimetable)을 반환한다.|
 |String getHeaderField(int n)|헤더의 n번째 필드를 읽어온다.|
+|String getHeaderField(String name)|헤더에서 지정된 이름의 필드를 읽어온다.|
+|long getHeaderFieldDate(String name, long default)|지정된 필드의 값을 날짜값으로 반환하여 반환한다.<br>필드 값이 유효하지 않을 경우 Default값을 반환한다.|
+|int getHeaderFieldInt(String name, int Default)|지정된 필드의 값을 정수값으로 변환하여 반환한다.<br>필드 값이 유효하지 않을 경우 Default값을 반환한다.|
+|String getHeaderFieldKey(int n)|헤더의 n번째 필드를 읽어온다.|
+|Map getHeaderFields()|헤더의 모든 필드와 값이 저장된 Map을 반환한다.|
+|long getIfModifiedSince()|ifModifiedSice(변경여부)필드 값을 반환한다.|
+|InputStream getInputStream()|URLConnection에서 InputStream을 반환한다.|
+|long getLastModified()|LastModified(최종변경일) 필드의 값을 반환한다.|
+|OutputStream getOutputStream()|URLConnection에서 OutputStream을 반환한다.|
+|Permission getPermission()|Permission(허용권한)을 반환한다.|
+|int getRemoteTimeout()|읽기제한시간의 값을 반환한다.(천분의 일초)|
+|Map getRequestProperties()|RequestProperties에 저장한(키, 값)을 Map으로 반환|
+|String getRequestProperty(String key)|RequestProperty에서 지정한 키의 값을 반환한다.|
+|URL getURL()|URLConnection의 URL을 반환한다.|
+|boolean getUseCaches()|캐쉬의 사용여부를 반환한다.|
+|String guessContentTypeFromName(String fname)|지정된 파일(fname)의 content-type을 추측하여 반환한다.|
+|String guessContentTypeFromStream(InputStream in)|지정된 입력스트림(in)의 content-type을 추측하여 반환한다.|
+|void setAllowUserInteraction(boolean allowUserInteraction)|UserInteraction의 허용여부를 설정한다.|
+|void setConnectTimeout(int timeout)|연결종료시간을 설정한다.|
+|void setContentHandlerFactory(ContentHandlerFactory fac)|ContentHandlerFactory를 설정한다.|
+|void setDefaultAllowUserInteraction(boolean defaultAlllowUserInterfaction)|UserInteraction허용여부의 기본값을 설정한다.|
+|void setDefaultRequestProperty(String key, String value)|RequestProperty의 기본 키쌍(key-pair)를 설정한다.|
+|void setDefaultUseCaches(boolean defaultUseCaches)|캐시 사용여부의 기본값을 설정한다.|
+|void setDoInput(boolean doInput)|DoInput필드의 값을 설정한다.|
+|void setDoOutput(boolean doOutput)|DoOutput필드의 값을 설정한다.|
+|void setFileNameMap(FileNameMap map)|FileNameMap을 설정한다.|
+|void setModifiedSince(long ifModifiedSince)|ModifiedSince필드의 값을 설정한다.|
+|void setReadTimeout(int timeout)|읽기제한시간을 설정한다(천분의 일초)|
+|void setRequestProperty(String key, String value)|RequestProperty에 (key, value)를 저장한다.|
+|void setUseCaches(boolean useCaches)|캐시의 사용여부를 설정한다.|
 
 
+#### day22/network/Ex3.java
+```
+package day22.network;
 
+import java.net.*;
+
+public class Ex3 {
+	public static void main(String[] args) {
+		URL url = null;
+		String address = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=105";
+		
+		try {
+			url = new URL(address);
+			URLConnection conn = url.openConnection();
+			
+			System.out.println("conn.toString():" + conn);
+			System.out.println("getAllowUserInteraction() : " + conn.getAllowUserInteraction());
+			System.out.println("getConnectTimeout():" + conn.getConnectTimeout());
+			System.out.println("getContent():" + conn.getContent());
+			System.out.println("getContentEncoding():" + conn.getContentEncoding());
+			System.out.println("getContentType() : " + conn.getContentType());
+			System.out.println("getDate() :" + conn.getDate());
+			System.out.println("getDefaultAllowUserInteraction():" + conn.getDefaultAllowUserInteraction());
+			System.out.println("getDefaultUseCaches():" + conn.getDefaultUseCaches());
+			System.out.println("getDoInput():" + conn.getDoInput());
+			System.out.println("getDoOutput():" + conn.getDoOutput());
+			System.out.println("getExpiration() : " + conn.getExpiration());
+			System.out.println("getHeaderFields():" + conn.getHeaderFields());
+			System.out.println("getIfModifiedSince():" + conn.getIfModifiedSince());
+			System.out.println("getLastModified():" + conn.getLastModified());
+			System.out.println("getReadTimeout():" + conn.getReadTimeout());
+			System.out.println("getURL():" + conn.getURL());
+			System.out.println("getUseCaches():"+conn.getUseCaches());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+실행결과
+
+conn.toString():sun.net.www.protocol.https.DelegateHttpsURLConnection:https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=105
+getAllowUserInteraction() : false
+getConnectTimeout():0
+getContent():sun.net.www.protocol.http.HttpURLConnection$HttpInputStream@489115ef
+getContentEncoding():null
+getContentType() : text/html;charset=EUC-KR
+getDate() :1652719703000
+getDefaultAllowUserInteraction():false
+getDefaultUseCaches():true
+getDoInput():true
+getDoOutput():false
+getExpiration() : 0
+getHeaderFields():{date=[Mon, 16 May 2022 16:48:23 GMT], null=[HTTP/1.1 200 200], server=[nfront], set-cookie=[JSESSIONID=382F1A174053B967FEEB02FE00033954; Path=/main; HttpOnly], expires=[Thu, 01 Jan 1970 00:00:00 GMT], transfer-encoding=[chunked], vary=[Accept-Encoding], referrer-policy=[unsafe-url], content-type=[text/html;charset=EUC-KR], cache-control=[no-cache], content-language=[ko-KR]}
+getIfModifiedSince():0
+getLastModified():0
+getReadTimeout():0
+getURL():https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=105
+getUseCaches():true
+```
+
+#### day22/network/Ex4.java
+```
+package day22.network;
+
+import java.net.*;
+import java.io.*;
+
+public class Ex4 {
+	public static void main(String[] args) {
+		URL url = null;
+		BufferedReader input = null;
+		String address = "https://www.naver.com";
+		String line = "";
+		
+		try {
+			url = new URL(address);
+			input = new BufferedReader(new InputStreamReader(url.openStream()));
+			
+			while((line=input.readLine()) != null) {
+				System.out.println(line);
+			}
+			input.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+```
 
 *** 
 # 사용자 인터페이스
