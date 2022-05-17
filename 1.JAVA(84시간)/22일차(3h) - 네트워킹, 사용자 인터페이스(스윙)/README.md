@@ -492,3 +492,43 @@ p1.add(p2);
 
 #### 스윙의 주요 컴포넌트 상속 관계
 
+![스윙5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%995.png)
+
+#### 스윙의 주요 컴포넌트 클래스
+
+|클래스|설명|
+|-----|------|
+|AbstractButton|버튼과 연관된 클래스들의 상위 추상 클래스|
+|ButtonGroup|버튼을 그룹화하기 위한 클래스|
+|ImageIcon|이미지를 아이콘으로 캡슐화하여 제공하는 클래스|
+|JButton|버튼 클래스|
+|JCheckBox|체크박스 클래스|
+|JCheckBoxMenuItem|체크 박스의 메뉴 아이템 클래스|
+|JColorChooser|컬러 선택 다이얼로그 클래스
+|JComponent|모든 스윙 컴포넌트의 최상위 클래스|
+|JLabel|레이블 클래스|
+|JList|리스트 클래스|
+|JMenu|메뉴 클래스|
+|JMenuBar|메뉴 바 클래스|
+|JMenuItem|메뉴 아이템 클래스|
+|JPanel|패널 클래스|
+|JPasswordField|패스워드 입력 클래스|
+|JPopupMenu|팝업 메뉴 클래스|
+|JProgressBar|진행 바 클래스|
+|JRadioButton|라디오 버튼 클래스|
+|JRadioButtonMenuItem|메뉴에 사용하는 라디오 버튼 클래스|
+|JScrollBar|스크롤바 클래스|
+|JScrollPane|스크롤 윈도우를 나타내는 클래스|
+|JSeparator|분리자 클래스|
+|JSlider|슬라이더 클래스|
+|JTabbedPane|그룹을 폴더 형태로 제공하는 윈도우를 나타내는 클래스|
+|JTable|테이블 클래스|
+|JTableHeader|테이블 헤더 클래스|
+|JTextArea|텍스트 에어리어 클래스|
+|JTextComponent|텍스트 관련 클래스들의 상위 클래스|
+|JTextField|텍스트 필드 클래스|
+|JToggleButton|토글 버튼 클래스|
+|JToolBar|툴바 제공 클래스|
+|JToolTip|풍선 도움말 클래스|
+|JTree|트리형태를 나타내는 클래스|
+
