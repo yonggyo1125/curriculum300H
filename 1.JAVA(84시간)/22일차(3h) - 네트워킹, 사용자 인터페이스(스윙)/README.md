@@ -374,6 +374,7 @@ public class Ex4 {
 #### JFrame의 주요 메서드
 
 |메서드|설명|
+|-----|------|
 |void add(Component c)|지정된 컴포넌트를 프레임에 추가한다.|
 |JMenuBar getJMenuBar()|지정된 JMenuBar를 구한다.|
 |void pack()|프레임에 부속된 컴포넌트들의 크기에 맞게 프레임의 크기를 조절한다.|
