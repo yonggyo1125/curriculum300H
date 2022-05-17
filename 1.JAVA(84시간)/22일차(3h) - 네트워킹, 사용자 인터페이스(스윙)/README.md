@@ -341,8 +341,12 @@ public class Ex4 {
 
 #### JComponent 클래스의 상속관계
 
+![스윙](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%991.png)
+
 
 #### 스윙 컨테이너의 상속 관계
+
+![스윙](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%992.png)
 
 
 ## 스윙 프로그램
@@ -350,6 +354,39 @@ public class Ex4 {
 - **JPanel**은 중간 컨테이너로 사용되고 **JFrame**은 최종 컨테이너로 사용됩니다.
 
 ### 프레임 : JFrame
+- 프레임은 컨테이너의 일종으로 컴포넌트를 담는 그릇 역할을 한다.
+- 프페임은 일종의 윈도우로 제목표시줄(타이틀 바)을 가지고 있으며, 애플레케이션 프로그래밍에 사용된다. 
+- 애플리케이션 프로그램은 main()메서드를 가지고 있기 때문에 main() 메서드로 부터 프로그램이 시작된다.
+- JFrame은 javax.swing 패키지를 import하여 사용한다. 다른 스윙 컴포넌트들이 JComponent를 상속받는 반면에 JFrame은 AWT의 Frame 클래스를 상속받는다.
+
+#### JFrame의 생성자
+
+|생성자|설명|
+|-----|------|
+|JFrame()|보이지 않는 JFrame을 생성한다.|
+|JFrame(String title)|타이틀을 지정한 보이지 않는 JFrame을 생성한다.|
+
+- 프레임은 기본적으로 보이지 않는 프레임을 생성한다.
+- 프레임을 화면에 표시하고자 할때는 크기와 화면 표시여부를 지정해 주어야 한다.
+- setSize(int width, int height)  : 프레임크기 지정
+- setVisible(boolean value) :  화면 표시 여부 지정 
+
+#### JFrame의 주요 메서드
+
+|메서드|설명|
+|void add(Component c)|지정된 컴포넌트를 프레임에 추가한다.|
+|JMenuBar getJMenuBar()|지정된 JMenuBar를 구한다.|
+|void pack()|프레임에 부속된 컴포넌트들의 크기에 맞게 프레임의 크기를 조절한다.|
+|void remove(Component c)|프레임에 지정된 컴포넌트를 제거한다.|
+|void setDefaultCloseOperation(int operation)|사용자가 JFrame을 닫을 때 기본적으로 어떤 작업을 할지 정한다.  operation은 하기 표 참조|
+|void setIconImage(Icon image)|프레임이 최소화 되었을 떄의 아이콘을 지정한다.|
+|void setLayout(LayoutManager layout)|배치관리자를 지정한다(디폴트는 BoarderLayout 배치관리자이다.)|
+|void setLocation(int x, int y)|프레임의 x좌표, y좌표를 지정한다.|
+|void setResizable(boolean value)|프레임의 크기 변경 허용 여부를 지정한다.|
+|void setSize(int width, int height)|프레임의 크기를 설정한다.|
+|void setJMenuBar(JMenubar menubar)|현재 프레임에 메뉴바를 붙인다.|
+
+
 
 
 ## 스윙 컴포넌트
