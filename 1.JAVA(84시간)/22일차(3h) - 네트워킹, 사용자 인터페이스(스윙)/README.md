@@ -429,8 +429,42 @@ public class JFrameEx extends JFrame {
 
 ```
 - 실행결과
+
 ![스윙3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%993.png)
 
+
+### 패널 : JPanel
+- JPanel은 JFrame과 같은 최종 컨테이터에 장착하기 위한 중간 컨테이너로 사용한다.
+- JPanel은 경량화된 패널로 JComponent로 부터 상속을 받는다. 
+- 자바에서는 컴포넌트를 컨터이너에 추가하여 나타낸다고 하였다. 화면이 복잡한 형태인 경우에는 그룹별로 묶어서 표현할 수가 있는데, 이러한 경우에는 중간 컨테이너인 JPanel을 사용하여 묶어서 최종 컨테이너인 JFrame에 추가한다.
+- 또한 컴포넌트들을 여러가지 형태로 부착할 수 있는데, 이러한 경우에는 레이아웃 매니저를 사용하여 처리한다.
+
+#### JPanel의 생성자
+
+|생성자|설명|
+|-----|------|
+|JPanel()|레이아웃 매니저가 FlowLayout인 JPanel을 생성한다.|
+|JPanel(LayoutManager layout)|레이아웃 매니저가 layout인 JPanel을 생성한다.|
+
+#### JPanel의 주요 메서드
+
+|메서드|설명|
+|-----|------|
+|void add(Component c)|지정된 컴포넌트를 패널에 추가한다.|
+|void remove(Component c)|패널에 지정된 컴포넌트를 제거한다.|
+|void setLayout(LayoutManager layout)|배치관리자를 지정한다(디폴트는 FlowLayout 배치관리자이다.)|
+|void setLocation(int x, int y)|패널의 x좌표, y좌표를 지정한다.|
+|void setSize(int width, int height)|패널의 크기를 설정한다.|
+|void setToolTipText(String text)|패널의 빈곳에 마우스를 올려놓으면 툴팁을 표시한다.|
+
+```
+JPanel p1 = new JPanel();
+JPanel p2 = new JPanel();
+p2.add(new JButton("버튼 1"));
+p2.add(new JButton("버튼 2"));
+p2.add(new JButton("버튼 3"));
+p1.add(p2);
+```
 
 
 ## 스윙 컴포넌트
