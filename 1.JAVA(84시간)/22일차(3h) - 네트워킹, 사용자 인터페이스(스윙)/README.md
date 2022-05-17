@@ -469,8 +469,26 @@ p1.add(p2);
 ![스윙4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%994.png)
 
 
-
 ## 스윙 컴포넌트
+- 스윙과 관련된 컴포넌트들은 javax.swing 패키지에 포함되어 있다.
+- 이 컴포넌트를 사용하려면 javax.swing 패키지를 import 하여야 한다. 
+- 스윙 패키지에서 중요한 역할을 하는 클래스는 javax.swing.JComponent 클래스이며, 스윙의 대부분의 컴포넌트들은 JComponent클래스의 하위클래스이다.
 
+#### 스윙 패키지
 
+|스윙패키지|설명|
+|-----|------|
+|javax.swing|대부분의 스윙 컴포넌트들이 포함되어 있으며, 가장 기본적인 패키지이다.|
+|javax.swing.border|다양한 테두리선의 사용을 위한 패키지이다.|
+|javax.colorchooser|JColorChooser 컴포넌트의 색을 선택하기 위한 패키지이다.|
+|javax.swing.event|이벤트 처리를 위한 패키지이다.|
+|javax.swing.filechooser|JFileChooser 컴포넌트의 파일을 선택하기 위한 패키지이다.|
+|javax.swing.table|JTable 컴포넌트를 지원하는 패키지이다.|
+|javax.swing.tree|JTree 컴포넌트를 지원하는 패키지이다.|
+
+- 스윙에서 제공되는 컴포넌트는 기존의 AWT 컴포넌트에 대응되는 컴포넌트들과 새롭게 추가된 컴포넌트들로 구성된다.
+- 기존의 AWT 컴포넌트에 대응되는 클래스들은 AWT 컴포넌트의 클래스 이름 앞에 J를 붙인 이름을 가진다. 
+- 스윙 컴포넌트는 AWT에 비해 보다 다양한 형태의 GUI를 제공한다.
+
+#### 스윙의 주요 컴포넌트 상속 관계
 
