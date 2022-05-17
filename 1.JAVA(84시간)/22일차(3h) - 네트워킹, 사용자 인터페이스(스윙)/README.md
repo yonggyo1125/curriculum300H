@@ -387,6 +387,47 @@ public class Ex4 {
 |void setSize(int width, int height)|프레임의 크기를 설정한다.|
 |void setJMenuBar(JMenubar menubar)|현재 프레임에 메뉴바를 붙인다.|
 
+#### setDefaultCloseOperation(int operation) 메서드의 operation 값
+
+|상수값|설명|
+|-----|------|
+|EXIT_ON_CLOSE|닫기 단추를 누르면 창을 화면에서 사라지게 하고, 메모리에도 제거된다.|
+|DO_NOTHING_ON_CLOSE|닫기 단추를 비활성화 시킨다. 이 상수는 JFrame에서 제공하는 적업을 하지 않고 등록된 WindowListener의 windowClosing()메서드에서 원하는 작업을 하고 싶을 때 사용한다.|
+|HIDE_ON_CLOSE|등록된 WindowListener의 메서드를 호출하기 전에 자동적으로 JFrame을 닫는다. 화면에서 창을 숨겨준다.|
+|DISPOSE_ON_CLOSE|닫기 단추를 누르면 창을 화면에서 사라지게 하고, 메모리에는 제거되지 않는다.|
+
+- 자바의 스윙 프레임(JFrame)은 닫기 단추가 활성화되어 있지 않기 때문에 프로그래밍 시에 닫기 단추를 활성화해야 한다. 
+- 프레임 닫기 단추를 활성화하기 위해서는 이벤트 처리 루틴을 사용하거나 setDefaultCloseOperation(EXIT_ON_CLOSE) 메서드를 사용한다.
+
+
+#### 스윙프로그램에서 JFrame 클래스를 사용하여 윈도우를 표시하는 순서 
+1. javax.swing 패키지를 import 한다.
+2. JFrame 클래스의 인스턴스(객체)를 생성한다.
+3. setSize() 메서드로 윈도우 크기를 지정한다.
+4. setVisible() 메서드로 윈도우를 가시상태(눈에 보이도록) 설정한다.
+
+#### day22/gui/JFrameEx.java
+```
+package day22.gui;
+
+import java.awt.*;
+import javax.swing.*;
+
+public class JFrameEx extends JFrame {
+	JFrameEx() {
+		super("JFrame");
+		setSize(300, 200);
+		setLocation(300, 300);
+		setVisible(true);
+	}
+	
+	public static void main(String[] args) {
+		JFrameEx jfe = new JFrameEx();
+		jfe.setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+}
+
+```
 
 
 
