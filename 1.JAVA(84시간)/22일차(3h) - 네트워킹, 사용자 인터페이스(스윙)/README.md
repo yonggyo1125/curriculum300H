@@ -532,3 +532,117 @@ p1.add(p2);
 |JToolTip|풍선 도움말 클래스|
 |JTree|트리형태를 나타내는 클래스|
 
+- 스윙 컴포넌트들을 배치할 JFrame 컨테이너에 컴포넌트를 추가하기 위해서는 Container 클래스의 add() 메서드를 사용한다. add() 메서드의 형식은 다음과 같다.
+```
+void add(Component c)
+```
+
+### JLabel
+- JLabel 클래스는 정보 또는 텍스트를 위한 레이블을 생성한다. 
+- JLabel 클래스는 문자열이나 아이콘을 사용하여 객체를 생성한다.
+
+#### JLabel 클래스와 생성자
+
+|생성자|설명|
+|-----|------|
+|JLabel()|text와 이미지를 사용하지 않는 JLabel을 생성한다.|
+|JLabel(Icon image)|image를 Icon으로 사용하는 JLabel을 생성한다.|
+|JLabel(Icon image, int horizontalAlignment)|image를 Icon으로 사용하고, horizontalAlignment의 값에 따라 정렬하는 JLabel을 생성한다.|
+|JLabel(String text)|text를 사용하는 JLabel을 생성한다.|
+|JLabel(String text, Icon icon, int horizontalAlignment)|text와 icon을 사용하고, horizontalAlignment의 값에 따라 정렬하는 JLabel을 생성한다.|
+|JLabel(String text, int horizontalAlignment)|text를 사용하고, horizontalAlignment의 값에 따라 정렬하는 JLabel을 생성한다.|
+
+- horizointalAlignment에는 다음과 같은 값을 가진다.
+```
+SwingConstants.CENTER - 가운데로 정렬한다.
+SwingConstants.LEFT - 왼쪽으로 정렬한다.
+SwingConstants.RIGHT - 오른쪽으로 정렬한다.
+```
+
+### JTextField 
+JTextField 클래스는 한 줄의 문자열을 입력할 수 있는 컴포넌트이다.
+
+#### JTextField 클래스의 생성자
+
+|생성자|설명|
+|-----|------|
+|JTextField()|초기 문자열이 null이고 길이가 0인 텍스트 필드를 생성한다.|
+|JTextField(String text)|초기 문자열이 text이고 길이가 0인 텍스트 필드를 생성한다.|
+|JTextField(int column)|초기 문자령리 null이고 길이가 columns인 텍스트 필드를 생성한다.|
+|JTextField(String text, int columns)|초기 문자열이 text이고 길이가 columns인 텍스트 필드를 생성한다.|
+
+#### JTextField 클래스의 주요 메서드
+
+|메서드|설명|
+|-----|------|
+|String getText()|텍스트 필드에 입력된 문자열을 구한다.|
+|void setText(String text)|지정된 문자열을 텍스트 필드에 쓴다.|
+|void setEditable(boolean)|텍스트를 입력할 수 있는지 없는지 설정한다.|
+|boolean isEditable()|텍스트를 입력할 수 있는지 없는지 반환한다.|
+
+### TextArea
+- JTextArea 클래스는 여러 줄의 문자열을 입력할 수 있는 컴포넌트이다. 
+- JTextArea는 창의 크기보다 많은 문자열을 입력하더라도 자동으로 스크롤바가 생기지 않는다.
+- 따라서 스크롤바의 기능을 사용하기 위해서는 JScrollPane 클래스를 사용해서 표시해야 한다. 
+
+#### JTextArea 클래스의 생성자
+
+|생성자|설명|
+|-----|------|
+|JTextArea()|초기 문자열이 null이고 행과 열이 각각 0인 텍스트에어리어를 생성한다.|
+|JTextArea(String text)|초기 문자열이 text이고 행과 열이 각각 0인 텍스트에어리어를 생성한다.|
+|JTextArea(int rows, int columns)|초기 문자열이 null이고 행이 rows이고 열이 columns인 텍스트에어리어를 생성한다.|
+|JTextArea(String text, int rows, int columns)|초기 문자열이 text이고 행이 rows이고 열이 columns인 텍스트에어리어를 생성한다.|
+
+#### JPasswordFIeld 
+- JPasswordField  클래스는 비밀번호와 같이 입력받은 글자를 보여주지 않아야 할 때 사용하는 컴포넌트이다.
+
+|생성자|설명|
+|-----|------|
+|JPasswordField()|JPasswordFIeld를 생성한다.|
+|JPasswordField(String text)|초기 문자열이 text인 패스워드인 필드를 생성한다.|
+|JPasswordFIeld(int columns)|열의 수(길이)가 columns인 패스워드 필드를 생성한다.|
+|JPasswordField(String text, int columns)|초기 문자열이 text이고, 열의 수가 columns인 패스워드 필드를 생성한다.|
+
+#### day22/gui/JLabelText.java
+```
+package day22.gui;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class JLabelText extends JFrame {
+	JTextField tf;
+	JTextArea ta;
+	JPasswordField pf;
+	
+	JLabelText() {
+		super("JLabelText");
+		setLayout(new FlowLayout());
+		setSize(300, 200);
+		setLocation(300, 300);
+		setVisible(true);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		JLabel lb1 = new JLabel("이름");
+		JLabel lb2 = new JLabel("주소");
+		JLabel lb3 = new JLabel("비밀");
+		
+		tf = new JTextField(20);
+		ta = new JTextArea(7, 20);
+		pf = new JPasswordField(20);
+		
+		add(lb1);
+		add(tf);
+		add(lb2);
+		add(ta);
+		add(lb3);
+		add(pf);
+	}
+	
+	public static void main(String[] args) {
+		JLabelText jlt = new JLabelText();
+	}
+}
+```
+- 실행결과
