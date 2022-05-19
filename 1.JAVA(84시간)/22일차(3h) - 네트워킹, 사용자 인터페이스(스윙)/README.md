@@ -830,3 +830,33 @@ public class JCheckBoxButton extends JFrame {
 
 ![스윙8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%998.png)
 
+### JComboBox
+
+- JComboBox 클래스는 텍스트 필드와 풀다운 리스트를 조합한 형태의 콤보 박스의 기능을 제공한다. 콩보 박스는 텍스트 필드에 하나의 항목만 나타내지만, 마우스로 항목을 선택하면 풀다운 형태의 리스트를 제공한다.
+
+#### JComboBox 클래스의 생성자
+
+|생성자|설명|
+|-----|------|
+|JComboBox()|아이템이 없는 콤보박스를 생성한다.|
+|JComboBox(Vector items)|특정한 Vector로 부터 아이템을 취하는(콤보 박스를 초기화시키는) 콤보박스를 생성한다.|
+|JComboBox(Object[] items)|배열 items로부터 아이템을 취하는 콤보박스를 생성한다.|
+
+
+#### JComboBox 메서드
+
+|메서드|설명|
+|-----|------|
+|void setSelectedItem(Object anObject)|anObject가 리스트에 있으면 그 아이템을 선택하고 없으면 리스트의 첫 번째 아이템을 선택한다.|
+|Object getSelectedItem()|선택된 아이템을 구한다.|
+|void setSelectedIndex(int anIndex)|anIndex에 위치한 아이템을 선택한다.|
+|int getSelectedIndex()|선택된 아이템의 인덱스를 구한다. 선택된 아이템이 없거나 사용자가 필드에 리스트에 없는 값을 입력했을 경우 -1을 리턴한다.|
+|void addItem(Object anObject)|콤보박스의 아이템 리스트에 항목인 anObject를 추가한다. 이 메서드는 JComboBox가 기본 데이터 모델을 사용할 때에만 작동한다.|
+|void InsertItemAt(Object anObject, int index)|주어진 인덱스에 아이템을 삽입한다. 이 메소드는 JComboBox가 기본 데이터 모델을 사용할 때에만 작동한다.|
+|void removeItem(Object anObject)|아이템 리스트에서 아이템을 삭제한다. 이 메소드는 JComboBox가 기본 데이터 모델을 사용할 때에만 작동한다.|
+|void removeItem(int anIndex)|anIndex에 위치한 아이템을 삭제한다. 이 메모스든 JCheckBox가 기본 데이터 모델을 사용할 때에만 작동한다.|
+|void removeAllItems()|모든 아이템을 삭제한다. 이 메서드는 JComboBox가 기본 데이터 모델을 사용할 때에만 작동한다.|
+
+
+
+
