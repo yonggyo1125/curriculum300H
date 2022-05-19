@@ -679,3 +679,43 @@ public class JLabelText extends JFrame {
 |JButton(Icon icon)|아이콘을 가진 버튼을 생성한다.|
 |JButton(String text)|문자열 기반인 text를 가진 버튼을 생성한다.|
 |JButton(String text, Icon icon)|문자열인 text와 아이콘을 가진 버튼을 생성한다.|
+
+#### JButton 클래스의 메서드
+
+|메서드|설명|
+|-----|------|
+|boolean isDefaultButton()|이 버튼이 RootPane의 기본 버튼인지 알아낸다.|
+|boolean isDefaultCapable()|이 버튼이 RootPane의 기본 버튼이 될 수 있는지 알아낸다.|
+|void setDefaultCapable(boolean defaultCapable)|이 버튼이 RootPane의 기본 버튼이 될 수 있는지의 여부를 정한다.|
+
+
+#### day22/gui/JButtonTest.java
+```
+package day22.gui;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class JButtonTest extends JFrame {
+	JButton jbtn1, jbtn2, jbtn3;
+	JButtonTest() {
+		super("버튼(JButton) 추가");
+		setLayout(new FlowLayout());
+		
+		jbtn1 = new JButton("입력");
+		add(jbtn1);
+		jbtn2 = new JButton("추가");
+		add(jbtn2);
+		jbtn3 = new JButton("삭제");
+		add(jbtn3);
+		
+		setSize(300, 200);
+		setVisible(true);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+	
+	public static void main(String[] args) {
+		new JButtonTest();
+	}
+}
+```
