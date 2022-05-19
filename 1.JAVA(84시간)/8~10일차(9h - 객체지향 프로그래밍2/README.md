@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1ktyhtPM4LtoYLEbLz3C5GKR0GZL3cBud?usp=sharing)
+
 # 상속과 다형성
 
 ## 상속이란?
