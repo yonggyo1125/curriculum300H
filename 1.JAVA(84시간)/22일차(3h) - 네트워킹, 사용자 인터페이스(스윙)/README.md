@@ -719,3 +719,111 @@ public class JButtonTest extends JFrame {
 	}
 }
 ```
+
+![스윙7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%997.png)
+
+
+### JCheckBoxs
+- JCheckBox 클래스는 체크 박스 기능을 제공하며, AbstractButton 클래스로부터 상속받는다. 
+
+#### JCheckBox 클래스의 생성자
+
+|생성자|설명|
+|-----|------|
+|JCheckBox()|글자와 아이콘을 사용하지 않고, 선택되지 않은 상태의 JCheckBox를 생성한다.|
+|JCheckBox(Icon icon)|아이콘을 사용하고, 선택되지 않은 상태의 JCheckBox를 생성한다.|
+|JCheckBox(Icon icon, boolean selected)|아이콘을 사용하는 JCheckBox를 생성한다. selected가 true이면 체크박스가 선택된 상태로 나나나며, false이면 선택되지 않은 상태로 나타난다.|
+|JCheckBox(String text)|글자를 사용하는 선택되지 않은 상태의 JCheckBox를 생성한다.|
+|JCheckBox(String text, boolean selected)|글자와 아이콘을 사용하는 선택되지 않은 상태의 JCheckBox를 생성한다.|
+|JCheckBox(String text, Icon icon, boolean selected)|글자와 아이콘을 사용하는 JCheckBox를 생성한다. selected가 true이면 체크박스가 선택된 상태로 나타나며, false이면 선택되지 않은 상태로 나타난다.|
+
+- 체크 박스의 상태는 다음의 메서드를 이용하여 설정할 수가 있으며, selected를 true로 설정하면 체크 박스가 선택된 상태로 나타난다.
+```
+void setSelected(boolean selected)
+```
+### JRadioButton
+- JRadioButton 클래스는 라디오 버튼 기능을 제공하며, AbstractButton 클래스로부터 상속받는다. 
+
+#### JRadioButton 클래스의 생성자
+
+|생성자|설명|
+|-----|------|
+|JRadioButton()|글자가 없고 선택되지 않은 상태의 JRadioButton을 생성한다.|
+|JRadioButton(Icon icon)|아이콘을 사용하고 선택되지 않은 상태의 JRadioButton을 생성한다.|
+|JRadioButton(Icon icon, boolean selected)|아이콘을 사용하는 JRadioButton을 생성한다. selected가 true이면 체크박스가 선택된 상태로 나타나며, false이면 선택되지 않은 상태로 나타난다.|
+|JRadioButton(String text)|글자를 사용하는 선택되지 않은 상태의 JRadioButton을 생성한다.|
+|JRadioButton(String text, boolean selected)|글자를 사용하는 JRadioButton을 생성한다. selected가 true이면 체크박스가 선택된 상태로 나타나며, false이면 선택되지 않은 상태로 나타난다.|
+|JRadioButton(String text, Icon icon)|글자의 아이콘을 사용하는 선택되지 않은 상태의  JRadioButton을 생성한다.|
+|JRadioButton(String text, Icon icon, boolean selected)|글자와 아이콘을 사용하는 JRadioButton을 생성한다. selected가 true이면 체크박스가 선택된 상태로 나타나며, false이면 선택되지 않은 상태로 나타난다.|
+
+- 여러개의 라디오 버튼은 ButtonGroup을 사용하여 하나의(논리적) 그룹으로 묶을 수가 있다. 그룹으로 묶으면 여러 개의 라디오 버튼에서 하나만이 선택되어진다. 라디오 버튼을 그룹으로 묶으면 ButtonGroup 클래스에서 제공하는 add()메서드를 사용한다. 
+
+```
+void add(AbstractButton ab)
+```
+
+#### day22/gui/JCheckBoxButton.java
+```
+package day22.gui;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class JCheckBoxButton extends JFrame {
+	JCheckBox jcb1, jcb2, jcb3;
+	JRadioButton jrb1, jrb2, jrb3, jrb4, jrb5;
+	JPanel jp1, jp2, jp3;
+	
+	JCheckBoxButton() {
+		super("체크박스와 라디오 버튼 만들기");
+		
+		// 체크 박스 등록 
+		jp1 = new JPanel();
+		jcb1 = new JCheckBox("음악감상", true);
+		jcb2 = new JCheckBox("등산", true);
+		jcb3 = new JCheckBox("조깅", false);
+		jp1.add(jcb1);
+		jp1.add(jcb2);
+		jp1.add(jcb3);
+		
+		add(jp1, "North");
+		
+		// 결혼여부 라디오 버튼 등록
+		jp2 = new JPanel();
+		jrb1 = new JRadioButton("결혼", true);
+		jrb2 = new JRadioButton("미혼", false);
+		ButtonGroup bg1 = new ButtonGroup();
+		bg1.add(jrb1);
+		bg1.add(jrb2);
+		
+		jp2.add(jrb1);
+		jp2.add(jrb2);
+		add(jp2, "Center");
+		
+		// 주거형 라디오 버튼 등록
+		jp3 = new JPanel();
+		jrb3 = new JRadioButton("자가", true);
+		jrb4 = new JRadioButton("전세", false);
+		jrb5 = new JRadioButton("월세", false);
+		
+		ButtonGroup bg2 = new ButtonGroup();
+		bg2.add(jrb3); 
+		bg2.add(jrb4);
+		bg2.add(jrb5);
+		
+		jp3.add(jrb3);
+		jp3.add(jrb4);
+		jp3.add(jrb5);
+		add(jp3, "South");
+		
+		setSize(300, 200);
+		setVisible(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	public static void main(String[] args) {
+		new JCheckBoxButton();
+	}
+}
+```
+- 실행결과
