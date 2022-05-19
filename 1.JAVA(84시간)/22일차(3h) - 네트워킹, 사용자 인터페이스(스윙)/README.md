@@ -648,3 +648,34 @@ public class JLabelText extends JFrame {
 - 실행결과
 
 ![스윙6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%996.png)
+
+### 버튼(Button)
+- AbstractButton 클래스는 JButton, JToggleButton, JCheckBox, JRadioButton 클래스의 공통적인 것들을 정의한 추상 클래스이다.
+- 이 4개의 클래스인 스윙 버튼들은 AbstractButton 클래스의 서브클래스로 정의되어 있다. 
+- 스윙의 버튼들은 아이콘을 버튼화하여 사용할 수 있는 방법 등 AWT에서 제공하지 않는 다양한 기능들을 제공한다.
+
+
+#### AbstractButton클래스의 주요 메서드
+
+|메서드|설명|
+|-----|------|
+|void doClick()|버튼을 누른 것처럼 이벤트를 발생시킨다.|
+|void getText()|버튼의 글자를 구한다(반환한다).|
+|void setBounderPainted(boolean value)|버튼의 경계를 나타내거나 감춘다.|
+|void setContentAreaFilled(boolean value)|버튼의 배경을 채울 것인지를 지정한다.|
+|void setEnabled(boolean value)|버튼을 활성화나 비활성화 한다.|
+|void setVisible(boolean value)|버튼을 버이게 하거나 감추게 한다.|
+
+
+### JButton
+- JButton은 클릭 기능을 제공한다.
+- JButton클래스는 문자열 또는 아이콘을 사용하여 버튼을 생성할 수가 있으며, AbstractButton 클래스로부터 상속받는다.|
+
+#### JButton 클래스의 생성자
+
+|생성자|설명|
+|-----|------|
+|JButton()|text와 아이콘을 사용하지 않는 버튼을 생성한다.|
+|JButton(Icon icon)|아이콘을 가진 버튼을 생성한다.|
+|JButton(String text)|문자열 기반인 text를 가진 버튼을 생성한다.|
+|JButton(String text, Icon icon)|문자열인 text와 아이콘을 가진 버튼을 생성한다.|
