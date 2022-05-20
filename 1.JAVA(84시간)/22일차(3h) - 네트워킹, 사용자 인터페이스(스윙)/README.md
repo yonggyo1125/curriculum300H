@@ -896,3 +896,105 @@ public class JComboBoxTest extends JFrame {
 ```
 - 실행결과
 
+![스윙9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%999.png)
+
+### JScollPane
+- JScollPane 클래스는 스크롤바의 기능을 제공한다.
+- 보편적으로 JScrollPane 클래스는 패널(JPanel) 클래스에 스크롤바를 설정하는데 사용된다.
+- 필요에 따라 패널에 수평이나 수직 스크롤바를 설정한다.
+
+#### JScrollPane 클래스의 생성자
+
+|생성자|설명|
+|-----|------|
+|JScrollPane()|수직, 수평 스크롤바가 필요할 때 표시되는 스크롤판을 생성한다.|
+|JScollPane(Component view)|스크롤바가 추가될 컴포넌트 view에 스크롤판을 생성한다.|
+|JScrollPane(Component view, int vsb, in hsb)|스크롤바가 추가될 컴포넌트 view에 스크롤판을 생성한다. 수직(vsb), 수평(hsb) 스크롤바를 설정하기 위한 상수가 올수 있다.|
+|JScrollPane(int vsb, int hsb)|vsb와 hsb의 값에 따라 수직, 수평 스크롤바를 표시하는 스크롤판을 생성한다.|
+
+#### vsb와 hsb의 상수 값
+
+<table>
+<thead>
+	<tr>
+		<th>구분</th>
+		<th>상수</th>
+		<th>설명</th>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<td rowspan='3'>vsb(수직)</td>
+		<td>VERTICAL_SCROLLBAR_ALWAYS</td>
+		<td>항상 수직 스크롤바를 표시한다.</td>
+	</tr>
+	<tr>
+		<td>VERTICAL_SCROLLBAR_AS_NEEDED</td>
+		<td>필요한 때만 수직 스크롤바를 표시한다.|
+	</tr>
+	<tr>
+		<td>VERTICAL_SCROLLBAR_NEVER</td>
+		<td>수직 스크롤바를 표기하지 않는다.</td>
+	</tr>
+	<tr>
+		<td rowspan='3'>hsb(수평)</td>
+		<td>HORIZONTAL_SCROLLBAR_ALWAYS</td>
+		<td>항상 수평 스크롤바를 표시한다.</td>
+	</tr>
+	<tr>
+		<td>HORIZONTAL_SCROLLBAR_AS_NEEDED</td>
+		<td>필요할 때만 수평 스크롤바를 표시한다.</td>
+	</tr>
+	<tr>
+		<td>HORIZONTAL_SCROLLBAR_NEVER</td>
+		<td>수평 스크롤바를 표시하지 않는다.</td>
+	</tr>
+</tbody>
+</table>
+
+
+#### day22/gui/JScrollPaneTest.java
+```
+package day22.gui;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class JScrollPaneTest extends JFrame {
+	JPanel jp;
+	
+	JScrollPaneTest() {
+		super("JScrollPane Test");
+		setSize(300, 300);
+		setLayout(new BorderLayout());
+		setLocation(300, 300);
+		setVisible(true);
+		
+		jp = new JPanel();
+		jp.setLayout(new GridLayout(10, 5));
+		int cnt = 1;
+		for (int i = 1; i <= 10; i++) {
+			for (int j = 1; j <= 5; j++) {
+				jp.add(new JButton("버튼" + cnt));
+				cnt++;
+			}
+		}
+		
+		// 수직, 수평 스크롤바를 설정하기 위한 상수를 얻음
+		int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
+		int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS;
+		JScrollPane  js = new JScrollPane(jp, v, h);
+		add(js, BorderLayout.CENTER);
+		
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+	}
+	
+	public static void main(String[] args) {
+		new JScrollPaneTest();
+		
+	}
+}
+```
+
+- 실행결과
