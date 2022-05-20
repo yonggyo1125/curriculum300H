@@ -1000,3 +1000,10 @@ public class JScrollPaneTest extends JFrame {
 - 실행결과
 
 ![스윙](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%9910.png)
+
+
+### JTable
+- JTable 클래스는 데이터를 테이블 형태인 행과 열로 나타내고자 할 때 사용한다.
+- JTable 클래스로 나타낸 테이블에서 행은 마우스를 이용하여 경계선을 조정하고 위치를 바꿀 수 있다.
+
+#### JTable 클래스와 생성자 
