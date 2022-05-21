@@ -1056,3 +1056,8 @@ public class JTableTest extends JFrame {
 ### 메뉴 - JMenuBar, JMenu, JMenuItem
 - 스윙에서 메뉴 관련 클래스는 JMenuBar, JMenu, JMenuItem, JCheckBoxMenuItem, JRadioButtonMenuItem이 있다.
 - 메뉴는 setJMenuBar() 메서드를 제공하는 컨테이너의 객체에만 사용할 수 있다. 이러한 컨테이너는 최종 컨테이너로 사용되는 JFrame 컨테이너만 가능하다.
+
+#### 메뉴의 구조
+
+![스윙12](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%9912.png)
+
