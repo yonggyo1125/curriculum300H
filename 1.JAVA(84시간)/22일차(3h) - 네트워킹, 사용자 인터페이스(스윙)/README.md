@@ -1316,3 +1316,65 @@ class fTable extends JPanel {
 
 ![스윙15](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%9915.png)
 
+
+## 스윙 레이아웃
+- 레이아웃 매니저(배치 관리자)는 AWT에서 제공하는 레이아웃 외에 스윙에서 5가지의 레이아웃을 추가적으로 제공하고 있다.
+- AWT 레이아웃은 BorderLayout, FlowLayout, GridLayout, GridBagLayout, CardLayout이 있다.
+- 스윙 레이아웃에는 ScrollPaneLayout, ViewPortLayout, BoxLayout, OverlayLayout, SpringLayout이 있다. 
+- 스윙의 레이아웃 중에서 ScrollPaneLayout, ViewportLayout은 실제로 사용하지 않고 컴포넌트 내부에서 사용하며, 나머지 3개의 레이아웃인 BoxLayout, OverLayLayout, SpringLayout은 AWT에서 제공하는 레이아웃과 같은 방법으로 사용한다.
+
+### 레이아웃 매니저의 사용법 
+- 필요한 배치를 지원하는 레이아웃 매니저 클래스 객체를 생성한다.
+```
+FlowLayout flayout = new FlowLayout(); // 플로우 레이아웃인 경우 
+BorderLayout blayout = new BorderLayout(); // 보더 레이아웃인 경우
+```
+
+- 생성된 레이아웃 매니저 클래스 객체를 setLayout() 메서드를 이용하여 컨테이너에 설정한다.
+```
+setLayout(flayout);
+```
+
+- add() 메서드를 이용하여 추가하는 컴포넌트는 설정된 레이아웃 매니저에 의하여 자동으로 배치가 일어난다.
+```
+add(new JButton("첫번째"));
+```
+
+
+### FlowLayout
+- 플로우 레이아웃은 컨테이너에 컴포넌틀를 가운데 정렬하며 왼쪽에서 오른쪽으로 한 줄로 늘어놓는 배치 기능을 한다. 
+- 컴포넌트를 한 줄에 배치하지 못하고 남으면 자연스럽게 다름줄에 추가하여 배치된다.
+
+
+#### day22/gui/FlowLayoutTest.java
+```
+package day22.gui;
+
+import java.awt.*;
+import javax.swing.*;
+
+public class FlowLayoutTest extends JFrame {
+	public FlowLayoutTest() {
+		super("FlowLayout");
+		
+		// FlowLayout 매니저 생성
+		FlowLayout flayout = new FlowLayout();
+		
+		// 컨테이너에 설정 
+		setLayout(flayout);
+		
+		add(new JButton("첫번째"));
+		add(new JButton("두번째"));
+		
+		setSize(300, 200);
+		setVisible(true);
+	}
+	
+	public static void main(String[] args) {
+		FlowLayoutTest flt = new FlowLayoutTest();
+		flt.setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+}
+```
+
+- 실행결과
