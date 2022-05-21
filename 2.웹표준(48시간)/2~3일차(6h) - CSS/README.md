@@ -425,25 +425,25 @@ padding: 10px 5px 15px 6px;
 </style>
 ```
 
-### 그래픽
-#### background
+## 그래픽
+### background
 - 배경색 또는 배경 이미지를 지정하는 속성 입니다.
 
-#### background-color 
+### background-color 
 - 요소의 배경색상을 지정합니다.
 ```
 예)
 body { background-color: blue; }
 ```
 
-#### background-image 
+### background-image 
 - 배경을 이미지로 채우게 됩니다. 이미지 경로를 설정하면 좌우, 상하 반복(repeat-x, repeat-y) 속성이 기본적으로 적용되므로 요소를 가득 채우게 됩니다.
 ```
 예)
 body { background-image: url(”img/photo.jpg”); }
 ```
 
-#### background-repeat
+### background-repeat
 - 배경이미지의 반복 속성을 지정합니다.
 - no-repeat 반복 없음 
 - repeat-x - 좌우 방향으로 반복
@@ -457,7 +457,7 @@ body {
 }
 ```
 
-#### background-attachment
+### background-attachment
 - 배경이미지를 스크롤할지 고정할지 여부를 지정
 - fixed - 고정
 - scroll - 스크롤 
@@ -471,7 +471,7 @@ body {
 }
 ```
 
-#### background-position
+### background-position
 - 배경이지미의 위치를 지정할 수 있습니다. 
 - background-position: 좌중우(left|right|center) 상중하(top|bottom|center);
 - background-position: 100px 100px; (좌측에서 100px 이동, 위에서 아래로 100px 이동)
@@ -485,7 +485,7 @@ body {
 }
 ```
 
-#### background 단축형 
+### background 단축형 
 - background: 색상 이미지 반복여부 스크롤여부 위치
 
 ```
@@ -495,7 +495,7 @@ body {
 }
 ```
 
-#### overflow 
+## overflow 
 - 요소 안에 있는 컨텐츠의 크기가 영역에 비해 클 경우 통제하는 속성
 
 - visible - 기본속성이며, 컨텐츠 영역이 상위 영역에 비해 클 경우 영역 밖에 겹쳐지게 출력이 됩니다.
@@ -506,7 +506,7 @@ body {
 - overflow-x: auto - 좌우 위치 기준으로 스크롤바 생성
 
 
-#### transition
+## transition
 - CSS 효과를 특정 지연을 주어 부드럽게 전환될 수 있도록 합니다.
 - transition-delay - CSS 속성이 적용되기전 지연시간을 지정합니다. 
 ```
@@ -527,4 +527,22 @@ div {
 }
 ```
 
-## flex
+## flexbox
+### flexbox의 기본 개념
+- 일명 flexbox라 불리는 Flexible Box module은 flexbox 인터페이스 내의 아이템 간 공간 배분과 강력한 정렬 기능을 제공하기 위한 1차원 레이아웃 모델 로 설계되었습니다. 
+- flexbox를 1차원이라 칭하는 것은, 레이아웃을 다룰 때 한 번에 하나의 차원(행이나 열)만을 다룬다는 뜻입니다. 
+
+### flexbox의 두 개의 축
+flexbox를 다루려면 주축과 교차축이라는 두 개의 축에 대한 정의를 알아야 합니다. 주축은 flex-direction 속성을 사용하여 지정하며 교차축은 이에 수직인 축으로 결정됩니다. flexbox의 동작은 결국 이 두 개의 축에 대한 문제로 환원되기 때문에 이들이 어떻게 동작하는지 처음부터 이해하는 것이 중요합니다. 
+
+#### 주축
+- 주축은 flex-direction에 의해 정의되며 4개의 값을 가질 수 있습니다.
+	- row 
+	- row-reverse 
+	- column
+	- column-reverse
+
+- row 혹은 row-reverse를 선택하면 주축은 인라인 방향으로 행을 따릅니다.
+
+
+- column 혹은 column-reverse 을 선택하면 주축은 페이지 상단에서 하단으로 블록 방향을 따릅니다. 
