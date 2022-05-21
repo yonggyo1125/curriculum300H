@@ -1418,3 +1418,6 @@ public class BorderLayoutTest extends JFrame {
 ```
 
 - 실행결과
+
+![스윙18](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%9918.png)
+
