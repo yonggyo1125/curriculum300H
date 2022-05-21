@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+</head>
+<body>
+	<h1>HTML Forms</h1>
+	<h2>GET 방식</h2>
+	<form method="get" action="board_ps.php">
+		<label for='username'>아이디:</label>
+		<input type="text" name="username" id="username"><br>
+		<label for="password">비밀번호:</label>
+		<input type="password" name="password" id="password"><br>
+		<input type="submit" value="로그인">
+	</form>
+	<br>
+	
+	<h2>POST 방식</h2>
+	<form method="post" action="board_ps.php">
+		<label for='username'>아이디:</label>
+		<input type="text" name="username" id="username"><br>
+		<label for="password">비밀번호:</label>
+		<input type="password" name="password" id="password"><br>
+		<input type="submit" value="로그인">
+	</form>
+	
+	
+	<h2>&lt;INPUT&gt; 요소</h2>
+	<form method="post" action="board_ps.php" autocomplete='off' enctype="multipart/form-data">
+		<label for='input_text'>type="text"</label>
+		<input type="text" name="username" id="input_text" placeholder="10자 이내로 아이디 입력" maxlength="10" size="20" required><br>
+		
+		<label for="input_password">type="password"</label>
+		<input type="password" name="password" placeholder="비밀번호 입력" size="20" required><br>
+		
+		<h3>type="radio"</h3>
+		<input type="radio" name="gender" value="male" id="gender_male" checked>
+		<label for="gender_male">남성</label>
+		<input type="radio" name="gender" value="female" id="gender_female">
+		<label for="gender_female">여성</label>
+		
+		<h3>type="checkbox"</h3>
+		<input type="checkbox" name="vehicle[]" value="Bike" id="vehicle_bike" checked>
+		<label for="vehicle_bike">Bike</label>
+		<input type="checkbox" name="vehicle[]" value="Car" id="vehicle_car" checked>
+		<label for="vehicle_car">Car</label>
+		<input type="checkbox" name="vehicle[]" value="Boat" id="vehicle_boat">
+		<label for="vehicle_boat">Boat</label>
+		<br>
+		<br>
+		
+		<h3>&lt;select&gt; 요소</h3>
+		<label for="cars">자동차를 선택하세요 : </label>
+		<select id="cars" name="cars">
+		   <option value=""> - 선택하세요 -</option>
+		   <option value="액센트">액센트</option>
+		   <option value="아반떼">아반떼</option>
+		   <option value="소나타">소나타</option>
+		   <option value="그랜져" selected>그랜져</option>
+		</select>
+		<br>
+		<br>
+		
+		<h3>&lt;select&gt; 요소 - size 속성</h3>
+		<label for="cars">자동차를 선택하세요 : </label>
+		<select id="cars" name="cars" size='3'>
+		   <option value=""> - 선택하세요 -</option>
+		   <option value="액센트">액센트</option>
+		   <option value="아반떼">아반떼</option>
+		   <option value="소나타">소나타</option>
+		   <option value="그랜져" selected>그랜져</option>
+		</select>
+		<br>
+		<br>
+		
+		<h3>&lt;select&gt; 요소 - multiple 속성</h3>
+		<label for="cars">자동차를 선택하세요 : </label>
+		<select id="cars" name="cars" multiple>
+		   <option value=""> - 선택하세요 -</option>
+		   <option value="액센트">액센트</option>
+		   <option value="아반떼">아반떼</option>
+		   <option value="소나타">소나타</option>
+		   <option value="그랜져" selected>그랜져</option>
+		</select>
+		<br>
+		<br>
+		
+		<h3>&lt;textarea&gt; 요소 - resize 가능</h3>
+		<textarea name="contents" rows="10" cols="100" placeholder="내용 입력..">textarea 내용</textarea>
+		<br>
+		<br>
+		
+		<h3>&lt;textarea&gt; 요소 - resize 불가</h3>
+		<textarea name="contents" rows="10" cols="100" style="resize: none;" placeholder="내용 입력..">textarea 내용</textarea>
+		<br>
+		<br>
+		
+		<h3>type='fie'</h3>
+		<input type='file' name='file'>
+		<br>
+		<br>
+		
+		<h3>type='fie' - multiple</h3>
+		<input type='file' name='files[]' multiple>
+		<br>
+		<br>
+		
+		<input type="submit" value="제출버튼 입니다.">
+	</form>
+	
+</body>
+</html>

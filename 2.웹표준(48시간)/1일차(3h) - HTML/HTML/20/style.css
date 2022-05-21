@@ -1,0 +1,6 @@
+header { border: 1px solid blue; margin-bottom: 10px; text-align: center; }
+nav { border: 1px solid red; padding: 10px; margin-bottom: 10px; }
+main > section { float: left; border: 1px solid green; width: calc(100% - 170px); min-height: 500px; }
+main > aside { float: right; border: 1px solid skyblue; width: 150px; min-height: 500px; }
+main:after { clear: both; content: ''; display: block; }
+footer { text-align: center; margin-top: 10px; padding: 20px; border: 1px solid blue; font-size: 25px; font-weight: bold; }
