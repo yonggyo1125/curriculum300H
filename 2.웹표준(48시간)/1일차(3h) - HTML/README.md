@@ -709,18 +709,18 @@ window.addEventListener(”load”, function(e) {
 
 |Entity Name|Result|
 |----|----|
-|&nbsp;|공백 1개|
-|&lt;|\<|
-|&gt;|\>|
-|&amp;|&|
-|&quot;|“|
-|&apos;|'|
-|&cent;|¢|
-|&pound;|£|
-|&yen;|¥|
-|&euro;|€|
-|&copy|©|
-|&reg;|®|
+|\&nbsp;|공백 1개|
+|\&lt;|\<|
+|\&gt;|\>|
+|\&amp;|&|
+|\&quot;|“|
+|\&apos;|'|
+|\&cent;|¢|
+|\&pound;|£|
+|\&yen;|¥|
+|\&euro;|€|
+|\&copy|©|
+|\&reg;|®|
 
 
 ## HTML Forms
