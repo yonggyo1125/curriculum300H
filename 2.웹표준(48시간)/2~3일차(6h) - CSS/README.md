@@ -674,4 +674,172 @@ flex-direction 속성과 flex-wrap 속성을 flex-flow라는 축약 속성으로
 ```
 
 ### flex 항목에 지정 가능한 속성들 
+```
+- flex-grow
+- flex-shrink
+- flex-basis
+```
+
 500 픽셀의 크기를 갖는 flex 컨테이너 내에 100 픽셀 크기의 자식 세 개가 존재할 때, 사용가능한 공간 200 픽셀이 남게 됩니다. 기본적으로 flexbox는 이 공간을 마지막 자식 요소 다음에 빈공간으로 남겨둡니다.
+
+![flex7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/2~3%EC%9D%BC%EC%B0%A8(6h)%20-%20CSS/images/flex7.png)
+
+위의 세 가지 속성을 변경한다는 것은 **flex 항목에게 사용가능한 공간**을 분배하는 방식을 변경하는 것입니다. **사용가능한 공간** 개념은 **flex 항목**을 정렬할 때 특히 중요합니다.
+
+#### flex-basis 속성 
+- flex-basis 속성은 항목의 크기를 결정합니다. 이 속성의 기본값은 auto이며, 이 경우 브라우저는 항목이 크기를 갖는지 확인합니다. 위의 사진 예시의 경우 항목의 크기가 100 픽셀이므로 flex-basis의 값으로 100 픽셀이 사용됩니다.
+
+- flex 항목에 크기가 지정되어 있지 않으면, flex 항목의 내용물 크기가 flex-basis 값으로 사용됩니다. 따라서 flex 컨테이너에서 display: flex 속성만을 지정하면 flex항목들이 각 내용물 크기만큼 공간을 차지하게 됩니다.
+
+#### flex-grow 속성
+- flex-grow값을 양수로 지정하면 flex 항목별로 주축 방향 크기가 flex-basis 값 이상으로 늘어날 수 있게 됩니다. 위의 사진 예시에서 모든 항목의 flex-grow 값을 1로 지정하면 사용가능한 공간은 각 항목에게 동일하게 분배되며, 각 항목은 주축을 따라 분배받은 값만큼 사이즈를 늘려 공간을 차지합니다.
+
+- 첫 항목의 flex-grow 값을 2로 지정하고 나머지 두 개의 항목을 1로 지정한다면 각 항목에 지정된 flex-grow 값의 비율에 따라 남은 공간이 분배됩니다. 각 항목의 flex-grow 비율이 2:1:1 이므로 첫 항목에게 100 픽셀, 두 번째와 세 번째 항목에게 50 픽셀씩 분배됩니다.
+
+#### flex-shrink 속성 
+- flex-grow 속성이 주축에서 남는 공간을 항목들에게 분배하는 방법을 결정한다면 flex-shrink 속성은 주축의 공간이 부족할때 각 항목의 사이즈를 줄이는 방법을 정의합니다. 만약 flex 컨테이너가 flex 항목을 모두 포함할 만큼 넉넉한 공간을 갖고 있지 않고 flex-shrink 값이 양수이면 flex 항목은 flex-basis에 지정된 크기보다 작아집니다. 또한, flex-grow 속성과 마찬가지로 더 큰 flex-shrink 값을 갖는 항목의 사이즈가 더 빨리 줄어듭니다.
+
+- 항목의 최소 크기는 실제 축소량을 계산할 때 고려되기 때문에 flex-shrink 속성이 flex-grow 속성에 비해 덜 일관된 모습을 보여줄지도 모릅니다. 
+
+- ** flex-grow 와 flex-shrink의 값이 비율임을 유의**하세요.  flex 항목의 flex 속성을 모두 1 1 200px 로 지정하고 한 항목만 크기가 늘어나는 비율을 타 항목의 두배로 하고 싶으면 해당 flex 항목의 flex 속성을 2 1 200px로 지정하면 되지만, flex 속성 값을 모두  10 1 200px로 지정하고 늘어나는 비율을 두 배로 하고 싶은 항목의 flex 속성 값만 20 1 200px로 지정해도 동일하게 동작합니다. 
+
+#### 축약형 속성 flex 
+- 보통은 flex-grow, flex-shrink, flex-basis  값을 각각 사용하지 않고 이 세 속성을 한번에 지정하는 flex 축약형을 많이 사용합니다. flex 축약형의 값은 flex-grow, flex-shrink, flex-basis 순서로 지정됩니다.
+
+```
+      .box {
+        display: flex;
+      }
+
+      .one {
+        flex: 1 1 auto;
+      }
+
+      .two {
+        flex: 1 1 auto;
+      }
+
+      .three {
+        flex: 1 1 auto;
+      }
+```
+
+```
+      <div class="box">
+        <div class="one">One</div>
+        <div class="two">Two</div>
+        <div class="three">Three</div>
+      </div>
+```
+
+- flex 축약형 표현에 사용할 수 있는 미리 정의된 축약 값들이 아래에 나열되어 있습니다. 이 값들 만으로도 대부분의 경우(use-case)에 대응할 수 있을 것 입니다.
+	- flex: initial
+	- flex: auto
+	- flex: none
+	- flex: \<positive-number\>
+	
+- flex 항목을 flex: initial로 지정하면  flex: 0 1 auto 로 지정한 것과 동일하게 동작합니다. 이 경우, flex 항목들은  flex-grow가 0이므로  flex-basis값보다 커지지 않고  flex-shrink가 1이므로 flex 컨테이너 공간이 모자라면 크기가 줄어듭니다. 또, flex-basis가 auto이므로 flex 항목은 주축 방향으로 지정된 크기 또는 자기 내부 요소 크기 만큼 공간을 차지합니다.
+
+- flex: auto 로 지정하면 flex: 1 1 auto로 지정한 것과 동일하며, flex:initial 과는 주축 방향 여유 공간이 있을 때 flex 항목들이 늘어나서 주축 방향 여유 공간을 채우는 점만 다릅니다.
+
+- flex: none으로 지정하면 flex: 0 0 auto으로 지정한 것과 동일하며 flex 컨테이너의 크기 변화에도 flex 항목 크기는 변하지 않고 flex-basis를 auto로 지정했을 때 정해지는 크기로 결정됩니다.  
+
+- 이 축약형은 더 축약해서 flex: 1 이나 flex: 2처럼 쓸수도 있는데, 이는 flex-grow 만 지정하고 나머지는 1 0으로 사용한다는 뜻이다. 따라서 flex: 2는 flex: 2 1 0와 동일하게 처리됩니다.
+
+```
+	.box {
+        display: flex;
+      }
+
+      .one {
+        flex: 1;
+      }
+
+      .two {
+        flex: 1;
+      }
+
+      .three {
+        flex: 1;
+      } 
+```
+
+```
+      <div class="box">
+        <div class="one">One</div>
+        <div class="two">Two</div>
+        <div class="three">Three</div>
+      </div>
+    
+```
+
+### 정렬, 끝 맞추기(justification), flex 항목간 여유 공간 분배 
+
+flexbox의 주 기능 중 하나는 (주축과 교차축으로 표현되는) flex 컨테이너 공간 안에 flex 항목들을 정렬하고 끝 마추며 여유 공간을 항목 간에 분배하는 것입니다. 
+
+#### align-items
+- align-items는 flex 컨테이너에 지정하는 속성이며, 교차축을 따라 flex 항목 열을 정렬하는 방식을 지정합니다. 
+
+- 이 속성의 (아무것도 지정하지 않았을 때 적용되는)초기 값은 stretch이며 이 값을 지정하면 flex 항목의 높이는 flex 컨테이너 내 flex 항목 행의 최대 높이로 지정됩니다. 따라서, flex 항목 행이 하나 일 때는 flex 항목은 교차축 방향으로 flex 컨테이너를 가득 채우게 됩니다.
+
+- 이 속성을 flex-start로 지정하면 flex 항목의 첫 열이 교차축 방향의 시작선에 정렬됩니다. flex-end로 지정하면 flex 항목의 첫 열이 교차축 방향의 끝선에 정렬됩니다. center로 지정하면 flex 항목 행에 배분된 공간의 가운데 라인에 정렬됩니다.
+	- stretch
+	- flex-start
+	- flex-end
+	- center
+
+```
+		.box {
+            display: flex;
+            align-items: flex-start;
+          }
+```
+```
+        <div class="box">
+          <div>One</div>
+          <div>Two</div>
+          <div>Three
+              <br>has
+              <br>extra
+              <br>text
+          </div>
+        </div>
+```
+
+#### justify-content
+- justify-content 속성은 주축을 따라 flex 항목 행을 정렬하는 방식을 지정합니다.
+
+- 이 속성의 (아무것도 지정하지 않았을 때 적용되는)초기 값은 flex-start이며 이 값을 지정하면 flex 항목 행 내의 항목들은 flex 컨테이너의 시작선에서 부터 정렬됩니다. flex-end로 지정하면 flex 항목 행의 마지막 항목이 flex 컨테이너의 끝선에서 정렬됩니다. center로 지정하면 flex 항목들이 flex 항목 행의 가운데 정렬됩니다.
+
+- space-between을 지정하면 주축 방향 여유 공간을 flex 항목 사이의 공간에 균등 배분합니다.
+
+- space-around는 시작선 및 끝선과 flex 항목간 공간도 균등 배분에 고려하므로 시작선 및 끝선과 flex 항목 간의 공간의 크기를 1로 배분한다면 flex 항목 사이의 공간은 2로 배분합니다. 
+
+- space-evenly로 지정하면 여유 공간을 flex 항목 사이의 공간 및 시작선 및 끝선과 flex 항목 간의 공간에 모두 균등하게 배분합니다.
+
+	- stretch
+	- flex-start
+	- flex-end
+	- center
+	- space-around
+	- space-between
+	- space-evenly
+	
+```
+          .box {
+            display: flex;
+            justify-content: flex-start;
+          }
+```
+
+```
+        <div class="box">
+          <div>One</div>
+          <div>Two</div>
+          <div>Three</div>
+        </div>
+```
+
+## 과제
+다음의 모바일 사이트의 메인페이지를 지금까지 배운 HTML과 CSS를 적용하여 동일하게 퍼블리싱 해보세요.
+- ![http://m.rkdwlstjr782.godomall.com](http://m.rkdwlstjr782.godomall.com)
