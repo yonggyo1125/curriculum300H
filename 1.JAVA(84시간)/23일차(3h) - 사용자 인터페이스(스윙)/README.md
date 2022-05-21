@@ -367,5 +367,381 @@ public class ItemEventTest extends JFrame {
 ![이벤트4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/23%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%9D%B4%EB%B2%A4%ED%8A%B84.png)
 
 
+### ChangeEvent와 JSlider
+- ChangeEvent는 JSlider와 같은 컴포넌트에서 값이 변경될 때에 발생된다.
+- ChangeEvent는 ChangeListener 인터페이스를 구현하여 사용하는데, ChangeListener가 가지고 있는 메서드인 stateChanged(ChangeEvent e)를 재정의 해 주어야 한다.
+
+- ChangeEvent는 JSlider의 값이 변경될 때마다 발생된다. 슬라이더 손잡이를 움직이거나 애플리케이션에서 JSlider의 setValue() 메서드를 호출하여 value값을 변경할 때 ChangeEvent가 발생한다.
+
+#### day23/JSliderChangeEvent.java
+```
+package day23;
+
+import javax.swing.*;
+import java.awt.*;
+import javax.swing.event.*;
+
+public class JSliderChangeEvent extends JFrame {
+	
+	JLabel colorLabel;
+	JSlider jsl = new JSlider();
+	JSliderChangeEvent() {
+		setTitle("슬라이더와 ChangeEvent");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLayout(new FlowLayout());
+		colorLabel = new JLabel("    SLIDER EXAMPLE      ");
+		//0~100 사이의 값을 선택할 수 있는 슬라이더 생성. 초기값은 50
+		jsl = new JSlider(JSlider.HORIZONTAL,0, 255, 50);
+		jsl.setPaintLabels(true);
+		jsl.setPaintTicks(true);
+		jsl.setPaintTrack(true);
+		jsl.setMajorTickSpacing(50);
+		jsl.setMinorTickSpacing(10);
+		
+		jsl.addChangeListener(new MyChangeListener());
+		add(jsl);
+		
+		jsl.setForeground(Color.RED);
+		colorLabel.setOpaque(true);
+		
+		colorLabel.setBackground(new Color(0, jsl.getValue(), 0));
+		add(colorLabel);
+		setSize(300, 300);
+		setVisible(true);
+	}
+	
+	
+	class MyChangeListener implements ChangeListener {
+		// 슬라이더 컴포넌트의 값이 변경되면 호출됨
+		public void stateChanged(ChangeEvent e) {
+			colorLabel.setBackground(new Color(0, jsl.getValue(), 0));
+		}
+	}
+	
+	public static void main(String[] args) {
+		new JSliderChangeEvent();
+	}
+}
+```
+- 실행결과 
+
+#### WindowEvent
+- WindowEvent는 윈도우와 관련되어 있다. 윈도우의 창을 닫거나 열 때, 크기를 변경할 때, 윈도우가 활성화 되거나 아이콘화 될 때에 WindowEvent가 발생한다.
+
+#### WindowEvent 생성자
+
+|생성자|설명|
+|----|------|
+|WindowEvent(Window src, int type)|src는 이벤트를 발생시킨 윈도우 객체, type은 이벤트 유형을 의미한다.|
+
+#### 윈도우 유형 상수
+
+|윈도우 유형|설명|
+|----|------|
+|WINDOW_ACTIVATED|윈도우가 활성화될 때|
+|WINDOW_CLOSED|윈도우가 닫힐 때|
+|WINDOW_CLOSING|윈도우가 사용자의 요청으로 닫힐 때|
+|WINDOW_ICONFIED|윈도우가 아이콘화 될 때|
+|WINDOW_OPENED|왼도우가 생성될 때|
+
+#### WindowEvent 메서드
+
+|메서드|설명|
+|----|------|
+|Window getWindow()|이벤트를 발생시킨 윈도우 객체를 가져온다.|
+
+- WindowEvent는 WindowListener 인터페이스를 구현(implements)하여 사용하기 보다는 WIndowAdapter 클래스를 상속받아 필요한 메서드를 오버라이딩하는 방법으로 많이 사용한다.
+
+
+### MouseEvent
+- MouseEvent는 마우스를 움직이거나 마우스의 버튼을 눌렀을 때 발생하는 이벤트이다. 
+- Component 클래스는 버튼이나 마우스나 리스트와 같은 콤포넌트들의 수퍼클래스이다.
+- MouseEvent는 Component 클래스가 발생시키기 때문에 자바의 거의 모든 컴포넌트에서 마우스 이벤트를 사용할 수 있다.
+
+- MouseListener는 마우스 버튼을 클릭하거나 해제하는 것과 관련된 리스너이다.
+- MouseMotionListener는 마우스의 이동과 관련된 리스너이다. 
+- MouseEvent가 발생할 때에는 상기 필요한 메서드를 가지고 있는 리스너를 상속받아서 구현하면 된다.
+
+#### MouseEvent의 리스너 인터페이스
+
+<table>
+	<thead>
+		<tr>
+			<th>리스너 인터페이스</th>
+			<th>리스너 인터페이스 메서드</th>
+			<th>설명</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td rowspan='5'>MouseListener</td>
+			<td>mouseClicked(MouseEvent e)</td>
+			<td>마우스 버튼을 눌렀다 놓았을 때에 실행</td>
+		</tr>
+		<tr>
+			<td>mouseEntered(MouseEvent e)</td>
+			<td>마우스가 컴포넌트 영역 안으로 들어올 때에 실행</td>
+		</tr>
+		<tr>
+			<td>mouseExited(MouseEvent e)</td>
+			<td>마우스가 컴포넌트 영역 밖으로 나갈때에 실행</td>
+		</tr>
+		<tr>
+			<td>mousePressed(MouseEvent e)</td>
+			<td>마우스 버튼을 누를 때에 실행</td>
+		</tr>
+		<tr>
+			<td>mouseReleased(MouseEvent e)</td>
+			<td>마우스 버튼을 누른 상태에서 움직일때에 실행</td>
+		</tr>
+		<tr>
+			<td rowspan='2'>MouseMotionListener</td>
+			<td>mouseDragged(MouseEvent e)</td>
+			<td>마우스 버튼을 누른 상태에서 움직일 때에 실행</td>
+		</tr>
+		<tr>
+			<td>mouseMoved(MouseEvent e)</td>
+			<td>마우스 버튼을 누르지 않고 움직일 때에 실행</td>
+		</tr>
+	</tbody>
+</table>
+
+#### MouseEvent 클래스의 주요 메서드
+
+|메서드|설명|
+|----|------|
+|int getX()|마우스 이벤트가 발생한 위치의 x좌표를 구한다.|
+|int getY()|마우스 이벤트가 발생한 위치의 y좌표를 구한다.|
+|int getClickCount()|마우스가 클릭한 횟수를 구한다.|
+|Point getPoint()|마우스 이벤트가 발생한 위치의 좌표(x, y)를 구한다.|
+|boolean isPopupTrigger()|팝업 메뉴를 나타내게 할 이벤트인지를 구한다.|
+|void translatePoint(int x, int y)|현재 이벤트가 발생한 좌표에서 (x, y)좌표로 위치를 이동한다.|
+
+
+#### day23/MouseEventDraw.java
+```
+package day23;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class MouseEventDraw extends JFrame implements MouseListener {
+	
+	
+	public MouseEventDraw() {
+		super("MouseEvent");
+		setSize(500, 500);
+		setVisible(true);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		addMouseListener(this);
+	}
+	
+	public void mouseClicked(MouseEvent e) {
+		System.out.println(e.getX() + "," + e.getY());
+	}
+	
+	public void mouseEntered(MouseEvent e) {
+		
+	}
+	
+	public void mouseExited(MouseEvent e) {
+		
+	}
+	
+	public void mousePressed(MouseEvent e) {
+		
+	}
+	
+	public void mouseReleased(MouseEvent e) {
+		
+	}
+	
+	public static void main(String[] args) {
+		new MouseEventDraw();
+	}
+}
+
+- 실행결과 
+
+157,113
+309,127
+171,85
+111,202
+```
+
+### KeyEvent 
+- KeyEvent는 키보드의 키를 누르거나 놓을 때에 발생하는 이벤트이다.
+- Component 클래스를 상속받은 컴포넌트들인 JLabel, JButton, JCheckBox, JList 등은 모두 키 이벤트를 발생시킬 수 있다.
+- 키 이벤트도 마우스 이벤트와 마찬가지로 리스너 인터페이스인 KeyListener를 상속받아서 구현한다. 
+
+#### KeyEvent의 리스너 인터페이스
+
+<table>
+<thead>
+	<tr>
+		<th>리스너 인터페이스</th>
+		<th>리스너 인터페이스 메서드</th>
+		<th>설명</th>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<td rowspan='3'>KeyListener</td>
+		<td>keyPressed(KeyEvent e)</td>
+		<td>키가 눌려졌을 때에 실행</td>
+	</tr>
+	<tr>
+		<td>keyReleased(KeyEvent e)</td>
+		<td>키를 놓았을 때에 실행</td>
+	</tr>
+	<tr>
+		<td>keyTyped(KeyEvent e)</td>
+		<td>키를 타이핑 했을 때에 실행</td>
+	</tr>
+</tbody>
+</table>
+
+#### KeyEvent 클래스의 주요 메서드
+
+|메서드|설명|
+|----|------|
+|char getKeyChar()|키 이벤트가 발생된 유니코드 문자를 구한다.|
+|int geKeyCode()|키 이벤트가 발생된 문자의 코드값을 구한다.|
+|String getKeyText(int keyCode)|Function 키, Delete 키, 일반문자와 같은 문자열을 구한다.|
+
+#### day23/KeyEventDraw.java
+```
+package day23;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class KeyEventDraw extends JFrame implements KeyListener {
+	String kname= " ";
+	public KeyEventDraw() {
+		super("KeyEvent");
+		
+		setSize(300, 400);
+		setVisible(true);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+	
+	// 키를 눌렀을 때 실행
+	public void keyPressed(KeyEvent e) {
+			kname = "Key Pressed : " + e.getKeyText(e.getKeyCode());
+			System.out.println(kname);
+	}
+	
+	// 키를 놓았을때 는 
+	public void keyReleased(KeyEvent e) {
+		
+	}
+	
+	// 키를 눌렀다가 놓았을 때 실행
+	public void keyTyped(KeyEvent e) {
+		
+	}
+	
+	
+	public static void main(String[] args) {
+		new KeyEventDraw();
+	}
+}
+
+```
+
+
+### InputEvent
+- InputEvent는 Component 클래스로부터 상속된 추상 클래스이다.
+- 추상 클래스는 객체를 생성할 수 없기 때문에 이 클래스로부터 이벤트를 생성하여 사용할 수 가 없다.
+- InputEvent는 하위 클래스에서 사용하는 다양한 상수와 메서드를 정의하고 있다.
+- InputEvent는 하위 클래스로 MouseEvent와 KeyEvent 클래스가 있다. InputEvent는 이벤트 발생 시에 같이 사용된 수정자 키를 구분하기 위하여 다음의 표과 같은 상수를 제공한다.
+
+#### InputEvent의 수정자 키 상수
+
+|수정자 키 상수|설명|
+|----|------|
+|ALT_MASK|수정자 키로 ALT키를 사용|
+|BUTTON1_MASK|마우스의 첫 번째 버튼 사용(왼쪽 버튼)|
+|BUTOTN2_MASK|마우스의 두 번째 버튼 사용
+|BUTTON3_MASK|마우스의 세 번째 버튼 사용(오른쪽 버튼)|
+|CTRL_MASK|수정자 키로 CTRL 키를 사용|
+|META_MASK|수정자 키로 META 키를 사용|
+|SHIFT_MASK|수정자 키로 SHIFT 키를 사용|
+
+#### InputEvent의 메서드
+
+|메서드|설명|
+|----|------|
+|boolean isAltDown()|수정자 키로 ALT키가 사용되었다면 true, 아니면 false를 반환|
+|boolean isControlDown()|수정자 키로 CTRL 키가 사용되었다면 true, 아니면 false를 반환|
+|boolean isMetaDown()|수정자 키로 META 키가 사용되었다면 true, 아니면 false를 반환|
+|boolean isShiftDown()|수정자 키로 SHIFT 키가 사용되었다면 true, 아니면 false를 반환|
+|int getModifiers()|이벤트 발생 시에 같이 사용된 수정자 키를 반환|
+
+#### day23/MouseInputEvent.java
+```
+package day23;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class MouseInputEvent extends JFrame implements MouseListener {
+	String msg;
+	JLabel sbar;
+	
+	public MouseInputEvent() {
+		super("마우스에서 InputEvent");
+		setLayout(new BorderLayout());
+		sbar = new JLabel();
+		add(sbar, BorderLayout.SOUTH);
+		addMouseListener(this);
+		setSize(300, 200);
+		setVisible(true);
+	}
+	
+	// 마우스 버튼을 클릭했을 때 실행
+	public void mouseClicked(MouseEvent e) {
+		
+	}
+	
+	public void mouseEntered(MouseEvent e) {
+		
+	}
+	
+	// 프레임 안의 마우스 커서가 프레임 밖으로 나갈 때 발생
+	public void mouseExited(MouseEvent e) {
+		
+	}
+	
+	// 마우스 버튼을 눌렀을 때 실행
+	public void mousePressed(MouseEvent e) {
+		if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0) {
+			msg = "마우스 오른쪽 버튼을 눌렀습니다.";
+		} else {
+			msg = "마우스 왼쪽 버튼을 눌렀습니다.";
+		}
+		sbar.setText(msg);
+	}
+	
+	public void mouseReleased(MouseEvent e) {
+		msg = "마우스 버튼을 누르세요";
+		sbar.setText(msg);
+	}
+	
+	public static void main(String[] args) {
+		MouseInputEvent mie = new MouseInputEvent();
+		mie.setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+}
+```
+
+- 실행화면
+
+
 ## 어댑터를 이용한 이벤트 처리
 
