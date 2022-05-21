@@ -816,6 +816,9 @@ public class KeyInputEvent extends JFrame implements KeyListener {
 ```
 - 실행화면
 
+![이벤트7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/23%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%9D%B4%EB%B2%A4%ED%8A%B87.png)
+
+
 
 ## 어댑터를 이용한 이벤트 처리
 
