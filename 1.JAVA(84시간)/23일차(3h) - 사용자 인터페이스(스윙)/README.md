@@ -746,7 +746,6 @@ public class MouseInputEvent extends JFrame implements MouseListener {
 
 
 #### day23/KeyInputEvent.java
-
 ```
 package day23;
 
@@ -821,4 +820,76 @@ public class KeyInputEvent extends JFrame implements KeyListener {
 
 
 ## 어댑터를 이용한 이벤트 처리
+- 리스너 인터페이스를 구현(implements)하기 위해서는 반드시 재정의 해 주어야 한다. 
+- 만약에 MouseListener를 구현해야 하는 경우에, 필요가 없더라도 이 인터페이스가 가지고 있는 5개의 메서드를 모두 재정의 해 주어야 한다.
+- 이러한 문제를 해결해 주는 방법이 <b>어댑터 클래스(Adapter Class)</b>이다.
+- 어댑터 클래스는 리스너가 가지고 있는 메서드 중에서 필요한 메서드만 재정의 해주면 된다.
+- 필요한 경우에 일부 메서드만 어댑터 클래스를 상속 받는 것이 리스너 인터페이스를 구현하는 것 보다 더 편리하다.
+- 어댑터 클래스는 인터페이스의 기능을 그대로 옮겨놓은 추상 클래스이다.
 
+#### 리스너 인터페이스와 관련된 어댑터 클래스
+
+|리스너 인터페이스|어댑터 클래스|
+|----|------|
+|ActionListener|없음|
+|ChangeListener|없음|
+|ItemListener|없음|
+|KeyListener|KeyAdapter|
+|ListSelectionListener|없음|
+|MouseListener|MouseAdapter, MouseMotionAdapter|
+|WindowListener|WindowAdapter|
+
+- 자바에서의 어댑터는 클래스이기 때문에 앞의 리스너 인터페이스처럼 구현으로 사용할 수가 없고, 내부 클래스를 이용하여 사용해야 한다.
+
+#### day23/KeyEventAdapter.java
+```
+package day23;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class KeyEventAdapter extends JFrame {
+	String msg;
+	JLabel sbar;
+	
+	public KeyEventAdapter() {
+		super("키보드에서의  InputEvent");
+		sbar = new JLabel();
+		add(sbar);
+		addKeyListener(new KeyHandler());
+		setSize(300, 200);
+		setVisible(true);
+	}
+	
+	// 어댑터를 상속받은 내부 클래스로 선언 
+	class KeyHandler extends KeyAdapter {
+		// 키를 눌럿을 때 실행
+		public void keyPressed(KeyEvent e) {
+			msg = e.getKeyText(e.getKeyCode());
+			if (e.isShiftDown()) msg = "KeyPressed : <Shift> +" + msg;
+			if (e.isControlDown()) msg = "KeyPressed : <Ctrl> + " + msg;
+			if (e.isAltDown()) msg = "KeyPressed : <Alt> + " + msg;
+			
+			sbar.setText(msg);
+		}
+		
+		// 키를 놓았을 때 실행
+		public void keyReleased(KeyEvent e) {
+			msg = "KeyReleased : " + e.getKeyText(e.getKeyCode());
+			if (e.isShiftDown()) msg = e.getKeyText(e.getKeyCode());
+			if (e.isControlDown()) msg = e.getKeyText(e.getKeyCode());
+			if (e.isAltDown()) msg = e.getKeyText(e.getKeyCode());
+			
+			sbar.setText(msg);
+		}
+	}
+	
+	public static void main(String[] args) {
+		KeyEventAdapter kea = new KeyEventAdapter();
+		kea.setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+}
+```
+
+- 실행결과
