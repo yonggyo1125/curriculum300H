@@ -258,10 +258,110 @@ public class ActionEventTest extends JFrame implements ActionListener {
 }
 ```
 - 실행결과
+
 ![이벤트3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/23%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%9D%B4%EB%B2%A4%ED%8A%B83.png)
 
 - JOpionPane 클래스(대화상자)를 처리하는데 ActionEvent를 사용하였다.
 - 팝업 다이얼로그인 JOptionPane은 대화상자를 출력하는 클래스인데 showInputDialog, showMessageDialog, showConfirmDialog, showOptionDialog의 네 종류가 있다.
+
+### ItemEvent
+- ItemEvent는 체크박스, 라디오버튼, 리스트의 항목, 메뉴의 항목이 선택되었거나 해제될 때에 발생한다.
+
+#### ItemEvent 생성자
+
+|생성자|설명|
+|----|------|
+|ItemEvent(ItemSelectable src, int type, Object entry, int state)|src는 이벤트를 발생시킨 컴포넌트, type은 이벤트 유형, entry는 이벤트 발생 시에 전달하고자 하는 특수한 아이템 객체, static은 아이템의 현재 상태를 의미한다.|
+
+- ItemEvent는 이벤트 유형을 구분하기 위한 두 개의 상수를 제공한다.
+
+#### 이벤트 유형 상수
+
+|이벤트 유형|설명|
+|----|------|
+|SELECTED|한 항목이 선택되었을 때의 상수|
+|DESELECTED|선택된 항목이 해제되었을 때의 상수|
+
+#### ItemEvent의 메서드
+
+|메서드|설명|
+|----|------|
+|Object getItem()|이벤트를 발생시킨 객체를 반환한다.|
+|ItemSelectable getItemSelectable()|이벤트를 발생시킨 ItemSelectable 객체를 반환한다. 선택 박스나 리스트 등은 ItemSelectable 인터페이스를 이용하여 구현한다.|
+|int getStateChange()|이벤트의 발생으로 변환된 상태를 상수로 반환한다.|
+
+- ItemEvent는 ItemListener 인터페이스를 구현(implements)하여 사용하는데, ItemListener가 가지고 있는 메서드인 itemStateChanged(ItemEvent e)를 반드시 오버라이딩 해 주어야 한다.
+
+
+#### day23/ItemEventTest.java
+```
+package day23;
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+public class ItemEventTest extends JFrame {
+	JLabel txt1, txt2;
+	JRadioButton r1, r2, r3;
+	
+	public ItemEventTest() {
+		super("ItemEvent 처리");
+		setLayout(new BorderLayout());
+		
+		ButtonGroup rgroup = new ButtonGroup();
+		r1 = new JRadioButton("선택1");
+		r2 = new JRadioButton("선택2");
+		r3 = new JRadioButton("선택3");
+		
+		rgroup.add(r1);
+		rgroup.add(r2);
+		rgroup.add(r3);
+		
+		JPanel jp1 = new JPanel();
+		jp1.setLayout(new FlowLayout());
+		jp1.add(r1);
+		jp1.add(r2);
+		jp1.add(r3);
+		
+		add(jp1, BorderLayout.CENTER);
+		
+		RBHandler rh = new RBHandler();
+		r1.addItemListener(rh);
+		r2.addItemListener(rh);
+		r3.addItemListener(rh);
+		
+		JPanel jp2 = new JPanel(new FlowLayout());
+		txt1 = new JLabel("선택 항목 : ");
+		txt2 = new JLabel();
+		jp2.add(txt1);
+		jp2.add(txt2);
+		add(jp2, BorderLayout.SOUTH);
+	}
+	
+	private class RBHandler implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				if (e.getSource() == r1) {
+					txt2.setText("선택1");
+				} else if (e.getSource() == r2 ) {
+					txt2.setText("선택2");
+				} else if (e.getSource() == r3) {
+					txt2.setText("선택3");
+				}
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		ItemEventTest iet = new ItemEventTest();
+		iet.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		iet.setSize(400, 200);
+		iet.setVisible(true);
+	}
+} 
+```
 
 
 ## 어댑터를 이용한 이벤트 처리
