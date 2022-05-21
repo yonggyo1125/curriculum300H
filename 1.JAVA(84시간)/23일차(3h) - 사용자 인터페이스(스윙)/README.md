@@ -136,6 +136,133 @@
 
 
 ## 리스너 인터페이스를 이용한 이벤트 처리
+- 리스너 인터페이스는 이벤트와 이벤트 핸들러 사이를 연결시켜주는 역할을 한다.
+- 이벤트가 발생한 해당 컴포넌트를 리스너에 등록시켜야 프로그램의 제어가 해당 이벤트가 제공하는 이벤트 핸들러로 옮겨진다. 
+- 자바에서 이벤트 핸들러는 메서드로 표현되며, 이벤트를 처리하는 메서드이다.
+
+- 리스너 인터페이스를 이용하여 이벤트를 처리하기 위해서는 다음과 같은 순서로 프로그램을 작성해야 한다.
+	1. 발생하는 이벤트를 처리할 이벤트 종류 결정
+	2. 이벤트 처리에 적합한 리스너 인터페이스를 사용하여 클래스 작성
+	3. 이벤트를 받아들일 각 컴포넌트에 리스너 등록
+	4. 리스너 인터페이스에 선언된 메서드를 오버라이딩하여 이벤트 처리 루틴 작성(이벤트 핸들러 작성)
+	
+- AWT에서 제공하는 java.awt.event 패키지와 스윙에서 제공하는 javax.swing.event 패키지는 각각의 이벤트 클래스와 연관된 이벤트 리스너 인터페이스를 제공하고 있다.
+- 이벤트 리스너 인터페이스는 사용자로부터 받아들인 이벤트를 처리할 메소드들을 선언하고 있다.
+- 프로그램에는 이벤트 처리를 위해 이벤트 리스너 인터페이스에서 선언된 모든 메서드들을 오버라이딩하여 구현하여야 한다.
+
+#### 이벤트 클래스와 리스터 인터페이스
+
+|이벤트 클래스|리스너 인터페이스|리스너 인터페이스 메소드(이벤트 핸들러)|
+|------|-----|------|
+|ActionEvent|ActionListener|actionPerformed(ActionEvent e)|
+|ChangeEvent|ChangeListener|stateChanged(ChangeEvent e)|
+|ItemEvent|ItemListener|itemStateChanged(ItemEvent e)|
+|KeyEvent|KeyListener|keyPressed(KeyEvent e)<br>keyReleased(KeyEvent e)<br>keyTyped(KeyEvent e)|
+|ListSelectionEvent|ListSelectionListener|valueChanged(ListSelectionEvent e)|
+|MouseEvent|MouseListener|mouseClicked(MouseEvent e)<br>mouseEntered(MouseEvent e)<br>mouseExited(MouseEvent e)<br>mousePressed(MouseEvent e)<br>mouseReleased(MouseEvent e)|
+|MouseEvent|MouseMotionListener|mouseDragged(MouseEvent e)<br>mouseMoved(MouseEvent e)|
+|WindowEvent|WindowListener|windowActivated(WindowEvent e)<br>windowClosed(WindowEvent e)<br>windowClosing(WindowEvent e)<br>windowDeactivated(WindowEvent e)<br>windowDeiconified(WindowEvent e)<br>windowIconified(WindowEvent e)<br>windowOpened(WindowEvent e)|
+
+
+### ActionEvent
+- ActionEvent는 버튼을 눌렀을 때, 텍스트 필드에서 엔터키를 눌렀을 때, 리스트 항목이 선택되었을 때, 메뉴의 한 항목이 선택되었을 때 발생한다.
+
+#### ActionEvent 생성자
+
+|생성자|설명|
+|-----|------|
+|ActionEvent(Object src, int type, String cmd)|src는 이벤트를 발생한 객체, type은 이벤트 타입을, cmd는 이벤트를 발생시킨 컴포넌트의 테이블을 의미한다.|
+|ActionEvent(Object src, int type, String cmd, int modifiers)|src는 이벤트를 발생한 객체, type은 이벤트 타입을, cmd는 이벤트를 발생시킨 컴포넌트의 레이블을, modifiers는 이벤트가 발생할 때 같이 사용된 수정자의 키의 상수를 의미한다.|
+
+- ActionEvent는 마우스를 누를 때 같이 사용된 수정자(modifier)키가 있는 경우에 구분하기 위하여 4개의 상수를 제공합니다.
+
+#### 수정자 키
+
+|수정자 키|설명|
+|-----|------|
+|ALT_MASK|수정자 키로 ALT키를 사용|
+|CTRL_MASK|수정자 키로 CTRL 키를 사용|
+|META_MASK|수정자 키로 META 키를 사용|
+|SHIFT_MASK|수정자 키로 SHIFT 키를 사용|
+
+#### ActionEvent의 메서드
+
+|메서드|설명|
+|----|------|
+|String getActionCommand()|ActionEvent를 발생시킨 객체의 이름을 구한다.|
+|int getModifiers()|ActionEvent 발생 시에 같이 사용된 수정자 키(ALT, CTRL, META, SHIFT)를 나타내는 상수값을 구한다.|
+|String getSource()|이벤트를 발생시킨 이벤트 소스 객체(이벤트를 발생시킨 컴포넌트)를 구한다.|
+
+- ActionEvent는 ActionListener 인터페이스를 구현(implements)하여 사용하는데, ActionListener가 가지고 있는 메서드인 actionPerformed(ActionEvent e)를 반드시 오버라이딩 해주어야 한다.
+
+
+#### day23/ActionEventTest.java
+```
+package day23;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class ActionEventTest extends JFrame implements ActionListener {
+	JButton jbtn1, jbtn2, jbtn3, jbtn4;
+	
+	ActionEventTest() {
+		super("ActionEvent 처리");
+		setLayout(new FlowLayout());
+		jbtn1 = new JButton("입력");
+		add(jbtn1);
+		jbtn2 = new JButton("확인");
+		add(jbtn2);
+		jbtn3 = new JButton("옵션");
+		add(jbtn3);
+		jbtn4 = new JButton("메시지");
+		add(jbtn4);
+		
+		jbtn1.addActionListener(this);
+		jbtn2.addActionListener(this);
+		jbtn3.addActionListener(this);
+		jbtn4.addActionListener(this);
+		
+		setSize(300, 200);
+		setVisible(true);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == jbtn1) {
+			String name = JOptionPane.showInputDialog(this, "이름을 입력하세요");
+			System.out.println(name);
+		}
+		
+		if (e.getSource() == jbtn2) {
+			int con = JOptionPane.showConfirmDialog(this, "확인?");
+			/** 옵션 타입은 YES_OPTION, YES_NO_OPTION, YES_NO_CANCEL_OPTION이 있다 */
+			System.out.println(con);
+		}
+		
+		if (e.getSource() == jbtn3) {
+			String[] option = {"검색", "추가", "취소"};
+			JOptionPane.showOptionDialog(this, "원하는 직업 선택", "옵션 대화상자" , JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, option, option[0]);
+		}
+		
+		if (e.getSource() == jbtn4) {
+			JOptionPane.showMessageDialog(this, "메세지 대화상자");
+		}
+	}
+	
+	public static void main(String[] args) {
+		ActionEventTest aet = new ActionEventTest();
+		aet.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+}
+```
+- 실행결과
+
+
+- JOpionPane 클래스(대화상자)를 처리하는데 ActionEvent를 사용하였다.
+- 팝업 다이얼로그인 JOptionPane은 대화상자를 출력하는 클래스인데 showInputDialog, showMessageDialog, showConfirmDialog, showOptionDialog의 네 종류가 있다.
+
 
 ## 어댑터를 이용한 이벤트 처리
 
