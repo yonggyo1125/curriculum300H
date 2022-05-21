@@ -1381,3 +1381,8 @@ public class FlowLayoutTest extends JFrame {
 
 ![스윙16](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%9916.png)
 
+### BorderLayout
+- 보더 레이아웃은 컴포넌트에 부착시킬 위치가 이미 정해져있는 레이아웃이다
+- 보더(Border)란 경계란 뜻을 가지고 있듯이 다음의 그림과 같이 모두 5개의 영역으로 구분된다. 
+- 각 배치에는 East, West, South, North, Center가 있으며, 각 이름은 컴포넌트를 컨테이너에 포함시킬 때 같이 주어진다.
+
