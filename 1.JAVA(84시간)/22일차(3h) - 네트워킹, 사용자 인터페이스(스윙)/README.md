@@ -1211,3 +1211,106 @@ public class JPopupMenuTest extends JFrame {
 
 ![스윙14](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%9914.png)
 
+### JTabbedPane
+- JTabbedPane 클래스는 탭(Tab)의 기능을 제공한다.
+
+|생성자|설명|
+|-----|------|
+|JTabbedPane()|비어있는 탭팬을 생성한다. 기본적인 탭의 위치는  JTabbedPane.TOP이 기본값이 된다.|
+|JTabbedPane(int tabPlacement)|비어 있는 J탭팬을 생성한다. tabPlacement의 값에 따라 탭의 위치가 정해진다. tabPlacement의 값에는 JTabbedPane.TOP, JTabbedPane.BOTTOM, JTabbedPane.LEFT, JTabbedPane.RIGHT가 있다.|
+
+- 탭(JTabbedPane)객체를 생성한다.
+```
+JTabbedPane jtp = new JTabbedPane(JTabbedPane.TOP);
+```
+
+- 탭에 addTab("탭의 레이블 이름", 추가할 객체 이름) 메소드를 사용하여 필요한 개수의 컴포넌트를 추가한다.
+
+```
+// 추가할 패널 객체 생성(만약 패널을 추가할 경우)
+JPanel jpn1 = new JPanel();
+JPanel jpn2 = new JPanel();
+
+jtp.addTab("기본내용", jpn1);
+jtp.addTab("기본내용", jpn2);
+```
+
+
+#### day22/gui/JTabbedPaneFrame.java
+```
+package day22.gui;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class JTabbedPaneFrame extends JFrame {
+	public JTabbedPaneFrame() {
+		super("사원 개인정보 조회(JTabbedPane)");
+		
+		JTabbedPane jtp = new JTabbedPane(JTabbedPane.TOP);
+		JPanel jpn1 = new JPanel();
+		JPanel jpn2 = new JPanel();
+		JPanel jpn3 = new JPanel();
+		bTable jt1 = new bTable();
+		eTable jt2 = new eTable();
+		fTable jt3 = new fTable();
+		
+		jpn1.add(jt1);
+		jpn2.add(jt2);
+		jpn3.add(jt3);
+		
+		jtp.addTab("기본내용", jpn1);
+		jtp.addTab("추가내용", jpn2);
+		jtp.addTab("보안내용", jpn3);
+		
+		add(jtp, BorderLayout.CENTER);
+		
+		setSize(500, 200);
+		setVisible(true);
+	}
+	
+	public static void main(String[] args) {
+		JTabbedPaneFrame jt = new JTabbedPaneFrame();
+		jt.setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+}
+
+
+class bTable extends JPanel {
+	public bTable() {
+		String[] title = {"사번", "성명", "부서"};
+		String[][] data = {{"1", "이름1", "총무과"}, {"2", "이승엽", "인사과"}, {"3", "박태환", "전산과"}};
+		JTable table = new JTable(data, title);
+		int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
+		int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS;
+		JScrollPane js = new JScrollPane(table, v, h);
+		add(js);
+	}
+}
+
+class eTable extends JPanel {
+	public eTable() {
+		String[] title = {"입사일", "주소", "전화" };
+		String[][] data = {{"2001-1-1", "은평구 응암동", "303-5555"}, {"2000-5-30", "마토구 도화동", "5555-6666"}, {"2008-1-1", "구로구 신림동", "777-1234"}};
+		JTable table = new JTable(data, title);
+		int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
+		int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS;
+		JScrollPane js = new JScrollPane(table, v, h);
+		add(js);
+	}
+}
+
+class fTable extends JPanel {
+	public fTable() {
+		String[] title = {"호봉", "근무평점"};
+		String[][] data = {{"0506", "보통"}, {"0401", "우수"}, {"0701", "미흡"}};
+		JTable table = new JTable(data, title);
+		int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
+		int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS;
+		JScrollPane js = new JScrollPane(table, v, h);
+		add(js);
+	}
+}
+```
+- 실행결과
+
