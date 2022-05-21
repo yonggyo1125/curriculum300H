@@ -1,6 +1,6 @@
 # HTML
 
-##. 정의
+## 정의
 1 HTML은 Hyper Text Markup Language의 약자입니다.
 2. HTML은 웹페이지를 만드는 대표적인 마크업 언어입니다
 3 HTML은 웹페이지의 구조를 표현합니다.
