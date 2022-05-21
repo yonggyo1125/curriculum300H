@@ -42,8 +42,8 @@
 
 	- 또한 초기 페이지 렌더링시에 불러와야 할 외부 링크를 정의합니다.(css, javascript)
 	```
-	<link rel=“stylesheet" type=“text/css" href=“style.css">
-	<script src=“common.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="common.js"></script>
 	```
 
 - \<title\>~\</title\>
@@ -712,7 +712,7 @@ window.addEventListener("load", function(e) {
 |\&lt;|\<|
 |\&gt;|\>|
 |\&amp;|&|
-|\&quot;|“|
+|\&quot;|"|
 |\&apos;|'|
 |\&cent;|¢|
 |\&pound;|£|
