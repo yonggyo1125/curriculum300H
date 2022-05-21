@@ -742,6 +742,80 @@ public class MouseInputEvent extends JFrame implements MouseListener {
 
 - 실행화면
 
+![이벤트6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/23%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%9D%B4%EB%B2%A4%ED%8A%B86.png)
+
+
+#### day23/KeyInputEvent.java
+
+```
+package day23;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class KeyInputEvent extends JFrame implements KeyListener {
+	String msg;
+	JLabel sbar;
+	
+	public KeyInputEvent() {
+		super("키보드에서의 InputEvent");
+		sbar = new JLabel();
+		add(sbar);
+		addKeyListener(this);
+		setSize(300, 200);
+		setVisible(true);
+	}
+	
+	// 키를 눌렀을 때 실행
+	public void keyPressed(KeyEvent e) {
+		msg = "keyPressed : " + e.getKeyText(e.getKeyCode());
+		if (e.isShiftDown()) { 
+			msg += "<Shift>"; 
+		}
+		
+		if (e.isControlDown()) {
+			msg += "<Ctrl>";
+		}
+		
+		if (e.isAltDown()) {
+			msg += "<Alt>";
+		}
+		
+		sbar.setText(msg);
+	}
+	
+	// 키를 놓았을 때 실행
+	public void keyReleased(KeyEvent e) {
+		msg = "KeyReleased : " + KeyEvent.getKeyText(e.getKeyCode());
+		if (e.isShiftDown()) {
+			msg += "<Shift>";
+		}
+		
+		if (e.isControlDown()) {
+			msg += "<Ctrl>";
+		}
+		
+		if (e.isAltDown()) {
+			msg += "<Alt>";
+		}
+		
+		sbar.setText(msg);
+	}
+	
+	// 키를 눌렀다가 놓았을 때 실행
+	public void keyTyped(KeyEvent e) {
+		
+	}
+	
+	public static void main(String[] args) {
+		KeyInputEvent kie = new KeyInputEvent();
+		kie.setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+}
+```
+- 실행화면
+
 
 ## 어댑터를 이용한 이벤트 처리
 
