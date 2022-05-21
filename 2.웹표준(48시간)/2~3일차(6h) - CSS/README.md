@@ -544,5 +544,34 @@ flexbox를 다루려면 주축과 교차축이라는 두 개의 축에 대한 �
 
 - row 혹은 row-reverse를 선택하면 주축은 인라인 방향으로 행을 따릅니다.
 
+![flex1](https://github.com/yonggyo1125/curriculum300H/blob/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/2~3%EC%9D%BC%EC%B0%A8(6h)%20-%20CSS/images/flex1.png)
 
 - column 혹은 column-reverse 을 선택하면 주축은 페이지 상단에서 하단으로 블록 방향을 따릅니다. 
+
+![flex2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/2~3%EC%9D%BC%EC%B0%A8(6h)%20-%20CSS/images/flex2.png)
+
+#### 교차축
+- 교차축은 주축에 수직하므로, 만약 flex-direction(주축)이 row 나 row-reverse 라면 교차축은 열 방향을 따릅니다.
+
+![flex3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/2~3%EC%9D%BC%EC%B0%A8(6h)%20-%20CSS/images/flex3.png)
+
+- 주축이 column 혹은 column-reverse 라면 교차축은 행 방향을 따릅니다.
+
+![flex4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/2~3%EC%9D%BC%EC%B0%A8(6h)%20-%20CSS/images/flex4.png)
+
+- flex 요소를 정렬하고 끝을 맞추(justify)려면 어느 축이 어느 방향인지 이해하는 것이 중요합니다; flexbox는 주축, 교차축을 따라 항목을 정렬하고 끝을 맞추는 각종 속성들을 적용하는 방식으로 동작합니다. 
+
+#### 시작선과 끝선
+- flexbox가 쓰기 방법(writing mode)을 가정하지 않는다는 것은 상당히 중요합니다. 과거의 CSS는 왼쪽에서 오른쪽으로 향하는 가로 방향의 쓰기 방법에 치우쳐 있었습니다. 하지만 현대의 레이아웃은 다양한 쓰기 방법을 포괄해야 하므로, 더이상 텍스트가 문서의 왼쪽 상단에서 시작해서 오른쪽으로 향한다고 가정하지 않습니다. 새 라인이 항상 아래에 쌓인다고 가정하지도 않습니다.
+
+- 다른 글에서 flexbox와 쓰기 방법 명세(writing mode spec.)가 어떤 관련이 있는지 알아볼 수 있습니다. 그 전에, 이 글에서 flex 요소의 정렬 방향에 "왼쪽, 오른쪽, 위, 아래"를  사용하지 않는 이유를 알 수 있었으면 합니다.
+
+- flex-direction이 row고 영어 문장을 문서에 쓰고 있다면, 주축의 시작선은 왼쪽 끝, 끝선은 오른쪽 끝이 될 것입니다.
+
+- 아랍어 문장을 쓰고 있다면, 주축의 시작선은 오른쪽 끝, 끝 선은 왼쪽 끝이 될 것입니다.
+
+
+- 영어와 아랍어는 모두 가로 쓰기를 채택하고 있으므로 두 예시에서 교차축의 시작선은 flex 컨테이너의 위 끝이며 끝선은 아래 끝입니다.
+
+- 조금만 지나면 왼쪽-오른쪽으로 생각하는 것보다 시작선-끝선으로 생각하는 것이 금새 자연스러워질 것입니다. 동일한 패턴을 따르는 CSS 그리드 레이아웃 같은 방법을 다룰 때도 쉽게 적응할 수 있을 것입니다.
+
