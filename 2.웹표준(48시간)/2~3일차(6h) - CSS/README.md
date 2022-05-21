@@ -568,10 +568,110 @@ flexbox를 다루려면 주축과 교차축이라는 두 개의 축에 대한 �
 
 - flex-direction이 row고 영어 문장을 문서에 쓰고 있다면, 주축의 시작선은 왼쪽 끝, 끝선은 오른쪽 끝이 될 것입니다.
 
+![flex5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/2~3%EC%9D%BC%EC%B0%A8(6h)%20-%20CSS/images/flex5.png)
+
 - 아랍어 문장을 쓰고 있다면, 주축의 시작선은 오른쪽 끝, 끝 선은 왼쪽 끝이 될 것입니다.
 
+![flex6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/2~3%EC%9D%BC%EC%B0%A8(6h)%20-%20CSS/images/flex6.png)
 
 - 영어와 아랍어는 모두 가로 쓰기를 채택하고 있으므로 두 예시에서 교차축의 시작선은 flex 컨테이너의 위 끝이며 끝선은 아래 끝입니다.
 
-- 조금만 지나면 왼쪽-오른쪽으로 생각하는 것보다 시작선-끝선으로 생각하는 것이 금새 자연스러워질 것입니다. 동일한 패턴을 따르는 CSS 그리드 레이아웃 같은 방법을 다룰 때도 쉽게 적응할 수 있을 것입니다.
+- 조금만 지나면 왼쪽-오른쪽으로 생각하는 것보다 시작선-끝선으로 생각하는 것이 금새 자연스러워질 것입니다.
 
+
+### flex 컨테이너
+문서의 영역 중에서 flexbox가 놓여있는 영역을 flex 컨테이너라고 부릅니다. flex 컨테이너를 생성하려면 영역 내의 컨테이너 요소의 display 값을 flex 혹은 inline-flex로 지정합니다. 이 값이 지정된 컨테이너의 일차 자식(direct children) 요소가 flex 항목이 됩니다. display 속성만 지정하여 flex 컨테이너를 생성하면 다른 flex 관련 속성들은 아래처럼 기본 값이 지정됩니다.
+
+- 항목은 행으로 나열됩니다. (flex-direction 속성의 기본값은 row입니다).
+- 항목은 주축의 시작 선에서 시작합니다.
+- 항목은 주 차원 위에서 늘어나지는 않지만 줄어들 수 있습니다.
+- 항목은 교차축의 크기를 채우기 위해 늘어납니다.
+- flex-basis 속성은 auto로 지정됩니다.
+- flex-wrap 속성은 nowrap으로 지정됩니다.
+
+이렇게되면 flex 항목들은 각 항목 별 내부 요소의 크기로 주축을 따라 정렬됩니다. 컨테이너의 크기보다 더 많은 항목이 있을 경우 행을 바꾸지 않고 주축 방향으로 흘러 넘치게 됩니다. 어떤 항목이 다른 항목보다 높이 값이 크다면 나머지 모든 항목들은 그에 맞게 교차축을 따라 늘어나게 됩니다.<br><br>
+
+```
+.box {
+		display: flex;
+      }
+```
+```
+		<div class="box">
+          <div>One</div>
+          <div>Two</div>
+          <div>Three
+              <br>has
+              <br>extra
+              <br>text
+          </div>
+        </div>
+```
+
+#### flex-direction 지정 
+- flex 컨테이너에 flex-direction 속성을 지정하면 flex 항목이 나열되는 방향을 변경할 수 있습니다. flex-direction: row-reverse 라고 지정하면 행으로 나열되는 것은 그대로지만 시작 선과 끝 선이 서로 바뀌게 됩니다.
+
+- flex-direction을 column으로 지정하면 주축이 변경되고 항목들은 열로 나열됩니다. column-reverse로 지정하면 그에 더해 시작 선과 끝 선이 서로 바뀌게 됩니다.
+```
+.box1 {
+          display: flex;
+          flex-direction: row-reverse;
+        }
+.box2 {
+          display: flex;
+          flex-direction: column-reverse;
+        }
+```
+
+```
+		<div class="box1">
+          <div>One</div>
+          <div>Two</div>
+          <div>Three</div>
+        </div>
+      
+		<div class="box2">
+          <div>One</div>
+          <div>Two</div>
+          <div>Three</div>
+        </div>
+```
+
+### flex-wrap을 이용한 복수 행 flex 컨테이너 지정
+- flexbox는 1차원 모델이지만 flex 항목이 여러 행에 나열되도록 할 수 있습니다. 그 경우 각 행이 새로운 flex 컨테이너라고 생각해야 합니다. 공간 배분은 해당 행에서만 이루어지며 다른 행은 영향을 받지 않습니다.
+
+- 항목이 여러 행에 나열되도록 하려면 flex-wrap 속성의 값을 wrap으로 지정합니다. 그러면 항목이 하나의 행에 들어가지 않을 정도로 클 경우 다른 행에 배치됩니다. 아래의 라이브 예시에 있는 flex 항목은 폭이 지정되어 있으며 항목들의 폭의 합은 flex 컨테이너에 들어가기에는 너무 넓습니다. flex-wrap속성이 wrap으로 지정되어 있으므로 항목은 여러 행에 나열됩니다. 초깃값과 동일한 nowrap을 지정하고 flex항목에 대한 확대/축소 방식을 별도로 지정하지 않으면 flex 항목들은 컨테이너의 폭에 맞게 줄어듭니다.  nowrap을 지정하면 항목이 전혀 줄어들 수 없거나 충분히 줄어들 수 없을 때 흘러넘치게 됩니다.
+
+```
+	.box {
+        display: flex;
+        flex-wrap: wrap;
+    }
+```
+
+```
+	<div class="box">
+        <div>One</div>
+        <div>Two</div>
+        <div>Three</div>
+      </div>
+```
+
+### 축약형 속성 flex-flow 
+flex-direction 속성과 flex-wrap 속성을 flex-flow라는 축약 속성으로 합칠 수 있습니다. 첫 번째 값은 flex-direction이고 두 번째 값은 flex-wrap입니다.
+```
+	.box {
+        display: flex;
+        flex-flow: row wrap;
+      }
+```
+```
+	<div class="box">
+        <div>One</div>
+        <div>Two</div>
+        <div>Three</div>
+      </div>
+```
+
+### flex 항목에 지정 가능한 속성들 
+500 픽셀의 크기를 갖는 flex 컨테이너 내에 100 픽셀 크기의 자식 세 개가 존재할 때, 사용가능한 공간 200 픽셀이 남게 됩니다. 기본적으로 flexbox는 이 공간을 마지막 자식 요소 다음에 빈공간으로 남겨둡니다.
