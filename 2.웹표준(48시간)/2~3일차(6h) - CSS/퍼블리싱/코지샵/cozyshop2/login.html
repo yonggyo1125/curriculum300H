@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<link rel="stylesheet" type="text/css" href="css/login.css">
+		<title>코지샵 공식 온라인스토어</title>
+	</head>
+	<body class='login_page'>
+		<header>
+			<!-- 상단 메뉴 S -->
+			<div class='top_menu'>
+				<div class='layout_width'>
+					<a href='#' class='menu'>JOIN</a> | 
+					<a href='#' class='menu'>LOGIN</a> | 
+					<a href='#' class='menu'>CART</a> | 
+					<a href='#' class='menu'>ORDER</a> | 
+					<a href='#' class='menu'>전자공고</a>
+				</div>
+			</div>
+			<!-- 상단 메뉴 E -->
+			
+			<!-- 로고 검색 영역 S -->
+			<div class='logo_search'>
+				<div class='layout_width'>
+					<div class='box box1'>
+						<a href='#'>
+							<i class='xi-message-o'></i>
+						</a>
+						<a href='#'>
+							<i class='xi-user-plus-o'></i>
+						</a>
+						<a href='#'>
+							<i class='xi-heart'></i>
+						</a>
+					</div>
+					<div class='box box2'>
+						<a href="index.html">
+							<img src="image/logo.png" class="logo">
+						</a>
+					</div>
+					<div class='box box3'>
+						<form method="get" action="search.html">
+							<div class='search_box'>
+								<input type="text" name="sword" value="">
+								<input type="image" src="image/icon_search.png" class='search_btn'>
+							</div>
+							<!--// search_box -->
+						</form>
+					</div>
+				</div>
+			</div> <!--// logo_search -->
+			<!-- 로고 검색 영역 E -->
+		</header>
+		
+		<!-- 로그인 상단 영역 S -->
+		<section class='layout_width'>
+			<article class='page_nav'>
+				<a href='index.html'>HOME</a> &gt; 
+				<a href='login.html'>로그인</a>
+			</article>
+			<article class='page_title'>
+				<img src="image/icon_login.png" class='icon'>
+				LOGIN
+			</article>
+		</section>
+		<!-- 로그인 상단 영역 E -->
+		
+		<!-- 로그인 하단 영역 S -->
+		<section class='login_wrap'>
+			<div class='box box1'>
+				<img src="image/login_banner.png">
+			</div>
+			<div class='box box2'>
+				<ul class='tab_wrap'>
+					<li class='on'>
+						회원로그인
+					</li>
+					<li>비회원 주문확인</li>
+				</ul>
+				
+				<div class='login_form'>
+					<form method='post' action='#' autocomplete="off">
+						<input type="text" name="memId" placeholder="아이디">
+						<input type="password" name="password" placeholder="비밀번호">
+						
+						<div class='control'>
+							<input type="checkbox" name="saveId" value="1" id="saveId">
+							<label for="saveId">아이디 저장</label>
+						</div> <!--// control -->
+						
+						<input type="submit" value="로그인" class='login_btn'>
+						
+						<div class='control_link'>
+							<div class='box box1'>
+								<a href='#'>아이디</a>
+								·
+								<a href='#'>비밀번호</a>찾기
+							</div>
+							<div class='box box2'>
+								<a href='#'>회원가입</a>
+							</div>
+						</div> <!--// control_link -->
+						
+						<div class='sns_login'>
+							<div class='box box1'>간편하게 시작하기</div>
+							<div class='box box2'>
+								<a href='#'>
+									<img src='image/sns_naver.png'>
+								</a>
+								<a href='#'>
+									<img src='image/sns_kakao.png'>
+								</a>
+								<a href='#'>
+									<img src='image/sns_facebook.png'>
+								</a>
+								<a href='#'>
+									<img src='image/sns_payco.png'>
+								</a>
+							</div>
+						</div> <!--// sns_login -->
+						
+					</form>
+				</div> <!--// login_form -->
+			</div>
+		</section>
+		<!-- 로그인 하단 영역 E -->
+		
+		<footer>
+			<section>
+				<!-- 고객센터 정보 영역 S -->
+				<article class='cs_info_wrap'>
+					<div class='cs_info layout_width'>
+						<div class='box box1'>
+							<div class='text_style1 text1'>CUSTOMER SERVICE</div>
+							<div class='text_style1 text2'>1688-4564</div>
+						</div>
+						<div class='box box2'>
+							월요일-토요일 09:00-18:00(점심시간 11:50-13:00)<br>
+							일요일 및 공휴일은 1:1게시판을 이용해주세요.
+						</div>
+						<div class='box box3'>
+							<a href='#'>1:1문의하기</a>
+							<a href='#'>공사 및 도매문의</a>
+						</div>
+						<div class='box box4'>
+							<div class='text_style1 text1'>BANK INFO</div>
+							<div class='text_style1 text2'>140-010-291124</div>
+						</div>
+						<div class='box box5'>
+							<div class='text1'>
+								신한은행&nbsp;&nbsp; 예금주 | (주)코지샵
+							</div>
+							<div class='text2'>
+								본사는 위 계좌이외에 타 계좌번호를 사용하지 않습니다.
+							</div>
+						</div>					
+					</div> <!--// cs_info -->
+				</article>
+				<!-- 고객센터 정보 영역 E -->
+				
+				<!-- 사이트맵, 공지사항 S -->
+				<article class='sitemap layout_width'>
+					<div class='box box1'> 
+						<div class='box box1'> 
+							<div class='title'>GUIDE</div>
+							<ul>
+								<li><a href='#'>회사소개</a></li>
+								<li><a href='#'>개인정보취급방침</a></li>
+								<li><a href='#'>이용약관</a></li>
+								<li><a href='#'>이용안내</a></li>
+								<li><a href='#'>도매/제휴문의</a></li>
+								<li><a href='#'>회원탈퇴</a></li>
+								<li><a href='#'>Partnership</a></li>
+								<li><a href='#'>인재채용</a></li>
+							</ul>
+						</div>
+						<div class='box box2'>
+							<div class='title'>CUSTOMER SERVICE</div>
+							<ul>
+								<li><a href='#'>공지사항</a></li>
+								<li><a href='#'>A/S 서비스 신청</a></li>
+								<li><a href='#'>자주 묻는 질문</a></li>
+								<li><a href='#'>이벤트</a></li>
+								<li><a href='#'>해외배송안내</a></li>
+							</ul>
+						</div>
+						<div class='box box3'>
+							<div class='title'>COMMUINTY</div>
+							<ul>
+								<li><a href='#'>방문견적신청</a></li>
+								<li><a href='#'>실시간 후기</a></li>
+								<li><a href='#'>실측/설치 방법</a></li>
+								<li><a href='#'>TV&amp;Movie 협찬</a></li>
+								<li><a href='#'>쇼룸안내</a></li>
+							</ul>
+						</div>
+						<div class='box box4'>
+							<div class='title'>DELIVERY</div>
+							
+							<dl>
+								<dt>반품주소:</dt>
+								<dd>
+									경기도 김포시 김포한강1로 골든타임빌딩 311호<br>
+									(주)코지샵
+								</dd>
+							</dl>
+							
+							<dl>
+								<dt>반품요청:</dt>
+								<dd>로젠/CJ택배</dd>
+							</dl>
+							
+						</div>
+					</div>
+					<div class='box box2'>
+						<div class='box box1'>
+							<a href='#' class='more'>MORE</a>
+							<a href='#' class='boardnm'>NOTICE</a>
+						</div>
+						<div class='box box2'>
+							<ul>
+								<li>
+									<a href='#'>·코지샵 방문견적 &amp; 시공 안심하고 신청하세요. 코지샵 방문견적 &amp; 시공 안심하고 신청하세요.</a>
+								</li>
+								<li>
+									<a href='#'>·코지샵 방문견적 &amp; 시공 안심하고 신청하세요.</a>
+								</li>
+								<li>
+									<a href='#'>·코지샵 방문견적 &amp; 시공 안심하고 신청하세요.</a>
+								</li>
+								<li>
+									<a href='#'>·코지샵 방문견적 &amp; 시공 안심하고 신청하세요.</a>
+								</li>
+								<li>
+									<a href='#'>·코지샵 방문견적 &amp; 시공 안심하고 신청하세요.</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</article>
+				<!-- 사이트맵, 공지사항 E -->
+				
+				<!-- 회사 정보 영역 S -->
+				<article class='company_info layout_width'>
+					회사명 : 주식회사 코지샵&nbsp;&nbsp;|&nbsp;&nbsp; 
+					대표이사 : 이정섭&nbsp;&nbsp;|&nbsp;&nbsp;
+					사업자등록번 : 230-81-01462&nbsp;&nbsp;|&nbsp;&nbsp;
+					통신판매 : 제2019-경기김포-0902<br>
+					
+					본사 : 경기도 김포한강1로 250 골든타임 311호~313호&nbsp;&nbsp;|&nbsp;&nbsp;
+					전화 : 1688-4564&nbsp;&nbsp;|&nbsp;&nbsp;
+					팩스 : 031-984-0830&nbsp;&nbsp;|&nbsp;&nbsp;
+					제품 문의 / 협찬 및 제휴 문의 : cozyshop_4564@naver.com<br>
+					
+					서울 영등포 문래지점: 서울시 영등포구 경인로775 에이스하이테크시티 1층 803-56호<br>
+					
+					개인정보관리자: 김해뜰&nbsp;&nbsp;|&nbsp;&nbsp;
+					copyright &copy; <strong>www.cozyshop.kr</strong> ALL RIGHTS RESERVED
+					
+					<span class='copyright_notice'>
+					&copy; 코지샵은 상표권 등록에 따라 모든 컨텐츠를 보호받고 있습니다.
+					</span>
+				</article>
+				<!-- 회사 정보 영역 E -->
+			</section>
+			
+			<!-- 카카오 상담하기 퀵 메뉴 -->
+			<img src="image/float_katalk.png" class="quick_btn">
+		</footer>
+	</body>
+</html>

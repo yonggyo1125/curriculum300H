@@ -1,0 +1,15 @@
+.banner {
+	height: 500px; 
+}
+
+.banner:nth-child(1) {
+	background: url("../image/banner1.jpg") no-repeat center center;
+}
+
+.banner:nth-child(2) {
+	background:url("../image/banner2.jpg") no-repeat center center;
+}
+
+.banner:nth-child(3) {
+	background:url("../image/banner3.jpg") no-repeat center center;
+}

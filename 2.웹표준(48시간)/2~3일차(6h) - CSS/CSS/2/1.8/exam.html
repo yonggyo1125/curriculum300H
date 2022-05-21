@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    <meta charset='utf-8'>
+	<style>
+		.link1:link { color: red; }
+		.link:visited { color: green; }
+		.link1:hover { background-color: gray; }
+		.link1:active { font-weight: bold; }
+		
+		input:read-only { background-color: gray; }
+		
+		.box:not(.small) { border: 1px solid red; }
+		
+		.text1:nth-child(2n + 1) { font-weight: bold; color: red; }
+				
+		input[name^='payment'] { display: none; }
+		input[name^='payment']+label { display: inline-block; width: 23px; height: 23px; background:url('img/chk-off.png') no-repeat center center; font-size: 0;  cursor: pointer; }
+		input[name^='payment']:checked+label { display: inline-block; width: 23px; height: 23px; background:url('img/chk-on.png') no-repeat center center; }
+		
+		.after_box:after { content: "요소 내부 마지막에 있음"; color: red; display: block; }
+		
+		.before_box:before { content: "요소 내부 첫번쨰에 있음"; color: blue; display: block; }
+	</style>
+    </head>
+    <body>
+		<h1>가상클래스 선택자</h1>
+		
+		<a href='#' class='link1'>링크1</a>
+		<a href='#' class='link2'>링크2</a>
+		<br>
+		 
+	    <h2>:read-only</h2>
+		<input type='text' readonly><br>
+		
+		<h2>:not<h2>
+		<div class='box'>BOX1</div>
+		<div class='box small'>BOX2 with small class</div>
+		<div class='box'>BOX3</div>
+		
+		
+		<h2>:nth-child</h2>
+		<span class='text1'>1</span>
+		<span class='text1'>2</span>
+		<span class='text1'>3</span>
+		<span class='text1'>4</span>
+		<span class='text1'>5</span>
+		
+		<h2>:first-child</h2>
+		<span class='text2'>1</span>
+		<span class='text2'>2</span>
+		<span class='text2'>3</span>
+		<span class='text2'>4</span>
+		<span class='text2'>5</span>
+		
+		<h2>:checked</h2>
+		<input type='checkbox' name='payment[]' value='card' id='payment_card' checked>
+		<label for='payment_card'>신용카드</label>
+		
+		<input type='checkbox' name='payment[]' value='bank' id='payment_bank'>
+		<label for='payment_bank'>은행</label>
+		
+		
+		<h2>:after</h2>
+		<div class='after_box'>
+			<p>AFTER1</p>
+			<p>AFTER2</p>
+		</div>
+		
+		<h2>:before</h2>
+		<div class='before_box'>
+			<p>BEFORE1</p>
+			<p>BEFORE2</p>
+		</div>
+    </body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<style>
+	* { 
+		box-sizing: border-box; 
+	}
+	.box {
+		width: calc(100% / 3 - 7px);
+		height: 300px; 
+		border: 1px solid red; 
+		margin-left: 10px; 
+		margin-bottom: 10px; 
+		float: left; 
+	}
+	.box:nth-child(3n+1) {
+		margin-left: 0;
+	}
+	
+	@media all and (max-width: 900px) { /* 2단 출력 */
+		.box {
+			background-color: green;
+			width: calc(100% / 2 - 10px);
+			margin-left: 20px;
+			margin-bottom: 20px; 
+		}
+		
+		.box:nth-child(3n+1) { 
+			margin-left: 20px; 
+		}
+		.box:nth-child(2n+1) {
+			margin-left: 0;
+		}
+	}
+	
+	@media all and (max-width: 600px) { /* 1단 출력 */
+		.box {
+			background-color: orange;
+			width: 100%; 
+			margin-left: 0;
+		}
+		
+		.box:nth-child(3n+1) {
+			margin-left: 0; 
+		}
+	}
+	</style>
+</head>
+<body>
+	<div class='box'>BOX1</div>
+	<div class='box'>BOX2</div>
+	<div class='box'>BOX3</div>
+	<div class='box'>BOX4</div>
+	<div class='box'>BOX5</div>
+	<div class='box'>BOX6</div>
+</body>
+</html>
