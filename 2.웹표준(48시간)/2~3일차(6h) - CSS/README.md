@@ -842,4 +842,4 @@ flexbox의 주 기능 중 하나는 (주축과 교차축으로 표현되는) fle
 
 ## 과제
 다음의 모바일 사이트의 메인페이지를 지금까지 배운 HTML과 CSS를 적용하여 동일하게 퍼블리싱 해보세요.
-- ![http://m.rkdwlstjr782.godomall.com](http://m.rkdwlstjr782.godomall.com)
+- [http://m.rkdwlstjr782.godomall.com](http://m.rkdwlstjr782.godomall.com)
