@@ -258,7 +258,7 @@ public class ActionEventTest extends JFrame implements ActionListener {
 }
 ```
 - 실행결과
-
+![이벤트3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/23%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%9D%B4%EB%B2%A4%ED%8A%B83.png)
 
 - JOpionPane 클래스(대화상자)를 처리하는데 ActionEvent를 사용하였다.
 - 팝업 다이얼로그인 JOptionPane은 대화상자를 출력하는 클래스인데 showInputDialog, showMessageDialog, showConfirmDialog, showOptionDialog의 네 종류가 있다.
