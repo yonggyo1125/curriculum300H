@@ -1006,4 +1006,46 @@ public class JScrollPaneTest extends JFrame {
 - JTable 클래스는 데이터를 테이블 형태인 행과 열로 나타내고자 할 때 사용한다.
 - JTable 클래스로 나타낸 테이블에서 행은 마우스를 이용하여 경계선을 조정하고 위치를 바꿀 수 있다.
 
-#### JTable 클래스와 생성자 
+#### JTable 클래스와 생성자
+
+|생성자|설명|
+|-----|------|
+|JTable()|테이블을 생성한다.|
+|JTable(int numRows, int numColumns)|행의 수가 numRows이고 열의 수가 numColumns인 테이블을 생성한다.|
+|JTable(Object[][] rowData, Object[] columnNames)|테이블에 나타낼 2차원 배열인 rowData와 행의 제목을 나타내는 일차원 배열인 columnNames을 가지고 테이블을 생성한다.|
+
+- 테이블의 각 행에 들어갈 데이터인 이차원 배열 객체를 생성한다.
+- 테이블(JTable) 객체 생성한다.
+- JScrollPane에 테이블을 붙인다.
+
+#### day22/gui/JTableTest.java
+```
+package day22.gui;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class JTableTest extends JFrame {
+	JTableTest() {
+		super("JTable Test");
+		setSize(300, 300);
+		setLocation(300, 300);
+		setLayout(new BorderLayout());
+		String[] title = {"사번", "성명", "부서"};
+		String[][] data = {{"1", "고애신", "총무과"}, {"2", "최유신", "인사과"}, {"3", "구동매", "전산과"}};
+		JTable table = new JTable(data, title);
+		int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
+		int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
+		
+		JScrollPane js = new JScrollPane(table, v, h);
+		add(js, BorderLayout.CENTER);
+		
+		setVisible(true);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+	
+	public static void main(String[] args) {
+		new JTableTest();
+	}
+}
+```
