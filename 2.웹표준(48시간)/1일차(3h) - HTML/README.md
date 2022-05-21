@@ -84,7 +84,7 @@
 
 #### HTML 속성 예시
 - href  - 이동할 페이지 링크를 지정할 수 있습니다.
-````
+```
 <a href='https://www.naver.com'>네이버</a>
 ```
 
@@ -256,47 +256,39 @@ HTML <a>태그는 하이퍼링크를 정의합니다. a 태그에서 가장 중�
    - iframe을 사용하고 있다면 가장 상위 창에서 링크를 이동합니다.
 
 
-10-3. 경로
-절대경로
-절대 경로란 특정문서 페이지 또는 이미지등 자원에 접근할 수 있는 전체 URL을 의미 합니다.
-photo.jpg 파일이 서버에서 /web/public/img/photo.jpg에 위치 해 있다면  
-<a href='/web/public/img/photo.jpg'>사진</a>과 같이 표현할 수 있습니다.
+### 경로
+- 절대경로
+	- 절대 경로란 특정문서 페이지 또는 이미지등 자원에 접근할 수 있는 전체 URL을 의미 합니다.
+	- photo.jpg 파일이 서버에서 /web/public/img/photo.jpg에 위치 해 있다면 \<a href='/web/public/img/photo.jpg'\>사진\</a\>과 같이 표현할 수 있습니다.
 
-상대경로
-서버에서 /web/public/img/photo.jpg에 위치해 있고 현재 html 경로가 /web/public이라면 
-<a href='img/photo.jpg'> 형태로 표현할 수 있습니다.(현재 경로 기준)
+- 상대경로
+	- 서버에서 /web/public/img/photo.jpg에 위치해 있고 현재 html 경로가 /web/public이라면 \<a href='img/photo.jpg'\> 형태로 표현할 수 있습니다.(현재 경로 기준)
 
-상대경로를 표현하는 방식
-./ 현재 파일이 열려 있는 경로
-../ 현재 파일이 열려 있는 경로보다 1단계 상위 경로
-../../ 현재 파일이 열려 있는 경로보다 2단계 상위 경로
+	- 상대경로를 표현하는 방식
+	- ./ 현재 파일이 열려 있는 경로
+	- ../ 현재 파일이 열려 있는 경로보다 1단계 상위 경로
+	- ../../ 현재 파일이 열려 있는 경로보다 2단계 상위 경로
 
 
+## HTML 이미지(Images)
+- HTML <img>태그는 웹페이지에서 이미지를 표시하기 위해 사용합니다.
 
-11. HTML 이미지(Images)
-HTML <img>태그는 웹페이지에서 이미지를 표시하기 위해 사용합니다.
+### 필수 속성
+\<img\>태그에는 다음 2개의 필수 속성이 있습니다.
+- src - 이미지 경로를 지정할수 있습니다.
+- alt - 이미지 대체 문구(이미지가 노출이 되지 않는 경우에 대체 노출되는 문구)
 
-11-1. 필수 속성
-<img>태그에는 다음 2개의 필수 속성이 있습니다.
-
-src - 이미지 경로를 지정할수 있습니다.
-alt - 이미지 대체 문구(이미지가 노출이 되지 않는 경우에 대체 노출되는 문구)
-
-11-2. width, height 속성
-이미지의 너비와 높이를 지정할 수 있습니다. 다만 이미지의 사이즈는 속성으로 지정하기 보다는 CSS Style로 width, height를 지정하는것이 좋습니다.
+### width, height 속성
+- 이미지의 너비와 높이를 지정할 수 있습니다. 다만 이미지의 사이즈는 속성으로 지정하기 보다는 CSS Style로 width, height를 지정하는것이 좋습니다.
 
 
-12. HTML 테이블(Tables)
-HTML 테이블은 
-table, tr, th, td, thead, tbody, tfoot 등으로 구성되어 있으며 
-tr은 데이터의 행
-td, th는 데이터의 열로 생각할 수 있습니다.
-th는 테이블 헤더로 테이블 각 열을 대표하는 셀
-
-
-
-또한 테이블 태그는 thead - 헤더영역, tbody - 본문영역, tfoot - 본문영역으로 구분하여 사용할 수 있습니다. 
-
+## HTML 테이블(Tables)
+- HTML 테이블은 table, tr, th, td, thead, tbody, tfoot 등으로 구성되어 있으며 
+- tr은 데이터의 행 td, 
+- th는 데이터의 열로 생각할 수 있습니다.
+- th는 테이블 헤더로 테이블 각 열을 대표하는 셀
+- 또한 테이블 태그는 thead - 헤더영역, tbody - 본문영역, tfoot - 본문영역으로 구분하여 사용할 수 있습니다. 
+```
 <table>
 <thead>
    <tr>
@@ -318,68 +310,67 @@ th는 테이블 헤더로 테이블 각 열을 대표하는 셀
    </tr>
 </tbody>
 </table>
+```
 
+## HTML 리스트(Lists)태그
 
-13. HTML 리스트(Lists)태그
+- 순서없는 리스트(Unordered HTML List)
+- 순서 없는 리스트는 <ul>태그로 시작하며 리스트 항목들은 <li>~</li> 태그를 사용합니다.
 
-13.1 순서없는 리스트(Unordered HTML List)
-순서 없는 리스트는 <ul>태그로 시작하며 리스트 항목들은 <li>~</li> 태그를 사용합니다.
-
+```
 예)
 <ul>
 <li>항목1</li>
   <li>항목2</li>
   <li>항목3</li> 
 </ul>
+```
 
+- 리스트 구분 기본 값은 disc로 색이 채워진 둥근 점 모양입니다.
+- 리스트 구분 값은 css의 list-style-type으로 지정할 수 있습니다.
+	- desc - 기본 값, 채워진 둥근 점
+	- circle - 책이 미워진 둥근 점
+	- square - 사각형 모양 점
+	- none - 구분값 없음
 
-리스트 구분 기본 값은 disc로 색이 채워진 둥근 점 모양입니다.
-리스트 구분 값은 css의 list-style-type으로 지정할 수 있습니다.
-
-desc - 기본 값, 채워진 둥근 점
-circle - 책이 미워진 둥근 점
-square - 사각형 모양 점
-none - 구분값 없음
-
-적용방식
+- 적용방식
+```
 <ul style=”list-style-type:disc 또는 circle, square, none 중 하나 입력”>
+```
 
 
+### 순서 있는 리스트(Ordered HTML List)
+순서 있는 리스트는 \<ol\>태그로 시작하며 리스트 항목들은 \<li\>~\</li\> 태그를 사용합니다.
 
-
-13.2 순서 있는 리스트(Ordered HTML List)
-순서 있는 리스트는 <ol>태그로 시작하며 리스트 항목들은 <li>~</li> 태그를 사용합니다.
-
+```
 예) 
 <ol>
   <li>항목</li>
   <li>항목</li>
   <li>항목</li>
 </ol>
+```
 
+- 리스트 구분 값은 순서가 있는 숫자나 문자로 표현이 되며 다음과 같은 타입으로 지정하실 수 있습니다.
 
+- \1 - 기본값이며 숫자 순서로 표시됩니다.
+- A - 대문자 알파벳 순서로 표시됩니다.
+- a - 소문자 알파벳 순서로 표시됩니다.I - 대문자 로마 숫자 형식으로 표시됩니다.
+- i - 소문자 로마 숫자 형식으로 표시됩니다.
 
-
-
-
-리스트 구분 값은 순서가 있는 숫자나 문자로 표현이 되며 다음과 같은 타입으로 지정하실 수 있습니다.
-
-1 - 기본값이며 숫자 순서로 표시됩니다.
-A - 대문자 알파벳 순서로 표시됩니다.
-a - 소문자 알파벳 순서로 표시됩니다.I - 대문자 로마 숫자 형식으로 표시됩니다.
-i - 소문자 로마 숫자 형식으로 표시됩니다.
-
-적용방식
+- 적용방식
+```
 <ol type=”1 또는 A, a, I, i 중 하나 입력”>
+```
 
-시작번호 지정할 경우 start=”시작번호”로 지정하며 숫자를 변경할 경우 <li value=”변경숫자”>로 입력합니다.
+- 시작번호 지정할 경우 start=”시작번호”로 지정하며 숫자를 변경할 경우 \<li value=”변경숫자”\>로 입력합니다.
 
+### 설명 리스트(Description List)
+- 용어에 대한 설명을 위한 구조로 구성되어 있는 리스트 입니다.
+- \<dl\>~\</dl\> 태그이며 하나의 행을 구성합니다. 
+- 각 행은 \<dt\>~\</dt\>(항목명)와 \<dd\>~\</dd\>(항목 설명)으로 구성되어 있습니다.
 
-13.3 설명 리스트(Description List)
-용어에 대한 설명을 위한 구조로 구성되어 있는 리스트 입니다.
-<dl>~</dl> 태그이며 하나의 행을 구성합니다. 
-각 행은 <dt>~</dt>(항목명)와 <dd>~</dd>(항목 설명)으로 구성되어 있습니다.
-
+```
 예)
 <dl>
    <dt>상품명</dt>
@@ -389,22 +380,21 @@ i - 소문자 로마 숫자 형식으로 표시됩니다.
    <dt>판매가</dt>
    <dd>275,000원</dd>
 </dl>
+```
 
 
+## HTML Block & Inline 요소
+- 모든 HTML 요소들은 각 태그(요소)에 따른 기본 출력 값(display value)를 가지고 있습니다.
 
-14. HTML Block & Inline 요소
-모든 HTML 요소들은 각 태그(요소)에 따른 기본 출력 값(display value)를 가지고 있습니다.
+- 출력 값은 block과 inline이 있습니다.
 
-출력 값은 block과 inline이 있습니다.
-
-14.1 Block-level 요소
-항상 줄개행을 합니다.
-공간을 지정할 수 있습니다. 즉, width, height(너비와 높이)를 가질 수 있습니다.(CSS에서 지정)
-아래 위 또는 왼쪽 오른쪽에 공백(margin)을 지정할 수 있습니다.
-
-대표적으로 <div> 태그는 block-level 요소 입니다.
-
-block-level 태그(요소) 
+### Block-level 요소
+- 항상 줄개행을 합니다.
+- 공간을 지정할 수 있습니다. 즉, width, height(너비와 높이)를 가질 수 있습니다.(CSS에서 지정)
+- 아래 위 또는 왼쪽 오른쪽에 공백(margin)을 지정할 수 있습니다.
+- 대표적으로 \<div\> 태그는 block-level 요소 입니다.
+- block-level 태그(요소) 
+```
 <address>
 <article>
 <aside>
@@ -435,13 +425,14 @@ block-level 태그(요소)
 <tfoot>
 <ul>
 <video>
+```
 
-14.2 Inline-level 요소
-줄개행을 하지 않습니다.
-공간을 지정할 수 없습니다. 요소 안에 있는 내용만큼의 공간만 차지합니다.
-위 아래 공백(margin)을 지정할 수 없으나, 내부 공백(padding)은 지정할 수 있습니다.
-
-대표적으로 <span>태그는 inline-level 요소 입니다.
+### Inline-level 요소
+- 줄개행을 하지 않습니다.
+- 공간을 지정할 수 없습니다. 요소 안에 있는 내용만큼의 공간만 차지합니다.
+- 위 아래 공백(margin)을 지정할 수 없으나, 내부 공백(padding)은 지정할 수 있습니다.
+- 대표적으로 \<span\>태그는 inline-level 요소 입니다.
+```
 <a>
 <abbr>
 <acronym>
@@ -475,28 +466,28 @@ block-level 태그(요소)
 <time>
 <tt>
 <var>
+```
 
-14.3 Inline-block Level 요소
-block-level, inline-level 외에도 이 둘의 속성을 모두 가지고 있는 inline-block-level 요소도 있습니다.
+### Inline-block Level 요소
+- block-level, inline-level 외에도 이 둘의 속성을 모두 가지고 있는 inline-block-level 요소도 있습니다.
 
-각 요소 자체에 자연적으로 있는 속성은 아니며, style 지정을 하여 적용할 수 있습니다.
-또한 block-level 속성은 style 지정을 통해 inline, inline-block level 속성으로 변경이 가능합니다. 
-inline-level 속성 역시 style 지정을 통해 inline-block, block-level 속성으로 변경할 수 있습니다.
-
-예) style 적용시
+- 각 요소 자체에 자연적으로 있는 속성은 아니며, style 지정을 하여 적용할 수 있습니다.
+- 또한 block-level 속성은 style 지정을 통해 inline, inline-block level 속성으로 변경이 가능합니다. 
+- inline-level 속성 역시 style 지정을 통해 inline-block, block-level 속성으로 변경할 수 있습니다.
+- 예) style 적용시
+```
 div { display: inline-block; }
 span { display: block; }
+```
 
-15. HTML class 속성
-class 속성은 주로 스타일시트(style sheet)에서 특정 요소(태그)를 지정할 때 사용합니다. 
-다만 Class 속성은 동일한 이름의 class명을 지정할 수 있고 복수의 요소에 스타일을 공통적으로 지정할 수 있습니다.
+## HTML class 속성
+- class 속성은 주로 스타일시트(style sheet)에서 특정 요소(태그)를 지정할 때 사용합니다. 
+- 다만 Class 속성은 동일한 이름의 class명을 지정할 수 있고 복수의 요소에 스타일을 공통적으로 지정할 수 있습니다.
+- 스타일시트에서 요서 선택시 점(.)으로 클래스라고 지정할 수 있습니다.(셀렉터)
+- class='city'인 경우 .city 
+- 참고) 자바스트립트에서도 class, name tagName 등은 HTML Document Object Model(Dom)에서 복수로 선택이 되며, HTMLCollection 또는 NodeList 형태로 객체가 반환이 됩니다.
 
-스타일시트에서 요서 선택시 점(.)으로 클래스라고 지정할 수 있습니다.(셀렉터)
-class='city'인 경우 .city 
-
-참고) 자바스트립트에서도 class, name tagName 등은 HTML Document Object Model(Dom)에서 복수로 선택이 되며, HTMLCollection 또는 NodeList 형태로 객체가 반환이 됩니다.
-
-
+```
 예)
 <style>
 .city { 
@@ -510,23 +501,18 @@ class='city'인 경우 .city
 <div class='city'>서울</div>
 <div class='city'>인천</div>
 <div class='city'>부산</div>
+```
 
+- **주의**
+- class명은 대소문자를 구분하므로 정확하게 입력하여야 합니다.<br>(class='city'와 class='City'는 서로 다른 class로 인식합니다.)
 
+## HTML id 속성
+- id 속성은 HTML 요소 중에서 유일하게 존재하는 요소에 지정할 수 있습니다.
+- 복수로 지정하거나 중복될 때에는 class를 사용해야 합니다.
+- 스타일시트에서 요소 선택시 샾(#)으로 id를 지정할 수 있습니다.(셀렉터)<br>id='person1'인 경우 #person1
+- 참고) 자바스크립트에서도 유일값으로 1개만 선택이 가능합니다(document.getElementById)
 
-주의
-class명은 대소문자를 구분하므로 정확하게 입력하여야 합니다. 
-(class='city'와 class='City'는 서로 다른 class로 인식합니다.)
-
-16. HTML id 속성
-id 속성은 HTML 요소 중에서 유일하게 존재하는 요소에 지정할 수 있습니다.
-복수로 지정하거나 중복될 때에는 class를 사용해야 합니다.
-
-스타일시트에서 요소 선택시 샾(#)으로 id를 지정할 수 있습니다.(셀렉터)
-id='person1'인 경우 #person1
-
-참고)
-자바스크립트에서도 유일값으로 1개만 선택이 가능합니다(document.getElementById)
-
+```
 예)
 <style>
 #myHeader { 
@@ -535,41 +521,29 @@ id='person1'인 경우 #person1
 }
 </style>
 <h1 id='myHeader'>페이지 제목</h1>
+```
+
+## HTML iframes
+- iframe은 웹페이지 안에서 다른 웹페이지를 보여줘야 할때 사용합니다.
+- \<ifame\>~\</iframe\>태그형태로 사용
+- 속성
+	- src - iframe에 삽입될 문서의 주소
+	- width, height - iframe의 너비, 높이
+	- frameborder - 테두리 표시여부(1 - 테두리 있음, 0 - 테두리 없음)
+	- scrolling - 스크롤바 유무 선택(yes - 표시, no - 없음, auto - 자동)
+	- name - target이 필요한 프레임의 이름
+
+	- 예)<br>\<iframe src='inner_iframe.html' width='1100' height='500' frameborder=0 scrolling='yes'\>\</iframe\>
 
 
+## HTML Javascript 
+- HTML에서 자바스크립트를 사용해야 할 경우 \<script\>~\</script\>태그를 사용합니다.
+- \<script\>태그는 브라우저에 내장된 자바스크립트 언어를 사용할때 정의니다.
+- 보통 통상적으로 <script>태그는 head 태그 안쪽에 넣습니다. 그러나 필요에 따라서는 위치에 상관없이 추가될 수 있습니다.
+- HTML 문서 내부에 코드를 정의하는 방법과 자바스크립트를 외부파일에서 불러오는 방법이 있습니다.
 
-
-17. HTML iframes
-
-iframe은 웹페이지 안에서 다른 웹페이지를 보여줘야 할때 사용합니다.
-<ifame>~</iframe>태그형태로 사용
-
-속성
-src - iframe에 삽입될 문서의 주소
-width, height - iframe의 너비, 높이
-frameborder - 테두리 표시여부(1 - 테두리 있음, 0 - 테두리 없음)
-scrolling - 스크롤바 유무 선택(yes - 표시, no - 없음, auto - 자동)
-name - target이 필요한 프레임의 이름
-
-예)
-<iframe src='inner_iframe.html' width='1100' height='500' frameborder=0 scrolling='yes'></iframe>
-
-
-
-
-
-18. HTML Javascript 
-HTML에서 자바스크립트를 사용해야 할 경우 <script>~</script>태그를 사용합니다.
-
-<script>태그는 브라우저에 내장된 자바스크립트 언어를 사용할때 정의합니다.
-
-보통 통상적으로 <script>태그는 head 태그 안쪽에 넣습니다.
-그러나 필요에 따라서는 위치에 상관없이 추가될 수 있습니다.
-
-HTML 문서 내부에 코드를 정의하는 방법과 
-자바스크립트를 외부파일에서 불러오는 방법이 있습니다.
-
-18.1 내부에 코드를 정의하는 방법
+### 내부에 코드를 정의하는 방법
+```
 예)
 <script>
 window.addEventListener(”DOMContentLoaded”, function(e) {
@@ -580,27 +554,29 @@ window.addEventListener(”load”, function(e) {
      alert(”HTML 문서 호출 완료”);
 }, false);
 </script>
+```
 
-18.2 외부파일에서 불러오는 방법
+### 외부파일에서 불러오는 방법
+```
 <script src='script.js'></script>
+```
 
+### 태그(요소) 속성으로 스크립트를 실행하는 방법
+- 태그의 속성명으로 자바스크립트를 실행할 수 있습니다. 다만 자바스크립트, 스타일시트를 HTML에 혼재하지 않고 분리하여 쓰는것이 좋으므로 꼭 필요한 경우에만 적용합니다.<br>(혼재해 사용할 경우 소스가 HTML에 분산되어 있어 유지보수시에 어려움이 따릅니다. 따라서 따로 용도에 맞는 외부 파일로 분리하여 관리하는것이 좋습니다.)
 
-18.3 태그(요소) 속성으로 스크립트를 실행하는 방법
-태그의 속성명으로 자바스크립트를 실행할 수 있습니다. 다만 자바스크립트, 스타일시트를 HTML에 혼재하지 않고 분리하여 쓰는것이 좋으므로 꼭 필요한 경우에만 적용합니다.
-(혼재해 사용할 경우 소스가 HTML에 분산되어 있어 유지보수시에 어려움이 따릅니다. 따라서 따로 용도에 맞는 외부 파일로 분리하여 관리하는것이 좋습니다.)
-
+```
 예)
 <button onclick=”alert('클릭하셨습니다.');”>클릭</button>
+```
 
+## HTML Head
+- \<head\>태그(요소)는 메타데이터(데이터의 데이터)를 포함하는 영역입니다.
+- \<html\>태그와 \<body\> 태그 사이에 위치합니다.
+- 메타데이터는 출력되지 않으며, title, charset(문자집합), style(스타일시트), script(자바스크립트), 및 기타 meta 데이터를 정의합니다.
 
-19. HTML Head
-<head>태그(요소)는 메타데이터(데이터의 데이터)를 포함하는 영역입니다.
-<html>태그와 <body> 태그 사이에 위치합니다.
-메타데이터는 출력되지 않으며, title, charset(문자집합), style(스타일시트), script(자바스크립트), 및 기타 meta 데이터를 정의합니다.
+- 일반적으로 head 태그안에는 다음의 요소가 추가될 수 있습니다.
 
-
-일반적으로 head 태그안에는 다음의 요소가 추가될 수 있습니다.
-19.1 <title> 요소
+### \<title\> 요소
 문서의 제목을 정의하며, 텍스트로만 지정합니다. 브라우저의 제목표시줄이나 페이지의 탭에 표시가 됩니다.
 검색엔진에서 데이터 수집시 <title>~</title>에 지정된 내용을 바탕으로 검색페이지를 나열 하므로 검색이 잘되는 사이트를 만들때에는 꼭 title을 넣어주셔야 합니다.
 (검색엔진 최적화 - SEO)
