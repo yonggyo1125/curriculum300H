@@ -1421,3 +1421,52 @@ public class BorderLayoutTest extends JFrame {
 
 ![스윙18](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/1.JAVA(84%EC%8B%9C%EA%B0%84)/22%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9%2C%20%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4(%EC%8A%A4%EC%9C%99)/images/%EC%8A%A4%EC%9C%9918.png)
 
+
+### GridLayout
+- 행렬의 형태를 가지는 레이아웃
+- 그리드 레이아웃은 생성할 때 행(컬럼 수)과 열(라인 수)을 지정한다.
+
+```
+GridLayout glayout = new GridLayout(3, 5);
+setLayout(glayout);
+```
+
+#### day22/gui/GridLayoutTest.java
+```
+package day22.gui;
+
+import java.awt.*;
+import javax.swing.*;
+
+public class GridLayoutTest extends JFrame {
+	String[] title = {"Num", "/", "*", "-", "7", "8", "9", "+", "4", "5", "6", "=", "1", "2", "3", "Enter", "0", ".", ",", "?"};
+	
+	public GridLayoutTest() {
+		super("그리드 레이아웃");
+		
+		// 그리드 레이아웃 매니저 생성
+		GridLayout glayout = new GridLayout(4, 5);
+		
+		// 컨테이너에 설정
+		setLayout(glayout);
+		
+		// 각 컴포넌트를 컨테이너에 추가
+		JButton btn[] = new JButton[20];
+		for(int i = 0; i < 20; i++) {
+			btn[i] = new JButton(title[i]);
+			add(btn[i]);
+		}
+		
+		setSize(400, 200);
+		setVisible(true);
+	}
+	
+	public static void main(String[] args) {
+		GridLayoutTest glt = new GridLayoutTest();
+		glt.setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+}
+```
+
+- 실행결과
+
