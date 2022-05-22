@@ -324,7 +324,7 @@ WHERE Customer.custid=Orders.custid AND Orders.bookid = Book.bookid AND Book.pri
 ```
 SELECT Customer.name, saleprice 
 FROM Customer LEFT OUTER JOIN Orders 
-			ON Customer.custid = Orders.custid;
+		ON Customer.custid = Orders.custid;
 ```
 - 결과를 보면 고객 박세리의 saleprice 값이 NULL로 표시되어 있다. 왼쪽 외부조인인 LEFT OUTER JOIN .. ON 문법으로 질의한다. 
 - 오른쪽에 있는 테이블에 대하여 같은 방법으로 질의하려면 RIGHT OUTER JOIN ... ON을 사용하고, 
@@ -394,10 +394,10 @@ WHERE custid IN (SELECT custid FROM Orders);
 SELECT name 
 FROM Customer
 WHERE custid IN (SELECT custid 
-						FROM Orders
-						WHERE bookid IN (SELECT bookid 
-													FROM Book 
-													WHERE publisher='대한미디어'));
+				FROM Orders
+				WHERE bookid IN (SELECT bookid 
+										FROM Book 
+										WHERE publisher='대한미디어'));
 ```
 
 - 부속질의 간에는 상하 관계가 있으며, 실행 순서는 **하위 부속질의를 먼저 실행하고 그 결과를 이용하여 상위 부속질의를 실행**한다. 
@@ -457,8 +457,8 @@ WHERE custid IN (SELECT custid FROM Orders);
 SELECT name, address
 FROM Customer cs
 WHERE EXISTS (SELECT * 
-						FROM Orders od 
-						WHERE cs.custid = od.custid);
+				FROM Orders od 
+				WHERE cs.custid = od.custid);
 ```
 
 * * * 
@@ -468,13 +468,13 @@ WHERE EXISTS (SELECT *
 INSERT 문은 테이블에 새로운 투플을 삽입하는 명령어이다.
 ```
 INSERT INTO 테이블이름[(속성리스트)] 
-		VALUES (값 리스트);
+	VALUES (값 리스트);
 ```
 
 - Book 테이블이 새로운 도서 '스포츠 의학'을 삽입하시오. 스포츠 의학은 한솔의학서적에서 출간했으며 가격은 90,000원이다.
 ```
 INSERT INTO Book(bookid, bookname, publisher, price)
-		VALUES (11, '스포츠 의학', '한솔의학서적', 90000);
+	VALUES (11, '스포츠 의학', '한솔의학서적', 90000);
 ```
 
 > 결과를 확인하기 위해서는 'SELECT \* FROM Book' 명령을 실행해야 한다.
@@ -482,12 +482,12 @@ INSERT INTO Book(bookid, bookname, publisher, price)
 - 새로운 투플을 삽입할 때 속성의 이름은 생략할 수 있다. 이때 데이터의 입력 순서는 속성의 순서와 일치해야 한다.
 ```
 INSERT INTO Book
-		VALUES (12, '스포츠 의학', '한솔의학서적', 90000);
+	VALUES (12, '스포츠 의학', '한솔의학서적', 90000);
 ```
 - 데이터는 항상 속성의 순서대로 입력하지 않아도 된다. 만약 price를 publisher 앞에 입력하고 싶다면 속성의 이름과 데이터의 순서를 바꾸면 된다.
 ```
 INSERT INTO Book(bookid, bookname, price, publisher)
-		VALUES (13, '스포츠 의학', 9000, '한솔의학서적');
+	VALUES (13, '스포츠 의학', 9000, '한솔의학서적');
 ```
 
 - 만약 몇 개의 속성만 입력해야 한다면 해당되는 속성만 명시하면 된다.
