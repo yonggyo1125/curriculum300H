@@ -208,8 +208,6 @@ CREATE TABLE NewOrders (
 - SET NULL 옵션은 NULL 값으로 바꾸며,
 - NO ACTION은 옵션의 기본(default) 값으로 어떠한 동작도 취하지 않는다.
 
-#### 참조 무결성 제약조건
-
 #### 데이터 타입 종류
 |데이터 타입|설명|ANSI SQL 표준타입|
 |----|---------|-----|
