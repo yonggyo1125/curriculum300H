@@ -148,7 +148,9 @@ CREATE TABLE NewBook (
 
 - NewBook 테이블의  CREATE 문에 좀 더 복잡한 제약사항을 추가하면 다음과 같다.
 <pre>
-bookname은 NULL 값을 가질 수 없고, publisher는 같은 값이 있으면 안 된다. price에 값이 입력되지 않을 경우 기본값 10000을 저장한다. 또 가격은 최소 1,000원 이상으로 한다.
+bookname은 NULL 값을 가질 수 없고, publisher는 같은 값이 있으면 안 된다. 
+price에 값이 입력되지 않을 경우 기본값 10000을 저장한다. 
+또 가격은 최소 1,000원 이상으로 한다.
 </pre>
 ```
 CREATE TABLE NewBook (
