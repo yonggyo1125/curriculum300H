@@ -343,15 +343,15 @@ FROM Customer LEFT OUTER JOIN Orders
 <tbody>
 	<tr>
 		<td rowspan='2'>일반적인 조인</td>
-		<td>SELECT \<속성들\><br>FROM 테이블 1, 테이블 2<br>WHERE \<조인조건\> AND \<검색조건\></td>
+		<td>SELECT <속성들><br>FROM 테이블 1, 테이블 2<br>WHERE <조인조건> AND <검색조건></td>
 		<td rowspan='2'>SQL 문에서는 주로 동등조인을 사용한다. 두 가지 문법 중 하나를 사용할 수 있다.</td>
 	</tr>
 	<tr>
-		<td>SELECT \<속성들\><br>FROM 테이블 1 INNER JOIN 테이블 2 ON \<조인조건\><br>WHERE \<검색조건\></td>
+		<td>SELECT <속성들><br>FROM 테이블 1 INNER JOIN 테이블 2 ON <조인조건><br>WHERE <검색조건></td>
 	</tr>
 	<tr>
 		<td>외부조인</td>
-		<td>SELECT \<속성들\><br>FROM 테이블 1 {LEFT | RIGHT | FULL \[OUTER\]} JOIN 테이블 2 ON \<조인조건\><br>WHERE \<검색조건\></td>
+		<td>SELECT <속성들><br>FROM 테이블 1 {LEFT | RIGHT | FULL \[OUTER\]} JOIN 테이블 2 ON <조인조건><br>WHERE <검색조건></td>
 		<td>외부조인은 FROM 절에 조인 종류를 적고 ON을 이용하여 조인조건을 명시한다.</td>
 	</tr>
 </tbody>
@@ -421,3 +421,138 @@ WHERE b1.price > (SELECT avg(b2.price)
 	
 	
 ### 집합 연산
+- SQL문의 결과는 테이블로 나타난다. 
+- 테이블은 투플의 집합이므로 테이블 간의 집합 연산을 이용하여 합집합, 차집합, 교집합을 구할 수 있다. SQL에서 집합 연산 중 합집합을 UNION으로 나타낸다.(MySQL은 다른 DBMS와 달리 MINUS, INTERSECT 집합 연산이 없다. MINUS 연산은 NOT IN, INTERSECT 연산은 IN 연산자를 이용하여 구한다.)
+
+- 대한민국에서 거주하는 고객의 이름과 도서를 주문한 고객의 이름을 보이시오.
+```
+SELECT name 
+FROM Customer
+WHERE address LIKE '대한민국%'
+UNION 
+SELECT name 
+FROM Customer
+WHERE custid IN (SELECT custid FROM Orders);
+```
+
+- UNION 연산자 외에 UNION ALL 연산자는 중복을 포함하여 모든 결과를 구한다.
+```
+SELECT name 
+FROM Customer
+WHERE address LIKE '대한민국%'
+UNION ALL
+SELECT name 
+FROM Customer
+WHERE custid IN (SELECT custid FROM Orders);
+```
+
+### EXISTS 
+- EXISTS는 상관 부속질의문 형식이다.
+- EXISTS는 원래 단어에서 의미하는 것과 같이 조건에 맞는 투플이 존재하면 결과에 포함시킨다. 즉, 부속질의문의 어떤 행이 조건에 만족하면 참이다.
+- 반면 NOT EXISTS는 부속질의문이 모든 행이 조건에 만족하지 않을 때만 참이다.
+- EXISTS와 NOT EXISTS는 상관 부속질의문의 다른 형태이다.
+
+- 주문이 있는 고객의 이름과 주소를 보이시오.
+```
+SELECT name, address
+FROM Customer cs
+WHERE EXISTS (SELECT * 
+						FROM Orders od 
+						WHERE cs.custid = od.custid);
+```
+
+* * * 
+## 데이터 조작어 - 삽입, 수정, 삭제
+
+### INSERT문 
+INSERT 문은 테이블에 새로운 투플을 삽입하는 명령어이다.
+```
+INSERT INTO 테이블이름[(속성리스트)] 
+		VALUES (값 리스트);
+```
+
+- Book 테이블이 새로운 도서 '스포츠 의학'을 삽입하시오. 스포츠 의학은 한솔의학서적에서 출간했으며 가격은 90,000원이다.
+```
+INSERT INTO Book(bookid, bookname, publisher, price)
+		VALUES (11, '스포츠 의학', '한솔의학서적', 90000);
+```
+
+> 결과를 확인하기 위해서는 'SELECT \* FROM Book' 명령을 실행해야 한다.
+
+- 새로운 투플을 삽입할 때 속성의 이름은 생략할 수 있다. 이때 데이터의 입력 순서는 속성의 순서와 일치해야 한다.
+```
+INSERT INTO Book
+		VALUES (12, '스포츠 의학', '한솔의학서적', 90000);
+```
+- 데이터는 항상 속성의 순서대로 입력하지 않아도 된다. 만약 price를 publisher 앞에 입력하고 싶다면 속성의 이름과 데이터의 순서를 바꾸면 된다.
+```
+INSERT INTO Book(bookid, bookname, price, publisher)
+		VALUES (13, '스포츠 의학', 9000, '한솔의학서적');
+```
+
+- 만약 몇 개의 속성만 입력해야 한다면 해당되는 속성만 명시하면 된다.
+- Book 테이블에 새로운 도서 '스포츠 의학'을 삽입하시오. 스포츠 의학은 한솔의학서적에서 출간했으며 가격은 미정이다.
+```
+INSERT INTO Book(bookid, bookname, publisher) 
+		VALUES (14, '스포츠 의학', '한솔의학서적');
+```
+
+- INSERT 문은 SELECT 문을 사용하여 작성할 수도 있다. 이는 한꺼번에 여러 개의 투플을 삽입하는 방법으로 대량 삽입(bulk insert)이라고도 한다. 
+- 수입도서 목록(Imported_book)을 Book 테이블에 모두 삽입하시오
+```
+INSERT INTO Book(bookid, bookname, price, publisher)
+		SELECT bookid, bookname, price, publisher
+		FROM Imported_book;
+```
+
+### UPDATE문
+UPDATE 문은 특정 속성 값을 수정하는 명령이다. 
+```
+UPDATE 테이블이름
+SET 속성이름1 = 값1[, 속성이름2 = 값2, ...]
+[WHERE <검색조건>]; 
+```
+> 실습에 앞서 Workbench의 Safe Updates 옵션을 해제해준다.<br>\[Edit\]->\[Preferences\]->\[SQL Editor\]->스크롤바 내림 -> 'Safe Updates' 체크 해제 -> \[OK\]
+
+- Customer 테이블에서 고객번호가 5인 고객의 주소를 '대한민국 부산'으로 변경하시오.
+```
+SET SQL_SAFE_UPDATES=0; /* Safe Updates 옵션 미 해제 시 실행 */
+UPDATE Customer
+SET address='대한민국 부산' 
+WHERE custid = 5;
+```
+
+> 결과를 확인하기 위해서는 'SELECT \* FROM Customer;' 명령을 실행해야 한다.
+
+- UPDATE 문은 다른 테이블의 속성 값을 이용할 수도 있다.
+- Book 테이블에서 14번 '스포츠 의학'의 출판사를 Imported_book 테이블의 21번 책의 출판사와 동일하게 변경하시오.
+```
+UPDATE Book 
+SET publisher=(SELECT publisher 
+					FROM Imported_book
+					WHERE bookid='21')
+WHERE bookid='14';
+```
+
+### DELETE 문
+DELETE 문은 테이블에 있는 기존 투플을 삭제하는 명령이다.
+```
+DELETE FROM 테이블이름
+[WHERE 검색조건];
+```
+
+DELETE 문의 \<검색조건\>에 해당하는 투플을 삭제한다. \<검색조건\>이 없으면 모든 투플을 삭제한다.
+
+- Book 테이블에서 도서번호가 11인 도서를 삭제하시오.
+```
+DELETE FROM Book 
+WHERE bookid='11';
+```
+
+- 모든 고객을 삭제하시오.
+```
+DELETE FROM Customer;
+```
+- 위 SQL문은 실행되지 않는다. 그 이유는 Orders 테이블에서 Customer.custid 속성을 외래키로 참조하고 있기 때문이다. 제약이 해제되지 않으면 데이터 삭제가 중지된다.
+
+> DROP문은 DDL 문으로 테이블의 구조를 삭제한다. 당연히 데이터도 같이 삭제된다. DELETE 문은 DML문으로 테이블의 구조는 그대로 두고 데이터만 삭제한다.
