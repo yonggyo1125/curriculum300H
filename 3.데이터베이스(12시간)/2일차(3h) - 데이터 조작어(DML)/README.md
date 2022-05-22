@@ -529,8 +529,8 @@ WHERE custid = 5;
 ```
 UPDATE Book 
 SET publisher=(SELECT publisher 
-			FROM Imported_book
-			WHERE bookid='21')
+	FROM Imported_book
+	WHERE bookid='21')
 WHERE bookid='14';
 ```
 
