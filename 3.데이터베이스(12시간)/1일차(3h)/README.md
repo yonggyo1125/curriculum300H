@@ -300,5 +300,44 @@ DROP TABLE NewCustomer;
 ```
 
 * * * 
-## 데이터 조작어(DML)
+## 데이터 조작어(DML) - 검색
+- SQL의 SELECT문은 데이터를 검색하는 기본 문장으로 특별히 <b>질의어(query)</b>라고 부른다.
+- SELECT 문은 검색한 결과를 테이블 형태로 출력한다.
+- 예) 10,000원 이상인 도서의 이름과 출산사를 보이시오
+```
+SELECT bookname, publisher   // 속성 이름
+FROM Book   // 테이블 이름 
+WHERE price >= 10000;  // 검색 조건
+```
+
+### SELECT문의 기본 문법
+```
+SELECT [ALL | DISTINCT] 속성이름(들)
+FROM 테이블이름(들)
+[WHERE 검색조건(들)]
+[GROUP BY 속성이름]
+[HAVING  검색조건(들)]
+[ORDER BY 속성이름 [ASC | DESC]]
+```
+- \[\] : 대괄호 안의  SQL 예약어들은 선택적으로 사용한다.
+- | : 선택 가능한 문법들 중 한 개를 사용할 수 있다.
+
+### SELECT문의 자세한 문법
+```
+SELECT 
+			[ALL | DISTINCT]
+			[테이블이름.]{ * | 속성이름 [[AS] 속성이름 별칭]}
+[FROM
+			{테이블이름 [AS 테이블이름별칭]}
+			[INNER JOIN | LEFT [OUTER] JOIN | RIGHT [OUTER] JOIN {테이블이름 [ON 검색조건]}
+			| FULL [OUTER] JOIN {테이블이름}]] 
+[WHERE 검색조건(들)]
+[GROUP BY {속성이름, [..., n]}]
+[HAVING 검색조건(들)]
+[질의 UNION 질의 | 질의 UNION ALL 질의]
+[ORDER BY {속성이름 [ASC | DESC], [..., n]}]
+```
+- \[\] : 대괄호 안의 SQL의 예약어들은 선택적으로 사용한다.
+- {} : 중괄호 안의 SQL 예약어들은 필수적으로 사용한다.
+- | : 선택 가능한 문법들 중 한 개를 사용할 수 있다.
 
