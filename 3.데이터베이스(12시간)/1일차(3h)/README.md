@@ -343,3 +343,42 @@ SELECT
 - {} : 중괄호 안의 SQL 예약어들은 필수적으로 사용한다.
 - | : 선택 가능한 문법들 중 한 개를 사용할 수 있다.
 
+### SELECT문 
+
+- 모든 도서의 이름과 가격을 검색하시오.
+```
+SELECT bookname, price
+FROM Book;
+```
+
+- SQL은 세미콜론(;)과 함께 끝난다. 세미콜론은 SQL-92 표준에서 정한 사항이지만 세미콜론을 생략해도 된다. 그러나 SQL문을 작성할 때는 세미콜론과 함께 마치는 습관을 기르도록 하자.
+- 대소문자의 구분은 없지만 SQL 예약어는 대문자로, 테이블이나 속성이름은 소문자로 적어주면 읽기 쉽다.
+- SELECT 절에서 열 순서는 절과 테이블의 열 순서를 결정한다. 만약 SELECT 절에 bookname과 price를 바꾸면 결과 테이블의 순서가 바뀐다.
+```
+SELECT price, bookname
+FROM Book;
+```
+
+- 모든 도서의 도서번호, 도서이름, 출판사, 가격을 검색하시오.
+```
+SELECT bookid, bookname, publisher, price
+FROM Book;
+```
+
+> SELECT 절에 '\*'(asterisk라고 한다)는 모든 열을 나타낸다. '\*'를 써주면 열의 이름을 쓰지 않아도 된다.
+```
+SELECT * 
+FROM Book;
+```
+
+- 도서 테이블에 있는 모든 출판사를 검색하시오.
+```
+SELECT publisher 
+FROM Book;
+```
+
+- 중복을 제거하고 싶으면 다음과 같이 DISTINCT라는 키워드를 사용한다.
+```
+SELECT DISTINCT publisher 
+FROM Book;
+```
