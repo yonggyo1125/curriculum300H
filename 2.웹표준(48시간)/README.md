@@ -103,3 +103,11 @@
 		- XMLHHttpRequest
 		- FileReader
 		- 드래그 앤 드롭 API
+		
+		
+## 참고 사이트
+- [w3schools.com](https://www.w3schools.com/)
+- [Mozila Developer Network](https://developer.mozilla.org/ko/)
+
+## 참고 도서
+- [길벗 / 모던 자바스크립트 입문 / 아소 히로시](http://www.yes24.com/Product/Goods/59410698)
