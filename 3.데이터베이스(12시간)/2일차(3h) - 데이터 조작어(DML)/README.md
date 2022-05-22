@@ -253,4 +253,171 @@ WHERE 절과 HAVING 절이 같이 포함된 SQL문은 검색조건이 모호해�
 	GROUP BY custid;
 	```
 	
-## 두 개 이상의 테이블에서 SQL 질의
+### 두 개 이상의 테이블에서 SQL 질의
+SQL은 여러 개의 테이블을 질의하는 두 가지 방법을 제공한다. <b>조인(join)과 부속질의(subquery)</b> 두 가지 모두 여러 개의 테이블을 동시에 다루지만 방법은 약간 다르다.
+
+### 조인
+조인(join)은 한 테이블의 행을 다른 테이블의 행에 연결하여 두 개 이상의 테이블을 결합하는 연산이다.
+
+- 두 테이블을 아무런 조건을 주지 않고 SELECT 시키면 관계대수의 카티전 프로덕트 연산(**단순 순서쌍**)이 된다.
+```
+SELECT * 
+FROM Customer, Orders;
+```
+- 그러나 결과는 논리에 맞지 않다.  이것은 SQL문의 WHERE 절에 두 테이블의 연결 조건을 추가함으로써 쉽게 해결할 수 있다.
+- 고객과 고객의 주문에 관한 데이터를 모두 보이시오.
+```
+SELECT * 
+FROM Customer, Orders
+WHERE Customer.custid = Orders.custid;
+```
+
+- 고객과 고객의 주문에 관한 데이터를 고객별로 정렬하여 보이시오.
+```
+SELECT * 
+FROM Customer, Orders 
+WHERE Customer.custid = Orders.custid
+ORDER BY Customer.custid;
+```
+
+> 열 이름을 표기하는 방법<br>앞의 두 SQL 문에서 Customer.custid, Orders.custid와 같이 표현된 것을 볼 수 있다. 이는 '테이블 이름.열 이름' 형식의 표현으로 열 이름이 어느 테이블과 연관되는지 정확히 명시한다.
+
+- 여러 개의 테이블을 연결하여 하나의 테이블을 만드는 과정을 테이블 조인이라고 한다. 
+- 특히 앞의 SQL 문처럼 동등조건에 의하여 테이블을 조인하는 것을 <b>동등조인(equal join)</b>이라고 한다.
+
+- 고객의 이름과 고객이 주문한 도서의 판매가격을 검색하시오.
+```
+SELECT name, saleprice 
+FROM Customer, Orders
+WHERE Customer.custid = Orders.custid;
+```
+
+- 모든 SQL 질의의 결과는 단일 테이블이다. 따라서 위 결과 테이블에 SQL 문법을 적용할 수 있다. 예를 들면 GROUP BY 절과 ORDER BY 절을 추가하면 다음과 같다.
+
+- 고객별로 주문한 모든 도서의 총 판매액을 구하고, 고객별로 정렬하시오.
+```
+SELECT name, SUM(saleprice) 
+FROM Customer, Orders 
+WHERE Customer.custid = Orders.custid 
+GROUP BY Customer.name
+ORDER BY Customer.name;
+```
+
+- 세 개 이상의 테이블을 조인할 수도 있다.
+- 고객의 이름과 고객이 주문한 도서의 이름을 구하시오
+```
+SELECT Customer.name, Book.bookname
+FROM Customer, Orders, Book
+WHERE Customer.custid = Orders.custid AND Orders.bookid = Book.bookid;
+```
+
+- 가격이 20,000원인 도서를 주문한 고객의 이름과 도서의 이름을 구하시오.
+```
+SELECT Customer.name, Book.bookname
+FROM Customer, Orders, Book
+WHERE Customer.custid=Orders.custid AND Orders.bookid = Book.bookid AND Book.price = 20000;
+```
+
+- 조인 연산의 특별한 경우로 <b>외부 조인(outer join)</b>이 있다. 고객의 이름과 고객이 주문한 도서의 판매가격을 구하는 동등조인의 예에서 도서를 주문하지 않은 고객 '박세리'는 결과에 포함되지 않는다. 만약 **도서를 구매하지 않은 고객 '박세리'까지 포함하여** 고객의 이름과 고객이 주문한 도서의 가격을 구하려면 어떻게 해야 할까? 방법은 **외부조인**을 사용하면 된다.
+
+- 도서를 구매하지 않은 고객을 포함하여 고객의 이름과 고객이 주문한 도서의 판매가격을 구하시오.
+```
+SELECT Customer.name, saleprice 
+FROM Customer LEFT OUTER JOIN Orders 
+			ON Customer.custid = Orders.custid;
+```
+- 결과를 보면 고객 박세리의 saleprice 값이 NULL로 표시되어 있다. 왼쪽 외부조인인 LEFT OUTER JOIN .. ON 문법으로 질의한다. 
+- 오른쪽에 있는 테이블에 대하여 같은 방법으로 질의하려면 RIGHT OUTER JOIN ... ON을 사용하고, 
+- 왼쪽과 오른쪽 테이블 모두에 대하여 질의하려면 FULL OUTER JOIN ... ON을 사용하면 된다.
+
+#### 조인 문법
+
+<table>
+<thead>
+	<tr>
+		<th>명령</th>
+		<th>문법</th>
+		<th>설명</th>
+	</tr>
+</thead>
+<tbody>
+	<tr>
+		<td rowspan='2'>일반적인 조인</td>
+		<td>SELECT \<속성들\><br>FROM 테이블 1, 테이블 2<br>WHERE \<조인조건\> AND \<검색조건\></td>
+		<td rowspan='2'>SQL 문에서는 주로 동등조인을 사용한다. 두 가지 문법 중 하나를 사용할 수 있다.</td>
+	</tr>
+	<tr>
+		<td>SELECT \<속성들\><br>FROM 테이블 1 INNER JOIN 테이블 2 ON \<조인조건\><br>WHERE \<검색조건\></td>
+	</tr>
+	<tr>
+		<td>외부조인</td>
+		<td>SELECT \<속성들\><br>FROM 테이블 1 {LEFT | RIGHT | FULL \[OUTER\]} JOIN 테이블 2 ON \<조인조건\><br>WHERE \<검색조건\></td>
+		<td>외부조인은 FROM 절에 조인 종류를 적고 ON을 이용하여 조인조건을 명시한다.</td>
+	</tr>
+</tbody>
+</table>
+
+### 부속질의
+- 가격이 가장 비싼 도서의 이름은 얼마인가? 라는 질문에 대한 답을 구한다고 생각해 보자, 가장 비싼 도서의 가격은 다음과 같이 구할 수 있으며 답은 35,000원 이다. 
+```
+SELECT MAX(price)
+FROM Book;
+```
+
+- 만약 가장 비싼 도서의 가격을 알고 있다면 다음과 같이 가격이 35,000원인 도서의 이름을 바로 검색하면 된다.
+```
+SELECT bookname 
+FROM Book
+WHERE price=35000;
+```
+
+- 이 두 질의를 하나의 질의로 작성할 수 있을까? 가능하다. 두 번째 질의르 35,000 값의 위치에 첫 번째 질의를 대치하면 된다.
+- 가장 비싼 도서의 이름을 보이시오.
+```
+SELECT bookname
+FROM Book 
+WHERE price = (SELECT MAX(price) FROM Book);
+```
+- SELECT 문의 WHERE 절에 또 다른 테이블 결과를 이용하기 위해 다시 SELECT문을 괄호로 묶는 것을 <b>부속질의(subquery)</b>라고 한다.
+- 부속질의는 질의가 중첩되어 있다는 의미에서 <b>중첩질의(nested query)</b>라고도 한다.
+
+- 도서를 구매한 적이 있는 고객의 이름을 검색하시오.
+```
+SELECT name 
+FROM Customer
+WHERE custid IN (SELECT custid FROM Orders);
+```
+
+- 세 개 이상 중첩된 부속질의도 가능하다.
+- 대한미디어에서 출판단 도서를 구매한 고객의 이름을 보이시오.
+```
+SELECT name 
+FROM Customer
+WHERE custid IN (SELECT custid 
+						FROM Orders
+						WHERE bookid IN (SELECT bookid 
+													FROM Book 
+													WHERE publisher='대한미디어'));
+```
+
+- 부속질의 간에는 상하 관계가 있으며, 실행 순서는 **하위 부속질의를 먼저 실행하고 그 결과를 이용하여 상위 부속질의를 실행**한다. 
+- 반면 <b>상관 부속질의(correlated subquery)</b>는 상위 부속질의의 투플을 이용하여 하위 부속질의를 계산한다. 즉, **상위 부속질의와 하위 부속질의가 독립적이지 않고 서로 관련을 맺고 있다.**
+
+- 출판사별로 출판사의 평균 도서 가격보다 비싼 도서를 구하시오.
+```
+SELECT b1.bookname 
+FROM Book b1
+WHERE b1.price > (SELECT avg(b2.price)
+							FROM Book b2
+							WHERE b2.publisher = b1.publisher);
+```
+> 투플 변수<br>테이블 이름이 길거나 한 개의 테이블이 SQL 문에 두 번 사용될 때 혼란을 피하기 위해 테이블의 별칭을 붙여 사용하는데, 이를 <b>투플 변수(tuple variable)</b>라 한다. 투플 변수는 FROM 절의 테이블 이름 뒤에 표기한다.
+
+- 부속질의와 조인의 차이점
+	- 부속질의는 SELECT 문에 나오는 결과 속성을 FROM 절의 테이블에서만 얻을 수 있고 
+	- 조인은 조인한 모든 테이블에서 결과 속성을 얻을 수 있다.
+	- 조인은 부속질의가 할 수 있는 모든 것을 할 수 있다.
+	- 그러나 한 개의 테이블에서만 결과를 얻는 여러러 테이블 질의는 조인보다 부속질의로 작성하는 것이 훨씬 편하다.
+	
+	
+### 집합 연산
