@@ -176,7 +176,7 @@ SUBSTR()은 문자열 중 특정 위치에서 시작하여 지정한 길이만�
 - 마당서점 고객 중에서 같은 성씨를 가진 사람이 몇 명이나 되는지 성별 인원수를 구하시오.
 
 ```
-SELECT SUBSTR(name, 1, 1) '성', COUNT(\*) '원원'
+SELECT SUBSTR(name, 1, 1) '성', COUNT(*) '원'
 FROM Customer
 GROUP BY SUBSTR(name, 1, 1);
 ```
@@ -245,11 +245,80 @@ SELECT SYSDATE(),
 
 ### NULL 값 처리
 - NULL 값이란 아직 지정되지 않은 값을 말한다.
+- 지정되지 않았다는 것은 값을 알 수도 없고 적용할 수도 없다는 뜻이다.
+- NULL값은 '0', ''(빈문자), ' '(공백) 등과 다른 특별한 값임을 유의해야 한다.
+- NULL값은 비교 연산자로 비교가 불가능하다. NULL값은 아직 지정되지 않은 값이므로 =, \<, \> 등과 같은 연산자로 비교하지 못한다. 
+- 또한 NULL값의 연산을 수행하면 결과 역시 NULL 값으로 반환된다.
+
+#### NULL 값에 대한 연산과 집계 함수
+집계 함수를 사용할 때 NULL 값이 포함된 행에 대하여 다음과 같은 주의가 필요하다.
+- 'NULL + 숫자' 연산의 결과는 NULL이다.
+- 집계 함수를 계산할 때 NULL이 포함된 행은 집계에서 빠진다.
+- 해당되는 행이 하나도 없을 경우 SUM, AVG 함수의 결과는 NULL이 되고, COUNT 함수의 결과는 0이다.
+
+```
+SELECT price+100
+FROM Mybook 
+WHERE bookid=3
+```
+
+```
+SELECT SUM(price), AVG(price), COUNT(*), COUNT(price)
+FROM MyBook
+```
+
+```
+SELECT SUM(price), AVG(price), COUNT(*)
+FROM Mybook
+WHERE bookid >= 4;
+```
+
+#### NULL 값을 확인하는 방법 - IS NULL, IS NOT NULL
+NULL 값을 찾을 때는 '=' 연산자가 아닌 'IS NULL'을 사용하고 NULL이 아닌 값을 찾을 때는 '\<\>'연산자가 아닌 'IS NOT NULL'을 사용해야 한다.
+
+```
+SELECT * 
+FROM Mybook 
+WHERE price IS NULL;
+```
+위의 SQL 문을 다음과 같이 작성하면 결과는 틀리다.
+```
+SELECT * 
+FROM Mybook 
+WHERE price='';
+```
+
+#### IFNULL 함수
+- IFNULL 함수는 NULL 값을 다른 값으로 대치하여 연산하거나 다른 값으로 출력하는 함수이다. 
+- IFNULL 함수를 사용하면 NULL 값을 임의의 다른 값으로 변경할 수 있다.
+
+```
+IFNULL(속성, 값) /* 속성 값이 NULL이면, '값'으로 대치한다. */
+```
+
+- 이름, 전화번호가 포함된 고객목록을 보이시오. 단, 전화번호가 없는 고객인 '연락처없음'으로 표시하시오.
+```
+SELECT name '이름', IFNULL(phone, '연락처없음') '전화번호' 
+FROM Customer;
+```
+
+### 행번호 출력
+MySQL에서는 변수를 사용하여 처리하는 방법이 있다. MySQL에서 변수는 이름 앞에 @기호를 붙이며 치환문에는 SET := 기호를 사용한다.
+- 고객 목록에서 고객번호, 이름, 전화번호를 앞의 두 명만 보이시오.
+
+```
+SET @seq:=0;
+SELECT (@seq:=@seq+1) ' 순번', custid, name, phone
+FROM Customer
+WHERE @seq < 2;
+```
 
 * * * 
 ## 부속질의
 
 ### 스칼라 부속질의 - SELECT 부속질의
+- 스칼라 부속질의(scalar subquery)는 SELECT 절에서 사용되는 부속질의로 부속질의의 결과 값을 단일 행, 단일 열의 스칼라 값으로 반환한다.
+- 만약 결과 값이 다중 행이거나 다중 열이라면 DBMS는 그 중 어떠한 행, 어떠한 열을 출력해야 하는지 알 수 없어 에러를 출력한다.
 
 ### 인라인 뷰 - FROM 부속질의
 
