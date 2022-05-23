@@ -11,7 +11,7 @@
 - 강의 일자별로 별도 동영상 강의 URL을 공유합니다.
 
 ## 스터디 및 과제 그룹 신청
-- <a href='http://yonggyo.com:3001/board/view/66' target='_blank'>신청URL로 이동하기</a>
+- [신청URL로 이동하기](http://yonggyo.com:3001/board/list/team)
 
 * * * 
 # JAVA 과정(84시간)
