@@ -182,8 +182,8 @@ page 애트리뷰트 -> request 애트리뷰트 -> session 애트리뷰트 -> ap
 	<body>
 		아이디 : ${param.ID} <br>
 		선택한 동물 : ${paramValues.ANIMAL[0]}
-			${paramValues.ANIMAL[1]}
-			${paramValues.ANIMAL[2]}
+			     ${paramValues.ANIMAL[1]}
+			     ${paramValues.ANIMAL[2]}
 	</body>
 </html>
 ```
