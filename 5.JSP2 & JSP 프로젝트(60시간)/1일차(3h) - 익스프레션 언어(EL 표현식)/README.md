@@ -156,9 +156,37 @@ page 애트리뷰트 -> request 애트리뷰트 -> session 애트리뷰트 -> ap
 	 - ${paramValues.ANIMAL\[0\]} : 객체의 이름 뒤에 마침표를 찍고, 그 다음에 데이터 이름을 쓰고, 그 다음에 대괄호 안에 데이터 값의 인덱스를 표시하는 것 입니다.
 	 - ${paramValues\["ANIMAL"\]\[1\]} : 객체의 이름 뒤에 두 개의 대괄호를 입력하고, 그 안에 각각 따옴표로 묶은 데이터의 이름과 인덱스를 쓰는 것 입니다.
 
+#### PetsInput.jsp
 ```
+<%@page contentType="text/html; charset=utf-8"%>
+<html>
+	<body>
+		<form action="PetsResult.jsp">
+			아이디 : <input type='text' name='ID'><br><br>
+			다음 중 회원님이 키우고 있는 애완동물을 선택하십시오.<br><br>
+			<input type='checkbox' name='ANIMAL' value='개'>개
+			<input type='checkbox' name='ANIMAL' value='고양이'>고양이
+			<input type='checkbox' name='ANIMAL' value='금붕어'>금붕어<br><br>
+			
+			<input type='reset' value='취소'>
+			<input type='submit' value='확인'>
+		</form>
+	</body>
+</html>
 ```
 
+#### PetsResult.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<html>
+	<body>
+		아이디 : ${param.ID} <br>
+		선택한 동물 : ${paramValues.ANIMAL[0]}
+		${paramValues.ANIMAL[1]}
+		${paramValues.ANIMAL[2]}
+	</body>
+</html>
+```
 
 ## 익스프레션 언어의 연산자
 
