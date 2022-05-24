@@ -151,11 +151,184 @@ delimiter ;
 |RETURN|프로시저를 종료<br>상태값 반환 가능|RETURN \[\<식\>\]|
 
 - 동일한 도서가 있는지 점검한 후 삽입하는 프로시저
+```
+use madang;
+delimiter //
+CREATE PROCEDURE BookInsertOrUpdate(
+	myBookID INTEGER,
+	myBookName VARCHAR(40),
+	myPublisher VARCHAR(40),
+	myPrice INTEGER)
+BEGIN
+	DECLARE mycount INTEGER
+	SELECT COUNT(*) INTO mycount FROM Book
+	  WHERE bookname LIKE myBookName;
+	IF mycount != 0 THEN
+	 SET SQL_SAFE_UPDATES=0; /* DELETE, UPDATE 연산에 필요한 설명문 */
+	 UPDATE Book SET price = myPrice
+	   WHERE bookname LIKE myBookName;
+    ELSE 
+	  INSERT INTO Book(bookid, bookname, publisher, price)
+	    VALUES(myBookID, myBookName, myPublisher, myPrice);
+	END IF;
+END;
+//
+delimiter ;
+```
+-  실행방법
+```
+CALL BookInsertOrUpdate(15, '스포츠 즐거움', '마당과학서적', 25000);
+SELECT * FROM Book; -- 15번 투플 삽입 결과 확인
 
+CALL BookInsertOrUpdate(15, '스포츠 즐거움', '마당과학서적', 20000);
+SELECT * FROM Book; -- 15번 투플 가격 변경 확인
+```
+
+- IN/OUT을 생략하면 기본값은 IN으로 설정된다.
+
+
+### 결과를 반환하는 프로시저
+- 반환하는 방법은 프로시저를 선언할 떄 인자의 타입을 OUT으로 설정한 후, 이 인자 변수에 값을 주면 된다.
+- Book 테이블에 저장된 도서의 평균가격을 반환하는 프로시저
+```
+delimiter //
+CREATE PROCEDURE AveragePrice(
+	OUT AverageVal INTEGER)
+BEGIN
+	SELECT AVG(price) INTO AverageVal
+	FROM Book WHERE price IS NOT NULL;
+END;
+//
+delimiter ;
+```
+- 실행방법
+```
+CALL AveragePrice(@myValue);
+SELECT @myValue;
+```
+
+### 커서를 사용하는 프로시저
+- SQL 문의 실행 결과가 다중행 또는 다중열일 경우 프로그램에서는 한 행씩 처리한다. 
+- 커서(cursor)는 실행 결과 테이블을 한 번에 한 행씩 처리하기 위하여 테이블의 행을 순서대로 가리키는 데 사용한다.
+- 커서에 관련된 키워드는 CURSOR, OPEN, FETCH, CLOSE등이 있다.
+
+#### 커서와 관련된 키워드
+
+|키워드|역할|
+|-------|-----|
+|CURSOR \<cursor 이름\> IS \<커서 정의\><br>DECLARE \<cursor 이름\> CURSOR FOR|커서를 생성|
+|OPEN \<cursor 이름\>|커서의 사용을 시작|
+|FETCH \<cursor 이름\> INTO \<변수\>|행 데이터를 가져옴|
+|CLOSE \<cursor 이름\>|커서의 사용을 끝냄|
+
+- Orders 테이블의 판매 도서에 대한 이익을 계산하는 프로시저
+
+```
+delimiter //
+CREATE PROCEDURE Interest()
+BEGIN
+	DECLARE myInterest INTEGER DEFAULT 0.0;
+	DECLARE Price INTEGER;
+	DECLARE endOfRow BOOLEAN DEFAULT FALSE;
+	DECLARE InterestCursor CURSOR FOR 
+		SELECT saleprice FROM Orders;
+	DECLARE CONTINUE handler
+		FOR NOT FOUND SET endOfRow=TRUE;
+	OPEN InterestCursor;
+	cursor_loop : LOOP
+		FETCH InterestCursor INTO Price;
+		IF endOfRow THEN LEAVE cursor_loop;
+		END IF;
+		IF price >= 30000 THEN
+			SET myInterest = myInterest + Price * 0.1;
+		ELSE 
+			SET myInterest = myInterest + Price * 0.05;
+	END LOOP cursor_loop;
+	CLOSE InterestCursor;
+	SELECT CONCAT(' 전체 이익 금액 = ', myInterest);
+END
+//
+delimiter ;
+```
+- 실행방법
+```
+CALL Interest();
+```
 
 * * * 
 ## 트리거
+- 트리거(trigger)는 데이터의 변경(INSERT, DELETE, UPDATE) 문이 실행될 때 자동으로 같이 실행되는 프로시저를 말한다.
+- 보통 트리거는 데이터의 변경문이 처리되는 세 가지 시점, 즉 실행 전(BEFORE), 대신하여(INSTEAD OF), 실행 후(AFTER)에 동작한다.
+- DBMS 재조사에 따라 트리거의 정의가 많이 다르다.
+- 트리거는 데이터의 변경(삽입, 삭제, 수정)이 일어날 때 부수적으로 필요한 작업인 데이터의 기본값 제공, 데이터의 제약 준수, SQL 뷰의 수정, 참조무결성 작업 등을 수행한다.
+
+- 신규 도서를 삽인한 후 자동으로 Book_log 테이블에 삽인한 내용을 기록하는 트리거
+```
+실습을 위해 root 계정에서 트리거 작동을 위하여 다음 문장을 실행해 준다.
+
+SET global log_bin_trust_function_creators=ON;
+```
+```
+ CREATE TABLE Book_log(
+	bookid_l INTEGER,
+	bookname_l VARCHAR(40),
+	publisher_l VARCHAR(40),
+	price_l INTEGER);
+```
+```
+delimiter // 
+CREATE TRIGGER AfterInsertBook 
+	AFTER INSERT ON Book FOR EACH ROW
+BEGIN
+	DECLARE average INTEGER;
+	INSERT INTO Book_log 
+	  VALUES(new.bookid, new.bookname, new.publisher, new.price);
+END;
+//
+delimiter ;
+```
+- 실행방법
+```
+INSERT INTO Book VALUES(14, '스포츠 과학 1', '이상미디어', 25000);
+SELECT * FROM Book WHERE bookid=14;
+SELECT * FROM Book_log WHERE bookid_l=14; -- 결과 확인
+```
 
 * * *
 ## 사용자 정의함수
+- 사용자 정의 함수는 사용자가 직접 필요한 기능을 함수로 만들어 사용한다.
+- 프로시저와 비슷해 보이지만 프로시저는 CALL 명령에 의해 실행되는 독립적인 프로그램이고, 사용자 정의 함수는 SELECT  문이나 프로시저 내에서 호출되어 SQL 문이나 프로시저에 그 값을 제공하는 용도로 사용된다.
+- MySQL에서 작성할 수 있는 사용자 정의 함수는 단일 값을 돌려주는 스칼라 함수가 일반적이다.
+
+- 판매된 도서에 대한 이익을 계산하는 함수
+```
+delimiter //
+CREATE FUNCTION fnc_Interest(
+	Price INTEGER) RETURNS INT
+BEGIN
+	DECLARE myInterest INTEGER;
+	-- 가격이 30,000원 이상이면 10%, 30,000원 미만이면 5%
+	IF Price >= 30000 THEN SET myInterest = Price * 0.1;
+	ELSE SET myInterest = Price * 0.05;
+	END IF 
+	RETURN myInterest;
+END;
+//
+delimiter ;
+```
+
+-  실행방법
+```
+SELECT custid, orderid, saleprice, fnc_interest(saleprice) interest FROM Orders;
+```
+
+
+#### 프로시저, 트리거, 사용자 정의 함수의 공통점과 차이점
+
+|구분|프로시저|트리거|사용자 정의 함수|
+|----|------|------|------|
+|공통점|저장프로시저|저장프로시저|저장프로시저|
+|정의방법|CREATE PROCEDURE문|CREATE TRIGGER문|CREATE FUNCTION문|
+|호출방법|CALL 문으로 직접 호출|INSERT, DELETE, UPDATE 문이 실행될 떄 자동으로 실행됨|SELECT 문에 포함|
+|기능의 차이|SQL 문으로 할 수 없는 복잡한 로직을 수행|기본값 제공, 데이터의 제약 준수, SQL 뷰의 수정, 참조무결성 작업등을 수행|속성 값을 가공하여 반환, SQL 문에서 직접 사용|
 
