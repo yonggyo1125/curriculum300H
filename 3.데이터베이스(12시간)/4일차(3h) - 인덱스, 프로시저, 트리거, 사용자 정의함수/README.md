@@ -86,6 +86,72 @@ DROP INDEX ix_Book ON Book;
 ## 프로시저 - 저장프로그램
 - 저장 프로그램(Stored Program)은 데이터베이스 응용 프로그램을 작성하는 데 사용하는 MySQL의 SQL 전용 언어이다.
 - SQL 전용 언어는 SQL문에 변수, 제어, 입출력 등의 프로그래밍 기능을 추가하여 SQL만으로 처리하기 어려운 문제를 해결한다.
+- 저장 프로그램은 로직을 프로시저(procedure)로 구현하여 객체 형태로 사용한다. 
+- 저장 프로그램은 일반 프로그래밍 언어에서 사용하는 함수와 비슷한 개념으로, 작업 순서가 정해진 독립된 프로그램 수행 단위를 말하며 정의된 다음 MySQL(DBMS)에 저장되므로 저장 프로그램이라고 한다.
+- 저장 프로그램은 저장루틴(routine), 트리거(trigger), 이벤트(event)로 구성되며, 저장루틴은 프로시저(procedure)와 함수(function)로 나눈다.
+
+> 트리거란 데이터의 변경(INSERT, DELETE, UPDATE)문이 실행될 때 자동으로 같이 실행되는 프로시저를 말한다.
+
+- 프로시저를 정의하려면 CREATE PROCEDURE 문을 사용한다. 정의 방법은 다음과 같다.
+	 - 프로시저는 선언부와 실행부(BEGIN-END)로 구성된다. 선언부에서는 변수와 매개변수를 선언하고 실행부에서는 프로그램 로직을 구성한다.
+	 - 배개변수(parameter)는 저장 프로시저가 호출될 때 그 프로시저에 전달되는 값이다.
+	 - 변수(variable)는 저장 프로시저나 트리거 내에서 사용되는 값이다.
+	 - 소스코드에 대한 설명문은 /\*와 \*/ 사이에 기술한다. 설명문이 한 줄이면 이중 대시(--) 기호 다음에 기술해도 된다.
+	 
+```
+delimiter //
+CREATE PROCEDURE dorepeat(p1 INT)
+BEGIN 
+SETG @x = 0;
+REPEAT SET @x = @x + 1; UNTIL @x > p1 END REPEAT;
+END
+//
+delimiter ;
+
+CALL dorepeat(1000);
+SELECT @x;
+```
+
+### 삽입 작업을 하는 프로시저
+- Book  테이블에 한 개의 투플을 삽입하는 프로시저
+
+```
+use madang;
+delimiter //
+CREATE PROCEDURE InsertBook(
+	IN myBookID INTEGER,
+	IN myBookName VARCHAR(40),
+	IN myPublisher VARCHAR(40)m
+	IN myPrice INTEGER)
+BEGIN 
+	INSERT INTO Book(bookid, bookname, publisher, price)
+	VALUES(myBookID, myBookName, myPublisher, myPrice);
+END;
+//
+delimiter ;
+```
+- 프로시저 정의문은 CREATE PROCEDURE-BEGIN-END 형식이다. 프로시저 이름 뒤에 인자를 정의하였고, BEGIN-END에는 INSERT 문을 작성하였다. 
+-  프로시저 종료가 \/\/에서 끝남을 알리는 delimiter이다.
+- IN은 입력 인자, OUT은 출력 인자
+- 프로시저를 작성한 후 \[실행\]을 클릭하면 정의된 프로시저 InsertBook이 개체 탐색기 madang 데이터베이스 'Stored Procedures'항목에 생성된다.
+- 정의된 프로시저는 CALL문으로 호출한다.
+
+### 제어문을 사용하는 프로시저
+
+#### 저장 프로그램 제어문
+
+|구문|의미|문법|
+|----|-------|-----|
+|DELIMITER|구문 종료 기호 설정|DELIMITER \[기호\]|
+|BEGIN-END|프로그램 문을 블록화시킴<br>중첩 가능|BEGIN<br>\[SQL 문\]<br>END|
+|IF-ELSE|조건의 검사 결과에 따라 문장을 선택적으로 수행|IF \<조건\> THEN \[SQL 문\]<br>\[ELSE \[SQL 문\]\]<br>END IF;|
+|LOOP|LEAVE 문을 만나기 전까지 LOOP을 반복|\[label:\] LOOP<br>\[SQL 문\]\[LEAVE \[label\]\]<br>END LOOP|
+|WHILE|조건이 참일 경우 WHILE 문의 블록을 실행|WHILE \<조건\> DO<br>\[SQL 문 | BREAK | CONTINUE \]<br>END WHILE|
+|REPEAT|조건이 참일 경우 REPEAT 문의 블록을 실행|\[label:\] REPEA<br>\[SQL 문 | BREAK | CONTINUE \]<br>UNTIL \<조건\><br>END REPEAT \[label:\]|
+|RETURN|프로시저를 종료<br>상태값 반환 가능|RETURN \[\<식\>\]|
+
+- 동일한 도서가 있는지 점검한 후 삽입하는 프로시저
+
 
 * * * 
 ## 트리거
