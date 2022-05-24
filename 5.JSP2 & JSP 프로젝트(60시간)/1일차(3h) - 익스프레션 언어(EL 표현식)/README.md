@@ -147,6 +147,7 @@ page 애트리뷰트 -> request 애트리뷰트 -> session 애트리뷰트 -> ap
 |initParam|웹 애플리케이션의 초기화 파라미터의 집합|Map|
 |pageContext|JSP 페이지의 환경 정보의 집합|PageContext|
 
+#### param 내장객체
 - param은 웹브라우저에서 \<form\> 요소를 통해 입력된 데이터를 가져올 때 사용하는 내장 객체 입니다. 이 객체의 사용방법은 2가지 입니다.
 	- ${param.NUM} : 객체의 이름 뒤에 마침표를 찍고, 그 다음에 해당 데이터 이름을 쓰는 것입니다.
 	- ${param\["Color"\]} : 두번째 방법은 이 객체의 이름 뒤에 대괄호를 입력하고, 그 안에 작은 따옴표나 큰 따옴표로 묶은 데이터 이름을 쓰는 것입니다.
@@ -182,11 +183,91 @@ page 애트리뷰트 -> request 애트리뷰트 -> session 애트리뷰트 -> ap
 	<body>
 		아이디 : ${param.ID} <br>
 		선택한 동물 : ${paramValues.ANIMAL[0]}
-			     ${paramValues.ANIMAL[1]}
-			     ${paramValues.ANIMAL[2]}
+			      ${paramValues.ANIMAL[1]}
+			      ${paramValues.ANIMAL[2]}
 	</body>
 </html>
 ```
+
+#### header 내장객체
+- HTTP 요청 메시지에 포함된 HTTP 헤더 값을 가져올 때 사용하는 내장 객체입니다.
+	- ${header.Host} : 객체의 이름 뒤에 마침표를 찍고, 그 다음에 해당 헤더의 이름을 쓰는 것
+	- ${header\["User-Agent"\]} : 객체의 이름 뒤에 대괄호를 입력하고, 그 안에 작은 따옴표나 큰 따옴표로 묶은 헤더 이름을 쓰는 것
+
+- 그런데 이중 첫 번째 방법의 사용에는 한 가지 제약사항이 있습니다. HTTP 헤더 이름이 자바의 식별자 명명 규칙을 따르지 않을 때는 사용할 수 없다는 제약입니다.
+- 예를 들어 헤더 이름에 영문자, 숫자, $나 \_가 아닌 특수 문자가 포함되어 있을 경우에는 이 방법을 사용할 수 없으므로 반드시 두 번때 방법을 사용해야 합니다.
+	- ${header.User-Agent} : 잘못된 EL 식(X)
+	- ${header\["User-Agent"]} - 올바른 EL 식(O)
+	
+- HTTP 요청 메세지 안에 똑같은 이름의 HTTP 헤더가 둘 이상 있을 때 header 내장 객체 대신 headerValues 내장 객체를 사용해야 합니다. 
+- 이 내장 객체의 이름 뒤에는 마침표나 대괄호를 이용하여 헤더이름을 표시하고, 그 다음에 대괄호로 묶은 인덱스를 표시해야 합니다.
+	- ${headerValues.Accept\[0\]}
+	- ${headerValues\["User-data"\]\[1\]}
+	
+#### cookie 내장 객체
+- 웹브라우저가 웹 서버로 보낸 쿠키를 가져올 때 사용하는 내장객체 입니다.
+	- ${cookie.CART} : 마침표 이용 
+	- ${cookie\["USER_NAME"\]} : 대괄호 이용 
+	
+- 그런데 위의 EL 식이 가져오는 것은 쿠키의 값이 아니라 쿠키 객체입니다. 그러므로 이런 EL 식을 JSP페이지 안에 써 놓으면 사용자에게 아무 의미도 없는 쿠키 객체의 참조 값만 출력될 것입니다.
+- 쿠키의 값을 출력하기 위해서는 식 뒤에 마침표를 찍고 value라고 쓰거나 대괄호를 치고 그 안에 "value" 또는 'value'라고 쓰면 됩니다.
+	- ${cookie.CART.value} 
+	- ${cookie\["CART"\]\["value"\]}
+	- ${cookie.CART\["value"\]}
+	- ${cookie\["CART"\].value}
+
+- 쿠키 객체 안에는 쿠키 값 외에도 쿠키가 속하는 도메인 이름이나 URL 경로명, 쿠키의 수명 같은 중요한 정보들이 들어있습니다.
+- 이런 정보를 출력하기 위해서는 위와 같은 형태의 EL 식에서 value라는 이름을 빼고 그 대신 다음과 같이 domain, path, maxAge라는 이름을 써 넣으면 됩니다.
+	- ${cookie.CART.domain} : 쿠키의 도메인 이름을 가져오라는 표시
+	- ${cookie.CART\["path"\]} : 쿠키의 URL 경로명을 가져오라는 표시
+	- ${cookie\["CART"\]\["maxAge"\]} : 쿠키의 수명을 가져오라는 표시
+
+#### CookieDataWriter.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%>
+	Cookie cookie = new Cookie("NAME", "John");
+	request.addCookie(cookie);
+%>
+```
+
+#### CookieDataReader.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		NAME 쿠키 데이터의 값은? ${cookie.NAME.value}
+	</body>
+</html>
+```
+
+#### initParam 내장 객체
+- initParam은 웹 애플리케이션의 초기화 파라미터 값을 가져다가 출력할 때 사용하는 내장 객체이다.
+	- ${initParam.DB_NAME}
+	- ${initParam\["DB_NAME"\]}
+
+#### web.xml 
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+	<context-param>
+		<param-name>DB_NAME</param-name>
+		<param-value>malldb</param-value>
+	</context-param>
+	... 
+</web-app>
+```
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		DB_NAME 초기화 파라미터의 값은? ${initParam.DB_NAME}
+	</body>
+</html>
+```
+
+#### pageContext 내장객체
+
 
 ## 익스프레션 언어의 연산자
 
