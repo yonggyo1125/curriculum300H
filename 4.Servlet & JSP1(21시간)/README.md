@@ -48,3 +48,8 @@
 	
 * 6~7일차(6h)
 	- 칸반보드 프로그램 만들기(조회, 삭제, 수정, 추가)
+	
+	
+## 참고도서
+-[한빛아카데미 / 쉽게 배우는 JSP 웹 프로그래밍 / 송미영](http://www.yes24.com/Product/Goods/65120999)
+-[한빛미디어 / 뇌를 자극하는 JSP & Servlet / 김윤명](http://www.yes24.com/Product/Goods/4468035)
