@@ -1,6 +1,10 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1SlSGu2MaYG1d11HL8OQve9RDCqXbDikQ?usp=sharing)
+
 # 예외처리
 
 ## 예외 클래스
+
 ### 오류란 무인가요?
 - <b>컴파일 오류(compile error)</b>
 	- 프로그램 코드 작성 중 실수로 발생하는 오류
