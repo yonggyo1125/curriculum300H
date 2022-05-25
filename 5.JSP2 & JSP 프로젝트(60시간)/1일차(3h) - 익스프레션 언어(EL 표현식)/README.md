@@ -267,10 +267,263 @@ page 애트리뷰트 -> request 애트리뷰트 -> session 애트리뷰트 -> ap
 ```
 
 #### pageContext 내장객체
+- pageContext 내장 객체는 JSP 페이지의 주변 환경에 대한 정보를 제공하는 객체입니다. 이 내장 객체의 사용 방법은 다소 독특합니다. 그 이유는 이 내장 객체의 타입이 다른 내장 객체와 다르기 때문입니다.
+- pageContext의 내장 객체의 타입은 PageContext이고 이것은 자바의 java.servlet.jsp.PageContext 클래스의 이름인데, 이 객체를 이용하면 이 클래스에 속하는 get으로 시작하는 이름의 메서드를 호출할 수 있습니다.
+- 그러므로 pageContext 내장객체를 사용할땐 먼저 PageContext 클래스의 API 규격서를 찾아서 어떤 get메서드가 있는지 살펴보세요.
 
+![pageContext](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/1%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%9D%B5%EC%8A%A4%ED%94%84%EB%A0%88%EC%85%98%20%EC%96%B8%EC%96%B4(EL%20%ED%91%9C%ED%98%84%EC%8B%9D)/images/pageContext.png)
 
+- 위 그림에서 볼 수 있는 것처럼 이 클래스는 8개의 get메서드가 있습니다. 
+- EL 식을 이용해서 이 메서드들을 호출하려면 메서드 이름 제일 앞에 있는 get이라는 단어를 떼고, 그 다음에 있는 첫 문자를 소문자로 고친 이름을 사용하면 됩니다.
+- 예를 들어 getRequest라는 메서드을 호출하기 위해서는 request라는 이름을 이용해서 다음과 같은 EL 식을 만들면 됩니다.
+	- ${pageContext.request}
+	- ${pageContext\["request"\]}
+	
+- 사용 예
+	- ${pageContext.request.requestURI} : getRequestURI 메서드의 리턴값 가져옴
+	- ${pageContext\["request"\]\["requestURI"\]} : getRequestURI 메서드의 리턴값 가져옴
+	- ${pageContext.request\["requestURI"\]} : getRequestURI 메서드의 리턴값 가져옴
+	- ${pageContext\["request"\].requestURI} : getRequestURI 메서드의 리턴값 가져옴
 
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		요청 URL: ${pageContext.request.requestURI}
+	</body>
+</html>
+```
 
 ## 익스프레션 언어의 연산자
+익스프레션 언어를 이용하면 간단한 연산을 해서 그 결과를 출력할 수도 있습니다.
+
+#### 익스프레션 언어의 연산자
+
+|구분|연산자|설명|
+|----|--------|-----|
+|산술 연산자|\+ - \* / % div mod|덧셈, 뺄셈, 곱셈, 나눗셈, 나머지|
+|비교 연산자|\< \> \<= \>= == != lt gt le ge eq ne|크기와 동등 여부 비교|
+|논리 연산자|&& || ! and or not|논리적인 AND와 OR|
+|조건 연산자|? :|조건에 따라 두 값 중 하나를 선택|
+|엠프티 연산자|empty|데이터의 존재 유무 여부|
+|대괄호와 마침표 연산자|\[\] .|집합 데이터에 있는 한 항목을 선택|
+|괄호|()|연산자의 우선순위 지정|
+
+
+#### Operators.jsp
+```
+URL - Operators.jsp?NUM1=20&NUM2=4
+
+<%@page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		X = ${param.NUM1}, Y = ${param.NUM2} <br><br>
+		X + Y = ${param.NUM1} + param.NUM2} <br>
+		X - Y = ${param.NUM1 - param.NUM2} <br>
+		X * Y = ${param.NUM1 * param.NUM2} <br>
+		X / Y = ${param.NUM1 / param.NUM2} <br>
+		X % Y = ${param.NUM1 % param.NUM2} <br><br>
+		X가 더 큽니까? ${param.NUM1 - param.NUM2 > 0} <br>
+		Y가 더 큽니까? ${param.NUM1 - param.NUM2 < 0} <br><br>
+		X와 Y가 모두 양수입니까? ${ (param.NUM1 > 0) && (param.NUM2 > 0) } <br><br>
+		X와 Y가 같습니까? ${param.NUM1 == param.NUM2 ? "예" : "아니오"} <br><br>
+	</body>
+</html>
+```
+
+```
+<%@ page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		${param.NUM1}을 ${param.NUM2}로 나눈 몫은? 
+				${param.NUM1 div param.NUM2} <br>
+		나머지는? ${param.NUM1 mod param.NUM2} <br><br>
+		둘 다 양수입니까? ${ (param.NUM1 gt 0) AND (param.NUM2 gt 0) } <br>
+		둘 다 음수입니까? ${ (param.NUM1 lt 0) AND (param.NUM2 lt 0) } <br> 
+	</body>
+</html>
+```
+
+#### StringOperators.jsp
+```
+URL - StringOperators.jsp?STR1=DOG&STR2=CAT
+
+<%@ page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		입력 문자열 : ${param.STR1}, ${param.STR2} <br><br>
+		두 문자열이 같습니까? ${param.STR1 == param.STR2} <br>
+	</body>
+</html>
+```
+
+### 엠프티 연산자
+- ${empty NAME} : 값이 비어 있는지를 체크
+
+#### EmptyOperators.jsp
+```
+URL1 - EmptyOperators.jsp?ID=rose
+URL2 - EmptyOperators.jsp
+
+<%@ page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		안녕하세요, ${empty param.ID ? "guest" : param.ID}님
+	</body>
+</html>
+```
+### 대괄호 연산자와 마침표 연산자
+- 자바에서는 배열 항목과 객체 멤버를 가리키기 위해 사용되지만, 익스프레션 언어에서는 그와 비슷하면서도 다른 용도로 사용됩니다.
+- 이 두 연산자는 다음과 같은 데이터 항목을 가리키기 위해 사용됩니다.
+	- 배열 항목
+	- java.util.List 객체의 데이터 항목
+	- java.util.Map 객체의 데이터 항목
+	- 자바빈(javaBean) 프로퍼티
+	
+- 배열과 java.util.List 객체의 데이터 항목은 반드시 대괄호 연산자를 이용해서 가리켜야 합니다.
+- java.util.Map 객체의 데이터 항목과 자바빈 프로퍼티는 대괄호 연산자의 마침표 연산자 중 어느 것을 사용해서도 가리킬 수 있습니다.
+
+```
+${ARR[0]}
+```
+
+- 배열 예제
+
+#### Winners.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%
+	String winners[] = new String[3];
+	winners[0] = "이수현";
+	winners[1] = "정세훈";
+	winners[2] = "김진희";
+	request.setAttribute("WINNERS", winners);
+	RequestDispatcher dispatcher = request.getRequestDispatcher("WinnersView.jsp");
+	dispatcher.forward(request, response);
+%>
+```
+
+#### WinnersView.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		<h3>우승자 명단</h3>
+		1등. ${WINNERS[0]} <br>
+		2등. ${WINNERS[1]} <br>
+		3등. ${WINNERS[2]} <br>
+	</body>
+</html>
+```
+
+- java.util.List 예제
+
+#### Fruits.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@page import="java.util.*" %>
+<%
+	ArrayList<String> items = new ArrayList<String>();
+	items.add("딸기");
+	items.add("오렌지");
+	items.add("복숭아");
+	request.setAttributes("FRUITS", items);
+	RequestDispatcher dispatcher = request.getRequestDispatcher("FruitsView.jsp");
+	dispatcher.forward(request, response);
+%>
+```
+
+#### FruitsView.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		1위. ${FRUITS[0]} <br>
+		2위. ${FRUITS[1]} <br>
+		3위. ${FRUITS[2]} <br>
+	</body>
+</html>
+```
+
+- java.util.Map 예제
+
+#### Address.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@page import="java.util.*" %>
+<%
+	HashMap<String, String> map = new HashMap<String, String>();
+	map.put("Edgar", "보스턴");
+	map.put("Thomas", "오하이오");
+	map.put("John", "워싱턴");
+	request.setAttribute("ADDRESS", map);
+%>
+```
+
+#### AddressView.jsp
+```
+URL - AddressView.jsp?NAME=Thomas
+
+<%@page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		${param.NAME}의 주소는? ${ADDRESS[param.NAME]}
+	</body>
+</html>
+```
+
+- 자바빈(JavaBean) 예제
+
+#### mall.ProductInfo.java
+```
+package mall;
+public class ProductInfo {
+	private String name;
+	private int value;
+	
+	public ProductInfo() {}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setPrice(int price) {
+		value = price;
+	}
+	
+	public int getPrice() {
+		return value;
+	}
+}
+```
+
+#### ProductInfo.jsp 
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@page import="mall.ProductInfo" %>
+<%
+	ProductInfo product = new ProductInfo();
+	product.setName("초코케이크 3호");
+	product,setPrice(20000);
+	request.setAttribute("PRODUCT", product);
+	RequestDispatcher dispatcher = request.getRequestDispatcher("ProductInfoView.jsp");
+	dispatcher.forward(request, response);
+%>
+```
+
+#### ProductInfoView.jsp 
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		상품명 : ${PRODUCT.name} <br>
+		가격 : ${PRODUCT.price}원 <br>
+	</body>
+</html>
+```
 
 ##익스프레션 언어로 자바 정적 메서드 호출하기
