@@ -213,6 +213,236 @@ ${num}
 	${str} <br>
 </c:forEach>
 ```
+- str : 배열의 각 항목을 저장할 변수
+- arr : 배열 이름 
+
+#### \<c:forEach\>액션의 items 애트리뷰트를 이용해서 처리할 수 있는 데이터 
+- 배열
+- java.util.Collection 객체
+- java.util.Iterator 객체
+- java.util.Enumeration 객체
+- java.util.Map 객체
+- 콤마(,)로 구분된 항목들을 포함한 문자열
+
+#### LunchMenu.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%
+	String[] arr = { "불고기 백반", "오므라이스", "콩국수" };
+	request.setAttribute("MENU", arr);
+%>
+<jsp:forward page="LunchMenuView.jsp" />
+```
+
+#### LunchMenuView.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html>
+	<body>
+		<ul>
+			<c:forEach var="dish" items="${MENU}">
+				<li>${dish}</li>
+			</c:forEach>
+		</ul>
+	</body>
+</html>
+```
+
+#### <c:forTokens> 커스텀 액션 사용 방법
+- \<c:forTokens\>커스텀 액션은 자바의 for문과 java.util.StringTokenizer 클래스의 기능을 합친 것과 같은 기능을 제공합니다.
+- 다시 말해서 문자열에 포함된 토큰을 분리해서 각각의 토큰에 대해 반복 처리를 수행하도록 만드는 기능을 말합니다.
+- 이 액션에는 items, delims, var라는 3개의 애트리뷰트를 써야 합니다.
+	- items : 토큰을 포함하는 문자열을 지정
+	- delims : 토큰을 분리하는 데 사용할 구획문자를 기술 
+	- var : 분리된 토큰을 대입할 변수의 이름을 써야 합니다.
+	
+```
+<c:forTokens var="pet" items="햄스터 이구아니 소라게" delims=" ">
+	${pet}<br>
+</c:forTokens>
+```
+
+```
+<c:forTokens var="fruit" items="딸기*키위/체리-참외" delims="*/-">
+	${fruit}<br>
+</c:forTokens>
+```
+#### WildKingdom.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html>
+	<body>
+		<c:set var="guests" value="토끼^^거북이~사슴" />
+		<c:forTokens var="animal" items="${guests}" delims="^~">
+			${animal} <br>
+		</c:forTokens>
+	</body>
+</html>
+```
+
+#### <c:catch> 커스텀 액션 사용 - 방법
+- 자바의 프로그래밍 언어의 try문과 비슷한 역항을 하는 커스텀 액션입니다.
+- \<c:catch\> 커스텀 액션은 try 문의  try 블록과 마찬가지의 일을 합니다.
+- 이 액션의 시작 태그와 끝 태그 사이에서 에러가 발생하면 실행의 흐름이 곧바로 \<c:catch\>액션 다음에 있는 코드로 넘어갑니다.
+- 그리고 이때 에러에 대한 정보를 담은 익셉션 객체가 \<c:catch\>의 시작 태그에 있는 var 애트리뷰트에 저장한 이름의 변수에 대입됩니다.
+
+#### Divide.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglibn prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+	String str1 = request.getParameter("NUM1");
+	String str2 = request.getParameter("NUM2");
+	int num1 = Integer.parseInt(str1);
+	int num2 = Integer.parseInt(str2);
+%>
+<html>
+	<body>
+		<c:catch var="e">
+			<% int result = num1 / num2; %>
+			나눗셈의 결과는? <%= result %>
+		</c:catch>
+		<c:if test="${e != null}">
+			에러 메시지 : ${e.message}
+		</c:if>
+	</body>
+</html>
+```
+
+#### <c:redirect> 커스텀 액션 사용 방법
+- JSP 페이지를 호출하는 \<jsp:forward\> 표준 액션에 대해서 배웠습니다. 이 표준 액션은 RequestDispatcher 인터페이스의 forward 메서드와 동일한 방법으로 JSP 페이지를 호출합니다.
+- \<c:redirect\> 커스텀 액션도 이와 비슷한 일을 합니다. 하지만 이 메서드는 forward 메서드가 아니라 sendRedirect 메서드와 동일한 방법으로 작동합니다. 
+- 그렇기 때문에 이 액션을 이용하면 JSP 페이지가 아닌 웹 자원과 다른 웹 서버에 있는 웹 자원도 호출할 수 있습니다.
+
+```
+<c:redirect url="http://www.yonggyo.com:3001" />
+```
+
+- 때로는 다른 웹 자원을 호출하면서 데이터를 넘겨주어야 할 경우도 있습니다. 자바 코드에서는 이런 일을 하기 위해 해당 데이터를 쿼리 스트링 형태로 만들어서 URL 뒤에 덧붙여야 하지만 <c:redirect> 커스텀 액션을 이용하면 훨씬 더 간편하고 구조적인 방법으로 이런 일을 할 수 있습니다. 
+- 다음과 같이 <c:redirect>의 시작 태그와 끝 태그 사이에 <c:param>이라는 커스텀 액션을 쓰고 name과 value라는 애트리뷰트를 이용해서 데이터 이름과 데이터 값을 각각 지정하면 됩니다.
+
+```
+<c:redirect url="Buy.jsp">
+	<c:param name="code" value="75458" />
+	<c:param name="num" value="2" />
+</c:redirect>
+```
+- 위 코드가 실행되면 Buy.jsp?code=75458&num=2
+
+#### Redirect.jsp
+```
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:redirect url="Multiply.jsp">
+	<c:param name="NUM1" value="5" />
+	<c:param name="NUM2" value="25" />
+</c:redirect>
+```
+
+#### <c:import> 커스텀 액션 사용 방법
+- \<c:import\> 커스텀 액션은 8장에서 배웠던 \<jsp:include\> 표준 액션과 비슷한 일을 합니다. 다시 말해서 현재의 JSP 페이지에 다른 페이지의 결과를 포함시키는 일을 합니다.
+- 하지만 다른 점은 이 액션을 이용하면 다른 웹 서버에 있는 JSP 페이지도 불러올 수 있고, JSP 페이지가 이닌 다른 종류의 웹 자원도 불러올 수 있다는 점입니다.
+
+```
+<c:import url="Add.jsp" />
+```
+- url : 호출할 웹 자원의 URL 
+
+- 이 액션을 이용해서 호출하는 웹 자원에 데이터를 넘겨주어야 할 경우 시작 태그와 끝 태그 사이에 다음과 같이 \<c:param\> 커스텀 액션을 쓰면 됩니다. 
+```
+<c:import url="adScrap.jsp">
+	<c:param name="product" value="TV" />
+	<c:param name="ad_index" value="007" />
+</c:import>
+```
+
+#### <c:url> 커스텀 액션 사용 방법
+- \<c:url\> 커스텀 액션은 앞에서 배웠던 \<c:set\> 커스텀 액션과 마찬가지로 변수의 선언에 사용되는 액션이지만, URL을 저장하기 위한 변수의 선언에 사용됩니다.
+- 그래서 이 액션에서는 URL을 쉽게 다룰 수 있는 방법도 제공하고 있습니다.
+
+```
+<c:url var="myUrl" value="Add.jsp" />
+```
+
+- URL 뒤에 때로는 스트링 형태로 데이터를 덧붙여야 할 필요가 있습니다. 그럴 때는 이 액션의 시작 태그와 끝 태그 사이에 \<c:param\> 커스텀 액션을 쓰고, name과 value 애트리뷰트 값으로 각각 데이터 이름과 데이터 값을 지정하면 됩니다.
+
+```
+<c:url var="myUrl" value="Add.jsp">
+	<c:param name="NUM1" value="999" />
+	<c:param name="NUM2" value="1" />
+</c:url>
+```
+- Add.jsp?NUM1=999&NUM2=1
+
+- \<c:url\> 커스텀 액션은 바로 앞에서 배운 \<c:redirect\>, \<c:import\> 커스텀 액션과 함께 유용하게 사용될 수도 있습니다.
+#### NewRedirect.jsp
+```
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:url var="next" value="Divide.jsp">
+	<c:param name="NUM1" value="100" />
+	<c:param name="NUM2" value="25" />
+</c:url>
+<c:redirect url="${next}" />
+```
+
+#### <c:out> 커스텀 액션 사용 방법
+- \<c:out\> 커스텀 액션은 데이터를 출력할 떄 사용하는 커스텀 액션입니다. 
+- JSP 페이지에서는 데이터를 출력할 수 있는 다른 방법이 많이 있지만, 웹 브라우저에 의해 특수문자로 해석될 가능성이 있는 \<,\>,&,'," 문자를 포함한 데이터는 이 액션을 이용해서 출력하는 것이 좋습니다.
+- 왜냐하면 이 액션은 이런 특수 문자를 자동으로 이스케이프 시퀀스(escape sequence)로 바꿔주는 기능이 있기 때문입니다.
+
+```
+<c:out value="<INPUT>은<FORM>의 서브엘리먼트 입니다." />
+```
+
+#### XML의 특수 문자와 이스케이프 시퀀스
+
+|특수 문자|이스케이프 시퀀스|
+|----|-----|
+|\<|\&lt;|
+|\>|\&gt;|
+|&|\&amp;|
+|'|\&#039;|
+|"|\&0#034;|
+
+- 하지만 이와 반대로 출력할 데이터에 포함된 이런 기호가 태그의 일부로서 제기능을 하기를 원할 수 있습니다.
+- 그럴 때는 다음과 같이 escapeXml이라는 애트리뷰트를 추가하고, 그곳에 false 값을 지정하면 됩니다.  그렇게 하면 특수 문자가 이스케이프 시퀀스로 변환되지 않을 것입니다.
+
+```
+<c:out value="<H1>오늘의 과제</H1>" escapeXml="false" />
+```
+- \<H1\> 태그는 웹브라우저에 의해 태그로 인식됩니다.
+
+#### HtmlUsage.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html>
+	<body>
+		<c:out value="<font size='7'>커다란 글씨</font>는 다음과 같은 출력을 합니다." /><br><br>
+		<c:out value="<font size='7'>커다란 글씨</font>" escapeXml="false" />
+	</body>
+</html>
+```
+
+- \<c:out\> 커스텀 액션에는 출력할 데이터의 디폴트 값(기본 값)을 지정할 수도 있습니다.
+
+```
+<c:out value="${str}" default="No Data" />
+```
+- str 값이 없으면 No Data를 출력합니다.
+
+#### Hello.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html>
+	<body>
+		안녕하세요, <c:out value="${param.ID}" default="guest" />
+	</body>
+</html>
+```
+
 
 ## 포매팅(fmt) 라이브러리
 
