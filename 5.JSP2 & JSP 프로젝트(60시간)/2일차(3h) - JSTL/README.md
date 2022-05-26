@@ -145,7 +145,74 @@ ${num}
 ```
 
 #### <c:choose> 커스텀 액션 사용 방법
+- 자바 프로그램에 switch 문이 있다면, JSTL 코어 라이브러리에는 <c:choose> 커스텀 액션이 있습니다.
+- \<c:when\>, \<c:otherwise\>라는 커스텀 액션과 함께 사용되는데, 이 두 액션은 각각 switch 문의 case, default 절과 비슷한 역할을 합니다.
 
+#### Greeting.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html>
+	<body>
+		<c:choose>
+			<c:when test="${param.NUM == 0}">
+				처음 뵙겠습니다. <br>
+			</c:when>
+			<c:when test="${param.NUM == 1}">
+				반갑습니다. <br>
+			</c:when>
+			<c:otherwise>
+				안녕하세요. <br>
+			</c:otherwise>
+		</c:choose>
+	</body>
+</html>
+```
+
+#### <c:forEach> 커스텀 액션 사용방법
+- \<c:forEach\> 커스텀 액션은 자바 프로그램의 for 문에 해당하는 기능을 제공하는 커스텀 액션입니다.
+- 즉, 이 액션을 이용하면 특정 HTML 코드를 일정 횟수만큼 반복해서 출력할 수 있습니다.
+
+```
+<c:forEach begin="1" end="10">
+	야호<br>   <!-- 반복 출력할 명령문 -->
+</c:forEach>
+```
+- begin : 시작 값
+- end : 끝 값
+
+```
+<c:forEach var="cnt" begin="1" end="10">
+	${cnt} <br>
+</c:forEach>
+```
+- cnt : 카운터 변수
+
+```
+<c:forEach var="cnt" begin="1" end="10" step="2">
+	${cnt} <br>
+</c:forEach>
+```
+- step : 증가치
+
+#### Echo.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html>
+	<body>
+		<c:forEach var="cnt" begin="1" end="5">
+			<font size=${cnt}>야~호~</font> <br>
+		</c:forEach>
+	</body>
+</html>
+```
+
+```
+<c:forEach var="str" items="${arr}">
+	${str} <br>
+</c:forEach>
+```
 
 ## 포매팅(fmt) 라이브러리
 
