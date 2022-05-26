@@ -446,6 +446,143 @@ ${num}
 
 ## 포매팅(fmt) 라이브러리
 
+- 날짜를 '2010년 1월 3일'이라고 표시해야 할 때도 있고 '2009/1/3'이라고 표시해야 할 때도 있습니다. 숫자의 경우에도 12500이라는 수를 12,500이라고 표시해야 할 때도 있고, 12500.00이라고 표시해야 할 때도 있습니다.
+- JSTL의 포매팅 라이브러리(formatting library)를 이용하면 이런 다양한 포맷 요구 사항을 충족시킬 수 있습니다.
+- 이 라이브러리에는 국제화를 지원하는 커스텀 액션도 다수 포함되어 있습니다. 그 중에는 지구상의 여러 시간대에 따라 다른 시각을 계산해서 표시하는 커스텀 액션도 있고, 하나의 JSP 페이지를 가지고 여러 나라의 언어로 구성된 웹페이지를 생성할 수 있도록 만드는 커스텀 액션도 있습니다.
+
+### <fmt:formatDate> 커스텀 액션
+- \<fmt:formatDate\>는 날짜와 시각을 포맷하는 커스텀 액션입니다. 
+- 이 액션에는 출력할 날짜와 시각을 java.util.Date 클래스 타입의 객체로 넘겨줘야 하기 때문에, 먼저 이 클래스의 객체를 만들어야 합니다. 
+```
+Date date = new Date();
+```
+
+- Date 객체를 만든 다음에는 \<fmt:formatDate\> 커스텀 액션을 이용해서 이 객체가 담고 있는 날짜와 시각을 출력할 수 있습니다.
+
+```
+<fmt:formatDate value="${date}" />
+```
+- date : Date 객체
+- 날짜만 출력, type의 default 값은 date
+
+```
+<fmt:formatDate value="${date}" type="time" />
+```
+- time : 시각을 출력하라고 지시하는 애트리뷰트 값 
+
+```
+<fmt:formatDate value="${date}" type="both" />
+```
+- both : 날짜와 시각을 모두 출력하라고 지시하는 애트리뷰트 값
+
+#### Now.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@page import="java.util.*"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="date" value="<%=new Date() %>" />
+<html>
+	<body>
+		[오늘의 날짜] <fmt:formatDate value="${date}" /><br>
+		[현재의 시각] <fmt:formatDate value="${date}" type="time" /> 
+	</body>
+</html>
+```
+
+- dateStyle 애트리뷰트에 넘겨줄 수 있는 값은 full, long, medium, short 네 가지 입니다.
+```
+<fmt:formatDate type="date" value="${date}" dateStyle="long" />
+```
+
+```
+<fmt:formatDate type="time" value="${date}" timeStyle="full" />
+```
+
+```
+<fmt:formatDate type="both" value="${date}" dateStyle="long" timeStyle="short" />
+```
+
+#### DateTimeFormat.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@page import="java.util.*"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="date" value="<%= new Date()%>" />
+<html>
+	<body>
+		[S] <fmt:formatDate value="${date}" type="both" dateStyle="short" timeStyle="short" /><br>
+		[M] <fmt:formatDate value="${date}" type="both" dateStyle="medium" timeStyle="medium" /><br>
+		[L] <fmt:formatDate value="${date}" type="both" dateStyle="long" timeStyle="long" /><br>
+		[F] <fmt:formatDate value="${date}" type="both" dateStyle="full" timeStyle="full" />
+	</body>
+</html>
+```
+
+- 다른 포맷으로 날짜와 시각을 출력하고 싶다면, 직접 패턴을 지정할 수 도 있습니다. 
+- 그 방법은 dateStyle이나 timeStyle 대신 pattern이라는 애트리뷰트를 사용하는 것입니다.
+
+```
+<fmt:formatDate value="${date}" type="date" pattern="yyyy/MM/dd (E)" />
+```
+
+```
+<fmt:formatDate value="${date}" type="time" pattern="(a) hh:mm:ss" />
+```
+
+#### DateTimePattern.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@page import="java.util.*"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="date" value="<%= new Date() %>" />
+<html>
+	<body>
+		[오늘의 날짜] <fmt:formatDate value="${date}" type="date" pattern="yyyy/MM/dd (E)" /><br>
+		[현재의 시각] <fmt:formatDate value="${date}" type="time" pattern="(a) hh:mm:ss" />
+	</body>
+</html>
+```
+
+#### <fmt:formatNumber> 커스텀 액션
+- \<fmt:formatNumber\> 커스텀 액션을 이용하면 수치를 다양하게 표기할 수 있습니다.
+```
+<fmt:formatNumber value="10000" />
+```
+- 위 태그는 10000이라는 수치를 그대로 출력하므로, 굳이 \<fmt:formatNumber\> 태그를 쓸 필요는 없을 것 입니다.
+
+- 세 자리마다 쉼표를 하나씩 첨가하려면 groupingUsed라는 애트리뷰트를 추가하고, 그 값으로 'true'를 지정하면 됩니다.
+```
+<fmt:formatNumber value="1234500" groupingUsed="true" />
+```
+
+
+```
+<fmt:formatNumber value="3.14158" pattern="#.##" />
+```
+- 주어진 값을 소수점 아래 2자리까지 끊어서 출력하도록 지시합니다.
+
+```
+<fmt:formatNumber value="10.5" pattern="#.00" />
+```
+- pattern 애트리뷰트의 값에서 0이라고 쓴 위치는 표시할 유효숫자가 없으면 0으로 채워집니다.
+
+#### NumberFormat.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<html>
+	<body>
+		첫번째 수 : <fmt:formatNumber value="1234500" groupingUsed="true" /><br>
+		두번째 수 : <fmt:formatNumber value="3.14158" pattern="#.##" /><br>
+		세번쨰 수 : <fmt:formatNumber value="10.5" pattern="#.00" />
+	</body>
+</html>
+```
+
 ## 함수(functions) 라이브러리
+
 
 ## SQL 라이브러리
