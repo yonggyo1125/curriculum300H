@@ -582,6 +582,238 @@ Date date = new Date();
 </html>
 ```
 
+- \<fmt:formatNumber\> 액션을 이용하면 주어진 수치를 퍼센트 단위로 표시할 수도 있습니다. 
+- 그렇게 하려면 이 액션에 type 애트리뷰트를 추가하고 그 값으로 "percent"라고 쓰면 됩니다.
+- 퍼센트(%)는 1/100을 표시하는 단위이기 때문에 value 애트리뷰트에 주어진 값에 100을 곱하고 그 뒤에 %표시를 붙인 결과가 출력될 것입니다. 
+
+```
+<fmt:formatNumber value="0.5" type="percent" />
+```
+
+- type 애트리뷰트에 'currency'라는 값을 지정하면 주어진 수치가 금액에 적합한 포맷으로 만들어져서 출력됩니다. 즉, 3자리마다 쉼표가 하나씩 첨가되고, 경우에 따라서는 소수점 아래 2자리까지 표시될 것입니다.
+```
+<fmt:formatNumber value="2500000" type="currency" />
+```
+
+- 화폐 단위를 표시하기 위해서는 currencySymbol이라는 애트리뷰트를 이용하면 됩니다.
+```
+<fmt:formatNumber value="2500000" type="currency" currencySymbol="₩" />
+```
+
+#### NumberType.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<html>
+	<body>
+		금액 : <fmt:formatNumber value="1000000" type="currency" currencySymbol="₩" /><br>
+		퍼센트 : <fmt:formatNumber value="0.99" type="percent" />
+	</body>
+</html>
+```
+
+#### 지역을 설정하는 <fmt:setLocale> 커스텀 액션
+- 날짜와 시간, 수치를 표기하는 방법은 사용하는 언어와 나라에 따라서 달라지기도 합니다.
+- 예를 들어 우리나라에서 '2009년 5월 31일 일요일'라고 표시하는 날짜를 영어권에서는 'Sunday, May 31, 2009'라고 표시하고 합니다.
+- \<fmt:setLocale\> 커스텀 액션은 그런 차이를 반영해서 특정 지역에 맞게 데이터의 포맷을 설정하고자 할 때 사용하는 액션입니다.
+
+```
+<fmt:setLocale value="en" />
+```
+- en : 언어 코드
+
+```
+<fmt:setLocale value="us_en" />
+```
+- us_en : 국가코드_언어코드
+
+#### WorldFormat.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@page import="java.util.*" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="date" value="<%=new Date() %>" />
+<html>
+	<body>
+		<h3>우리나라의 포맷</h3>
+		<fmt:setLocale value="ko_kr" />
+		금액: <fmt:formatNumber value="1000000" type="currency" /><br>
+		일시: <fmt:formatDate value="${date}" type="both" dateStyle="full" timeStyle="full" /><br>
+		
+		<h3>미국의 포맷</h3>
+		<fmt:setLocale value="en_us" />
+		금액: <fmt:formatNumber value="1000000" type="currency" /><br>
+		일시: <fmt:formatDate value="${date}" type="both" dateStyle="full" timeStyle="full" /><br>
+		
+		<h3>일본의 포맷</h3>
+		<fmt:setLocale value="ja_jp" />
+		금액: <fmt:formatNumber value="1000000" type="currency" /><br>
+		일시: <fmt:formatDate value="${date}" type="both" dateStyle="full" timeStyle="full" /><br>
+	</body>
+</html>
+```
+
+#### 시간대를 설정하는 <fmt:timeZone>과 <fmt:setTimeZone> 커스텀 액션
+```
+<fmt:timeZone value="America/New_York">
+	날짜: <fmt:formatDate value="${date}" type="date" />
+	시각: <fmt:formatDate value="${date}" type="time" />
+</fmt:timeZone>
+```
+- date 객체에 들어 있는 날짜와 시각을 뉴욕 시간대에 맞춰서 출력할 것입니다.
+
+#### <fmt:timeZone> 커스텀 액션에 사용하는 지역 이름
+- \<fmt:timeZone\> 커스텀 액션의 value 애트리뷰트에는 시간대를 대표하는 지역 이름을 써야 하는데, 아무 이름이나 써도 되는 것은 아닙니다. 
+- JDK 라이브러리에 있는 java.util.TimeZone 클래스의 getAvailableIDs 메서드를 호출해서 리턴되는 이름 중 하나를 골라서 써야 합니다. 이 메서드는 정적 메서드이고, 리턴값은 지역 이름을 포함한 문자열 배열이므로 다음과 같은 방법으로 호출해야 합니다.
+
+```
+String[] arr = TimeZone.getAvailableIDs();  // 시간대 설정에 사용 가능한 모든 지역 이름을 리턴하는 메서드
+```
+- 다음은 이 메서드를 이용해서 시간대 지역 이름을 출력하는 JSP 페이지 입니다.
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@page import="java.util.TimeZone"%>
+<html>
+	<body>
+		<%
+			String[] arr = TimeZone.getAvailableIDs();
+			for (int cnt = 0; cnt < arr.length; cnt++) {
+				out.println(arr[cnt] + "<br>");
+			}
+		%>
+	</body>
+</html>
+```
+
+#### WorldTime.jsp
+```
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="date" value="<%= new Date()%>" />
+<html>
+	<body>
+		서울: <fmt:formatDate value="${date}" type="both" /><br>
+		<fmt:timeZone value="Asia/Hong_Kong">
+			홍콩: <fmt:formatDate value="${date}" type="both" /><br>
+		</fmt:timeZone>
+		<fmt:timeZone value="Europe/London">
+			런던: <fmt:formateDate value="${date}" type="both" /><br>
+		</fmt:timeZone>
+		<fmt:timeZone value="America/New_York">
+			뉴욕: <fmt:formatDate value="${date}" type="both" /><br>
+		</fmt:timeZone>
+	</body>
+</html>
+```
+
+#### <fmt:setTimeZone> 커스텀 액션 
+- 이 커스텀 액션도 <fmt:timeZone>과 마찬가지로 시간대를 설정하는 기능을 하지만, 시작 태그와 끝 태그 사이에만 영향을 미치는 것이 아니라, 이 액션이 실행된 다음의 모든 코드에 영향을 미칩니다.
+
+```
+<fmt:setTimeZone value="Europe/London" />
+```
+- 위 코드가 실행되고 난 다음에 날짜와 시간을 출력하면 런던의 시간대에 맞춰서 자동으로 계산된 결과가 출력될 것입니다.
+
+#### NewWorldTime.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@page import="java.util.*" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="date" value="<%= new Date()%>" />
+<html>
+	<body>
+		서울 : <fmt:formatDate value="${date}" type="both" /><br>
+		<fmt:setTimeZone value="Asia/Hong_Kong" />
+		홍콩 : <fmt:formatDate value="${date}" type="both" /><br>
+		<fmt:setTimeZone value="Europe/London" />
+		런던 : <fmt:formatDate value="${date}" type="both" /><br>
+		<fmt:setTimeZone value="America/New_York" />
+		뉴욕 : <fmt:formatDate value="${date}" type="both" /><br>
+	</body>
+</html>
+```
+
+#### 다국어를 지원하는 <fmt:setBundle>과 <fmt:bundle> 커스텀 액션
+- \<fmt:setBundle\>이나 \<fmt:bundle\>, \<fmt:message\> 커스텀 태그는 하나의 JSP 페이지를 가지고 여러 가지 언어의 웹 페이지를 생성하는 기능을 제공합니다.
+- 이 액션들은 언어에 따라 서로 다른 파일의 내용을 읽어서 사용하는 방식을 취하므로 그런 파일을 만들어야 합니다. 
+- 그런 파일은 자바 기술에서 사용하는 프로퍼티 파일 형태로 만들어야 하는데, <b>프로퍼티 파일(property file)</b>이란 데이터를 '키=값' 형태로 표현해서 모아놓은 텍스트 파일입니다.
+
+#### src/webapp/WEB-INF/classes/Intro_ko.properties
+```
+TITLE=회사 소개
+GREETING=이 사이트를 방문해 주셔서 감사합니다.
+BODY=당사는 소프트웨어 개발을 주업무로 하는 회사입니다.
+COMPANY_NAME=(주) 듀크 소프트웨어
+```
+
+#### src/webapp/WEB-INF/classes/Intro_en.properties
+```
+TITLE=About Us
+GREETING=Thank you for visiting this site.
+BODY=We are a dedicated software development company.
+COMPANY_NAME=Duke Software Inc.
+```
+
+- 프로퍼티 파일을 만든 다음에는 \<fmt:setBundle\> 또는 \<fmt:bundle\>, 그리고 \<fmt:message\> 커스텀 액션을 이용해서 프로퍼티 파일의 데이터를 읽어올 수 있습니다.
+- \<fmt:setBundle\> 액션은 사용할 프로퍼티 파일을 지정하는 역할을 합니다. 그런 일을 하기 위해서는 이 액션에 basename이라는 애트리뷰트를 쓰고, 애트리뷰트 값으로 사용할 프로퍼티 파일의 이름을 지정하면 됩니다.
+- 이때 주의해야 할 점은 여기에 프로퍼티 파일의 전체 이름을 쓰는 것이 아니라 대표명, 즉 밑줄과 언어 코드 .properties 확장자를 제외한 나머지 부분만 써야한다는 것입니다.
+
+```
+<fmt:setBundle basename="Intro" />
+```
+- Intro : 프로퍼티 파일명의 대표명
+- 프로퍼티 파일의 대표명만 지정한다면, 실제로 어떤 프로퍼티 파일을 사용할지는 JSP페이지를 호출하는 웹 브라우저의 기본 언어가 무엇으로 설정되어 있는지에 따라 결정됩니다.
+- 예를 들어 한글 윈도우즈에 설치되어 있는 웹 브라우저는 기본적으로 한글을 사용하도록 설정되어 있지만, 이 설정을 우리가 직접 바꿀 수도 있습니다.
+- \<fmt:setBundle\> 커스텀 액션을 이용해서 사용할 프로퍼티 파일을 지정한 다음에는 \<fmt:message\> 커스텀 액션을 이용해서 그 프로퍼티 파일 안에 있는 데이터를 가져울 수 있습니다. 
+- 그렇게 하라면 \<fmt:message\> 액션에 key라는 애트리뷰트를 쓰고, 그 값으로 해당 데이터의 키를 쓰면 됩니다.
+```
+<fmt:message key="TITLE" />
+```
+
+#### CompanyIntro.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:setBundle basename="Intro" />
+<html>
+	<head><title><fmt:message key="TITLE" /></title></head>
+	<body>
+		<h3><fmt:message key="TITLE" /></h3>
+		<fmt:message key="GREETING" /><br><br>
+		<fmt:message key="BODY" /> <br><br>
+		<font size="2"><fmt:message key="COMPANY_NAME" /></font>
+	</body>
+</html>
+```
+
+- \<fmt:message\> 커스텀 액션을 조금 다르게 사용하는 방법을 알아보면, 이 액션은 프로퍼티 파일의 데이터를 가져다가 출력하기 위해서도 사용되지만, 프로퍼티 파일의 데이터를 가져다가 변수에 저장하기 위해 사용할 수도 있습니다.
+- 그렇게 하려면 이 액션에 var라는 애트리뷰트를 추가하고 애트리뷰트 값으로 변수 이름을 지정하면 됩니다.
+
+```
+<fmt:message var="title" key="TITLE" />
+```
+
+#### NewCompanyIntro.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:setBundle basename="Intro" />
+<fmt:message var="title" key="TITLE" />
+<fmt:message var="greeting" key="GREETING" />
+<fmt:message var="body" key="BODY" />
+<fmt:message var="companyName" key="COMPANY_NAME" />
+<html>
+	<head><title>${title}</title></head>
+	<body>
+		<h3>${title}</h3>
+		${greeting} <br><br>
+		${body} <br><br>
+		<font size='2'>${companyName}</font>
+	</body>
+</html>
+```
+
 ## 함수(functions) 라이브러리
 
 
