@@ -814,7 +814,133 @@ COMPANY_NAME=Duke Software Inc.
 </html>
 ```
 
-## 함수(functions) 라이브러리
+#### src/webapp/WEB-INF/classes/Intro_ko.properties
+```
+TITLE=회사 소개
+GREETING=안녕하세요, {0}님, {1}번째 방문이시군요.
+BODY=당사는 소프트웨어 개발을 주업무로 하는 회사입니다.
+COMPANY_NAME=(주) 듀크 소프트웨어
+```
 
+#### src/webapp/WEB-INF/classes/Intro_en.properties
+```
+TITLE=About Us
+GREETING=Hi, You haave visited this site {1} times.
+BODY=We are a dedicated software development company.
+COMPANY_NAME=Duke Software Inc.
+```
+
+#### Welcome.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%
+	request.setAttribute("ID", "Spiderman");
+	request.setAttribute("VNUM", Integer.valueOf(3));
+%>
+```
+
+#### WelcomeView.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:bundle basename="Intro">
+	<fmt:message var="title" key="TITLE" />
+	<fmt:message var="greeting" key="GREETING">
+		<fmt:param>${ID}</fmt:param>
+		<fmt:param>${VNUM}</fmt:param>
+	</fmt:message>
+	<fmt:message var="body" key="BODY" />
+	<fmt:message var="companyName" key="COMPANY_NAME" />
+</fmt:bundle>
+<html>
+	<head><title>${title}</title></head>
+	<body>
+		${greeting} <br><br>
+		${body} <br><br>
+		<font size='2'>${companyName}</font>
+	</body>
+</html>
+```
+### POST 메서드로 전송된 한글 입력 데이터를 받기 위해 필요한 커스텀 액션
+-  \<form\> 요소에서 POST메서드를 통해 한글을 입력받기 위해서는 먼저 **request.setCharacterEncoding**이라는 메서드를 호출해야 했습니다. 
+- 그렇게 하지 않으면 한글 데이터를 제대로 받을 수 없는데, 이런 일이 익스프레션 언어를 이용해서 한글 데이터를 받을 경우에도 마찬가지로 발생합니다.
+- 이 문제를 해결하려면 JSP 페이지에 다음과 같은 스트립틀릿을 추가해야 합니다.
+```
+<% request.setCharacterEncoding("UTF-8"); %>
+```
+- 하지만 JSP 페이지의 가독성을 위해 스트립팅 요소를 사용하지 않기로 하였다면 이 방법 보다는 \<fmt:requestEncoding\> 커스텀 액션을 사용하는 것이 좋습니다.
+```
+<fmt:requestEncoding value="utf-8" />
+```
+#### Hello.jsp
+```
+<%@ page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		<form action="HelloResult.jsp" method="post">
+			한글 아이디를 입력하세요.<br>
+			<input type='text' name='ID'><br><br>
+			<input type='submit' value='확인'>
+		</form>
+	</body>
+</html>
+```
+
+#### HelloResult.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<html>
+	<body>
+		안녕하세요, $param.ID}님
+	</body>
+</html>
+```
+
+## 함수(functions) 라이브러리
+- JSTL의 함수 라이브러리는 익스프레션 언어의 EL 식 안에서 사용할 수 있는 EL 함수들의 라이브러리 입니다.
+- 이 함수들은 주로 문자열을 처리하는 일을 하며, 자바 JDK 라이브러리의 java.lang.String 클래스에 속하는 메서드들과 비슷한 기능을 제공합니다.
+- 하지만 이런 함수의 호출 방법이 java.lang.String 클래스의 메서드를 호출하는 방법과 똑같지는 않습니다. 
+- 왜냐하면 이 EL 함수들은 String 객체에 대해 호출하는 것이 아니기 때문에 처리해야 할 문자열을 파라미터로 넘겨주어야 합니다.
+
+#### JSTL의 함수 라이브러리에 있는 함수들
+
+|함수|제공하는 기능|
+|------|---------|
+|substring(str, index1, index2)|str의 index1부터 index2 -1까지의 부분문자열을 반환|
+|substringAfter(str1, str2)|str1에서 str2를 찾아서 그 후의 부분문자열을 반환|
+|substringBefore(str1, str2)|str1에서 str2를 찾아서 그 전의 부분문자열을 반환|
+|toUpperCase(str)|모든 소문자를 대문자로 치환한 값을 반환|
+|toLowerCase(str)|모든 대문자를 소문자로 치환한 값을 반환|
+|trim(str)|문자열에서 앞뒤 공백 문자를 제거한 결과를 반환|
+|replace(str, src, dest)|str 문자열에 포함된 src를 모두 dest로 치환한 결과를 반환|
+|indexOf(str, str2)|str1에 포함된 str2의 시작 인덱스를 반환|
+|startsWith(str1, str2)|str1이 str2로 시작하면 true, 그렇지 않으면 false를 반환|
+|endsWith(str1, str2)|str1이 str2로 끝나면 true, 그렇지 않으면 false를 반환|
+|contains(str1, str2)|str1이 str2를 초함하면 true, 그렇지 않다면 false를 반환|
+|containsIgnoreCase(str1, str2)|str1이 str2를 포함하면 true, 그렇지 않으면 false를 반환, contains 함수와는 달리 대소문자를 구별하지 않고 비교함|
+|split(str1, str2)|str1을 str2를 기준으로 분리해서 만든 부분문자열 배열을 반환|
+|join(arr, str2)|arr 배열의 모든 항목을 합쳐서 리턴, 항목 사이에는 str2가 들어감|
+|escapeXml(str)|HTML 문법에 의해 특수 문자로 취급되는 모든 문자를 이스케이스 시퀀스로 치환한 결과를 반환|
+|length(obj)|obj가 문자열이면 문자열의 길이, List나 Collection이면 항목의 수를 반환|
+
+#### VariousGreeting.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@page import="java.util.*" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:set var="greeting" value="How Are You?" />
+<html>
+	<body>
+		본래의 문자열: ${greeting} <br>
+		모두 대문자로: ${fn:toUpperCase(greeting)} <br>
+		모두 소문자로: ${fn:toLowerCase(greeting)} <br>
+		Are의 위치는? ${fn:indexOf(greeting, "Are")} <br>
+		Are를 Were로 바꾸면? ${fn:replace(greeting, "Are", "Were")} <br>
+		문자열의 길이는? ${fn:length(greeting)} <br>
+	</body>
+</html>
+```
 
 ## SQL 라이브러리
