@@ -944,3 +944,4 @@ COMPANY_NAME=Duke Software Inc.
 ```
 
 ## SQL 라이브러리
+[4.Servlet & JSP - 5일차 JDBC, JSTL SQL 참고](https://github.com/yonggyo1125/curriculum300H/tree/main/4.Servlet%20%26%20JSP1(21%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20JDBC%2C%20JSTL%20SQL#jstl-sql-%ED%83%9C%EA%B7%B8-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
