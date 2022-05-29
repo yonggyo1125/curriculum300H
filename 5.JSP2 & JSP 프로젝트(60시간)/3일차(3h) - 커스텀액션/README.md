@@ -460,7 +460,73 @@ public void doTag() throws JspException, IOException {
 
 }
 ```	
-	
+
+#### src/main/java/tool/StarLineTag.java
+```
+package tool;
+
+import java.io.*;
+import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.*;
+
+public class StarLineTag extends SimpleTagSupport {
+	public void doTag() throws JspException, IOException {
+		JspContext context = getJspContext();
+		JspWriter out = context.getOut();
+		out.println("*******************************<br>");
+	}
+}
+```
+- 컴파일을 수동으로 진행 한 후 WEB-INF/classes/tool/StarLineTag.class 파일을 복사한다.
+- javac -cp 톰캣 경로\lib\jsp-api.jar StarLineTag.java
+- 예) javac -cp D:\tomcat\apache-tomcat-9.0.53\lib\jsp-api.jar StarLineTag.java
+
+#### WEB-INF/tlds/tools.tld
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.4">
+	<tlib-version>1.0</tlib-version>
+	<short-name>tool</short-name>
+	<tag>
+		<name>starLine</name>
+		<tag-class>tool.StarLineTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+</taglib>
+```
+
+#### WEB-INF/web.xml
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+    version="4.0">
+    <jsp-config>
+    	<taglib>
+    		<taglib-uri>/taglibs/tools.tld</taglib-uri>
+    		<taglib-location>/WEB-INF/tlds/tools.tld</taglib-location>
+    	</taglib>
+    </jsp-config>
+    
+</web-app>
+```
+
+#### NewBooks.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="tool" uri="/taglibs/tools.tld" %>
+<html>
+	<body>
+		<h3>이달의 신작도서</h3>
+		<tool:starLine />
+		멀티프로세서 프로그래밍<br>
+		트와일라잇<br>
+		회사에서 바로 통하는 관리 회계<br>
+		<tool:starLine />
+	</body>
+</html>
+```	
 
 
 ## 태그 라이브러리를 만드는 방법
