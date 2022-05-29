@@ -7,3 +7,25 @@
 - 만약 나누어 떨어지는 정수가 하나이상 존재하면 그 수는 합성수(composite number)입니다. 
 
 ### 문항 : 1000 이하의 소수를 나열하는 프로그램을 작성하시오
+```
+class PrimeNumber {
+	public static void main(String[] args) {
+		int counter = 0; // 나눗셈의 횟수
+		
+		for(int i = 2; i <= 1000; i++) {
+			int j;
+			for (j = 2; j < i; j++) {
+				counter++;
+				if (i % j == 0) { // 나누어 떨어지면 소스가 아니므로 
+					break;  // 반복 중단
+				}				
+			}
+			if (j == i)  { // 마지막 까지 나누어 떨어지지 않으면 출력 
+				System.out.println(j)
+			}
+		}
+		
+		System.out.println("나눗셈을 구행한 횟수 : " + counter);
+	}
+}
+```

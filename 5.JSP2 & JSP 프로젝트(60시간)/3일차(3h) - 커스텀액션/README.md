@@ -446,6 +446,22 @@ ${result}
 
 > [SimpleTagSupport](https://docs.oracle.com/javaee/7/api/javax/servlet/jsp/tagext/SimpleTagSupport.html)
 
+### SimpleTagSupport 클래스를 이용해서 태그 클래스를 작성하는 방법 
+- SimpleTagSupport 클래스를 이용해서 태그 클래스를 만들 떄 반드시 작성해야 하는 메서드는 doTag 메서드입니다, 
+- 이 메서드는 커스텀 액션이 실행될 떄 호출되는 것이기 때문에 커스텀 액션이 해야 할 일은 이 메서들 안에 기술해 놓으면 됩니다.
+
+- doTag 메서드는 작성할 떄 지켜야 할 규칙이 있습니다.
+	- 이 메서드는 public으로 선언해야 합니다.
+	- 매개변수가 없어야 합니다.
+	- 외부로 던질 수 있는 예외는 javax.servlet.Jsp.JspException, java.io.IOException 두 가지 입니다.
+	
+```
+public void doTag() throws JspException, IOException {
+
+}
+```	
+	
+
 
 ## 태그 라이브러리를 만드는 방법
 
