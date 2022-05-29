@@ -433,11 +433,9 @@ ${result}
 
 ### SimpleTag 인터페이스를 구현하는 태그 클래스
 
-- [SimpleTag 인터페이스](https://docs.oracle.com/javaee/7/api/javax/servlet/jsp/tagext/SimpleTag.html)
-
 ![SimpleTag](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%BB%A4%EC%8A%A4%ED%85%80%EC%95%A1%EC%85%98/images/simpleTag.png)
 
-
+> [SimpleTag 인터페이스](https://docs.oracle.com/javaee/7/api/javax/servlet/jsp/tagext/SimpleTag.html)
 
 
 
