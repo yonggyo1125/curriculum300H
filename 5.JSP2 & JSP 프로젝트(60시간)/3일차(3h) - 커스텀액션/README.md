@@ -1213,9 +1213,147 @@ public class NewItemTag extends SimpleTagSupport {
 	- 그리고 태그 클래스의 컴파일 결과물들은 META-INF 디렉토리와 같은 수준으로 작업용 디렉토리에 저장해야 합니다.
 	- 이때 주의할 점은 클래스가 속한 패키지 디렉토리 구조 전체를 그대로 복사해야 합니다.
 	
+	![태그라이브러리 만들기1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%BB%A4%EC%8A%A4%ED%85%80%EC%95%A1%EC%85%98/images/taglib1.png)
 	
 2. TLD 파일을 수정합니다.
+	- TLD 파일을 열고 \<short-name\> 요소 다음 위치에 \<uri\>라는 요소를 추가하고 그 안에 TLD 파일의 URI를 써 넣으면 됩니다.
+	#### tl-work1/META-INF/tools.tld
+	```
+	<?xml version="1.0" encoding="UTF-8"?>
+	<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.4">
+		<tlib-version>1.0</tlib-version>
+		<short-name>tool</short-name>
+		<uri>/taglibs/tools.tld</uri>
+		<tag>
+			<name>starLine</name>
+			<tag-class>tool.StarLineTag</tag-class>
+			<body-content>empty</body-content>
+		</tag>
+		<tag>
+			<name>newLine</name>
+			<tag-class>tool.NewLineTag</tag-class>
+			<body-content>empty</body-content>
+			<attribute>
+				<name>size</name>
+				<type>java.lang.Integer</type>
+			</attribute>
+			<attribute>
+				<name>color</name>
+				<type>java.lang.String</type>
+			</attribute>
+		</tag>
+		<tag>
+			<name>newerLine</name>
+			<tag-class>tool.NewerLineTag</tag-class>
+			<body-content>empty</body-content>
+			<dynamic-attributes>true</dynamic-attributes>
+		</tag>
+		<tag>
+			<name>box</name>
+			<tag-class>tool.BoxTag</tag-class>
+			<body-content>scriptless</body-content>
+		</tag>
+		<tag>
+			<name>replace</name>
+			<tag-class>tool.ReplaceTag</tag-class>
+			<body-content>scriptless</body-content>
+			<attribute>
+				<name>oldWord</name>
+				<type>java.lang.String</type>
+			</attribute>
+			<attribute>
+				<name>newWord</name>
+				<type>java.lang.String</type>
+			</attribute>
+		</tag>
+		<tag>
+			<name>min</name>
+			<tag-class>tool.MinimumTag</tag-class>
+			<body-content>empty</body-content>
+			<attribute>
+				<name>num1</name>
+				<type>java.lang.Integer</type>
+				<rtexprvalue>true</rtexprvalue>
+			</attribute>
+			<attribute>
+				<name>num2</name>
+				<type>java.lang.Integer</type>
+				<rtexprvalue>true</rtexprvalue>
+			</attribute>
+			<variable>
+				<name-given>minimum</name-given>
+				<variable-class>java.lang.Integer</variable-class>
+				<scope>AT_END</scope>
+			</variable>
+		</tag>
+		<tag>
+			<name>newMin</name>
+			<tag-class>tool.NewMinimumTag</tag-class>
+			<body-content>empty</body-content>
+			<attribute>
+				<name>num1</name>
+				<type>java.lang.Integer</type>
+				<rtexprvalue>true</rtexprvalue>
+			</attribute>
+			<attribute>
+				<name>num2</name>
+				<type>java.lang.Integer</type>
+				<rtexprvalue>true</rtexprvalue>
+			</attribute>
+			<attribute>
+				<name>var</name>
+				<type>java.lang.String</type>
+				<required>true</required>
+				<rtexprvalue>false</rtexprvalue>
+			</attribute>
+			<variable>
+				<name-from-attribute>var</name-from-attribute>
+				<variable-class>java.lang.Integer</variable-class>
+				<scope>AT_END</scope>
+			</variable>
+		</tag>
+		<tag>
+			<name>list</name>
+			<tag-class>tool.ListTag</tag-class>
+			<body-content>scriptless</body-content>
+		</tag>
+		<tag>
+			<name>item</name>
+			<tag-class>tool.ItemTag</tag-class>
+			<body-content>scriptless</body-content>
+		</tag>
+		<tag>
+			<name>newList</name>
+			<tag-class>tool.NewListTag</tag-class>
+			<body-content>scriptless</body-content>
+			<attribute>
+				<name>bullet</name>
+				<type>java.lang.Character</type>
+			</attribute>
+		</tag>
+		<tag>
+			<name>newItem</name>
+			<tag-class>tool.NewItemTag</tag-class>
+			<body-content>scriptless</body-content>
+		</tag>
+	</taglib>
+	```
+3. 디렉토리 계층 구조 전체를 JAR 파일로 만듭니다.
+```
+jar cvf0 tool.jar *
+```
+- cvf0 : c는 새로운 JAR 파일을 생성하라는 의미이고, v는 JAR 파일에 들어가는 파일들의 목록을 보여달라는 의미, f는 옵션 다음에 생성할 JAR 파일의 이름이 온다는 의미 입니다. 그리고 마지막에 있는 숫자 0은 jar명령이 기본적으로 수행하는 ZIP 압축 알고리즘을 사용하지 말라는 의미입니다.
+- tool.jar : 생성한 JAR 파일의 이름
+- \* : JAR 파일에 들어갈 파일들
+
+- src/webapp/WEB-INF/lib경로에 생성된 tool.jar 복사
+
+### 태그 파일을 모아서 태그 라이브러리를 만드는 방법 
+1. 디렉토리 계층 구조를 만들고 파일들을 그곳에 저장합니다.
+	
+2. TLD 파일을 생성합니다.
+
 3. 디렉토리 계층 구조 전체를 JAR 파일로 만듭니다.
 
-	
+
 ## 커스텀 액션 태그를 이용하여 레이아웃 구성하기
