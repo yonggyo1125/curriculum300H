@@ -529,6 +529,474 @@ public class StarLineTag extends SimpleTagSupport {
 ```	
 
 
+### 애트리뷰트가 있는 커스텀 액션을 만드는 태그 클래스
+- 태그 파일의 경우에는 attribute 지시자만 써 넣으면 커스텀 액션에 애트리뷰트를 사용할 수 있었지만, 태그 클래스의 경우에는 각각의 애트리뷰트 값을 받는 메서드를 따로 선언해야 합니다.
+- 그리고 메서드는 정해진 규칙에 따라 선언해야 합니다.
+	- 애트리뷰트 값을 받는 메서드는 public으로 선언해야 합니다.
+	- 메서드의 이름은 set으로 시작해야 하고, 그 다음에 애트리뷰트의 본래 이름에서 첫 번째 문자를 대문자로 바꾼 이름을 붙여서 만들어야 합니다.
+	- 그리고 이 메서드에서는 커스텀 액션에서 사용한 애트리뷰트 값을 받기 위한 파라미터 변수도 선언해야 합니다. 
+	```
+	public void setColor(String color) {
+	
+	}
+	```
+	- setColor : color 애트리뷰트 값을 받는 메서드의 이름
+	- color : 이 매개변수를 통해 애트리뷰트 값이 전달됩니다.
+	
+- 파라미터 변수를 통해 받은 애트리뷰트 값은 set메서드 안에서 바로 사용되기 보다는 나중에 호출되는 doTag 메서드 안에서 사용되는 것이 보통입니다. 그러므로 대개의 경우 이 메서드는 매개변수의 값을 멤버변수(field)에 저장하고 끝나는 식으로 작성해도 충분합니다.
+```
+public class NewLineTag extends SImpleTagSupport {
+	private String color;
+	...
+	
+	public void setColor(String color) {
+		this.color = color;
+	}
+}
+```
+
+#### src/main/java/tool/NewLineTag.java
+```
+package tool;
+
+import java.io.*;
+import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.*;
+
+public class NewLineTag extends SimpleTagSupport {
+	private int size;
+	private String color;
+	
+	//size 애트리뷰트를 받는 메서드 
+	public void setSize(Integer size) {
+		this.size = size;
+	}
+	
+	// color 애트리뷰트를 받는 메서드
+	public void setColor(String color) {
+		this.color = color;
+	}
+	
+	public void doTag() throws JspException, IOException {
+		JspContext context = getJspContext();
+		JspWriter out = context.getOut();
+		out.println("<font colort=" + color + ">");
+		for(int i = 0; i < size; i++) {
+			out.print("*");
+		}
+		out.println("</font><br>");
+	}
+}
+```
+- 컴파일을 수동으로 진행 한 후 WEB-INF/classes/tool/NewLineTag.class 파일을 복사한다.
+- javac -cp 톰캣 경로\lib\jsp-api.jar NewLineTag.java
+- 예) javac -cp D:\tomcat\apache-tomcat-9.0.53\lib\jsp-api.jar NewLineTag.java -encoding UTF8 
+
+#### WEB-INF/tlds/tools.tld
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.4">
+...
+	<tag>
+		<name>newLine</name>
+		<tag-class>tool.NewLineTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>size</name>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<name>color</name>
+			<type>java.lang.String</type>
+		</attribute>
+	</tag>
+</taglib>
+```
+
+#### ElibNotice.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="tool" uri="/taglibs/tools.tld" %>
+<html>
+	<body>
+		<h3>이달의 신작 자료</h3>
+		<tool:newLine color="red" size="40" />
+		카르멘 (오페라) DVD<br>
+		돈키호테 (발레) DVD<br>
+		시간을 달리는 소녀 (애니메이션) DVD<br>
+		<tool:newLine color="red" size="30" />
+		전자정보실에서만 감상하실 수 있습니다.<br>
+		<tool:newLine color="blue" size="50" />
+	</body>
+</html>
+```
+### 동적 애트리뷰트 지원하는 태그 클래스
+- 동적 애트리뷰트의 이점은 명시적으로 선언되지 않은 애트리뷰트를 사용해도 오류가 발생하지 않는다는 문법적 유연성입니다.
+- 태그 클래스를 이용해서도 동적 애트리뷰트를 지원하는 커스텀 액션을 만들 수 있습니다.
+
+- 동적 애트리뷰트를 지원하는 태그 클래스를 만들기 위해서는 각각의 애트리뷰트에 대한 set메서드를 선언할 필요가 없고, 그 대신 setDynamicAttribute라는 이름의 메서드를 하나만 선언하면 됩니다.
+- 그렇게 하면 커스팀 액션에서 사용한 애트리뷰트 하나하나에 대해 이 메서드가 한 번씩 호출될 것입니다.
+- setDynamicAttibute 메서드는 커스텀 액션에서 사용한 애트리뷰트에 개한 세 가지 정보를 매개변수로 받습니다. 그 중 하나는 애트리뷰트의 이름이고, 다른 하나는 애트리뷰트의 값이며, 나머지 하나는 애트리뷰트의 이름이 속하는 네임스페이스의 URI입니다.
+```
+public void setDynamicAttribute(String uri, String localName, Object value) throws JspException {
+	
+}
+```
+- String uri : 애트리뷰트의 이름이 속하는 네임스페이스의 URI
+	- 네임스페이스(namespace)란 똑같은 이름의 충돌을 방지하기 위해서 만들어 놓는 이름의 공간을 말합니다. 
+	- 하지만 우리가 만드는 커스텀 액션에 속하는 애트리뷰트의 수가 이름 충돌을 걱정해야 할 만큼 많아지는 경우는 드물기 때문에 이런 네임스페이스를 사용해야 할 경우는 거의 없습니다. 
+	- 특정한 네임스페이스에 속하지 않는 애트리뷰트일 경우 이 메서드의 첫 번째 파라미터 값은 null이 됩니다.
+	- 대개의 경우 setDynamicAttribute 메서드 안에서는 첫 번째 매개변수 값을 무시하고 두 번째와 세 번째 매개변수 값만 사용해도 충분합니다.
+- String localName : 애트리뷰트의 이름
+- Object value : 애트리뷰트의 값
+
+- 이 메서드가 매개변수로 받은 애트리뷰트의 이름과 값을 나중에 찾아보기 쉽도록 저장해 두어야 합니다. 가장 손쉬운 방법은 태그 클래스에 java.util.Map 타입의 멤버변수를 만들어 놓고, 그 멤버 변수 안에 저장하는 것입니다.
+
+```
+public class NewerLineTag extends SimpleTagSupport implements DynamicAttributes {
+	private Map<String, Object> attrs = new HashMap<String, Object>();
+	... 
+	public void setDynamicAttributes(String uri, String localName, Object value) throws JspException {
+		attrs.put(localName, value); // 애트리뷰트의 이름과 값을 Map 객체에 저장합니다.
+	}
+}
+```
+- 이렇게 하고 나면 나중에 doTag 메서드에서 이 필드에 대해 get메서드를 호출해서 애트리뷰트 값을 가져올 수 있습ㄴ디ㅏ. 
+- get 메서드를 호출할 때는 애트리뷰트 이름을 매개변수로 넘겨줘야 합니다.
+
+```
+public class NewerLineTag extends SimpleTagSupport implements DynamicAttributes {
+	private Map<String, Object> attrs == new HashMap<String, Object>();
+	... 
+	public void doTag() throws JspException, IOException {
+		... 
+		String color = (String) attrs.get("color");
+		...
+	}
+	
+}
+```
+- 컴파일을 수동으로 진행 한 후 WEB-INF/classes/tool/NewerLineTag.class 파일을 복사한다.
+- javac -cp 톰캣 경로\lib\jsp-api.jar NewerLineTag.java
+- 예) javac -cp D:\tomcat\apache-tomcat-9.0.53\lib\jsp-api.jar NewerLineTag.java -encoding UTF8 
+
+#### WEB-INF/tlds/tools.tld
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.4">
+	...
+	
+	<tag>
+		<name>newerLine</name>
+		<tag-class>tool.NewerLineTag</tag-class>
+		<body-content>empty</body-content>
+		<dynamic-attributes>true</dynamic-attributes>
+	</tag>
+</taglib>
+```
+- \<dynamic-attributes\>true\</dynamic-attributes\> : 동적 애트리뷰트를 지원한다는 표시 
+
+#### MovieNotice.jsp 
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="tool" uri="/taglibs/tools.tld" %>
+<html>
+	<body>
+		<h3>무료 영화상영 안내</h3>
+		<tool:newerLine color="red" size="40" background="black" />
+		제목 : 폴라 익스프레스<br>
+		일시: 2009년 7월 4일 (토) 오후 5:00<br>
+		<tool:newerLine color="blue" size="45" height="3" />
+	</body>
+</html>
+```
+
+### 본체가 있는 커스텀 액션을 만드는 태그 클래스
+- 태그 파일에서는 커스텀 액션의 본체를 출력하기 위해 \<jsp:doBody /\>라는  표준 액션을 써야 했지만, 태그 클래스에서 해야 할 일은 그보다 훨씬 더 복잡합니다.
+- 이때에는 두 가지 단계가 필요합니다.
+	- 첫 번째 단계에서는 커스텀 액션의 본체 내용을 가져와야 합니다. 이런 일은 태그 클래스가 상위클래스인 SimpleTagSupport로 부터 상속받은 getJspBody 메서드를 호출해서 할 수 있습니다. 이 메서드의 리턴값은 본체의 내용을 포함하고 있는 JspFragment 타입의 객체이므로, 다음과 같은 방법으로 호출해야 합니다.
+		```
+		JspFragment body = getJspBody();
+		```
+	- 두 번째 단계에서는 이 JspFragment 객체를 이용해서 본체의 내용을 출력해야 합니다. 이런 일은 JspFragment 객체에 대한 invoke 메서드를 호출해서 할 수 있습니다. invoke 메서드에서는 본체의 출력에 사용될 출력 스트립을 매개변수로 넘겨줘야 합니다. 예를 들어 out이라는 출력 스트림을 통해 본체 내용을 출력하고자 하면 다음과 같이 호출해야 합니다.
+		```
+		body.invoke(out);
+		```
+	- invoke 메서드에는 출력 스트림 대신 null 값을 넘겨줄 수도 있습니다. 그렇게 하면 이 메서드는 JSP 페이지의 출력에 사용되는 출력 스트림을 통해 본체의 내용을 출력할 것 입니다.
+		```
+		body.invoke(null)
+		```
+	
+#### src/main/java/tool/BoxTag.java
+```
+package tool;
+
+import java.io.*;
+import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.*;
+
+public class BoxTag extends SimpleTagSupport {
+	public void doTag() throws JspException, IOException {
+		JspContext context = getJspContext();
+		JspWriter out = context.getOut();
+		JspFragment body = getJspBody();
+		out.println("<div style='border: 1px solid red; padding: 20px;'>");
+		body.invoke(out);
+		out.println("</div>");
+	}
+}
+```
+- 컴파일을 수동으로 진행 한 후 WEB-INF/classes/tool/BoxTag.class 파일을 복사한다.
+- javac -cp 톰캣 경로\lib\jsp-api.jar BoxTag.java -encoding UTF8 
+- 예) javac -cp D:\tomcat\apache-tomcat-9.0.53\lib\jsp-api.jar BoxTag.java -encoding UTF8 
+
+#### WEB-INF/tlds/tools.tld
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.4">
+	... 
+	<tag>
+		<name>box</name>
+		<tag-class>tool.BoxTag</tag-class>
+		<body-content>scriptless</body-content>
+	</tag>
+</taglib>
+```
+- 본체가 있는 커스텀 액션을 TLD 파일에 등록하기 위해서는 \<tag\> 하위의 \<body-content\>요소에 empty라고 쓰는 대신 scriptless나 tagdependant라고 써야 합니다. 
+	- scriptless는 본체가 스트립틀릿을 포함할 수 없음을 의미
+	- tagdependent는 본체의 텍스트가 있는 그대로 본체로 인식됨을 의미
+
+#### LibraryNotice.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="tool" uri="/taglibs/tools.tld" %>
+<html>
+	<body>
+		<tool:box>
+			다음달 1일부터 구입 희망 도서를 신청 받습니다.<br>
+			많은 참여 바랍니다.<br>
+		</tool:box>
+	</body>
+</html>
+```
+### 커스텀 액션의 본체 내용을 조작하는 태그 클래스
+
+#### src/main/java/tool/ReplaceTag.java
+```
+package tool;
+
+import java.io.*;
+import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.*;
+
+public class ReplaceTag extends SimpleTagSupport {
+	private String oldWord, newWord;
+	
+	public void setOldWord(String oldWord) {
+		this.oldWord = oldWord;
+	}
+	
+	public void setNewWord(String newWord) {
+		this.newWord = newWord;
+	}
+	
+	public void doTag() throws JspException, IOException {
+		JspContext context = getJspContext();
+		JspWriter out = context.getOut();
+		JspFragment body = getJspBody();
+		StringWriter writer = new StringWriter();
+		body.invoke(writer);
+		String str = writer.toString();
+		String newStr = str.replaceAll(oldWord, newWord);
+		out.print(newStr);
+	}
+}
+```
+- 컴파일을 수동으로 진행 한 후 WEB-INF/classes/tool/ReplaceTag.class 파일을 복사한다.
+- javac -cp 톰캣 경로\lib\jsp-api.jar ReplaceTag.java -encoding UTF8 
+- 예) javac -cp D:\tomcat\apache-tomcat-9.0.53\lib\jsp-api.jar ReplaceTag.java -encoding UTF8 
+
+#### WEB-INF/tlds/tools.tld
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.4">
+	...
+	<tag>
+		<name>replace</name>
+		<tag-class>tool.ReplaceTag</tag-class>
+		<body-content>scriptless</body-content>
+		<attribute>
+			<name>oldWord</name>
+			<type>java.lang.String</type>
+		</attribute>
+		<attribute>
+			<name>newWord</name>
+			<type>java.lang.String</type>
+		</attribute>
+	</tag>
+</taglib>
+```
+
+#### Song.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="tool" uri="/taglibs/tools.tld" %>
+<html>
+	<body>
+		<tool:replace oldWord="비행기" newWord="제트기">
+				떴다 떴다 비행기 날아라 날아라<br>
+				높이 높이 날아라 우리 비행기<br>
+		</tool:replace>
+	</body>
+</html>
+```
+
+### 변수를 지원하는 커스텀 액션을 만드는 태그 클래스
+- 태그 파일의 경우에는 variable 지시자를 이용해서 변수를 선언해야 하지만, 태그 클래스에서는 그런 선언을 할 필요가 없습니다.
+- 태그 클래스에서는 단지 해당 변수의 이름과 값을 page 데이터 영역에 저장해 놓기만 하면 됩니다. 그렇게 하면 JSP 페이지에서는 그 데이터를 변수로 인식하고 사용할 수 있습니다.
+- 태그 클래스 안에서 page 데이터 영역에 데이터를 저장하려면 JSP 페이지의 컨텍스트 정보를 표현하는 JspContext객체를 이용해서 할 수 있습니다. 
+- 이 객체는 태그 클래스의 상위 클래스인 SimpleTagSupport의 getJspContext 메서드를 호출하면 구할 수 있는데, 이 메서드의 호출 방법은 다음과 같습니다.
+
+```
+JspContext context = getJspContext();
+```
+- context : page 데이터 영역에 데이터를 저장할 수 있는 객체
+- 이렇게 JspContext 객체를 구한 다음에 이 객체에 setAttribute 메서드를 호출하면 page 데이터 영역에 변수의 이름과 값을 저장할 수 있습니다.
+```
+context.setAttribute("minimum", num1);
+```
+
+#### src/main/java/tool/MinimumTag.java
+```
+package tool;
+
+import java.io.*;
+import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.*;
+
+public class MinimumTag extends SimpleTagSupport {
+	private int num1, num2;
+	
+	public void setNum1(Integer num1) {
+		this.num1 = num1;
+	}
+	
+	public void setNum2(Integer num2) {
+		this.num2 = num2;
+	}
+	
+	public void doTag() throws JspException, IOException {
+		JspContext context = getJspContext();
+			if (num1 < num2)  
+				context.setAttribute("minimum", num1);
+			else 
+				context.setAttribute("minimum", num2);
+	}
+}
+```
+
+- 컴파일을 수동으로 진행 한 후 WEB-INF/classes/tool/MinimumTag.class 파일을 복사한다.
+- javac -cp 톰캣 경로\lib\jsp-api.jar MinimumTag.java -encoding UTF8 
+- 예) javac -cp D:\tomcat\apache-tomcat-9.0.53\lib\jsp-api.jar MinimumTag.java -encoding UTF8 
+
+#### WEB-INF/tlds/tools.tld
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.4">
+	... 
+	<tag>
+		<name>min</name>
+		<tag-class>tool.MinimumTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>num1</name>
+			<type>java.lang.Integer</type>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>num2</name>
+			<type>java.lang.Integer</type>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<variable>
+			<name-given>minimum</name-given>
+			<variable-class>java.lang.Integer</variable-class>
+			<scope>AT_END</scope>
+		</variable>
+	</tag>
+</taglib>
+```
+- \<attribute\> 요소 안에 \<rtexprvalue\>라는 하위 요소가 있고 그 안에 true라는 값이 써 있습니다. 
+- \<rtexprvalue\> 요소는 커스텀 액션의 애트리뷰트 값에 익스프레션 EL 식을 포함시킬 수 있는지 여부를 결정하는 역할을 하는데, 예제에서는 num1과 num2 애트리뷰트 EL 식을 쓸 것이기 때문에 true라고 써야 합니다.
+
+#### Minimum.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="tool" uri="/taglibs/tools.tld" %>
+<html>
+	<body>
+		<tool:min num1="1000" num2="2000" />
+		최소값 : ${minimum}
+	</body>
+</html>
+```
+
+- 지금까지 만든 커스텀 액션은 한 가지 단점이 있는데, 변수의 이름이 고정되어 있다는 단점입니다.
+- 이런 단점을 제거하기 위해서는 다음과 같이 커스텀 액션에서 애트리뷰트를 이용해서 변수의 이름을 지정할 수 있도록 만드는 것이 좋습니다.
+```
+<tool:min var="minimum" num1="12" num2="34" />
+```
+- minimum : 변수의 이름
+- 이런 식으로 작동하는 커스텀 액션을 만들기 위해서는 태그 클래스를 작성할 때 변수 이름을 담을 애트리뷰트를 위한 set메서드를 선언해야 합니다.
+
+#### WEB-INF/tlds/tools.tld
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.4">
+	...
+	<tag>
+		<name>newMin</name>
+		<tag-class>tool.NewMinimumTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>num1</name>
+			<type>java.lang.Integer</type>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>num2</name>
+			<type>java.lang.Integer</type>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<type>java.lang.String</type>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<variable>
+			<name-from-attribute>var</name-from-attribute>
+			<variable-class>java.lang.Integer</variable-class>
+			<scope>AT_END</scope>
+		</variable>
+	</tag>
+</taglib>
+```
+
+#### NewMinimum.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="tool" uri="/taglibs/tools.tld" %>
+<html>
+	<body>
+		<tool:newMin var="MIN" num1="1000" num2="2000" />
+	</body>
+</html>
+```
+
+#### 차일드 커스텀 액션
+
+
 ## 태그 라이브러리를 만드는 방법
 
 ## 커스텀 액션 태그를 이용하여 레이아웃 구성하기
