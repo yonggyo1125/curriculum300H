@@ -163,10 +163,283 @@
 <%@tag dynamic-attributes="attrs" %>
 ```
 - attrs : 동적 애트리뷰트의 대표 이름
+- 커스텀 액션은 사용된 모든 애트리뷰트의 \<이름, 값\>을 java.util.Map 객체 안에 저장한 후 그 객체를 태그 파일로 전달합니다.
+- 이때 tag 지시자의 dynamic-attributes 애트리뷰트 값이 이 Map 객체의 이름이 됩니다. 그러므로 다음과 같은 EL식을 사용하여 커스텀 액션에서 사용된 애트리뷰트 값을 가져올 수 있습니다.
+
+```
+${attrs.color}
+```
+- 위의 EL 식은 커스텀 액션에 기술된 color 애트리뷰트 값을 출력합니다. 
+- 일반 애트리뷰트의 이름과 달리 동적 애트리뷰트의 대표 이름은 자바 변수로 만들어지지 않습니다.
+- 커스텀 액션의 애트리뷰트를 담고 있는 Map 객체는 page 데이터 영역을 통해 태그 파일에 전달됩니다. 
+- 태그 파일에서 page 영역의 데이터를 가져오려면 jspContext 내장 변수에 대해 getAttribute라는 메서드를 호출하면 됩니다.
+- 그러므로 애트리뷰트를 담고 있는 Map 객체를 가져오려면 다음과 같이 getAttribute 메서드에 동적 애트리뷰트의 대표 이름을 넘겨주면 됩니다.
+```
+Map attrs = (Map) jspContext.getAttribute("attrs");
+```
+- 이렇게 가져온 Map 객체에 대해서 get 메서드를 호출하면서 애트리뷰트 이름을 넘겨주면 애트리뷰트 값을 가져올 수 있습니다. 
+- 이때 주의할 점은 동적 애트리뷰트의 경우 모든 애트리뷰트 값이 문자열로 저장되므로 get 메서드의 리턴값을 String 타입으로 변환해서 String 타입의 변수에 대입해야 한다는 것 입니다.
+```
+String str = (String) attrs.get("size");
+```
+- 그 다음에 필요하다면 애트리뷰트 값을 다음과 같이 원하는 데이터 타입으로 변환해서 사용하면 됩니다.
+```
+int size = Integer.parseInt(str);
+```
+
+#### WEB-INF/tags/util/doubleLine.tag
+```
+<%@tag body-content="empty" %>
+<%@tag dynamic-attributes="attrs" %>
+<%@ tag import="java.util.Map" %>
+<font color="${attrs.color}">
+<%
+	Map<String, String> attrs = (Map<String, String>)jspContext.getAttribute("attrs");
+	String str = attrs.get("size");
+	int size = Integer.parseInt(str);
+	for(int cnt = 0; cnt < size; cnt++) {
+		out.print("=");
+	}
+%>
+</font><br>
+```
+
+#### SatMenu.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="util" tagdir="/WEB-INF/tags/util" %>
+<html>
+	<body>
+		<h3>오늘은 토요일이므로 간단한 분식만 제공합니다.</h3>
+		<util:doubleLine color="green" size="30" />
+		 샌드위치 <br>
+		 우동 <br>
+		 <util:doubleLine color="purple" size="50" />
+	</body>
+</html>
+```
+
+- 동적 애트리뷰트를 지원하는 커스텀 액션은 어느 애트리뷰트가 유효한 것인지 일일히 확인하지 않습니다.
+- 그렇기 때문에 실제로 필요치 않은 애트리뷰트가 사용되더라도 문법 에러가 발생하지 않습니다. 
+- 그러므로 프로그래머나 웹 디자이너가 커스텀 액션의 사용 방법을 잘 모르고 엉뚱한 애트리뷰트를 사용했을 때에도 프로그램이 정상적으로 수행될 수 있는 문법적 유연성을 제공합니다.
 
 
+### 커스텀 액션의 본체를 처리하는 태그 파일
+- 커스텀 액션의 시작 태그와 끝 태그 사이에 오는 내용을 커스텀 액션의 본체(body)라고 합니다.
+```
+<util:box>
+	안녕하세요, 여러분!<br>
+	홈페이지를 오픈했습니다.
+</util:box>
+```
+
+- 본체가 있는 커스텀 액션을 만들기 위해서는 태그 파일에서 tag 지시자의 body-content 애트리뷰트에 'empty' 대신 **'scriptless'**나 **'tagdependent'**라는 값을 써야 합니다.
+- 이 중 **'scriptless'**라는 값은 커스텀 액션의 본체에 스트립팅 요소를 사용하면 안 된ㄴ다는 의미입니다.
+```
+<%@tag body-content="scriptless" %>
+```
+- scriptless : 커스텀 액션의 본체에 스크립틀릿을 쓸 수 없음을 표시합니다.
+
+- 위와 같은 tag 지시자를 이용해서 만든 커스텀 액션의 본체 안에서 스트립팅 요소를 사용하면 에러가 발생합니다.
+- body-content 애트리뷰트에 'tagdependent'라는 값을 지정했을 땐 커스텀 액션의 본체에 있는 스트립팅 요소, 익스프레션 언어, 액션이 전혀 처리되지 않고, 있는 그대로의 텍스트가 본체의 내용으로 취급될 것입니다.
+
+```
+<%@tag body-content="tagdependent" %>
+```
+- tagdependent : 커스텀 액션의 본체에 포함된 스크립틀릿, 익스프레션 언어, 액션이 있는 그대로 본체의 일부로 인식됩니다.
+
+
+- 커스텀 액션은 본체 안에 익스프레션 언어나 액션을 포함할 가능성도 있으므로 body-content 애트리뷰트에 scriptless라는 값을 사용하는 것이 좋습니다.
+
+- 하지만 태그 파일의 body-content 애트리뷰트에 이런 값을 지정해 놓더라도 본체의 내용이 자동으로 출력되는 것은 아닙니다. 
+- 커스텀 액션의 본체 내용을 출력하기 위해서는 본체 내용을 출력하고자 하는 위치에 <jsp:doBody> 표준 액션을 쓰면 됩니다.
+
+#### WEB-INF/tags/util/box.tag
+```
+<%@tag body-content="scriptless" %>
+<div style='border: 1px solid red; padding: 10px'>
+	<jsp:doBody />
+</div>
+```
+
+#### Notice1.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="util" tagdir="/WEB-INF/tags/util" %>
+<html>
+	<body>
+		구내 식당에서 알려드립니다.
+		<util:box>
+			공사 관계로 급식을 일시 중단합니다.<br>
+		</util:box>
+	</body>
+</html>
+```
+
+### 변수를 지원하는 커스텀 액션 
+- 커스텀 액션의 애트리뷰트는 JSP 페이지로부터 태그파일로 데이터를 넘겨주는 역할을 합니다. 그러면 태그 파일이 JSP 페이지로 데이터를 넘겨주기 위해서는 어떻게 해야 할까요?
+- 그럴 때는 태그 파일 안에 variable 지시자를 이용해서 변수를 선언해 놓으면 됩니다.
+- 그런 후에 태그 파일에서 이 변수에 어떤 값을 대입하면 JSP 페이지에서 그 변수를 통해 그 값을 사용할 수 있습니다.
+- variable 지시자는 다른 지시자와 마찬가지로 \<%@로 시작하고 %\>로 끝나야 합니다. 
+- \<%@ 바로 다음에는 variable이라는 지시자 이름이 와야 하고, 그 다음에 변수의 선언에 필요한 여러가지 정보가 애트리뷰트의 형태로 기술될 수 있습니다.
+- 변수의 이름은 name-given이라는 애트리뷰트를 이용해서 지정할 수 있습니다.
+```
+<%@variable name-given="result" %>
+```
+- 이렇게 선언한 변수는 기본적으로 String 타입이 됩니다.
+- 다른 타입의 변수를 선언하기 위해서는 variable-class라는 애트리뷰트를 추가하면 됩니다.
+- 이때 주의할 점은 이 애트리뷰트에 기본자료형 타입(primitive type)을 지정할 수 없으므로, 그에 해당하는 래퍼클래스(wrapper class)를 대신 지정해야 합니다. 예를 들어 int 타입의 변수가 필요할 때는 다음과 같이 java.lang.Integer. 타입을 대신 지정해야 합니다.
+```
+<%@variable name-given="result" variable-class="java.lang.Integer" %>
+```
+- 이렇게 선언해 놓은 변수는 태그 파일 안에서도 사용할 수 있고, 그 태그 파일을 호출하는 JSP 페이지 안에서도 사용할 수 있습니다. 하지만 JSP 페이지의 모든 위치에서 사용할 수 있는 것은 아닙니다. 그 태그 파일이 구현하는 커스텀 액션의 본체 안에서만 사용할 수 있습니다.
+- 때로는 이런 변수를 커스텀 액션 본체 밖에서 사용해야 할 필요가 있는데, 그 때는 variable 지시자에 scope라는 애트리뷰트를 추가할 수 있습니다.
+- scope 애트리뷰트는 변수의 사용 범위를 지정하는 역할을 하며, 여기에는 **NESTED, AT_BEGIN, AT_END** 중 한 값을 지정할 수 있습니다. 
+- **NESTED** :  커스텀 액션의 본체 안에서만 변수를 사용할 수 있다는 의미
+- **AT_BEGIN** : 커스텀 액션의 시작 태그 다음 위치부터 변수를 사용할 수 있다는 의미
+- **AT_END** : 커스텀 액션의 끝 태그 다음 위치부터 변수를 사용할 수 있다는 의미
+
+```
+<%@variable name-given="result" variable-class="java.lang.Integer" scope="AT_END" %>
+```
+- 단독으로 사용되는 태그 다음에 변수를 사용할 수 있도록 만드려면 **AT_END**로 지정하는 것이 더 적합
+
+```
+<c:set var="result" value="100" />
+```
+- 이렇게 변수에 저장한 값은 JSP 페이지로 전달될 것이고, JSP 페이지에서는 이 값을 익스프레션 언어의 EL 식을 이용하여 사용할 수 있습니다.
+```
+${result}
+```
+
+#### WEB-INF/tags/util/max.tag
+```
+<%@ tag pageEncoding="UTF-8" %>
+<%@ tag body-content="empty" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ attribute name="num1" type="java.lang.Integer" %>
+<%@ attribute name="num2" type="java.lang.Integer" %>
+<%@variable name-given="maximum" variable-class="java.lang.Integer" scope="AT_END" %>
+<%
+	int result;
+	if (num1 > num2)
+		result = num1;
+	else 
+		result = num2;
+%>
+<c:set var="maximum" value="<%=result%>" />
+```
+
+#### Maximum.jsp?NUM1=10&NUM2=20
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="util" tagdir="/WEB-INF/tags/util" %>
+<html>
+	<body>
+		<h3>최대값 구하기</h3>
+		<util:max num1="${param.NUM1}" num2="${param.NUM2}"  />
+		최대값: ${maximum}
+ 	</body>
+</html>
+```
+
+- 위 방법은 커스텀 액션의 결과를 리턴하는 maximum 변수의 이름이 태그 파일 안에 고정되어 있다는 단점이 있습니다. 
+- 이렇게 되면 커스텀 액션의 사용자가 변수의 이름을 잘못 알고 다른 이름을 사용할 가능성이 있습니다. 그리고 다른 데이터 이름과 충돌할 가능성도 있습니다.
+
+- 이런 문제를 해결하려면 애트리뷰트를 이용해서 다음과 같이 변수의 이름을 지정하면 됩니다.
+```
+<util:max var="maxinum" num1="37" num2="42" />
+```
+- 이렇게 애트리뷰트를 이용해서 변수의 이름을 지정할 때는 태그 파일의 작성방법도 변경되어야 합니다.
+
+```
+<%@attribute name="var" required="true" rtexprvalue="false" %>
+```
+- 변수 이름을 지정할 애트리뷰트를 선언할 때 지켜야 할 규칙
+	- required="true" : 이 애트리 뷰트를 필수 애트리뷰트로 만들어야 합니다.
+	- rtexprvalue="false" : 선언하는 애트리뷰트에는 스크립팅 요소나 익스프레스 언어를 값으로 지정할 수 없도록 만들어야 합니다.
+
+```
+<%@variable name-from-attribute="var" alias="maximuim" variable-class="java.lang.Integer" scope="AT_END" %>
+```
+- 변수를 선언하는 variable 지시자도 다르게 기술해야 합니다.
+	- name-given 애트리뷰트를 이용해서 변수의 이름을 지정하는 것이 아니라 name-from-attribute 애트리뷰트를 이용해서 변수의 이름을 지정할 애트리뷰트 이름을 지정해야 합니다.
+	- alias="maximum" : 태그파일에서 사용할 변수의 이름을 따로 선언해야 합니다. 그런 일은 alias라는 애트리뷰트를 이용해서 할 수 있습니다.
+
+#### WEB-INF/tags/util/newMax.tag
+```
+<%@ tag pageEncoding="UTF-8" %>
+<%@ tag body-content="empty" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ attribute name="var" required="true" rtexprvalue="false" %>
+<%@ attribute name="num1" type="java.lang.Integer" %>
+<%@ attribute name="num2" type="java.lang.Integer" %>
+<%@ variable name-from-attribute="var" alias="maximum" variable-class="java.lang.Integer" scope="AT_END" %>
+<%
+	int result;
+	if (num1 > num2)
+		result = num1;
+	else
+		result = num2;
+%>
+<c:set var="maximum" value="<%=result%>" />
+```
+
+#### NewMaximum.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="util" tagdir="/WEB-INF/tags/util" %>
+<html>
+	<body>
+		<h3>최대값 구하기</h3>
+		<util:newMax var="MAX"  num1="20" num2="30" />
+		최대값 : ${MAX}
+	</body>
+</html>
+```
+
+### 커스텀 액션의 본체 안에서 변수를 사용하는 예
+#### WEB-INF/tags/util/compute.tag 
+```
+<%@tag pageEncoding="UTF-8" %>
+<%@tag body-content="scriptless" %>
+<%@taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@attribute name="var" required="true" rtexprvalue="false" %>
+<%@attribute name="start" type="java.lang.Integer" %>
+<%@attribute name="end" type="java.lang.Integer" %>
+<%@variable name-from-attribute="var" alias="number" variable-class="java.lang.Integer" scope="NESTED" %>
+<% for (int i=start; i <= end; i++) { %>
+	<c:set var="number" value="<%=i %>" />
+	<jsp:doBody />
+<% }%>
+```
+
+#### Square.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="util" tagdir="/WEB-INF/tags/util" %>
+<html>
+	<body>
+		<h3>1부터 5까지의 제곱표</h3>
+		<util:compute var="num" start="1" end="5">
+			${num}의 제곱은? ${num * num} <br>
+		</util:compute>
+	</body>
+</html>
+```
 
 ## 태그 클래스를 이용해서 커스텀 액션 만들기
+- SimpleTag 인터페이스를 구현하여 태그 클래스를 작성할 수 있습니다.
+
+### SimpleTag 인터페이스를 구현하는 태그 클래스
+
+
+- [SimpleTag 인터페이스](https://docs.oracle.com/javaee/7/api/javax/servlet/jsp/tagext/SimpleTag.html)
+
+
+
+
+
 
 ## 태그 라이브러리를 만드는 방법
 
