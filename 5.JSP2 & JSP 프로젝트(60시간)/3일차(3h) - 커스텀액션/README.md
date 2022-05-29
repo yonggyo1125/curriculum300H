@@ -994,9 +994,228 @@ public class MinimumTag extends SimpleTagSupport {
 </html>
 ```
 
-#### 차일드 커스텀 액션
+### 차일드 커스텀 액션
+- 커스텀 액션 안에 또 다른 커스텀 액션이 포함되도록 만드는 방법
+```
+<tool:list>
+	<tool:item>오렌지 쥬스</tool:item>
+	<tool:item>키위 스무디</tool:item>
+	<tool:item>딸기 아이스크림</tool:item>
+</tool:list>
+```
+- 위와 같이 작동하는 커스텀 액션을 만들기 위해서는 두 개의 태그 클래스를 작성해야 합니다. 
+- 하나는 바깥쪽에 있는 \<tool:list\> 커스텀 액션을 위한 태그 클래스이고, 다른 하나는 안쪽에 있는 \<tool:item\>커스텀 액션을 위한 태그 클래스입니다.(이후 바깥쪽 커스텀 액션을 부모 커스텀 액션, 안쪽 커스텀 액션을 자식 커스텀 액션 또는 차일드 커스텀 액션이라고 부르겠습니다).
+
+#### 부모 커스텀 액션을 구현하는 태그 클래스
+
+#### src/main/java/tool/ListTag.java
+```
+package tool;
+
+import java.io.*;
+import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.*;
+
+public class ListTag extends SimpleTagSupport {
+	public void doTag() throws JspException, IOException {
+		JspFragment body = getJspBody();
+		body.invoke(null);
+	}
+}
+```
+- 컴파일을 수동으로 진행 한 후 WEB-INF/classes/tool/ListTag.class 파일을 복사한다.
+- javac -cp 톰캣 경로\lib\jsp-api.jar ListTag.java -encoding UTF8 
+- 예) javac -cp D:\tomcat\apache-tomcat-9.0.53\lib\jsp-api.jar ListTag.java -encoding UTF8 
 
 
+#### 자식 커스텀 액션을 구현하는 태그 클래스
+- 자식 커스텀 액션이 해야 할 일을 코딩하는 방법은 일반 커스텀 액션과 비슷하지만, 추가로 해야 할 일이 있습니다. 즉, 자식 커스텀 액션이 올바른 부모 커스텀 액션 안에서 사용되고 있는지 확인하는 것 입니다.
+- 태그 클래스가 상위 클래스인 SimpleTagSupport로 부터 상속받은 getParent 메서드를 이용하면 됩니다. 이 메서드는 부모 커스텀 액션 태그 클래스 객체를 반환하기 때문입니다.
+
+```
+JspTag parent = getParent();
+```
+- getParent() 메서드가 리턴하는 객체의 타입은 자바 연산자인 instanceof를 사용해서 확인할 수 있습니다. 이때 주의할 점은 부모 커스텀 액션이 아예 없을 경우를 대비하여 getParent 메서드의 반환값이 null인지 부터 확인해야 합니다. 
+- 그리고 올바른 부모 커스텀 액션이 아님을 확인했을 떄는 다음 예에서 볼 수 있는 것처럼 예외 객체를 만들어서 던저야 합니다. 이 예외 객체는 doTag 메서드 밖으로 던져져서 웹 컨테이너에 의해 처리되어야 하므로 doTag 메서드의 throws절에 명시된 JspException 타입으로 만들어야 합니다.
+```
+ if ((parent == null) || !(parent instanceof ListTag))
+	throw new JspException("잘못된 부모 커스텀 액션입니다.");
+```
+#### src/main/java/tool/ItemTag.java
+```
+package tool;
+
+import java.io.*;
+import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.*;
+
+public class ItemTag extends SimpleTagSupport {
+	public void doTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent == null || !(parent instanceof ListTag)) throw new JspException("The Parent is not ListTag");
+		
+		JspContext context = getJspContext();
+		JspWriter out = context.getOut();
+		JspFragment body = getJspBody();
+		out.print("-");
+		body.invoke(null);
+		out.println("<br>");
+	}
+}
+```
+- 컴파일을 수동으로 진행 한 후 WEB-INF/classes/tool/ListTag.class, WEB-INF/classes/tool/ItemTag.class 파일을 복사한다.
+- javac -cp 톰캣 경로\lib\jsp-api.jar ListTag.java ItemTag.java -encoding UTF8 
+D:\Spring\jspWeb1\src\main\java\tool>javac -cp D:\tomcat\apache-tomcat-9.0.53\lib\jsp-api.jar ListTag.java ItemTag.java -encoding UTF8
+
+#### WEB-INF/tlds/tools.tld
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.4">
+	...
+	<tag>
+		<name>list</name>
+		<tag-class>tool.ListTag</tag-class>
+		<body-content>scriptless</body-content>
+	</tag>
+	<tag>
+		<name>item</name>
+		<tag-class>tool.ItemTag</tag-class>
+		<body-content>scriptless</body-content>
+	</tag>
+</taglib>
+```
+
+#### FruitShop.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="tool" uri="/taglibs/tools.tld" %>
+<html>
+	<body>
+		<h3>오늘의 메뉴</h3>
+		<tool:list>
+			<tool:item>오렌지 쥬스</tool:item>
+			<tool:item>키위 스무디</tool:item>
+			<tool:item>딸기 아이스크림</tool:item>
+		</tool:list>
+	</body>
+</html>
+```
+
+#### 부모 커스텀 액션과 자식 커스텀 액션간의 커뮤니케이션의 예
+- 부모 커스텀 액션과 자식 커스텀 액션이 정보를 주고 받는 좀 더 복잡한 커스텀 액션을 만들어 보겠습니다.
+
+```
+<tool:newList bullet="@">
+	<tool:newItem>얼그레이</tool:newItem>
+	<tool:newItem>아쌈</tool:newItem>
+	<tool:newItem>잉글리쉬 브렉퍼스트</tool:newItem>
+</tool:newList>
+```
+
+#### src/main/java/tool/NewListTag.java
+```
+package tool;
+
+import java.io.*;
+import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.*;
+
+public class NewListTag extends SimpleTagSupport {
+	private char bullet;
+	
+	public void setBullet(char bullet) {
+		this.bullet = bullet;
+	}
+	
+	public char getBullet() {
+		return bullet;
+	}
+	
+	public void doTag() throws JspException, IOException {
+		JspFragment body = getJspBody();
+		body.invoke(null);
+	}
+}
+```
+
+#### src/main/java/tool/NewItemTag.java
+```
+package tool;
+
+import java.io.*;
+import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.*;
+
+public class NewItemTag extends SimpleTagSupport {
+	public void doTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent == null || !(parent instanceof NewListTag) )
+			throw new JspException("The Parent is not NewListTag");
+		
+		JspContext context = getJspContext();
+		JspWriter out = context.getOut();
+		JspFragment body = getJspBody();
+		char bullet = ((NewListTag) parent).getBullet();
+		out.print(bullet);
+		body.invoke(null);
+		out.println("<br>");
+	}
+}
+```
+
+- 컴파일을 수동으로 진행 한 후 WEB-INF/classes/tool/NewListTag.class, WEB-INF/classes/tool/NewItemTag.class 파일을 복사한다.
+- javac -cp 톰캣 경로\lib\jsp-api.jar NewListTag.java NewItemTag.java -encoding UTF8 
+- javac -cp D:\tomcat\apache-tomcat-9.0.53\lib\jsp-api.jar NewListTag.java NewItemTag.java -encoding UTF8
+
+#### WEB-INF/tlds/tools.tld
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.4">
+	...
+	<tag>
+		<name>newList</name>
+		<tag-class>tool.NewListTag</tag-class>
+		<body-content>scriptless</body-content>
+		<attribute>
+			<name>bullet</name>
+			<type>java.lang.Character</type>
+		</attribute>
+	</tag>
+	<tag>
+		<name>newItem</name>
+		<tag-class>tool.NewItemTag</tag-class>
+		<body-content>scriptless</body-content>
+	</tag>
+</taglib>
+```
+#### TeaShop.jsp
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="tool" uri="/taglibs/tools.tld" %>
+<html>
+	<body>
+		<h3>오늘의 메뉴</h3>
+		<tool:newList bullet="@">
+			<tool:newItem>얼그레이</tool:newItem>
+			<tool:newItem>아쌈</tool:newItem>
+			<tool:newItem>잉글리쉬 브렉퍼스트</tool:newItem>
+		</tool:newList>
+	</body>
+</html>
+```
 ## 태그 라이브러리를 만드는 방법
 
+### 태그 클래스를 모아서 태그 라이브러리를 만드는 방법
+
+1. 디렉토리 계층 구조를 만들고 파일들을 그곳에 저장합니다.
+	- JSP 규격서에 따르면 태그 라이브러리를 구성하는 파일들은 일정한 규칙에 따라 만들어진 디렉토리 계층구조에 저장해야 합니다. 이를 위해서는 작업용 디렉토리가 필요합니다. <br>( 예 - D:\tl-work1)
+	- 그 다음에는 이 작업용 디렉토리 아래에 META-INF라는 디렉토리를 만들어야 합니다. 이 디렉토리에는 클래스파일을 제외한 나머지 파일들을 저장해야 합니다. 
+	- 그리고 태그 클래스의 컴파일 결과물들은 META-INF 디렉토리와 같은 수준으로 작업용 디렉토리에 저장해야 합니다.
+	- 이때 주의할 점은 클래스가 속한 패키지 디렉토리 구조 전체를 그대로 복사해야 합니다.
+	
+	
+2. TLD 파일을 수정합니다.
+3. 디렉토리 계층 구조 전체를 JAR 파일로 만듭니다.
+
+	
 ## 커스텀 액션 태그를 이용하여 레이아웃 구성하기
