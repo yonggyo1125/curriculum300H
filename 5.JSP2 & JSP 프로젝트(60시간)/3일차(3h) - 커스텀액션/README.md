@@ -438,7 +438,11 @@ ${result}
 > [SimpleTag 인터페이스](https://docs.oracle.com/javaee/7/api/javax/servlet/jsp/tagext/SimpleTag.html)
 
 
+- SimpleTag 인터페이스는 모두 5개의 추상메서드가 있습니다. 즉, SimpleTag 인터페이스를 구현하는 태그 클래스를 만들기 위해서는 이 5개의 메서드를 모두 구현해야 합니다. 
+- 하지만 이것은 매우 번거로운 작업이고, 어떤 메서드는 항상 똑같은 일을 하기 떄문에 매번 다시 작성하는 것은 비효율적인 일입니다.
+- JSP 2.3에서는 이 인터페이스에 있는 모든 메서드를 구현해 놓은 SimpleTagSupport라는 클래스를 제공하고 있습니다.  그러므로 프로그래머는 태그 클래스를 작성할 때 이 클래스를 상속받으면 간접적으로 SimpleTag 인터페이스를 구현할 수 있고, 꼭 필요한 메서드만 작성해도 되니깐 편리합니다.
 
+- [SimpleTagSupport](https://docs.oracle.com/javaee/7/api/javax/servlet/jsp/tagext/SimpleTagSupport.html)
 
 
 ## 태그 라이브러리를 만드는 방법
