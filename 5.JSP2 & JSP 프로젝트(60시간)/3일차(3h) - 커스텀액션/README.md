@@ -1350,10 +1350,73 @@ jar cvf0 tool.jar *
 
 ### 태그 파일을 모아서 태그 라이브러리를 만드는 방법 
 1. 디렉토리 계층 구조를 만들고 파일들을 그곳에 저장합니다.
+	-  작업용 디렉토리를 하나 만듭니다.(예 - D:\tl-work2)
+	- 그런 후에 작성했던 태그 파일들을 이 작업용 디렉토리로 복사해야 합니다. 태그 파일은 META-INF 디렉토리 아래 tags 서브 디렉토리나 그 아래의 서브디렉토리에 저장해야 합니다.
 	
 2. TLD 파일을 생성합니다.
+	- META-INF에 TLD 파일을 생성합니다. 다만 태그파일을 TLD 파일에 등록하는 방법은 태그 클래스의 경우와 상당히 다릅니다.
+	- 태그 클래스의 경우에는 각각의 커스텀 액션을 위해 \<tag\> 요소를 기술해야 했지만 태그 파일의 경우에는 각각의 커스텀 액션을 위해 \<tag-file\>이라는 요소를 기술해야 합니다.
+	- 그리고 요소 안네 \<name\>과 \<path\>라는 하위 요소를 쓰고, 그 안에 커스텀 액션의 이름과 태그 파일명의 경로명을 각각 기술해야 합니다.
+	- 이 경로명은 최상위 디렉토리를 기준으로 한 셩로명으로 기술해야 하고 슬래시(/)로 시작해야 합니다.
+	
+	```
+	<tag-file>
+		<name>line</name>
+		<path>/META-INF/tags/line.tag</path>
+	</tag-file>
+	```
+	
+#### META-INF/util.tld
+```
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.4">
+	<tlib-version>1.0</tlib-version>
+	<short-name>util</short-name>
+	<uri>/taglibs/util.tld</uri>
+	<tag-file>
+		<name>newLine</name>
+		<path>/META-INF/tags/util/newLine.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>doubleLine</name>
+		<path>/META-INF/tags/util/doubleLine.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>box</name>
+		<path>/META-INF/tags/util/box.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>max</name>
+		<path>/META-INF/tags/util/max.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>newMax</name>
+		<path>/META-INF/tags/util/newMax.tag</path>
+	</tag-file>
+	<tag-file>
+		<name>compute</name>
+		<path>/META-INF/tags/util/compute.tag</path>
+	</tag-file>
+</taglib>
+```
 
 3. 디렉토리 계층 구조 전체를 JAR 파일로 만듭니다.
+```
+jar cvf0 util.jar *
+```
 
+4. 생성된 util.jar 파일을 WEB-INF/lib 디렉토리에 복사합니다.
+
+```
+<%@page contentType="text/html; charset=utf-8"%>
+<%@taglib prefix="util" uri="/taglibs/util.tld" %>
+<html>
+	<body>
+		<util:box>
+			커스텀 액션 만들기 학습
+		</util:box>
+	</body>
+</html>
+```
 
 ## 커스텀 액션 태그를 이용하여 레이아웃 구성하기
+
