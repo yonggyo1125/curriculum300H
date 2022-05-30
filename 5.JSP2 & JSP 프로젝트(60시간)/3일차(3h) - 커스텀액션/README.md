@@ -1351,7 +1351,12 @@ jar cvf0 tool.jar *
 ### 태그 파일을 모아서 태그 라이브러리를 만드는 방법 
 1. 디렉토리 계층 구조를 만들고 파일들을 그곳에 저장합니다.
 	-  작업용 디렉토리를 하나 만듭니다.(예 - D:\tl-work2)
+	
+		![taglib2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%BB%A4%EC%8A%A4%ED%85%80%EC%95%A1%EC%85%98/images/taglib2.png)
+		
 	- 그런 후에 작성했던 태그 파일들을 이 작업용 디렉토리로 복사해야 합니다. 태그 파일은 META-INF 디렉토리 아래 tags 서브 디렉토리나 그 아래의 서브디렉토리에 저장해야 합니다.
+	
+		![taglib3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%BB%A4%EC%8A%A4%ED%85%80%EC%95%A1%EC%85%98/images/taglib3.png)
 	
 2. TLD 파일을 생성합니다.
 	- META-INF에 TLD 파일을 생성합니다. 다만 태그파일을 TLD 파일에 등록하는 방법은 태그 클래스의 경우와 상당히 다릅니다.
