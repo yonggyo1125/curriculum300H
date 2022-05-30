@@ -838,6 +838,7 @@ LocalTime birthTime = LocalTime.parse("23:59:59");
 |boolean isLeapYear()|윤년 여부 확인(false)|
  
  - LocalTime
+ 
 |메서드|설명(1999-12-31 23:59:59)|
 |----|-----|
 |int getHour()|시(23)|
