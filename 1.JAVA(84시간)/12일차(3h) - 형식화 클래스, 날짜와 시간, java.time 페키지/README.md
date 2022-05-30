@@ -824,6 +824,7 @@ LocalTime birthTime = LocalTime.parse("23:59:59");
 - 주의할 점 : Calendar와 달리 월(month)의 범위가 1~12이고, 요일은 월요일이 1, 화요일이 2, ..., 일요일은 7이라는 것이다.
 
 - LocalDate
+
 |메서드|설명(1999-12-31 23:59:59)|
 |----|-----|
 |int getYear()|년도(1999)|
