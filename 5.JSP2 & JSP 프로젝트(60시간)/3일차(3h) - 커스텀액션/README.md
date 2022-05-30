@@ -1425,3 +1425,95 @@ jar cvf0 util.jar *
 
 ## 커스텀 액션 태그를 이용하여 레이아웃 구성하기
 
+- 간단한 Wrapper 태그 만들기
+#### WEB-INF/tags/wrapper.tag
+```
+<%@ tag description="간단한 wrapper 태그" pageEncoding="UTF-8" %>
+<!DOCTYPE html>
+<html>
+	<body>
+		<jsp:doBody /> <%-- doBody 태그를 사용하면 태그파일 내에 attribute로 선언하지 않아도 된다  --%>
+	</body>
+</html>
+```
+
+#### webapp/simple_wrapper.jsp 
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="layout" tagdir="/WEB-INF/tags" %>
+<layout:wrapper>
+	<h1>간단한 Wrapper 태그 만들기</h1>
+</layout:wrapper>
+```
+
+- 헤더와 푸터, 내용본문을 일부로서 추가할 수 있는 레이아웃 구성
+
+#### WEB-INF/tags/mainLayout.tag
+```
+<%@tag description="메인 레이아웃" pageEncoding="UTF-8" %>
+<%@attribute name="header" fragment="true" %>
+<%@attribute name="footer"  fragment="true" %>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>사이트 제목...</title>
+	</head>
+	<body>
+		<header>
+			<jsp:invoke fragment="header" />
+		</header>
+		<main>
+			<jsp:doBody />
+		</main>
+		<footer>
+			<jsp:invoke fragment="footer" />
+		</footer>
+	</body>
+</html>
+```
+
+#### layout1.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="layout" tagdir="/WEB-INF/tags" %>
+<layout:mainLayout>
+	<jsp:attribute name="header">
+		<h1>헤더</h1>
+	</jsp:attribute>
+	<jsp:attribute name="footer">
+		<h1>하단</h1>
+	</jsp:attribute>
+	<jsp:body>
+		<h1>본문</h1>
+	</jsp:body>	
+</layout:mainLayout>
+```
+
+- 레이아웃 태그를 이용하여 새로운 레이아웃 만들기
+
+#### WEB-INF/tags/subLayout.tag
+```
+<%@tag description="서브 페이지" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@attribute name="userNm" required="true" %><%-- 태그 속성 선언 --%> 
+<t:mainLayout>
+	<jsp:attribute name="header">
+		<h1>${userNm}님 로그인 하셨습니다.</h1>
+	</jsp:attribute>
+	<jsp:attribute name="footer">
+		<p>Copyright ...</p>
+	</jsp:attribute>
+	<jsp:body>
+		<jsp:doBody />
+	</jsp:body>
+</t:mainLayout>
+```
+
+#### layout2.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<%@taglib prefix="layout" tagdir="/WEB-INF/tags" %>
+<layout:subLayout userNm="김이름">
+	<h1>본문</h1>
+</layout:subLayout>
+```
