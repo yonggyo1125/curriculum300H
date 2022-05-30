@@ -1097,7 +1097,7 @@ LocalTime time = dt.toLocalTime(); // LocalDateTime -> LocalTime
 - LocalDateTIme에 시간대(time-zone)을 추가하면, ZonedDateTime이 된다. 기존에는 TimeZone클래스로 시간대를 다뤘지만 새로운 시간 패키지에서는 ZoneId라는 클래스를 사용한다.
 - ZoneId는 일광 절약시간(DST, Daylight Saving Time)을 자동적으로 처리해 주므로 편리하다.
 - LocalDateTime에 atZone()으로 시간대 정보를 추가하면, ZonedDateTime을 얻을 수 있다.
-> 사용가능한 ZoneId의 목록은 Zoned.getAvailableZoneIds()로 얻을 수 있다.
+> 사용가능한 ZoneId의 목록은 ZoneId.getAvailableZoneIds()로 얻을 수 있다.
 
 ```
 ZoneId zid = ZoneId.of("Asia/Seoul");
