@@ -1445,6 +1445,10 @@ jar cvf0 util.jar *
 	<h1>간단한 Wrapper 태그 만들기</h1>
 </layout:wrapper>
 ```
+- 실행 결과
+
+![layout1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%BB%A4%EC%8A%A4%ED%85%80%EC%95%A1%EC%85%98/images/layout1.png)
+
 
 - 헤더와 푸터, 내용본문을 일부로서 추가할 수 있는 레이아웃 구성
 
@@ -1489,6 +1493,11 @@ jar cvf0 util.jar *
 </layout:mainLayout>
 ```
 
+- 실행 결과
+
+![layout2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%BB%A4%EC%8A%A4%ED%85%80%EC%95%A1%EC%85%98/images/layout2.png)
+
+
 - 레이아웃 태그를 이용하여 새로운 레이아웃 만들기
 
 #### WEB-INF/tags/subLayout.tag
@@ -1517,3 +1526,7 @@ jar cvf0 util.jar *
 	<h1>본문</h1>
 </layout:subLayout>
 ```
+
+- 실행 결과
+
+![layout3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%BB%A4%EC%8A%A4%ED%85%80%EC%95%A1%EC%85%98/images/layout3.png)
