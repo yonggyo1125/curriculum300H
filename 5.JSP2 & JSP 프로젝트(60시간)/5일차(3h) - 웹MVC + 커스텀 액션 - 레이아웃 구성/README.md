@@ -110,3 +110,6 @@ public class IndexController extends HttpServlet {
 </layout:main>
 ```
 
+- 실행 결과
+
+![layout](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%9B%B9MVC%20%2B%20%EC%BB%A4%EC%8A%A4%ED%85%80%20%EC%95%A1%EC%85%98%20-%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EA%B5%AC%EC%84%B1/images/layout.png)
