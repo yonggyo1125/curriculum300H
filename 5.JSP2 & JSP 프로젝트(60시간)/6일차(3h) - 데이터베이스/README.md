@@ -865,14 +865,49 @@ Connection conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:/webdb_p
 - 그 소프트웨어를 이용해서 데이터베이스 커넥션 풀을 만들고, 그 풀을 웹 컨테이너에 등록하는 일은 직접 해야 합니다.
 - 두 가지 방법으로 등록할 수 있습니다.
 	- 데이터베이스 커넥션 풀을 생성해서 등록하는 프로그램을 작성하는 방법
-	- 그런일을 하는 데 필요한 정보를 기술한 XML 문서를 작성해 놓는 방법입니ㅏㄷ.
+	- 그런일을 하는 데 필요한 정보를 기술한 XML 문서를 작성해 놓는 방법입니다.
 
 
 
 * * * 
 # 마이바티스(mybatis) 프레임워크 설치 및 적용
 
-- [MyBatis 3.5.9](https://mvnrepository.com/artifact/org.mybatis/mybatis/3.5.9)
+## 설치
+- [MyBatis 다운로드](https://mvnrepository.com/artifact/org.mybatis/mybatis/3.5.9)
 
 ![MyBatis](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4/images/mybatis.png)
+
+- src/webapp/WEB-INF/lib에 다운로드 받은 jar 파일 복사
+
+## 설정
+
+```
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <properties>
+	  <property name="hostname" value="localhost" />
+      <property name="driver" value="com.mysql.cj.jdbc.Driver" />
+      <property name="url" value="jdbc:mysql://localhost:3306/spring5fs?characterEncoding=UTF8&amp;serverTimezone=UTC" />
+      <property name="username" value="spring5" />
+      <property name="password" value="spring5" />
+  </properties>
+  <environments default="development">
+    <environment id="development">
+      <transactionManager type="JDBC"/>
+      <dataSource type="POOLED">
+        <property name="driver" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+      </dataSource>
+    </environment>
+  </environments>
+  <mappers>
+	<mapper resource="org/mybatis/example/MemberMapper.xml" />
+  </mappers>
+</configuration>
+```
 
