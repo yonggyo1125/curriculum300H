@@ -2,6 +2,11 @@
 - JDBC(Java DataBase Connectivity)는 자바/JSP 프로그램 내에서 데이터베이스와 관련된 작업을 처리할 수 있도록 도와주는 자바 표준 인터페이스로, 관계형 데이터베이스 시스템에 접근하여 SQL문을 실행하기 위한 자바 API 또는 자바 라이브러리입니다. JDBC API를 사용하면 DBMS 종류에 상관없이 데이터베이스 작업을 처리할 수 있습니다.
 - JDBC API는 java.sql.\* 패키지에 의해 구현됩니다.
 
+## MySQL JDBC 드라이버 설치
+- [MySQL Connector/J 다운로드](https://mvnrepository.com/artifact/mysql/mysql-connector-java/8.0.29)
+	
+
+
 ## JDBC를 사용한 JSP와 데이터베이스의 연동은 다음과 같은 단계로 프로그래밍 됩니다.
 1. java.sql.\* 패키지 임포트
 2. JDBC 드라이버 로딩
