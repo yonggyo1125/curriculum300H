@@ -4,7 +4,10 @@
 
 ## MySQL JDBC 드라이버 설치
 - [MySQL Connector/J 다운로드](https://mvnrepository.com/artifact/mysql/mysql-connector-java/8.0.29)
-	
+
+![MySQL Connector](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4/images/mysql_connector.png)
+
+- src/webapps/WEB-INF/lib 폴더에 다운받은 jar 파일을 복사해 넣기 
 
 
 ## JDBC를 사용한 JSP와 데이터베이스의 연동은 다음과 같은 단계로 프로그래밍 됩니다.
