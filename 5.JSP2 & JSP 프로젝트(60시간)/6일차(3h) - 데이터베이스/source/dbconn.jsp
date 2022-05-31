@@ -1,4 +1,4 @@
-<%@ page import="java.sql.*"%> 
+<%@ page import="java.sql.*"%>
 <%
 	Connection conn = null;
 
