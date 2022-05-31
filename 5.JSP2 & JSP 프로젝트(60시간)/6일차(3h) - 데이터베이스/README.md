@@ -817,6 +817,10 @@ ResultSet executeQuery() throws SQLException
 * * * 
 # 데이터베이스 커넥션 풀 설치 및 적용
 
+- [Apache Commons DBCP](https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2/2.9.0)
+- [Apache Commons Pool](https://mvnrepository.com/artifact/org.apache.commons/commons-pool2/2.11.1)
+- [Apache Commons Collections](https://mvnrepository.com/artifact/org.apache.commons/commons-collections4/4.4)
+
 
 * * * 
 # 마이바티스(mybatis) 프레임워크 설치 및 적용
