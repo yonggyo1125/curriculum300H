@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MemberMapper">
+
+    <!-- Beans 클래스의 객체이름(id)과 클래스이름(type)을 명시한다. -->
+    <resultMap id="memberMap" type="kr.codefty.board.member.Member">
+        <!-- Beans의 멤버변수(property)이름과 대상 테이블의 컬럼(column)을 연결한다. -->
+        <result property="memNo" column="memNo" />
+        <result property="memId" column="memId" />
+        <result property="memNm" column="memNm" />
+        <result property="email" column="email" />
+        <result property="memPw" column="memPw" />
+        <result property="regDt" column="regDt" />
+        <result property="modDt" column="modDt" />
+    </resultMap>
+
+    <!-- 단일행 조회를 위한 기능 정의 -->
+    <select id="selectItem"
+            parameterType="kr.codefty.board.member.Member"
+            resultMap="memberMap">
+        <!-- 이 안에서 처리할 SQL문을 명시한다. -->
+		SELECT * FROM member WHERE memId=#{memId};
+    </select>
+
+    <!-- 다중행 조회를 위한 기능 정의 -->
+    <select id="selectList"
+            parameterType="kr.codefty.board.member.Member"
+            resultMap="memberMap">
+        <!-- 이 안에서 처리할 SQL문을 명시한다. -->
+		SELECT * FROM member ORDER BY memNo DESC;
+    </select>
+
+    <!-- 데이터 수 조회를 위한 기능 정의 -->
+    <select id="selectCount"
+            parameterType="kr.codefty.board.member.Member"
+            resultType="long">
+        <!-- 이 안에서 처리할 SQL문을 명시한다. -->
+		SELECT COUNT(*) FROM member;
+    </select>
+
+    <!-- 데이터 저장을 위한 기능 정의 -->
+    <insert id="insertItem"
+            parameterType="kr.codefty.board.member.Member"
+            useGeneratedKeys="true"
+            keyProperty="memNo">
+        <!-- 이 안에서 처리할 SQL문을 명시한다. -->
+		INSERT INTO member(memId, memNm, email, memPw) VALUES (#{memId},#{memNm},#{email}, #{memPw}); 
+    </insert>
+
+    <!-- 데이터 삭제를 위한 기능 정의 -->
+    <delete id="deleteItem" parameterType="kr.codefty.board.member.Member">
+        <!-- 이 안에서 처리할 SQL문을 명시한다. -->
+		DELETE FROM member WHERE memId=#{memId};
+    </delete>
+
+    <!-- 데이터 갱신을 위한 기능 정의 -->
+    <update id="updateItem" parameterType="kr.codefty.board.member.Member">
+        <!-- 이 안에서 처리할 SQL문을 명시한다. -->
+		UPDATE member 
+			SET 
+				memNm=#{memNm},
+				email=#{email}
+			WHERE memId=#{memId};
+    </update>
+</mapper>

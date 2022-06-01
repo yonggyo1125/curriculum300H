@@ -881,6 +881,79 @@ Connection conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:/webdb_p
 
 ## 설정
 
+#### member.sql
+```
+CREATE TABLE `member` (
+  `memNo` int NOT NULL AUTO_INCREMENT,
+  `memId` varchar(45) NOT NULL COMMENT '아이디',
+  `memNm` varchar(45) NOT NULL COMMENT '회원명',
+  `email` varchar(60) NOT NULL COMMENT '이메일 정보',
+  `memPw` varchar(60) NOT NULL COMMENT '비밀번호',
+  `regDt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modDt` datetime DEFAULT NULL,
+  PRIMARY KEY (`memNo`),
+  UNIQUE KEY `memId_UNIQUE` (`memId`)
+)
+```
+
+#### kr/codefty/config/mybatis/MyBatisConnectionFactory.java - 설정 클래스
+```
+package kr.codefty.config.mybatis;
+
+import java.io.IOException;
+import java.io.Reader;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+public class MyBatisConnectionFactory {
+	/** 데이터페이스 접속 객체 */
+	private static SqlSessionFactory sqlSessionFactory;
+	
+	/** XML에 명시된 접속 정보를 읽어온다. */
+	static {
+		// 접속정보를 명시하고 있는 XML의 경로 읽기
+		try {
+			// mybatis-config.xml 파일의 경로 지정 
+			Reader reader = Resources.getResourceAsReader("kr/codefty/config/mybatis/mybatis-config.xml");
+			
+			if (sqlSessionFactory == null) {
+				sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/** 데이터베이스 접속 객체를 통해 DATABASE에 접속한 세션을 리턴한다. */
+	public static SqlSession getSqlSession() {
+		return sqlSessionFactory.openSession();
+	}
+}
+```
+
+- 상기 소스는 설정파일을 읽고 데이터베이스의 접속하기 위한 클래스 입니다.
+- 데이터베이스 접속 정보와 SQL 실행을 위한  mapper 설정을 mybatis-config.xml에 작성하고 이를 읽어와서 데이터베이스에 접속할 수 있는 객체를 생성합니다.
+```
+Reader reader = Resources.getResourceAsReader("kr/codefty/config/mybatis/mybatis-config.xml");
+			
+if (sqlSessionFactory == null) {
+	sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+}
+```
+- 데이터베이스에 접속하여 mapper에 정의된 SQL을 실행할 수 있는 객체를 반환합니다.
+```
+public static SqlSession getSqlSession() {
+	return sqlSessionFactory.openSession();
+}
+```
+
+> **static { ... }** 으로 정의된 부분 : 클래스가 최초 로딩될때 실행되는 영역, 클래스의 초기화 역할을 담당합니다.
+
+
+#### kr/codefty/config/mybatis-config.xml
 ```
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration
@@ -890,9 +963,9 @@ Connection conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:/webdb_p
   <properties>
 	  <property name="hostname" value="localhost" />
       <property name="driver" value="com.mysql.cj.jdbc.Driver" />
-      <property name="url" value="jdbc:mysql://localhost:3306/spring5fs?characterEncoding=UTF8&amp;serverTimezone=UTC" />
-      <property name="username" value="spring5" />
-      <property name="password" value="spring5" />
+      <property name="url" value="jdbc:mysql://localhost:3306/jsp_board?characterEncoding=UTF8&amp;serverTimezone=UTC" />
+      <property name="username" value="jspboard" />
+      <property name="password" value="..." />
   </properties>
   <environments default="development">
     <environment id="development">
@@ -906,8 +979,487 @@ Connection conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:/webdb_p
     </environment>
   </environments>
   <mappers>
-	<mapper resource="org/mybatis/example/MemberMapper.xml" />
+	<mapper resource="kr/codefty/board/mapper/MemberMapper.xml" />
   </mappers>
 </configuration>
 ```
 
+- 데이터베이스 연결 정보를 설정합니다.  dataSource Type을 POOLED로 설정하였는데, 이는 커넥션 풀(Connection Pool)을 사용하여 데이터베이스 접속을 하므로 성능상의 이점이 있습니다.
+```
+<transactionManager type="JDBC"/>
+	<dataSource type="POOLED">
+    <property name="driver" value="${driver}"/>
+    <property name="url" value="${url}"/>
+    <property name="username" value="${username}"/>
+    <property name="password" value="${password}"/>
+</dataSource>
+```
+
+- 데이터 연결정보는 관리상의 편의로 하기와 같이 별도 변수로 등록하여 설정 합니다.
+```
+<properties>
+	<property name="hostname" value="localhost" />
+    <property name="driver" value="com.mysql.cj.jdbc.Driver" />
+    <property name="url" value="jdbc:mysql://localhost:3306/jsp_board?characterEncoding=UTF8&amp;serverTimezone=UTC" />
+    <property name="username" value="jspboard" />
+    <property name="password" value="..." />
+</properties>
+```
+
+- SQL 실행을 위한 mapper xml을 설정 합니다.
+```
+<mappers>
+	<mapper resource="kr/codefty/board/mapper/MemberMapper.xml" />
+</mappers>
+```
+
+#### kr/codefty/board/member/Member.java - SQL 실행 결과를 저장할 Bean 클래스 정의
+```
+package kr.codefty.board.member;
+
+public class Member {
+	
+	private int memNo; // 회원번호 
+	private String memId; // 아이디
+	private String memNm; // 회원명 
+	private String email; // 이메일 
+	private String memPw; // 비밀번호
+	private String regDt; // 가입일
+	private String modDt; // 정보 수정일
+	
+	public int getMemNo() {
+		return memNo;
+	}
+	
+	public void setMemNo(int memNo) {
+		this.memNo = memNo;
+	}
+	
+	public String getMemId() {
+		return memId;
+	}
+	
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+	
+	public String getMemNm() {
+		return memNm;
+	}
+	
+	public void setMemNm(String memNm) {
+		this.memNm = memNm;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	public String getMemPw() {
+		return memPw;
+	}
+	
+	public void setMemPw(String memPw) {
+		this.memPw = memPw;
+	}
+	
+	public String getRegDt() {
+		return regDt;
+	}
+	
+	public void setRegDt(String regDt) {
+		this.regDt = regDt;
+	}
+	
+	public String getModDt() {
+		return modDt;
+	}
+	
+	public void setModDt(String modDt) {
+		this.modDt = modDt;
+	}
+
+	@Override
+	public String toString() {
+		return "Member [memNo=" + memNo + ", memId=" + memId + ", memNm=" + memNm + ", email=" + email + ", memPw="
+				+ memPw + ", regDt=" + regDt + ", modDt=" + modDt + "]";
+	}
+}
+
+```
+
+#### kr/codefty/board/mapper/MemberMapper.xml
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MemberMapper">
+
+    <!-- Beans 클래스의 객체이름(id)과 클래스이름(type)을 명시한다. -->
+    <resultMap id="memberMap" type="kr.codefty.board.member.Member">
+        <!-- Beans의 멤버변수(property)이름과 대상 테이블의 컬럼(column)을 연결한다. -->
+        <result property="memNo" column="memNo" />
+        <result property="memId" column="memId" />
+        <result property="memNm" column="memNm" />
+        <result property="email" column="email" />
+        <result property="memPw" column="memPw" />
+        <result property="regDt" column="regDt" />
+        <result property="modDt" column="modDt" />
+    </resultMap>
+
+    <!-- 단일행 조회를 위한 기능 정의 -->
+    <select id="selectItem"
+            parameterType="kr.codefty.board.member.Member"
+            resultMap="memberMap">
+        <!-- 이 안에서 처리할 SQL문을 명시한다. -->
+		SELECT * FROM member WHERE memId=#{memId};
+    </select>
+
+    <!-- 다중행 조회를 위한 기능 정의 -->
+    <select id="selectList"
+            parameterType="kr.codefty.board.member.Member"
+            resultMap="memberMap">
+        <!-- 이 안에서 처리할 SQL문을 명시한다. -->
+		SELECT * FROM member ORDER BY memNo DESC;
+    </select>
+
+    <!-- 데이터 수 조회를 위한 기능 정의 -->
+    <select id="selectCount"
+            parameterType="kr.codefty.board.member.Member"
+            resultType="long">
+        <!-- 이 안에서 처리할 SQL문을 명시한다. -->
+		SELECT COUNT(*) FROM member;
+    </select>
+
+    <!-- 데이터 저장을 위한 기능 정의 -->
+    <insert id="insertItem"
+            parameterType="kr.codefty.board.member.Member"
+            useGeneratedKeys="true"
+            keyProperty="memNo">
+        <!-- 이 안에서 처리할 SQL문을 명시한다. -->
+		INSERT INTO member(memId, memNm, email, memPw) VALUES (#{memId},#{memNm},#{email}, #{memPw}); 
+    </insert>
+
+    <!-- 데이터 삭제를 위한 기능 정의 -->
+    <delete id="deleteItem" parameterType="kr.codefty.board.member.Member">
+        <!-- 이 안에서 처리할 SQL문을 명시한다. -->
+		DELETE FROM member WHERE memId=#{memId};
+    </delete>
+
+    <!-- 데이터 갱신을 위한 기능 정의 -->
+    <update id="updateItem" parameterType="kr.codefty.board.member.Member">
+        <!-- 이 안에서 처리할 SQL문을 명시한다. -->
+		UPDATE member 
+			SET 
+				memNm=#{memNm},
+				email=#{email}
+			WHERE memId=#{memId};
+    </update>
+</mapper>
+```
+- SQL을 실행 유형별 태그로 나누어 정의합니다. 
+	- \<select ... \> : 조회 SQL 
+	- \<insert ...\> : 추가 SQL
+	- \<delete ...\> : 삭제 SQL
+	- \<update ...\> : 수정 SQL
+	
+- 각 실행 유형별 태그에 지정된 id 값과 mapper namespace를 이용하여 XML에 미리 지정한 SQL 을 실행합니다.
+```
+List<Member> output = sqlSession.selectList("MemberMapper.selectList", null);
+```
+
+## 적용해보기
+#### kr/codefty/board/dbtest/MemberInsert.java
+```
+package kr.codefty.board.dbtest;
+
+import org.apache.ibatis.session.SqlSession;
+import kr.codefty.config.mybatis.MyBatisConnectionFactory;
+import kr.codefty.board.member.Member;
+
+public class MemberInsert {
+
+	public static void main(String[] args) {
+		// 1) 데이터베이스 접속
+		SqlSession sqlSession = MyBatisConnectionFactory.getSqlSession();
+		
+		// 2) 저장할 데이터 준비
+		Member member = new Member();
+		member.setMemId("user1");
+		member.setMemNm("사용자1");
+		member.setMemPw("123456");
+		member.setEmail("user1@test.org");
+
+		// 3) 데이터 저장
+		int affectedRows = sqlSession.insert("MemberMapper.insertItem", member);
+		
+		// 4) 결과 판별
+		System.out.printf("%d개의 데이터 저장됨%n", affectedRows);
+		
+		
+		// 신규로 저장된 데이터의 Primary Key는 입력 파라미터로 전달된 빈(beans)에 저장된다.
+		System.out.printf("회원번호(memNo) : " + member.getMemNo());
+		
+		// 5) 변경사항 저장 및 DB 접속 해제
+		sqlSession.commit();  // 데이터의 추가, 수정, 삭제는 항상 Transaction 처리되므로 commit()을 해야 최종 반영된다.
+		sqlSession.close();
+	}
+
+}
+```
+- 실행 결과
+```
+1개의 데이터 저장됨
+회원번호(memNo) : 1
+```
+
+#### kr/codefty/board/dbtest/MemberSelectList.java
+```
+package kr.codefty.board.dbtest;
+
+import java.util.List;
+import org.apache.ibatis.session.SqlSession;
+
+import kr.codefty.config.mybatis.MyBatisConnectionFactory;
+import kr.codefty.board.member.Member;
+
+public class MemberSelectList {
+
+	public static void main(String[] args) {
+		// 1) 데이터베이스 접속
+		SqlSession sqlSession = MyBatisConnectionFactory.getSqlSession();
+		
+		// 2) 데이터 조회
+		List<Member> members = sqlSession.selectList("MemberMapper.selectList");
+		
+		// 4) 결과 판별
+		if (members == null) {
+			System.out.println("조회결과 없음");
+		} else {
+			for(Member member : members) {
+				System.out.println(member);
+			}
+		}
+		
+		// 5) DB 접속 해제
+		sqlSession.close();
+	}
+}
+```
+- 실행 결과
+```
+Member [memNo=1, memId=user1, memNm=사용자1, email=user1@test.org, memPw=123456, regDt=2022-06-01 11:03:09, modDt=null]
+```
+
+#### kr/codefty/board/dbtest/MemberSelectOne.java
+```
+package kr.codefty.board.dbtest;
+
+import org.apache.ibatis.session.SqlSession;
+
+import kr.codefty.config.mybatis.MyBatisConnectionFactory;
+import kr.codefty.board.member.Member;
+
+public class MemberSelectOne {
+	public static void main(String[] args) {
+		// 1) 데이터베이스 접속
+		SqlSession sqlSession = MyBatisConnectionFactory.getSqlSession();
+		
+		// 2) 조회할 데이터 설정
+		Member param = new Member();
+		param.setMemId("user1");
+		
+		// 3) 데이터 조회
+		Member member = sqlSession.selectOne("MemberMapper.selectItem", param);
+		
+		// 4)  결과 판별
+		if (member == null) {
+			System.out.println("조회결과 없음");
+		} else {
+			System.out.println(member);
+		}
+
+		// 5) DB 접속 해제
+		sqlSession.close();
+	}
+}
+```
+- 실행 결과
+```
+Member [memNo=1, memId=user1, memNm=사용자1, email=user1@test.org, memPw=123456, regDt=2022-06-01 11:03:09, modDt=null]
+```
+#### kr/codefty/board/dbtest/MemberUpdate.java
+```
+package kr.codefty.board.dbtest;
+
+import org.apache.ibatis.session.SqlSession;
+
+import kr.codefty.config.mybatis.MyBatisConnectionFactory;
+import kr.codefty.board.member.Member;
+
+public class MemberUpdate {
+
+	public static void main(String[] args) {
+		// 1) 데이터베이스 접속
+		SqlSession sqlSession = MyBatisConnectionFactory.getSqlSession();
+		
+		// 2) 변경할 데이터 준비
+		Member param = new Member();
+		param.setMemId("user1");
+		param.setMemNm("사용자1_2");
+		param.setEmail("user1_2@test.org");
+		
+		// 3) 데이터 수정 -> 반환값은 수정된 행의 수
+		int affectedRows = sqlSession.update("MemberMapper.updateItem", param);
+		
+		// 4) 결과 판별
+		System.out.printf("%d 개의 데이터 수정됨%n", affectedRows);
+		
+		// 5) 변경사항 저장 및 DB 접속 해제
+		// 데이터의 추가, 수정, 삭제는 항상 Transaction 처리되므로 commit()을 해야 최종 반영된다.
+		sqlSession.commit();
+		sqlSession.close();
+	}
+}
+```
+- 실행 결과
+```
+1 개의 데이터 수정됨
+```
+
+#### kr/codefty/board/dbtest/MemberDelete.java
+```
+package kr.codefty.board.dbtest;
+
+import org.apache.ibatis.session.SqlSession;
+
+import kr.codefty.config.mybatis.MyBatisConnectionFactory;
+import kr.codefty.board.member.Member;
+
+public class MemberDelete {
+	public static void main(String[] args) {
+		// 1) 데이터베이스 접속
+		SqlSession sqlSession = MyBatisConnectionFactory.getSqlSession();
+		
+		// 2) 삭제할 데이터의 조건값 준비
+		Member member = new Member();
+		member.setMemId("user1");
+		
+		// 3) 데이터의 삭제 -> 반환값은 삭제된 행의 수
+		int affectedRows = sqlSession.delete("MemberMapper.deleteItem", member);
+		
+		// 4) 결과 판별
+		System.out.printf("%d개의 데이터 삭제됨%n", affectedRows);
+		
+		// 5) 변경사항 저장 및 DB 접속 해제
+		// 데이터의 추가, 수정, 삭제는 항상 Transaction 처리되므로 commit()을 해야 최종 반영된다.
+		sqlSession.commit();
+		sqlSession.close();
+	}
+}
+```
+- 실행결과
+```
+1개의 데이터 삭제됨
+```
+
+
+### MyBatis와 Log4J 연동하기
+- MyBatis의 로그 출력 기능을 이용하면 실행하는 SQL문, 파라미터 값, 실행 결과를 실시간으로 확인할 수 있어 디버깅시 유용합니다.
+
+- [log4j 다운로드](https://mvnrepository.com/artifact/log4j/log4j/1.2.17)
+
+- 다운로드 받은 jar 파일을 WEB-INF/lib에 복사하여 넣어줄 것 
+
+#### kr/codefty/config/mybatis-config.xml
+- \<setting name="logImpl" value="LOG4J"/\> 설정 추가  
+```
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	...
+	<settings>
+		<setting name="logImpl" value="LOG4J"/>  <!-- log4j log setting  -->
+	</settings>
+</configuration>
+```
+
+#### WEB-INF/classes/log4j.properties
+```
+log4j.rootLogger=DEBUG, stdout
+
+#log4j.logger.kr.codefty.board.mapper=DEBUG
+
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%5p [%t] - %m%n
+```
+- 로그 레벨 설정 - rootLogger 
+	- 먼저 rootLogger = 최상위 로거의 로그 레벨을 설정한다.
+	- 하위 로거들은 항상 부모의 로그 레벨을 상속받아서 별도로 설정하지 않으면 rootLogger의 레벨을 똑같이 따라간다.
+	- 로그 레벨
+		- FATAL : 어플리케이션을 중지해야 할 심각한 오류
+		- ERROR : 오류가 발생했지만 어플리케이션은 계속 실행할 수 있는 상태
+		- WARN : 잠재적인 위험을 갖고 있는 상태
+		- INFO : 어플리케이션의 주요 실행 정보
+		- DEBUG : 어플리케이션의 내부 실행 상황을 추적할 수 있는 상세 정보
+		- TRACE : DEBUG보다 더 상세한 정보
+	- 각 레벨은 위 레벨을 포함해서 ERROR로 설정하면 FATAL 로그를 포함해서 출력하고 INFO로 설정하면 FATAL, ERROR, WARN 로그를 포함해서 출력한다. 따라서 TRACE로 설정하면 모든 로그를 출력한다.
+
+- Appender(출력 담당자) 선언
+	- rootLogger의 로그 레벨 설정 다음에는 appender(출력 담당자)의 이름이 온다. appender 이름은 마음대로 지정할 수 있고 이렇게 선언한 이름으로 다음 설정에서 appender를 정의한다. 
+
+- Appender(출력 담당자) 정의
+	- log4j.appender.stdout(appender 이름)에 로그를 어디로 출력 할지 정의
+	- log4j.appender.stdout.layout에는 로그 출력 형식을 정의 
+	- log4j.appender.stdout.layout.ConversionPattern에는 로그를 출력할때 사용할 패턴을 정의
+	
+	- 로그를 어디로 출력할 것인가
+		- 로그를 기본 출력 장치인 모니터로 출력하거나 파일로 출력하거나 네트워크를 이용해서 원격의 서버로 출력할 수 있다. <br> 위와 같이 ConsoleAppender로 설정하면 표준 출력 = 모니터로 출력한다.
+		
+		- 주요 로그 출력 클래스
+		
+		|클래스|설명|
+		|------|----------|
+		|org.apache.log4j.ConsoleAppender|표준 출력 장치인 모니터로 출력한다.<br>System.out 또는 System.err로 로그를 출력한다.<br>기본은 System.out이다.|
+		|org.apache.log4j.FileAppender|파일로 로그를 출력한다.|
+		|org.apache.log4j.net.SocketAppender|원격 로그 서버에 로그 정보를 담은 LoggingEvent 객체를 보낸다.|
+	
+	- 로그의 출력 형식
+		- 로그는 문자열, XML, HTML 형식이나 특정 패턴으로 출력할 수 있다. 위와 같이 설정하면 특정 패턴 형식에 따라 로그를 출력하도록 하는것이다. 이 경우 추가적으로 ConversionPattern 설정이 필요하다. 
+			
+		- 주요 출력 형식 클래스 
+		
+		|클래스|설명|
+		|------|----------|
+		|org.apache.log4j.SimpleLayout|로그 레벨 - 메시지 형식|
+		|org.apache.log4j.HTMLLayout|HTML 테이블 형식|
+		|org.apache.log4j.PatternLayout|패턴에 따라 로그 출력|
+		|org.apache.log4j.xml.XMLLayout|log4j.dtd 규칙에 따라 XML을 만들어 출력|
+	
+	- 패턴 정의 : PatternLayout에서 사용할 패턴을 정의한다.
+		- %5p : 로그 레벨을 5자리 문자열로 출력하라
+		- %t : thread 이름을 출력하라
+		- %m : 로그 내용을 출력하라
+		- %n : 다음 행
+		
+- 실행 결과
+```
+DEBUG [main] - Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+DEBUG [main] - Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+DEBUG [main] - PooledDataSource forcefully closed/removed all connections.
+DEBUG [main] - PooledDataSource forcefully closed/removed all connections.
+DEBUG [main] - PooledDataSource forcefully closed/removed all connections.
+DEBUG [main] - PooledDataSource forcefully closed/removed all connections.
+DEBUG [main] - Opening JDBC Connection
+DEBUG [main] - Created connection 1860591867.
+DEBUG [main] - Setting autocommit to false on JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@6ee660fb]
+DEBUG [main] - ==>  Preparing: INSERT INTO member(memId, memNm, email, memPw) VALUES (?,?,?, ?);
+DEBUG [main] - ==> Parameters: user1(String), 사용자1(String), user1@test.org(String), 123456(String)
+```
