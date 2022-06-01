@@ -41,8 +41,207 @@
 - 그중 가장 중요한 규칙은 **javax.servlet.Filter 인터페이스**를 구현해야 한다는 것입니다.
 - [Filter 인터페이스](https://javaee.github.io/javaee-spec/javadocs/javax/servlet/Filter.html)
 
+![Filter 인터페이스](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/7%EC%9D%BC%EC%B0%A8(3h)%20-%20%ED%95%84%ED%84%B0%2C%20%EB%9E%98%ED%8D%BC%20%ED%81%B4%EB%9E%98%EC%8A%A4%2C%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC/images/filter5.png)
+
+-  **doFilter 메서드**
+	- 가장 중요한 메서드이며 웹 브라우저가 웹 컨테이너로 요청을 보냈을 때 호출되는 것이 바로 이 메서드입니다.
+	- 웹 컴포넌트에 대한 사전 작업과 사후 작업, 그리고 웹 컴포넌트를 호출하는 일은 이 메서드 안에 구현해야 합니다.
+- init 메서드
+	- 필터 클래스는 필터 객체가 만들어지고 초기화된 다음에 실행되는데, 바로 이 초기화 작업을 할 때 호출되는 메서드입니다.
+- destroy 메서드
+	- 웹 컨테이너가 필터를 더 이상 필요없다고 판단해서 제거하기 직전에 호출되는 메서드입니다. 
+	- 필터의 전체 라이프 사이클 동안 딱 한번만 실행하면 되는 로직은 이 두 메서드 안에 써 놓으면 됩니다.
+	
+```
+public class SimpleFilter implements Filter {
+	public void init(FilterConfig config) throws ServletException {
+	
+	}
+	
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	
+	}
+	
+	public void destroy() {
+		
+	}
+}
+```
 
 
+- 모든 필터 클래스에 공통적으로 기술해야 하는 명렬문이 하나 있는데, 웹 컴포넌트를 호출하는 명령문입니다. 이 명령문은 doFilter 메서드의 파라미터를 이용해서 만들어야 합니다.
+- doFilter 메서드에는 세 개의 매개변수가 있습니다. 이 세 매개변수의 값은 모두 웹 컨테이너가 필터로 넘겨주는 것인데, 이 중 첫 번째와 두 번째 파라미터는 요청 객체와 응답 객체입니다.
+- 필터가 없다면 이 두 객체는 웹 컨테이너가 웹 컴포넌트로 직접 넘겨줬겠지만, 필터가 있기 때문에 이 메서드로 전달된 것입니다.
+
+```
+public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+}
+```
+- ServletRequest request : 웹 컨테이너가 넘겨주는 요청 객체
+- ServletResponse response : 웹 컨테이너가 넘겨주는 응답 객체
+- FilterChain chain : 필터가 웹 컴포넌트를 호출할 때 가장 중요한 매개변수
+
+#### 필터 체인(filter chain)
+- 하나의 웹 컴포넌트에 대해 여러 개의 필터가 실행될 수도 있습니다. 그럴 때는 미리 정해 놓은 순서에 따라 첫 번째 필터가 두 번째 필터를 호출하고, 두 번째 필터가 세 번째 필터를 호출하는 식으로 진행되다고 마지막 필터가 웹 컴포넌트를 호출합니다. 
+- 그러면 웹 컴포넌트는 자기의 할 일을 하고 나서 자신을 호출했던 마지막 필터로 응답을 보냅니다.  그러면 그 필터는 자신을 호출했던 필터로 응답을 보내고 응답을 받은 필터는 또 자신을 호출했던 필터로 응답을 보냅니다.그런식으로 계속 진행되어서 결국 웹 브라우저로 응답이 도달합니다. 
+- 이렇게 호출과 응답이 이어진 필터들은 체인 형태를 이루기 때문에 이것을 <b>필터 체인(filter chain)</b>이라고 부릅니다.
+
+#### 연속해서 호출되는 필터들로 이루어지는 필터 체인
+![filter4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/7%EC%9D%BC%EC%B0%A8(3h)%20-%20%ED%95%84%ED%84%B0%2C%20%EB%9E%98%ED%8D%BC%20%ED%81%B4%EB%9E%98%EC%8A%A4%2C%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC/images/filter4.png)
+
+- 웹 컨테이너는 필터가 실행되기 전에 필터 체인에 대한 정보를 수깁해서 FilterChain 객체로 만든 다음에 doFilter 메서드로 전달합니다. 이 객체는 필터 체인의 다음번 멤버를 호출할 때 필요한데, 구체적인 사용 방법은 다음과 같습니다.
+```
+public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	// 사전 작업 기술 
+	... 
+	
+	chain.doFilter(request, response);
+	
+	// 사후 작업 기술
+	... 
+	
+}
+```
+- <b>chain.doFilter(request, response);</b> : 필터의 다음번 멤버를 호출하는 역할을 하는데, 그 멤버는 필터가 될 수도 있고 웹 컴포넌트가 될 수도 있습니다.
+- 위에서 처럼 chain.doFilter 메서드 호출문을 기술한 다음에, 그 앞과 뒤에 웹 컴포넌트에 대한 사전작업과 사후작업에 해당하는 로직을 기술하면 필터 클래스가 완성됩니다.
+
+#### src/main/java/myfilter/SimpleFilter.java
+```
+package myfilter;
+
+import javax.servlet.Filter;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+
+import java.io.IOException;
+
+public class SimpleFilter implements Filter {
+	
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		System.out.println("이제 곧 웹 컴포넌트가 시작됩니다.");
+		chain.doFilter(request, response);
+		System.out.println("이제 막 웹 컴포넌트가 완료되었습니다.");
+	}
+	
+}
+```
+-  필터를 적용하려면 web.xml 파일에 필터 클래스를 등록해야 합니다.
+```
+<web-app ...>
+	<filter>
+		// 필터를 등록하는 요소
+	</filter>
+	<filter-mapping>
+		// 필터를 적용할 웹 컴포넌트를 지정하는 요소
+	</filter-mapping>
+</web-app>
+```
+
+- \<filter\> 요소 안에는 \<filter-name\>과 \<filter-class\>라는 두 개의 하위 요소를 써야 합니다.
+	- \<filter-name\> : 필터 이름
+	- \<filter-class\> : 필터 클래스
+```
+<filter>
+	<filter-name>simple-filter</filter-name>
+	<filter-class>myfilter.SimpleFilter</filter-class>
+</filter>
+```
+
+- \<filter-mapping\> 요소 안에도 기본적으로 두 개의 하위 요소를 써야 합니다.
+	- \<filter-name\> : \<filter\>요소의 \<filter-name\>에 썼던 것과 동일한 필터 이름을 써야 합니다
+	- \<servlet-name\> 또는 \<url-pattern\> 중 하나가 될 수 있는데, 이 중 어떤 것을 써야 할지는 몇 개의 웹 컴포넌트에 필터를 적용할 것인지에 따라 달라집니다.
+	- 필터를 하나의 웹 컴포넌트에 적용하고자 할 때는 \<servlet-name\> 하위 요소를 사용하면 됩니다. 이 요소 안에는 필터를 적용할 서블릇의 이름을 써야 하는데, 그 이름은 서블릿을 등록할 때와 동일한 이름이어야 합니다.
+	```
+	<filter-mapping>
+		<filter-name>simple-filter</filter-name>
+		<servlet-name>hello-servlet</servlet-name>
+	</filter-mapping>
+	```
+	- 필터를 여러 개의 웹 컴포넌트에 한꺼번에 적용하려면 \<url-pattern\> 하위 요소를 하용해야 합니다.
+	- 이 요소 안에는 와일드카드 문자(\*)를 포함한 URL패턴을 쓸 수 있습니다. 예를 들어 같은 웹 애플리케이션 디렉토리에 있는 모든 웹 컴포넌트에 필터를 적용하려면 /\*라고 쓰면 됩니다.
+	- 여기에서 처음에 오는 슬래시(/) 기호는 웹 애플리케이션의 루트 디렉토리를 의미합니다.
+	```
+	<filter-mapping>
+		<filter-name>simple-filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	```
+	
+	
+	- 필터를 같은 웹 애플리케이션 디렉토리에 있는 모든 JSP 페이지에 적용하려면 \<url-pattern\> 요소 안에 \*.jsp라고 쓰면 됩니다.
+	```
+	<filter-mapping>
+		<filter-name>simple-filter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	```
+	
+	- http://localhost:8080/.../sub/ 이라는 URL로 시작하는 모든 웹 컴포넌트에 대해 필터를 적용하고 싶은 경우 다음과 같이 web.xml 파일에 추가하면 됩니다.
+	```
+	<filter-mapping>
+		<filter-name>simple-filter</filter-name>
+		<url-pattern>/sub1/*</url-pattern>
+	</filter-mapping>
+	```
+	
+	- \<filter-mapping\> 요소 안에는 여러 개의 \<url-pattern\> 하위 요소를 쓸 수 있습니다.
+	```
+	<filter-mapping>
+		<filter-name>simple-filter</filter-name>
+		<url-pattern>/sub1/*</url-pattern>
+		<url-pattern>/sub2/*</url-pattern>
+	</filter-mapping>
+	```
+	- \<filter-mapping\> 요소 안에 \<servlet-name\>과 \<url-pattern\> 요소를 섞어서 쓸 수도 있습니다.
+	```
+	<filter-mapping>
+		<filter-name>simple-filter</filter-name>
+		<url-pattern>/sub1/*</url-pattern>
+		<url-pattern>/sub2/*</url-pattern>
+		<servlet-name>hello-servlet</servlet-name>
+	</filter-mapping>
+	```
+	
+#### WEB-INF/web.xml
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+    version="4.0">
+	...
+	
+    <filter>
+    	<filter-name>simple-filter</filter-name>
+    	<filter-class>myfilter.SimpleFilter</filter-class>	
+    </filter>
+	<filter-mapping>
+		<filter-name>simple-filter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>    
+</web-app>
+```
+
+#### Simple.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<% System.out.println("이것은 JSP 페이지 안에서 출력하는 메시지 입니다."); %>
+<html>
+	<body>
+		이것은 필터 테스트를 위해 만들어진 JSP 페이지 입니다.
+	</body>
+</html>
+```
+
+- 실행 결과
+```
+이제 곧 웹 컴포넌트가 시작됩니다.
+이것은 JSP 페이지 안에서 출력하는 메시지 입니다.
+이제 막 웹 컴포넌트가 완료되었습니다.
+```
 
 * * * 
 # 래퍼 클래스 작성 및 적용하기
