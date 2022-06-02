@@ -422,12 +422,12 @@ public class LogMessageFilter implements Filter {
 }
 ```
 
-#### <dispatcher> 요소에 대하여
+#### \<dispatcher\> 요소에 대하여
 - 웹 컴포넌트를 호출하는 방법은 크게 네 가지입니다. 
-	1. 브라우저를 이용해서 호출하는 방법
-	2. forward 메서드를 통해 호출하는 방법
-	3. include 메서드를 통해 호출하는 방법
-	4. 익셉션이 발생했을 때 웹 컨테이너가 자동으로 호출하는 방법
+	- 브라우저를 이용해서 호출하는 방법
+	- forward 메서드를 통해 호출하는 방법
+	- include 메서드를 통해 호출하는 방법
+	-  익셉션이 발생했을 때 웹 컨테이너가 자동으로 호출하는 방법
 - 이 네가지 방법에 따라 필터를 선택적으로 적용할 수 있습니다. 그때 \<dispatcher\> 요소를 사용하시면 됩니다.
 
 - web.xml 파일의 \<filter-mapping\> 요소 안에 \<dispatcher\>라는 요소를 추가하고, 거기에 REQUEST, FORWARD, ERROR 중 한 값을 쓰면됩니다.
