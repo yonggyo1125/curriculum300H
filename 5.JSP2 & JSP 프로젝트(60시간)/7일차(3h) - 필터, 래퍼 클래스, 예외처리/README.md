@@ -422,7 +422,7 @@ public class LogMessageFilter implements Filter {
 }
 ```
 
-#### <dispatcher> 요소에 대하여\
+#### <dispatcher> 요소에 대하여
 - 웹 컴포넌트를 호출하는 방법은 크게 네 가지입니다. 
 	1. 브라우저를 이용해서 호출하는 방법
 	2. forward 메서드를 통해 호출하는 방법
