@@ -179,7 +179,7 @@ public class SimpleFilter implements Filter {
 	</filter-mapping>
 	```
 	
-	- http://localhost:8080/.../sub/ 이라는 URL로 시작하는 모든 웹 컴포넌트에 대해 필터를 적용하고 싶은 경우 다음과 같이 web.xml 파일에 추가하면 됩니다.
+	- http://localhost:8080/.../sub1/ 이라는 URL로 시작하는 모든 웹 컴포넌트에 대해 필터를 적용하고 싶은 경우 다음과 같이 web.xml 파일에 추가하면 됩니다.
 	```
 	<filter-mapping>
 		<filter-name>simple-filter</filter-name>
@@ -243,8 +243,349 @@ public class SimpleFilter implements Filter {
 이제 막 웹 컴포넌트가 완료되었습니다.
 ```
 
+#### src/main/java/mysevlet/SimpleServlet.java
+```
+package myservlet;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+public class SimpleServlet extends HttpServlet {
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		System.out.println("이것은 서블릿 클래스 안에서 출력하는 메세지입니다.");
+		response.setContentType("text/html; charset=utf-8");
+		PrintWriter out = response.getWriter();
+		out.println("<html>");
+		out.println("<head><title>필터 테스트용 서블릿</title></head>");
+		out.println("<body>");
+		out.println("이것은 필터 테스트를 위해 만들어진 서블릿 입니다.");
+		out.println("</body>");
+		out.println("</html>");
+	}
+}
+```
+
+#### WEB-INF/web.xml
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+    version="4.0">
+	...
+	 <servlet>
+    	<servlet-name>simple-servlet</servlet-name>
+    	<servlet-class>myservlet.SimpleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+    	<servlet-name>simple-servlet</servlet-name>
+    	<url-pattern>/simple</url-pattern>
+    </servlet-mapping>
+    <filter>
+    	<filter-name>simple-filter</filter-name>
+    	<filter-class>myfilter.SimpleFilter</filter-class>	
+    </filter>
+	<filter-mapping>
+		<filter-name>simple-filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+</web-app>
+```
+
+- 실행 결과
+```
+이제 곧 웹 컴포넌트가 시작됩니다.
+이것은 서블릿 클래스 안에서 출력하는 메세지입니다.
+이제 막 웹 컴포넌트가 완료되었습니다.
+```
+
+### 필터 클래스의  init 메서드와 destroy 메서드
+- 필터의 라이프 사이클 동안 단 한 번만 실행하면 되는 코드는 필터 클래스의 init 메서드나 destroy 메서드에 기술하는 것이 좋습니다.
+- 예를 들면 doFilter 메서드 안에서 파일로 메세지를 출력하는 일을 한다면 그 파일을 여는 코드는 init 메서드 안에, 닫는 코드는 destroy 메서드 안에 기술하는 것이 좋습니다.
+
+
+#### src/main/java/myfilter/LogMessageFilter.java - 미완성
+```
+package myfilter;
+
+import javax.servlet.Filter;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+
+import java.io.*;
+
+public class LogMessageFilter implements Filter {
+	PrintWriter writer;
+	
+	public void init(FilterConfig config) throws ServletException {
+		try {
+			writer = new PrintWriter(new FileWriter("D:\\logs\\myfilter.log", true), true);
+		} catch (IOException e) {
+			throw new ServletException("로그 파일을 열 수 없습니다.");
+		}
+	}
+	
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		writer.println("에제 곧 웹 컴포넌트가 시작될 것입니다.");
+		writer.flush();
+		chain.doFilter(request, response);
+		writer.println("이제 막 웹 컴포넌트가 완료되었습니다.");
+		writer.flush();
+	}
+	
+	public void destory() {
+		writer.close();
+	}
+}
+```
+- 위 예제에서는 출력한 로그 메세지는 D:\logs 디렉토리에 있는 myfilter.log 파일에 기록될 것 입니다. 
+- 그러나 소스 코드 안에 로그파일의 이름이 고정되어 있기 때문에 파일의 이름을 바꾸거나, 다른 디렉토리로 옮길 때 소스 코드를 수정하고, 컴파일하고 설치하는 작업을 다시 해야 합니다. 이런 불편함을 해소하기 위해서는 로그 파일명의 경로명을 필터의 초기화 파라미터로 web.xml 파일에 등록해 두는 것이 좋습니다.
+
+- 필터의 초기화 파라미터란 필터 클래스에서 사용할 데이터를 web.xml 파일 안에 이름-값 쌍으로 지정해 놓은 것을 말합니다. 필터의 초기화 파라미터는 필터를 등록하는 \<filter\> 요소 안에 \<init-param\> 하위 요소를 추가해서 등록할 수 있습니다.
+- 이 요소에는 다시 \<param-name\>과 \<param-value\> 하위 요소를 추가해야 하고, 그 안에 각각 초기화 파라미터의 이름과 값을 서 넣으면 됩니다.
+
+#### WEB-INF/web.xml
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+    version="4.0">
+	...
+	<filter>
+		<filter-name>log-filter</filter-name>
+		<filter-class>myfilter.LogMessageFilter</filter-class>
+		<init-param>
+			<param-name>FILE_NAME</param-name>
+			<param-value>D:\\logs\\myfilter.log</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>log-filter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+</web-app>
+```
+
+- 필터 클래스 안에서 필터의 초기화 파라미터를 읽어오려면 init 메서드에 있는 FilterConfig 객체에서 getInitParameter 메서드를 호출하면서 초기화 파라미터의 이름을 넘겨주면 초기화 파라미터의 값이 반환됩니다.
+```
+String filename = config.getInitParameter("FILE_NAME");
+```
+
+#### src/main/java/myfilter/LogMessageFilter.java
+```
+package myfilter;
+
+import javax.servlet.Filter;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+
+import java.io.*;
+
+public class LogMessageFilter implements Filter {
+	PrintWriter writer;
+	
+	public void init(FilterConfig config) throws ServletException {
+		String filename = config.getInitParameter("FILE_NAME");
+		if (filename == null)
+			throw new ServletException("로그 파일의 이름을 찾을 수 없습니다.");
+		
+		try {
+			writer = new PrintWriter(new FileWriter(filename, true), true);
+		} catch (IOException e) {
+			throw new ServletException("로그 파일을 열 수 없습니다.");
+		}
+	}
+	
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		writer.println("에제 곧 웹 컴포넌트가 시작될 것입니다.");
+		writer.flush();
+		chain.doFilter(request, response);
+		writer.println("이제 막 웹 컴포넌트가 완료되었습니다.");
+		writer.flush();
+	}
+	
+	public void destory() {
+		writer.close();
+	}
+}
+```
+
+#### <dispatcher> 요소에 대하여\
+- 웹 컴포넌트를 호출하는 방법은 크게 네 가지입니다. 
+	1. 브라우저를 이용해서 호출하는 방법
+	2. forward 메서드를 통해 호출하는 방법
+	3. include 메서드를 통해 호출하는 방법
+	4. 익셉션이 발생했을 때 웹 컨테이너가 자동으로 호출하는 방법
+- 이 네가지 방법에 따라 필터를 선택적으로 적용할 수 있습니다. 그때 \<dispatcher\> 요소를 사용하시면 됩니다.
+
+- web.xml 파일의 \<filter-mapping\> 요소 안에 \<dispatcher\>라는 요소를 추가하고, 거기에 REQUEST, FORWARD, ERROR 중 한 값을 쓰면됩니다.
+	- REQUEST : 웹 브라우저에 의한 호출
+	- FORWARD : forward 메서드에 의한 호출
+	- INCLUDE : include 메서드에 의한 호출
+	- ERROR : 에러 발생에 의한 호출
+	
+```
+<filter-mapping>
+	<filter-name>log-filter</filter-name>
+	<url-pattern>/sub2/*</url-pattern>
+	<dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+```
+- 위에서 처럼 \<dispatcher\> 요소를 기술하면  forward 메서드를 통해 웹 컴포넌트를 호출했을 때만 log-filter가 적용될 것이고, 다른 방법으로 호출했을 때는 적용되지 않을 것이다.
+- \<filter-mapping\> 요소 안에 여러 개의 \<dispatcher\> 하위 요소를 쓸 수도 있습니다. 
+```
+<filter-mapping>
+	<filter-name>log-filter</filter-name>
+	<url-pattern>/sub2/*</url-pattern>
+	<dispatcher>FORWARD</dispatcher>
+	<dispatcher>INCLUDE</dispatcher>
+</filter-mapping>
+```
+- 위 코드에서처럼 두 개의 \<dispatcher\>요소를 기술하면 forward 또는 include 메서드를 통해 웹 컴포넌트를 호출했을 때는 필터가 적용될 것이고, 그 밖의 경우에는 필터가 적용되지 않을 것입니다.
+
+### 요청 메시지와 응답 메세지에 포함된 정보 조회하기
+- 다음에 작성할 예제는 웹 브라우저의 IP 주소와 응답 메세지에 포함된 컨텐트 타입을 포함한 메세지를 로그 파일에 기록하는 필터 클래스 입니다.
+- 이런 정보를 구하기 위해서는 필터 클래스의 doFilter 메서드 안에서 ServletRequest 객체와 ServletResponse 객체를 이용하면 됩니다.
+- 웹 브라우저의 IP 주소를 구하기 위해서는 ServletRequest 객체에 대해 getRemoteAddr 이라는 메서드를 호출하시면 됩니다.
+
+```
+String clientAddr = request.getRemoteAddr();
+```
+- 응답 메세지에 포함된 컨텐트 타입을 구하기 위해서는 ServletResponse 객체에 대해 getContentType 이라는 메서드를 호출하시면 됩니다.
+- 이 메서드를 호출할 때는 주의할 점이 있는데, ServletResponse 객체에 대해 호출하는 메서드는 반드시 chain.doFilter 메서드보다 나중에 호출해야 합니다.
+- 그렇게 해야만 ServletResponse 객체에 응답 메시지 관련 정보가 저장되기 때문입니다.
+
+#### src/main/java/myfilter/NewLogMessageFilter.java
+```
+package myfilter;
+
+import javax.servlet.*;
+import java.io.*;
+import java.util.*;
+
+public class NewLogMessageFilter implements Filter {
+	PrintWriter writer;
+	
+	public void init(FilterConfig config) throws ServletException {
+		String filename = config.getInitParameter("FILE_NAME");
+		if (filename == null)
+			throw new ServletException("로그 파일의 이름을 찾을 수 없습니다.");
+		try {
+			writer = new PrintWriter(new FileWriter(filename, true), true);
+		} catch (IOException e) {
+			throw new ServletException("로그 파일을 열 수 없습니다.");
+		}
+	}
+	
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		Calendar now = Calendar.getInstance();
+		writer.printf("현재일시 : %TF %TT %n", now, now);
+		String clientAddr = request.getRemoteAddr();
+		writer.printf("클라이언트 주소: %s %n", clientAddr);
+		chain.doFilter(request, response);
+		String contentType = response.getContentType();
+		writer.printf("문서의 컨텐트 타입 : %s %n", contentType);
+		writer.println("-------------------------------------------------------------------");
+	}
+	
+	public void destroy() {
+		writer.close();
+	}
+}
+```
+
+#### WEB-INF/web.xml
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+    version="4.0">
+	...
+	<filter>
+		<filter-name>new-log-filter</filter-name>
+		<filter-class>myfilter.NewLogMessageFilter</filter-class>
+		<init-param>
+			<param-name>FILE_NAME</param-name>
+			<param-value>D:\\logs\\myfilter.log</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>new-log-filter</filter-name>
+		<url-pattern>/sub3/*</url-pattern>
+	</filter-mapping>
+</web-app>
+```
+
+#### .../sub3/Greetings.jsp
+```
+<%@page contentType="text/html; charset=utf-8" %>
+<html>
+	<head><title>인사말</title></head>
+	<body>
+		안녕하세요, 여러분<br><br>
+		여러분은 지금 필터 테스트를 위한 JSP 페이지를 실행 중 입니다.
+	</body>
+</html>
+```
+
+#### 필터 체인의 필터 순서가 정해지는 방법
+- 필터 체인에 속하는 필터들의 순서는 기본적으로 web.xml 파일에 있는 \<filter-mapping\> 요소의 순서에 따라 결정됩니다.
+- 예를 들어 web.xml 파일에 다음과 같은 세 개의 \<filter-mapping\> 요소가 있다고 가정하면 
+```
+<filter-mapping>
+	<filter-name>my-filter1</filter-name>
+	<url-pattern>*.jsp</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+	<filter-name>my-filter2</filter-name>
+	<url-pattern>/sub7/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+	<filter-name>my-filter3</filter-name>
+	<url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+- /sub7/Hello.jsp라는 URL 경로명 위치에 있는 웹 컴포넌트가 호출되었을 때 위에 있는 세 계의 필터가 모두 적용될 것입니다. 그리고 필터 체인은 my-filter1, my-filter2, my-filter3 순서로 구성될 것 입니다.
+
+- 하지만 \<url-pattern> 요소와 \<servlet-name\>요소가 섞여서 사용되었을 때는 필터 페인의 필터 순서가 이와 다르게 구성됩니다. 
+- 그럴 때는 \<url-pattern\> 요소에 해당하는 필터들이 순서대로 필터 체인의 앞부분을 구성하고, \<servlet-name\> 요소에 해당하는 필터들이 순서대로 필터 체인의 뒷부분을 구성합니다.
+```
+<filter-mapping>
+	<filter-name>my-filter1</filter-name>
+	<url-pattern>*.jsp</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+	<filter-name>my-filter2</filter-name>
+	<servlet-name>hello-servlet</servlet-name>
+</filter-mapping>
+
+<filter-mapping>
+	<filter-name>my-filter3</filter-name>
+	<url-pattern>/sub7/*</url-pattern>
+</filter-mapping>
+```
+- 위의 \<servlet-name\> 요소 안에 있는 hello-servlet이라는 서블릿 URL 경로명이 /sub7/hello라면 이 서블릿이 호출 되었을 때 위의 세 필터가 모두 적용될 것 입니다. 
+- 그리고 필터 체인은 my-filter1, my-filter3, my-filter2 순서로 구성될 것입니다.
+
 * * * 
-# 래퍼 클래스 작성 및 적용하기
+## 래퍼 클래스 작성 및 적용하기
+
 
 * * * 
 # 예외처리
