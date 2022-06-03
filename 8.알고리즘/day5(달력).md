@@ -3,7 +3,6 @@
 - 년도와 월의 입력은 java.util.Scanner 클래스를 사용할 것
 
 ```
-
 import java.time.*;
 import java.time.temporal.*;
 import java.text.*;
@@ -33,7 +32,7 @@ public class MyCalendar {
 			System.out.print(yoil + "  ");
 		}
 		System.out.println();
-		for (int i = 1; i <= 42; i++) {
+		for (int i = 1; i <= eDay + startPos ; i++) {
 			if (i > startPos) {
 				System.out.print(df.format(i - startPos));
 			} else {
@@ -42,20 +41,21 @@ public class MyCalendar {
 			System.out.print("  ");
 			if (i % 7 == 0) 
 				System.out.println();
-		}		
+		}
+		
+		
 	}
 }
 ```
 - 실행 결과
 ```
 몇년 ?2022
-몇월 ?9
-2022년 9월
-월  화  수   목   금   토  일  
-                01  02  03  04  
-05  06  07  08  09  10  11  
-12  13  14  15  16  17  18  
-19  20  21  22  23  24  25  
-26  27  28  29  30  31  32  
-33  34  35  36  37  38  39  
+몇월 ?6
+2022년 6월
+월  화  수  목  금  토  일  
+            01  02  03  04  05  
+06  07  08  09  10  11  12  
+13  14  15  16  17  18  19  
+20  21  22  23  24  25  26  
+27  28  29  30  
 ```
