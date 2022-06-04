@@ -1147,6 +1147,7 @@ public class CookieLowerCaseFilter implements Filter {
 #### \<error-code\>요소 사용 예
 ```xml
 <web-app ...> 
+	...
    <error-page>
       <error-code>404</error-code>
       <location>/errorCode_404.jsp</location>
@@ -1162,7 +1163,7 @@ public class CookieLowerCaseFilter implements Filter {
 #### WEB-INF/web.xml 
 ```xml
 <?xml version=“1.0” encoding=“UTF-8”?>
-<web-app> ... 
+<web-app ...>
    <error-page>
      <error-code>500</error-code>
      <location>/ch11/errorCode_error.jsp</location>
@@ -1170,4 +1171,231 @@ public class CookieLowerCaseFilter implements Filter {
 </web-app>
 ```
 
+#### source/errorCode.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	<form action="errorCode_process.jsp" method="post">
+		<p> 숫자1 : <input type="text" name="num1">
+		<p> 숫자2 : <input type="text" name="num2">
+		<p> <input type="submit" value="나누기">
+	</form>
+</body>
+</html>
+```
+
+#### source/errorCode_process.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	<%
+		String num1 = request.getParameter("num1");
+		String num2 = request.getParameter("num2");
+		int a = Integer.parseInt(num1);
+		int b = Integer.parseInt(num2);
+		int c = a / b;
+		out.print(num1 + " / " + num2 + " = " + c);
+	%>
+</body>
+</html>
+```
+
+#### source/errorCode_error.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	errorCode 505 오류가 발생하였습니다.	
+</body>
+</html>
+```
+
+### 예외 유형으로 오류 페이지 호출하기
+```xml
+<error-page>
+   <exception-type>예외 유형</exception-type>
+   <location>오류 페이지의 URI</location>
+</error-page>
+```
+
+#### \<exception-type\> 요소 사용 예
+```xml
+<web-app ...>
+   <error-page>
+       <exception-type>java.lang.NullPointerException</exception-type>
+       <location>/errorNullPointer.jsp</location>
+   </error-page>
+</web-app>
+```
+
+#### WEB-INF/web.xml 
+```xml
+<?xml version=“1.0” encoding=“UTF-8”?>
+<web-app ...>
+   <error-page>
+      <exception-type>java.lang.Exception</exception-type>
+      <location>/ch11/exceptionType_error.jsp</location>
+   </error-page>
+</web-app>
+```
+
+#### source/exceptionType.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	<form action="exceptionType_process.jsp" method="post">
+		<p> 숫자1 : <input type="text" name="num1">
+		<p> 숫자2 : <input type="text" name="num2">
+		<p> <input type="submit" value="나누기">
+	</form>
+</body>
+</html>
+```
+
+#### source/exceptionType_process.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	<%
+		String num1 = request.getParameter("num1");
+		String num2 = request.getParameter("num2");
+		int a = Integer.parseInt(num1);
+		int b = Integer.parseInt(num2);
+		int c = a / b;
+		out.print(num1 + " / " + num2 + " = " + c);
+	%>
+</body>
+</html>
+```
+
+#### source/exceptionType_error.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	exception type  오류가 발생하였습니다.
+</body>
+</html>
+```
+
+
 ## try/catch/finally를 이용한 예외처리
+```
+try{
+   //예외가 발생할 수 있는 실행문
+} catch ( 처리할 예외 유형 설정) {
+  // 예외 처리문
+} 
+[finally {
+  // 예외와 상관없이 무조건 실행되는 문장(생략 가능)
+}]
+```
+
+#### try-catch-finally 사용 예 
+```html
+<%@ page contentType=“text/html; charset=utf-8” %>
+<html>
+<body>
+  <%
+    try {
+       int num = 10 / 0;
+    } catch (NumberFormatException e) {
+       RequestDispatcher dispatcher = request.getRequestDispatcher(“error.jsp”);
+       dispatcher.forward(request, response);
+    }
+  %>
+</body>
+</html>
+```
+
+#### 참고) 서블릿에서 jsp 호출(forward와 include 방식)
+- forward() 메서드 방식 : JSP 페이지를 호출하는 순간 서블릿 프로그램이 실행을 멈추고 JSP 페이지로 넘어가 그곳에서 실행하고 프로그램이 끝납니다.
+	```java
+	RequestDispatcher rd = this.getServletContext().getRequestDispatcher(“jspFile”);
+	request.setAttribute(“name”, “value”);
+	rd.forward(request, response);
+	```
+
+- include() 메서드 방식 : JSP 페이지가 실행된 후 나머지 서블릿 프로그램이 실행됩니다.
+	```java
+	RequestDispatcher rd = this.getServletContext().getRequestDispatcher(“jspFile”);
+	rd.include(request, response);
+	```
+	
+#### source/tryCatch.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	<form action="tryCatch_process.jsp" method="post">
+		<p> 숫자1 : <input type="text" name="num1">
+		<p> 숫자2 : <input type="text" name="num2">
+		<p> <input type="submit" value="전송">
+	</form>
+</body>
+</html>
+```
+
+#### source/tryCatch_process.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>	   
+<%
+	try {
+		String num1 = request.getParameter("num1");
+		String num2 = request.getParameter("num2");
+		int a = Integer.parseInt(num1);
+		int b = Integer.parseInt(num2);
+		int c = a / b;
+	} catch (NumberFormatException e) {
+		RequestDispatcher dispatcher = request.getRequestDispatcher("tryCatch_error.jsp");
+		dispatcher.forward(request, response);
+	}
+%>
+</body>
+</html>
+```
+
+#### source/tryCatch_error.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	<p>잘못된 데이터가 입력되었습니다.
+	<p>	<%=" 숫자1 : " + request.getParameter("num1")%>
+	<p>	<%=" 숫자2 : " + request.getParameter("num2")%>	
+</body>
+</html>
+```
