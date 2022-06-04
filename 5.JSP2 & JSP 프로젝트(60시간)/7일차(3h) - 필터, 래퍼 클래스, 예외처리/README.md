@@ -591,7 +591,80 @@ public class NewLogMessageFilter implements Filter {
 - 이 두 종류의 클래스를 작성할 때는 지켜야 할 규칙이 있는데, 그 중 가장 중요한 규칙은 이들이 각각 HttpServletRequestWrapper 클래스와 HttpServletResponseWrapper 클래스를 상속하도록 만들어야 한다는 것 입니다.
 
 
+#### HttpServletRequestWrapper 클래스
 
+![wrapper1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/7%EC%9D%BC%EC%B0%A8(3h)%20-%20%ED%95%84%ED%84%B0%2C%20%EB%9E%98%ED%8D%BC%20%ED%81%B4%EB%9E%98%EC%8A%A4%2C%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC/images/wrapper1.png)
+
+
+#### HttpServletResponseWrapper 클래스
+
+![wrapper2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/7%EC%9D%BC%EC%B0%A8(3h)%20-%20%ED%95%84%ED%84%B0%2C%20%EB%9E%98%ED%8D%BC%20%ED%81%B4%EB%9E%98%EC%8A%A4%2C%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC/images/wrapper2.png)
+
+- HttpServletRequestWrapper클래스는 HttpServletRequest 인터페이스를 구현하고, HttpServletResponseWrapper 클래스는 HttpServletResponse 인터페이스를 구현합니다. 그러므로 이 두 클래스를 이용해서 만든 요청 래퍼 클래스와 응답 래퍼 클래스도 간접적으로 이 두 인터페이스를 구현하게 됩니다. 웹 컴포넌트가 요청 래퍼 객체와 응답 래퍼 객체를 요청 객체와 응답 객체로 인식할 수 있는 것은 바로 이런 이유 때문입니다.
+
+### 요청 래퍼 클래스를 작성하는 방법
+- 요청 래퍼 클래스는 HttpServletRequestWrapper 클래스를 상속받아야 하므로 다음과 같은 골격을 만드는 것으로 클래스 작성을 시작해야 합니다.
+```
+public class MyRequestWrapper extends HttpServletRequestWrapper {
+
+}
+```
+- MyRequestWrapper : 프로그래머가 정하는 요청 래퍼 클래스의 이름
+- HttpServletRequestWrapper : 요청 래퍼 클래스가 상속해야 하는 클래스
+
+- 그 다음에는 이 클래스의 가장 기본적인 역할인 요청 객체를 포장하는 일을 해야 합니다. 그런일은 이 클래스의 생성자를 통해서 할 수 있습니다.
+- 요청 객체를 파라미터로 받는 생성자를 선언해 놓고, 그 안에서 파라미터 값을 필드(클래스의 멤버 변수)에 저장하도록 만들면 됩니다.
+```
+public class MyRequestWrapper extends HttpServletRequestWrapper {
+	private HttpServletRequest request;
+	public MyRequestWrapper(HttpServletRequest request) {
+		super(request);
+		this.request = request;
+	}
+}
+```
+- 다음에는 이 클래스 안에 데이터를 변형하는 코드를 써 넣을 차례입니다.  그 코드는 웹 컴포넌트가 입력 데이터를 가져오기 위해 호출하는 메서드와 똑같은 시그니처의 메서드를 선언해 놓고 그 안에 써 넣어야 합니다.
+- 예를 들어 \<form\> 입력 데이터를 가져올 때 호출하는 getParameter 메서드는 String 타입의 파라미터를 받고 String 타입의 값을 반환합니다. 그러므로 \<form\> 입력 데이터를 변형하기 위해서는 다음과 같은 getParameter 메서드를 선언하고 그 안에 데이터를 변형하는 코드를 써 넣어야 합니다.
+
+```
+public class MyRequestWrapper extends HttpServletRequestWrapper {
+	... 
+	public String getParameter(String name) {
+		// HTML 문서의 <form> 요소를 통해 입력된 데이터를 
+		// 변형하는 코드는 여기에 써 넣어야 합니다.
+	}
+}
+```
+- 이렇게 하면 웹 컴포넌트가 이 메서드를 요청 객체의 메서드인 줄 알고 호출할 것이고, 그러면 그 때 \<form\> 데이터를 변형하는 코드가 실행될 것입니다.
+
+- 입력데이터에 있는 모든 소문자를 대문자로 바꾸어 보는 예
+```
+public class MyRequestWrapper extends HttpServletRequetWrapper {
+	...
+	public String getParameter(String name) {
+		String value = request.getParameter(name);
+		String newValue = value.getUpperCase();
+		return newValue;
+	}
+}
+```
+- String value = request.getParameter(name); : 요청 객체(request)를 이용해서 입력 데이터를 가져옵니다.
+- String newValue = value.getUpperCase(); : 가져온 입력 데이터를 변형합니다.
+- return newValue; : 변형된 결과를 반환합니다.
+
+- 이렇게 요청 래퍼 클래스를 작성해 놓는다고 해서 기존의 요청 객체가 요청 래퍼 객체로 자동으로 바뀌는 것은 아닙니다.  그런 일은 필터 클래스의 doFilter 메서드 안에서 해야 하고, 직접 코드를 서 넣어야 합니다. 그런 다음 그 코드를 통해서 만든 요청 래퍼 객체를 다음과 같이 chain.doFilter 메서드에 매개변수로 넘겨주어야 합니다.
+
+```java
+public class MyFilter implements Filter {
+	...
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) ... {
+		
+		MyRequestWrapper requestWrapper = new MyRequestWrapper((HttpServletRequest) request);
+		
+		chain.doFilter(requestWrapper, response);
+	}
+}
+```
 
 * * * 
 # 예외처리
