@@ -1108,4 +1108,66 @@ public class CookieLowerCaseFilter implements Filter {
 
 #### \<error-page\>를 구성하는 하위요소
 
+|요소|설명|
+|----|--------|
+|\<error-code\>|오류 코드를 설정하는 데 사용합니다.|
+|\<exception-type\>|자바 예외 유형의 정규화된 클래스 이름을 설정하는 데 사용합니다.|
+|\<location\>|오류 페이지의 URL을 설정하는 데 사용합니다.|
+
+### 주요 오류 코드의 종류
+- 200 OK<br>요청이 성공적으로 되었습니다. 
+
+- 201 Created<br>요청이 성공적이었으며 그 결과로 새로운 리소스가 생성되었습니다. 이 응답은 일반적으로 POST 요청 또는 일부 PUT 요청 이후에 따라옵니다.
+
+301 Moved Permanently
+이 응답 코드는 요청한 리소스의 URI가 변경되었음을 의미합니다. 새로운 URI가 응답에서 아마도 주어질 수 있습니다.
+
+302 Found
+이 응답 코드는 요청한 리소스의 URI가 일시적으로 변경되었음을 의미합니다. 새롭게 변경된 URI는 나중에 만들어질 수 있습니다. 그러므로, 클라이언트는 향후의 요청도 반드시 동일한 URI로 해야합니다.
+
+304 Not Modified
+이것은 캐시를 목적으로 사용됩니다. 이것은 클라이언트에게 응답이 수정되지 않았음을 알려주며, 그러므로 클라이언트는 계속해서 응답의 캐시된 버전을 사용할 수 있습니다
+
+400 Bad Request
+이 응답은 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음을 의미합니다.
+
+401 Unauthorized
+비록 HTTP 표준에서는 "미승인(unauthorized)"를 명확히 하고 있지만, 의미상 이 응답은 "비인증(unauthenticated)"을 의미합니다. 클라이언트는 요청한 응답을 받기 위해서는 반드시 스스로를 인증해야 합니다.
+
+403 Forbidden
+클라이언트는 콘텐츠에 접근할 권리를 가지고 있지 않습니다. 예를들어 그들은 미승인이어서 서버는 거절을 위한 적절한 응답을 보냅니다. 401과 다른 점은 서버가 클라이언트가 누구인지 알고 있습니다.
+- 404 Not Found<br>서버는 요청받은 리소스를 찾을 수 없습니다. 브라우저에서는 알려지지 않은 URL을 의미합니다. 이것은 API에서 종점은 적절하지만 리소스 자체는 존재하지 않음을 의미할 수도 있습니다. 서버들은 인증받지 않은 클라이언트로부터 리소스를 숨기기 위하여 이 응답을 403 대신에 전송할 수도 있습니다. 이 응답 코드는 웹에서 반복적으로 발생하기 때문에 가장 유명할지도 모릅니다.
+
+- 500 Internal Server Error<br>서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
+
+- 502 Bad Gateway<br>이 오류 응답은 서버가 요청을 처리하는 데 필요한 응답을 얻기 위해 게이트웨이로 작업하는 동안 잘못된 응답을 수신했음을 의미합니다.
+
+- 503 Service Unavailable<br>서버가 요청을 처리할 준비가 되지 않았습니다. 일반적인 원인은 유지보수를 위해 작동이 중단되거나 과부하가 걸렸을 때입니다.
+
+#### \<error-code\>요소 사용 예
+```xml
+<web-app ...> 
+   <error-page>
+      <error-code>404</error-code>
+      <location>/errorCode_404.jsp</location>
+   </error-page>
+
+   <error-page>
+     <error-code>500</error-code>
+    <location>/errorCode_500.jsp</location>
+   </error-page>
+</web-app>
+```
+
+#### WEB-INF/web.xml 
+```xml
+<?xml version=“1.0” encoding=“UTF-8”?>
+<web-app> ... 
+   <error-page>
+     <error-code>500</error-code>
+     <location>/ch11/errorCode_error.jsp</location>
+   </error-page>
+</web-app>
+```
+
 ## try/catch/finally를 이용한 예외처리
