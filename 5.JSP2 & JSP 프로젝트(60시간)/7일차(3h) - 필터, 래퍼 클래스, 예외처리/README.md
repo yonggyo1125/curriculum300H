@@ -52,7 +52,7 @@
 	- 웹 컨테이너가 필터를 더 이상 필요없다고 판단해서 제거하기 직전에 호출되는 메서드입니다. 
 	- 필터의 전체 라이프 사이클 동안 딱 한번만 실행하면 되는 로직은 이 두 메서드 안에 써 놓으면 됩니다.
 	
-```
+```java
 public class SimpleFilter implements Filter {
 	public void init(FilterConfig config) throws ServletException {
 	
@@ -73,7 +73,7 @@ public class SimpleFilter implements Filter {
 - doFilter 메서드에는 세 개의 매개변수가 있습니다. 이 세 매개변수의 값은 모두 웹 컨테이너가 필터로 넘겨주는 것인데, 이 중 첫 번째와 두 번째 파라미터는 요청 객체와 응답 객체입니다.
 - 필터가 없다면 이 두 객체는 웹 컨테이너가 웹 컴포넌트로 직접 넘겨줬겠지만, 필터가 있기 때문에 이 메서드로 전달된 것입니다.
 
-```
+```java
 public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
 }
@@ -91,7 +91,7 @@ public void doFilter(ServletRequest request, ServletResponse response, FilterCha
 ![filter4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/7%EC%9D%BC%EC%B0%A8(3h)%20-%20%ED%95%84%ED%84%B0%2C%20%EB%9E%98%ED%8D%BC%20%ED%81%B4%EB%9E%98%EC%8A%A4%2C%20%EC%98%88%EC%99%B8%EC%B2%98%EB%A6%AC/images/filter4.png)
 
 - 웹 컨테이너는 필터가 실행되기 전에 필터 체인에 대한 정보를 수깁해서 FilterChain 객체로 만든 다음에 doFilter 메서드로 전달합니다. 이 객체는 필터 체인의 다음번 멤버를 호출할 때 필요한데, 구체적인 사용 방법은 다음과 같습니다.
-```
+```java
 public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 	// 사전 작업 기술 
 	... 
@@ -107,7 +107,7 @@ public void doFilter(ServletRequest request, ServletResponse response, FilterCha
 - 위에서 처럼 chain.doFilter 메서드 호출문을 기술한 다음에, 그 앞과 뒤에 웹 컴포넌트에 대한 사전작업과 사후작업에 해당하는 로직을 기술하면 필터 클래스가 완성됩니다.
 
 #### src/main/java/myfilter/SimpleFilter.java
-```
+```java
 package myfilter;
 
 import javax.servlet.Filter;
@@ -129,7 +129,7 @@ public class SimpleFilter implements Filter {
 }
 ```
 -  필터를 적용하려면 web.xml 파일에 필터 클래스를 등록해야 합니다.
-```
+```xml
 <web-app ...>
 	<filter>
 		// 필터를 등록하는 요소
@@ -206,7 +206,7 @@ public class SimpleFilter implements Filter {
 	```
 	
 #### WEB-INF/web.xml
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -226,7 +226,7 @@ public class SimpleFilter implements Filter {
 ```
 
 #### Simple.jsp
-```
+```html
 <%@page contentType="text/html; charset=utf-8" %>
 <% System.out.println("이것은 JSP 페이지 안에서 출력하는 메시지 입니다."); %>
 <html>
@@ -244,7 +244,7 @@ public class SimpleFilter implements Filter {
 ```
 
 #### src/main/java/mysevlet/SimpleServlet.java
-```
+```java
 package myservlet;
 
 import javax.servlet.http.HttpServlet;
@@ -271,7 +271,7 @@ public class SimpleServlet extends HttpServlet {
 ```
 
 #### WEB-INF/web.xml
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -310,7 +310,7 @@ public class SimpleServlet extends HttpServlet {
 
 
 #### src/main/java/myfilter/LogMessageFilter.java - 미완성
-```
+```java
 package myfilter;
 
 import javax.servlet.Filter;
@@ -353,7 +353,7 @@ public class LogMessageFilter implements Filter {
 - 이 요소에는 다시 \<param-name\>과 \<param-value\> 하위 요소를 추가해야 하고, 그 안에 각각 초기화 파라미터의 이름과 값을 서 넣으면 됩니다.
 
 #### WEB-INF/web.xml
-```
+```java
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -376,12 +376,12 @@ public class LogMessageFilter implements Filter {
 ```
 
 - 필터 클래스 안에서 필터의 초기화 파라미터를 읽어오려면 init 메서드에 있는 FilterConfig 객체에서 getInitParameter 메서드를 호출하면서 초기화 파라미터의 이름을 넘겨주면 초기화 파라미터의 값이 반환됩니다.
-```
+```java
 String filename = config.getInitParameter("FILE_NAME");
 ```
 
 #### src/main/java/myfilter/LogMessageFilter.java
-```
+```java
 package myfilter;
 
 import javax.servlet.Filter;
@@ -436,7 +436,7 @@ public class LogMessageFilter implements Filter {
 	- INCLUDE : include 메서드에 의한 호출
 	- ERROR : 에러 발생에 의한 호출
 	
-```
+```xml
 <filter-mapping>
 	<filter-name>log-filter</filter-name>
 	<url-pattern>/sub2/*</url-pattern>
@@ -445,7 +445,7 @@ public class LogMessageFilter implements Filter {
 ```
 - 위에서 처럼 \<dispatcher\> 요소를 기술하면  forward 메서드를 통해 웹 컴포넌트를 호출했을 때만 log-filter가 적용될 것이고, 다른 방법으로 호출했을 때는 적용되지 않을 것이다.
 - \<filter-mapping\> 요소 안에 여러 개의 \<dispatcher\> 하위 요소를 쓸 수도 있습니다. 
-```
+```xml
 <filter-mapping>
 	<filter-name>log-filter</filter-name>
 	<url-pattern>/sub2/*</url-pattern>
@@ -468,7 +468,7 @@ String clientAddr = request.getRemoteAddr();
 - 그렇게 해야만 ServletResponse 객체에 응답 메시지 관련 정보가 저장되기 때문입니다.
 
 #### src/main/java/myfilter/NewLogMessageFilter.java
-```
+```java
 package myfilter;
 
 import javax.servlet.*;
@@ -507,7 +507,7 @@ public class NewLogMessageFilter implements Filter {
 ```
 
 #### WEB-INF/web.xml
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -530,7 +530,7 @@ public class NewLogMessageFilter implements Filter {
 ```
 
 #### .../sub3/Greetings.jsp
-```
+```html
 <%@page contentType="text/html; charset=utf-8" %>
 <html>
 	<head><title>인사말</title></head>
