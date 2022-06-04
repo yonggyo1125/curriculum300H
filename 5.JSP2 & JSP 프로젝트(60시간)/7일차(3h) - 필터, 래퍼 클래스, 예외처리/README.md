@@ -585,6 +585,12 @@ public class NewLogMessageFilter implements Filter {
 
 * * * 
 ## 래퍼 클래스 작성 및 적용하기
+- 웹 브라우저와 웹 컴포넌트 사이를 오가는 데이터에 변형을 가하려면 필터 클래스와 더불어 래퍼클래스를 작성해야 합니다. 
+- 래퍼 클래스(wrapper class)란 글자 그대로 포장하는 역할을 하는 클래스입니다.
+- 래퍼 클래스의 종류는 요청 객체를 포장하는 요청 래퍼 클래스와 응답 객체를 포장하는 응답 래퍼 클래스 두 가지 입니다.
+- 이 두 종류의 클래스를 작성할 때는 지켜야 할 규칙이 있는데, 그 중 가장 중요한 규칙은 이들이 각각 HttpServletRequestWrapper 클래스와 HttpServletResponseWrapper 클래스를 상속하도록 만들어야 한다는 것 입니다.
+
+
 
 
 * * * 
