@@ -934,7 +934,7 @@ public class CookieLowerCaseFilter implements Filter {
 ```
 
 #### sub5/CookieRetriever.jsp
-```hrml
+```html
 <%@page contentType="text/html; charset=utf-8" %>
 <html>
 	<body>
