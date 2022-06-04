@@ -666,6 +666,283 @@ public class MyFilter implements Filter {
 }
 ```
 
+#### src/main/java/myfilter/ParamUpperCaseRequestWrapper.java
+```java
+package myfilter;
+
+import javax.servlet.http.*;
+
+public class ParamUpperCaseRequestWrapper extends HttpServletRequestWrapper {
+	
+		HttpServletRequest request;
+		public ParamUpperCaseRequestWrapper(HttpServletRequest request) {
+			super(request);
+			this.request = request;
+		}
+		
+		public String getParameter(String name) {
+			String str = request.getParameter(name);
+			if (str == null) 
+				return null;
+			
+			return str.toUpperCase();
+		}
+}
+```
+
+#### src/main/java/myfilter/ParamUpperCaseFilter.java
+```
+package myfilter;
+
+import javax.servlet.http.*;
+import javax.servlet.*;
+import java.io.*;
+
+public class ParamUpperCaseFilter implements Filter {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		ParamUpperCaseRequestWrapper requestWrapper = new ParamUpperCaseRequestWrapper((HttpServletRequest) request);
+		chain.doFilter(requestWrapper, response);
+	}
+}
+```
+
+#### src/webapp/WEB-INF/web.xml
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+    version="4.0">
+	...
+	<filter>
+		<filter-name>param-upper-filter</filter-name>
+		<filter-class>myfilter.ParamUpperCaseFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>param-upper-filter</filter-name>
+		<url-pattern>/sub4/*</url-pattern>
+	</filter-mapping>
+</web-app>
+```
+
+#### sub4/Welcome.jsp
+- http://localhost:8080/../sub4/Welcome.jsp?name=Jessica
+```html
+<%@page contentType="text/html; charset=utf-8" %>
+<% String name = request.getParameter("name"); %>
+<html>
+	<body>
+		안녕하세요, <%= name %>님
+	</body>
+</html>
+```
+
+- 서블릿 클래스나 JSP 페이지에서 \<form\> 데이터를 가져올 때에는 getParameter 메서드뿐만 아니라 getParameterValues나 getParameterMap 메서드를 사용할 수도 있습니다. 이러한 메서드를 사용하면 \<form\> 데이터에 포함된 소문자가 여전히 그대로 나타날 것 입니다.
+- 이런 문제를 해결하기 위해서는 요청 래퍼 클래스에 getParameterValues 메서드와 getParameterMap 메서드를 추가로 선언하여 데이터를 변형하는 코드를 써 넣으면 됩니다.
+
+#### src/main/java/myfilter/ParamUpperCaseRequestWrapper.java
+```
+package myfilter;
+
+import javax.servlet.http.*;
+import java.util.*;
+
+public class ParamUpperCaseRequestWrapper extends HttpServletRequestWrapper {
+	
+		HttpServletRequest request;
+		public ParamUpperCaseRequestWrapper(HttpServletRequest request) {
+			super(request);
+			this.request = request;
+		}
+		
+		public String getParameter(String name) {
+			String str = request.getParameter(name);
+			if (str == null) 
+				return null;
+			
+			return str.toUpperCase();
+		}
+		
+		public String[] getParameterValues(String name) {
+			String[] str = request.getParameterValues(name);
+			if (str == null)
+				return null;
+			for (int i = 0; i < str.length; i++)
+				str[i] = str[i].toUpperCase();
+			return str;
+		}
+		
+		public Map getParameterMap() {
+			Map map = request.getParameterMap();
+			HashMap<String, String[]> newMap = new HashMap<String, String[]>();
+			
+			Object[] name = map.keySet().toArray();
+			for(int i = 0; i < name.length; i++) {
+				String[] value = (String[])map.get(name[i]);
+				for (int j = 0; j < value.length; j++) 
+					value[j] = value[j].toUpperCase();
+				newMap.put((String)name[i], value);
+			}
+			
+			return newMap;
+		}
+}
+```
+
+#### sub4/Colors.jsp
+- http://localhost:8080/jspWeb1/brain11/sub4/Colors.jsp?color=red&color=white&color=black
+```html
+<%@page contentType="text/html; charset=utf-8" %>
+<% String[] color = request.getParameterValues("color"); %>
+<html>
+	<body>
+		<h4>선택하신 색은 다음과 같습니다.</h4>
+		<%
+			if (color != null) {
+				for (int i = 0; i < color.length; i++) {
+					out.println(color[i] + "<br>");
+				}
+			}
+		%>
+	</body>
+</html>
+```
+
+### 응답 래퍼 클래스를 작성하는 방법
+- 요청 래퍼 클래스를 작성하는 방법과 여러 가지 면에서 비슷합니다. 요청 래퍼 클래스가 HttpServletRequestWrapper 클래스를 상속해야 하는 것처럼 응답 래퍼 클래스는 HttpServletResponseWrapper 클래스를 상속해야 합니다.
+```java
+public class MyResponseWrapper extends HttpServletResponseWrapper {
+
+}
+```
+- MyResponseWrapper : 프로그래머가 정하는 응답 래퍼 클래스의 이름
+- HttpServletResponseWrapper : 응답 래퍼 클래스가 상속해야 하는 클래스
+
+- 요청 래퍼 클래스가 요청 객체를 포장해야 하는 것처럼 응답 래퍼 클래스는 응답 객체를 포장하는 일을 해야 합니다. 이런 일은 응답 래퍼 클래스에 생성자를 선언하고, 그 안에서 응답 객체를 파라미터로 받아서 필드에 저장하는 식으로 구현할 수 있습니다. 
+
+```java
+public class MyResponseWrapper extends HttpServletResponseWrapper {
+	HttpServletResponse response;
+	public ParamUpperCaseResponseWrapper(HttpServletResponse response) {
+		super(response);
+		this.response = response;
+	}
+}
+```
+- 이 클래스 안에 응답 데이터를 변형하는 코드를 써 넣어야 합니다. 그리고 이런 코드는 웹 컴포넌트에서 해당 데이터를 출력할 때 사용하는 메서드와 똑같은 시그니처의 메서드를 선언하고 그 안에 써 넣어야 합니다.
+- 예를 들어 웹 컴포넌트에서 쿠기 데이터를 웹 브라우저로 보낼 때는 HttpServletResponse 인터페이스의 addCookie 메서드를 호출해야 합니다. 그러므로 쿠키 데이터를 변형하기 위해서는 그와 똑같은 시그니처의 addCookie 메서드를 선언하고, 그 안에 해당 로직을 써 넣으면 됩니다.
+
+```java
+public class MyRequestWrapper extends HttpServletRequestWrapper {
+	HttpServletRequest request;
+	...
+	public void addCookie(Cookie cookie) {
+		String name = cookie.getName();
+		String value = cookie.getValue();
+		String newValue = value.toLowerCase();
+		Cookie newCookie = new Cookie(name, newValue);
+		
+		response.addCookie(newCookie);
+	}
+}
+```
+- 이 메서드는 응답 객체의 addCookie 메서드인 줄로 알고 호출할 것이고, 그 결과 쿠키에 포함된 데이터가 변형된 다음에 웹 브라우저로 전달될 것입니다.
+- 이 클래스가 응답 객체를 가져다가 응답 래퍼 객체를 만드는 일을 자동으로 하는 것은 아니기 때문에, 그런 일을 하는 코드를 필터 클래스의 doFilter 메서드 안에 직접 써 넣어야 합니다. 그리고 그렇게 만든 응답 래퍼 객체를 chain.doFilter 메서드에 매개변수로 넘겨주어야 합니다.
+
+```java
+public class MyFilter implements Filter {
+	...
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) ... {
+		MyResponseWrapper responseWrapper = new MyResponseWrapper((HttpServletResponse) response);
+		chain.doFilter(request, responseWrapper);
+	}
+}
+```
+
+#### src/main/java/myfilter/CookieLowerCaseResponseWrapper.java
+```java
+package myfilter;
+
+import javax.servlet.http.*;
+
+public class CookieLowerCaseResponseWrapper extends HttpServletResponseWrapper {
+	private HttpServletResponse response;
+	
+	public CookieLowerCaseResponseWrapper(HttpServletResponse response) {
+		super(response);
+		this.response = response;
+	}
+	
+	public void addCookie(Cookie cookie) {
+		String value = cookie.getValue();
+		String newValue = value.toLowerCase();
+		cookie.setValue(newValue);
+		
+		response.addCookie(cookie);
+	}
+}
+```
+
+#### src/main/java/myfilter/CookieLowerCaseFilter.java
+```java
+package myfilter;
+
+import javax.servlet.http.*;
+import javax.servlet.*;
+import java.io.*;
+
+public class CookieLowerCaseFilter implements Filter {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		CookieLowerCaseResponseWrapper responseWrapper = new CookieLowerCaseResponseWrapper((HttpServletResponse) response);
+		
+		chain.doFilter(request, responseWrapper);
+	}
+}
+```
+
+#### src/webapp/WEB-INF/web.xml
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+    version="4.0">
+	...
+	<filter>
+		<filter-name>cookie-lower-filter</filter-name>
+		<filter-class>myfilter.CookieLowerCaseFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>cookie-lower-filter</filter-name>
+		<url-pattern>/sub5/*</url-pattern>
+	</filter-mapping>
+</web-app>
+```
+
+#### sub5/CookieSaver.jsp
+```html
+<%@page contentType="text/html; charset=utf-8" %>
+<%
+	Cookie cookie = new Cookie("CART", "LemonTree");
+	response.addCookie(cookie);
+%>
+<html>
+	<body>
+		쿠키가 저장되었습니다.
+	</body>
+</html>
+```
+
+#### sub5/CookieRetriever.jsp
+```hrml
+<%@page contentType="text/html; charset=utf-8" %>
+<html>
+	<body>
+		CART = ${cookie.CART.value}
+	</body>
+</html>
+```
+
 * * * 
 # 예외처리
 
