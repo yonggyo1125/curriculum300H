@@ -691,7 +691,7 @@ public class ParamUpperCaseRequestWrapper extends HttpServletRequestWrapper {
 ```
 
 #### src/main/java/myfilter/ParamUpperCaseFilter.java
-```
+```java
 package myfilter;
 
 import javax.servlet.http.*;
