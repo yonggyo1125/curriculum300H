@@ -544,7 +544,7 @@ public class NewLogMessageFilter implements Filter {
 #### 필터 체인의 필터 순서가 정해지는 방법
 - 필터 체인에 속하는 필터들의 순서는 기본적으로 web.xml 파일에 있는 \<filter-mapping\> 요소의 순서에 따라 결정됩니다.
 - 예를 들어 web.xml 파일에 다음과 같은 세 개의 \<filter-mapping\> 요소가 있다고 가정하면 
-```
+```xml
 <filter-mapping>
 	<filter-name>my-filter1</filter-name>
 	<url-pattern>*.jsp</url-pattern>
@@ -564,7 +564,7 @@ public class NewLogMessageFilter implements Filter {
 
 - 하지만 \<url-pattern> 요소와 \<servlet-name\>요소가 섞여서 사용되었을 때는 필터 페인의 필터 순서가 이와 다르게 구성됩니다. 
 - 그럴 때는 \<url-pattern\> 요소에 해당하는 필터들이 순서대로 필터 체인의 앞부분을 구성하고, \<servlet-name\> 요소에 해당하는 필터들이 순서대로 필터 체인의 뒷부분을 구성합니다.
-```
+```xml
 <filter-mapping>
 	<filter-name>my-filter1</filter-name>
 	<url-pattern>*.jsp</url-pattern>
@@ -604,7 +604,7 @@ public class NewLogMessageFilter implements Filter {
 
 ### 요청 래퍼 클래스를 작성하는 방법
 - 요청 래퍼 클래스는 HttpServletRequestWrapper 클래스를 상속받아야 하므로 다음과 같은 골격을 만드는 것으로 클래스 작성을 시작해야 합니다.
-```
+```java
 public class MyRequestWrapper extends HttpServletRequestWrapper {
 
 }
@@ -614,7 +614,7 @@ public class MyRequestWrapper extends HttpServletRequestWrapper {
 
 - 그 다음에는 이 클래스의 가장 기본적인 역할인 요청 객체를 포장하는 일을 해야 합니다. 그런일은 이 클래스의 생성자를 통해서 할 수 있습니다.
 - 요청 객체를 파라미터로 받는 생성자를 선언해 놓고, 그 안에서 파라미터 값을 필드(클래스의 멤버 변수)에 저장하도록 만들면 됩니다.
-```
+```java
 public class MyRequestWrapper extends HttpServletRequestWrapper {
 	private HttpServletRequest request;
 	public MyRequestWrapper(HttpServletRequest request) {
@@ -626,7 +626,7 @@ public class MyRequestWrapper extends HttpServletRequestWrapper {
 - 다음에는 이 클래스 안에 데이터를 변형하는 코드를 써 넣을 차례입니다.  그 코드는 웹 컴포넌트가 입력 데이터를 가져오기 위해 호출하는 메서드와 똑같은 시그니처의 메서드를 선언해 놓고 그 안에 써 넣어야 합니다.
 - 예를 들어 \<form\> 입력 데이터를 가져올 때 호출하는 getParameter 메서드는 String 타입의 파라미터를 받고 String 타입의 값을 반환합니다. 그러므로 \<form\> 입력 데이터를 변형하기 위해서는 다음과 같은 getParameter 메서드를 선언하고 그 안에 데이터를 변형하는 코드를 써 넣어야 합니다.
 
-```
+```java
 public class MyRequestWrapper extends HttpServletRequestWrapper {
 	... 
 	public String getParameter(String name) {
@@ -638,7 +638,7 @@ public class MyRequestWrapper extends HttpServletRequestWrapper {
 - 이렇게 하면 웹 컴포넌트가 이 메서드를 요청 객체의 메서드인 줄 알고 호출할 것이고, 그러면 그 때 \<form\> 데이터를 변형하는 코드가 실행될 것입니다.
 
 - 입력데이터에 있는 모든 소문자를 대문자로 바꾸어 보는 예
-```
+```java
 public class MyRequestWrapper extends HttpServletRequetWrapper {
 	...
 	public String getParameter(String name) {
