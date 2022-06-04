@@ -945,9 +945,167 @@ public class CookieLowerCaseFilter implements Filter {
 
 * * * 
 # 예외처리
+- 예외처리는 프로그램이 처리되는 동안 특정한 문제가 발생했을 때 처리를 중단하고 다른 처리를 하는 것으로 오류 처리라고도 합니다.
+- 웹 애플리케이션 실행 도중에 발생할 수 있는 오류에 대비한 예외 처리 코드를 작성하여 비정상적인 종료를 막을 수 있습니다.
+
+## 예외처리 방법의 종류 
+
+|예외 처리 방법|설명|
+|-----|------|
+|page 디렉티브 태그를 이용한 예외처리|errorPage와 isErrorPage 속성을 이용합니다.|
+|web.xml 파일을 이용한 예외처리|\<error-code\>또는 \<exception-type\>요소를 이용합니다.|
+|try/catch/finally를 이용한 예외처리|자바 언어의 예외 처리 구문을 이용합니다.|
+
+## 예외처리 방법의 우선순위
+- JSP 페이지에서 try-catch-finally 문으로 처리하는 경우
+- page 디렉티브 태그의 errorPage속성에서 설정한 오류페이지
+- JSP 페이지에서 발생한 예외 유형이 web.xml 파일에서 설정한 예외 유형
+- JSP 페이지에서 발생한 오류 코드가 web.xml 파일에서 설정한 오류코드와 동일한 경우
+- 상기 항목에 해당되지 않는 경우 웹 서버가 제공하는 기본 오류 페이지를 출력합니다.
 
 ##page 디렉티브 태그를 이용한 예외처리
 
+### errorPage 속성으로 오류페이지 호출하기
+- JSP 페이지가 실행되는 도중에 오류가 발생하면 웹 서버의 기본 오류 페이지를 대신하여 errorPage 속성에 설정한 페이지가 오류 페이지로 호출됩니다.
+
+```
+<%@ page errorPage = “오류 페이지 URL” %>
+```
+
+#### source/errorPage.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page errorPage="errorPage_error.jsp"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	name 파라미터 : <%=request.getParameter("name").toUpperCase()%>
+</body>
+</html>
+```
+#### source/errorPage_error.jsp
+```
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	<p>오류가 발생하였습니다.
+</body>
+</html>
+```
+
+### isErrorPage 속성으로 오류 페이지 만들기
+- 오류 페이지에서 exception 내장 객체를 사용할 수 있습니다.
+```
+<%@ page isErrorPage = “true” %>
+```
+
+### exception 내장 객체의 메서드
+
+|메서드|형식|설명|
+|-----|----|---------|
+|getMessage()|String|오류 이벤트와 함께 들어오는 메시지를 출력합니다.|
+|toString()|String|오류 이벤트의 toString()을 호출하여 간단한 오류 메시지를 확인합니다.|
+|printStackTrace()|String|오류 메시지의 발생 근원지를 찾아 단계적으로 오류를 출력합니다.|
+
+#### source/isErrorPage.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page errorPage="isErrorPage_error.jsp"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	name 파라미터 : <%=request.getParameter("name").toUpperCase()%>
+</body>
+</html>
+```
+
+#### source/isErrorPage_error.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page isErrorPage="true"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	<p>오류가 발생하였습니다.
+	<p>	예외 유형 :	<%=exception.getClass().getName()%>
+	<p>	오류 메시지 : <%=exception.getMessage()%>
+</body>
+</html>
+```
+
+#### source/exception.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	<form action="exception_process.jsp" method="post">
+		<p> 숫자1 : <input type="text" name="num1">
+		<p> 숫자2 : <input type="text" name="num2">
+		<p> <input type="submit" value="나누기">
+	</form>
+</body>
+</html>
+```
+
+#### source/exception_process.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page errorPage="exception_error.jsp"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	<%
+		String num1 = request.getParameter("num1");
+		String num2 = request.getParameter("num2");
+		int a = Integer.parseInt(num1);
+		int b = Integer.parseInt(num2);
+		int c = a / b;
+		out.print(num1 + " / " + num2 + " = " + c);
+	%>
+</body>
+</html>
+```
+
+#### source/exception_error.jsp
+```html
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page isErrorPage="true"%>
+<html>
+<head>
+<title>Exception</title>
+</head>
+<body>
+	<p>오류가 발생하였습니다.
+	<p>	예외 : <%=exception%>
+	<p>	toString() : <%=exception.toString()%>
+	<p>	getClass().getName() :	<%=exception.getClass().getName()%>
+	<p>	getMessage() :	<%=exception.getMessage()%>
+</body>
+</html>
+```
+
 ## web.xml 파일을 이용한 예외처리
+```xml
+<error-page>
+   <error-code>...</error-code>|<exception-type>...</exception-type>
+   <location>...</location>
+</error-page>
+```
+
+#### \<error-page\>를 구성하는 하위요소
 
 ## try/catch/finally를 이용한 예외처리
