@@ -177,11 +177,11 @@ HTTP 헤더는 클라이언트와 서버가 요청 또는 응답으로 부가적
 ## 서블릿(Servlet) 클래스 작성하기
 
 ### 서블릿 클래스를 작성할 때 지켜야할 규칙
-<div style="border: 1px solid #00000; padding: 10px;">
+
 - 서블릿 클래스는 javax.servlet.http.HttpServlet 클래스를 상속하도록 만들어야 합니다.
 - doGet 또는 doPost 메서드 안에 웹 브라우저로부터 요청이 왔을 떄 해야 할 일을 기술해야 합니다.
 - HTML 문서는 doGet, doPost 메서드의 두번째 파라미터를 이용해서 출력해야 합니다.
-</div>
+<hr />
 
 
 
