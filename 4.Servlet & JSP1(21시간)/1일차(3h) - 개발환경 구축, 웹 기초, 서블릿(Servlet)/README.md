@@ -372,10 +372,154 @@ public class HundredServlet2 extends HttpServlet {
 ### XML 문법의 기초
 - XML은 HTML과 마찬가지로 텍스트 내용에 태그(또는 마크업)를 첨가하기 위해서 사용되는 문법입니다. 이 언어는 언뜻 보기에 HTML과 비슷해 보입니다. 태그가 \<로 시작해서 \>로 끝나는 것도 그렇고, 주석이 \<!--로 시작해서 --\>로 끝나는 것도 그렇습니다. 하지만 좀 더 자세히 살펴보면 서로 다른 점이 상당히 많습니다. 
 - 첫째. XML 문서의 제일 앞에는 **XML 선언**이 올 수 있습니다. XML 선언은 XML 문서 작성에 사용된 XML 규격서의 버전과 XML 문서를 저장하는 데 사용된 문자 코드의 인코딩 방식을 표시하는 역할을 합니다.
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 ```
 - 하지만 XML 문서에서 XML 선언이 생략될 수도 있습니다. 예를 들어 XML 문서의 내용이 ASCII 문자로만 구성되었을 경우에는 XML 선언을 생략해도 됩니다.
 - 둘째, HTML에서는 모든 문서의 작성 방법이 동일하지만, XML에서는 문서의 종류에 따라 문서 작성 방법이 달라질 수 있습니다. 예를 들어 web.xml 문서의 루트 요소는(root element, 문서의 최상위 요소)는 \<web-app\>여야 하지만, 톰캣의 server.xml과 tomcat-users.xml 문서의 루트 요소sms 각각 \<server\>와 \<tomcat-users\>여야 합니다.
 - 셋째, HTML에서는 요소 이름과 속성(애트리뷰트) 이름에 있는 대소문자를 구분하지 않지만, XML에서는 엄격하게 구분합니다.
 
+### 웹 브라우저로부터 데이터 입력 받기
+- \<form\> 요소를 통해 입력된 데이터는 doGet, doPost 메서드의 첫 번째 매개변수인 HttpServletRequest 객체에서 getParameter 메서드를 호출해서 가져올 수 있습니다. 
+- 이 메서드는 입력된 모든 데이터를 한꺼번에 가져오는 것이 아니라, 파라미터로 넘겨준 이름(input 요소의 name 속성 값)에 해당하는 데이터 하나만 가져옵니다.
+```java
+String str = request.getParameter("num1");
+```
+- 위 코드에서 볼 수 있는 것 처럼 이 메서드가 반환하는 값은 수치 타입이 아니라 문자열 타입 입니다. 그러므로 수치 연산을 하기 위해서는 이 데이터를 수치 타입으로 변환해야 합니다.
+```java
+int num = Integer.parseInt(str);
+```
+
+#### src/main/java/myservlet/AdderServlet.java
+```java
+package myservlet;
+
+import javax.servlet.http.*;
+import javax.servlet.*;
+import java.io.*;
+
+public class AdderServlet extends HttpServlet {
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		String str1 = request.getParameter("num1");
+		String str2 = request.getParameter("num2");
+		int num1 = Integer.parseInt(str1);
+		int num2 = Integer.parseInt(str2);
+		int sum = num1 + num2;
+		response.setContentType("text/html; charset=utf-8");
+		PrintWriter out= response.getWriter();
+		out.println("<html>");
+		out.println("<head><title>덧셈 프로그램 - 결과화면</title></head>");
+		out.println("<body>");
+		out.printf("%d + %d = %d", num1, num2, sum);
+		out.println("</body>");
+		out.println("</html>");
+	}
+}
+```
+#### src/main/webapps/WEB-INF/web.xml
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee                       http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+	...
+	<servlet>
+		<servlet-name>adder-servlet</servlet-name>
+		<servlet-class>myservlet.AdderServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>adder-servlet</servlet-name>
+		<url-pattern>/adder</url-pattern>
+	</servlet-mapping>
+</web-app>
+```
+
+- URL에 다음과 같이 입력 - http://localhost:8080/jspWeb/adder?num1=10&num2=20
+- 실행결과
+```
+10 + 20 = 30
+```
+
+#### src/main/webapp/day01/BBSInput.html
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+	</head>
+	<body>
+		<h2>글쓰기</h2>
+		<form action="/jspWeb/bbs-post" method="post">
+			이름 : <input type="text" name="name"><br>
+			제목 : <input type="text" name="title"><br>
+			<textarea cols="50" rows="5" name="content"></textarea><br>
+			<input type="reset" value="취소">
+			<input type="submit" value="저장">
+		</form>
+	</body>
+</html>
+```
+
+#### src/main/java/myservlet/BBSPostServlet.java
+```java
+package myservlet;
+
+import javax.servlet.http.*;
+import javax.servlet.*;
+import java.io.*;
+
+public class BBSPostServlet extends HttpServlet {
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		String name = request.getParameter("name");
+		String title = request.getParameter("title");
+		String content = request.getParameter("content");
+		
+		response.setContentType("text/html; charset=utf-8");
+		PrintWriter out = response.getWriter();
+		out.println("<html>");
+		out.println("<head><title>게시판 글쓰기 - 결과화면</title></head>");
+		out.println("<body>");
+		out.printf("이름: %s <br>",name);
+		out.printf("제목: %s <br>", title);
+		out.println("-------------<br>");
+		out.printf("<pre>%s</pre>", content);
+		out.println("-------------<br>");
+		out.println("저장되었습니다.");
+		out.println("</body>");
+		out.println("</html>");
+	}
+}
+```
+- request.setCharacterEncoding("UTF-8"); : \<form\>을 통해서 POST 방식으로 요청 받은 데이터가 한글인 경우 깨짐 문제가 발행하는데 HttpServletRequest 객체의 setCharacterEncoding 메서드를 통해서 적절한 인코딩을 설정하여 문제를 해결할 수 있습니다.
+
+#### src/main/webapps/WEB-INF/web.xml
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee                       http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+	...
+	<servlet>
+		<servlet-name>bbs-post-servlet</servlet-name>
+		<servlet-class>myservlet.BBSPostServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>bbs-post-servlet</servlet-name>
+		<url-pattern>/bbs-post</url-pattern>
+	</servlet-mapping>
+</web-app>
+```
+
+
+- <select 요소에서 multiple과 size 속성을 추가하여 두 항목 이상 선택 가능한 선택 상자를 만들수 있는데, 이럴 경우 동일한 name 파라미터로 넘어오는 값이 여러개가 될 수 있다. 이때 getParameter 메서드를 사용하면 그 중 1개만 선택이 가능한데, 이럴 땐 getParameterValues() 라는 메서드를 사용하시면 됩니다.
+
+```
+<select name="fruits" multiple size=4>
+	<option value="사과">사과</option>
+	<option value="포도">포도</option>
+	<option value="복숭아">복숭아</option>
+	<option value="오렌지">오렌지</option>
+	<option value="딸기">딸기</option>
+</select>
+```
+
+```
+String[] names = request.getParameterValues("fruits");
+```

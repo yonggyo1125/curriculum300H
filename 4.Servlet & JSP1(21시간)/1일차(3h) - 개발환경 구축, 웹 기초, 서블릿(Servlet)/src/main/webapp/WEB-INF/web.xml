@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee                       http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+	<servlet>
+		<servlet-name>hundred-servlet</servlet-name>
+		<servlet-class>myservlet.HundredServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>hundred-servlet</servlet-name>
+		<url-pattern>/hundred</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>adder-servlet</servlet-name>
+		<servlet-class>myservlet.AdderServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>adder-servlet</servlet-name>
+		<url-pattern>/adder</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>bbs-post-servlet</servlet-name>
+		<servlet-class>myservlet.BBSPostServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>bbs-post-servlet</servlet-name>
+		<url-pattern>/bbs-post</url-pattern>
+	</servlet-mapping>
+</web-app>
