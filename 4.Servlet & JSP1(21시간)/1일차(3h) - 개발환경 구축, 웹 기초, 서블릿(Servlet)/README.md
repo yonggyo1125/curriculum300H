@@ -163,7 +163,7 @@ HTTP 헤더는 클라이언트와 서버가 요청 또는 응답으로 부가적
 	- 멀티쓰레드 방식의 서블릿에서는 필요한 서블릿의 수가 적기 떄문에 서블릿을 만들기 위해 필요한 시스템 자원과 서블릿이 차지하는 메모리를 절약할 수 있습니다. 
 	- 하지만 여러 쓰레드가 동시에 한 서블릿을 사용하기 때문에 데이터 공유 문제에 신경을 써야 합니다.  이 방식에서 일어날 가능성이 있는 데이터 공유 문제는 서블릿 클래스의 인스턴스 변수로 인한 것인데, 이런 변수를 선언해서 사용하지 않으면 됩니다.
 	
-	```
+	```java
 	public class HundredServlet extends HttpServlet {
 		//private int total;  
 		public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -195,18 +195,187 @@ HTTP 헤더는 클라이언트와 서버가 요청 또는 응답으로 부가적
 - 서블릿 클래스는 javax.servlet.http.HttpServlet 클래스를 상속받도록 만들어야 합니다. 
 - 서블릿 클래스는 public으로 만들어야 합니다. public으로 선언해야 하는 이유는 웹 컨테이너가 서블릿 객체를 만들 때 이 접근 권한이 필요하기 때문입니다.
 
-```
+```java
 public class HundredServlet extends HttpServlet {
 
 }
 ```
 - 서블릿 클래스 안에 doGet 또는 doPost 메서드를 선언해야 합니다. 이 두 메서드는 javax.servlet.http.HttpServletResponse와 javax.servlet.http.HttpServletResponse 타입의 매개변수를 받아야 하고 메서드 밖으로 javax.servlet.ServletException과 java.io.IOException을 던질 수 있도록 선언해야 합니다.
-- 그런데 이 이름은 너무 길고 복잡해서 실무에서 프로그램을 작성하다가 생각나지 않을 수 있습니다. 이럴 때는 HttpServlet 클래스의 API 문서를 찾아보면 됩니다.
-> 작업시에 또는 학습시에는 꼭 문서를 열어 놓고 수시로 참고해 주세요.
+- 그런데 이 이름은 너무 길고 복잡해서 실무에서 프로그램을 작성하다가 생각나지 않을 수 있습니다. 이럴 때는 HttpServlet 클래스의 API 문서를 찾아보면 됩니다. [HttpServlet 클래스 API 문서](https://javaee.github.io/javaee-spec/javadocs/javax/servlet/http/HttpServlet.html) <br>**작업시 또는 학습시에는 꼭 문서를 열어 놓고 수시로 참고해 주세요.**
+
+![images23](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/4.Servlet%20%26%20JSP1(21%EC%8B%9C%EA%B0%84)/1%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%B6%95%2C%20%EC%9B%B9%20%EA%B8%B0%EC%B4%88%2C%20%EC%84%9C%EB%B8%94%EB%A6%BF(Servlet)/images/images23.png) <br>
 
 
+![images24](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/4.Servlet%20%26%20JSP1(21%EC%8B%9C%EA%B0%84)/1%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%B6%95%2C%20%EC%9B%B9%20%EA%B8%B0%EC%B4%88%2C%20%EC%84%9C%EB%B8%94%EB%A6%BF(Servlet)/images/images24.png)
+
+```java
+public class HundredServlet extends HttpServlet {
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		...
+	}
+}
+```
+> doGet 메서드를 public으로 선언해야 하는 이유는 나중에 웹 컨테이너가 웹 브라우저로부터 요청을 받아서 이 메서드를 호출할 때 필요하기 때문입니다.
+
+-  1부터 100까지 합을 구해서 결과를 출력하는 예
+```java 
+public class HundredServlet extends HttpServlet {
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int total = 0;
+		for (int i = 0; i < 101; i++) {
+			total += i;
+		}
+	}
+}
+```
+- 위 결과를 출력하는 코드를 작성해야 하는데 doGet 메서드의 두 번째 매개변수를 이용해서 작성할 수 있습니다. 이 매개변수는 javax.servlet.http.HttpServletResponse 인터페이스 타입인데, 이 매개변수의 객체에서 getWriter 메서드를 호출하여 PrintWriter 객체를 구할 수 있습니다.
+```java
+PrintWriter writer = response.getWriter();
+```
+- PrintWriter는 일반 자바 프로그램에서는 파일로 텍스트를 출력할 때 사용하는 java.io 패키지의 PrintWriter 클래스입니다. 하지만 response.getWriter 메서드가 반환하는 PrintWriter 객체는 파일이 아니라 웹 브라우저로 데이터를 출력합니다. 
+- 즉, 다음과 같은 print, println, printf 메서드는 매개변수로 넘겨준 HTML 코드를 웹 브라우저로 전송합니다.
+```java
+writer.print("<head>");
+writer.println("<body>");
+writer.printf("TOTAL = %d", total);
+```
+> 여기에서 호출한 print, println, printf 메서드의 사용 방법은 일반 자바 프로그램에서 많이 사용하는 System.out.print, System.out.println, System.out.printf 메서드의 사용방법과 동일합니다.
+
+#### src/main/java/myservlet/HundredServlet.java
+```java
+package myservlet;
+
+import javax.servlet.http.*;
+import javax.servlet.*;
+import java.io.*;
+
+public class HundredServlet extends HttpServlet {
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int total = 0;
+		for(int i = 1; i < 101; i++)
+			total += i;
+		
+		response.setContentType("text/html; charset=utf-8");
+		PrintWriter out = response.getWriter();
+		out.println("<html>");
+		out.println("<body>");
+		out.printf("1부터 100까지 합은 = %d", total);
+		out.println("</body>");
+		out.println("</html>");
+	}
+}
+```
+- response.setContentType("text/html; charset=utf-8"); : 서블릿에서 한글은 출력되지 않고 깨져 보이게 됩니다. 이때 인코딩(charset=utf-8)과 출력될 문서 타입(text/html)을 추가하면 한글이 제대로 출력이 됩니다.
 
 
-## web.xml 파일에서 서블릿(Servlet) 구성하기
+## web.xml 파일에 서블릿(Servlet) 등록하기
+- 서블릿 클래스는 JSP 페이지와 달리 설치뿐만 아니라 등록을 하는 과정도 필요합니다. 
+- 등록은 웹 애플리케이션 배치 설명서(web application deployment descriptor) 파일에 등록해야 합니다. 
+- 웹 애플리케이션 배치 설명서 파일이란 웹 애플리케이션 디렉토리의 WEB-INF 하위 디렉토리에 있는 web.xml이라는 이름의 파일을 말합니다.
 
+> 설정의 예시는 다운로드 받은 tomcat9 소스의 webapps/examples/WEB-INF/web.xml을 참고 하실 수 있습니다.
+
+- web.xml 파일은 웹 애플리케이션 디렉토리마다 딱 하나씩만 만들수 있습니다. 경로는 webapps/WEB-INF/web.xml 입니다.
+- web.xml 파일을 새로 만들 때는 루트 요소인 \<web-app\>을 만드는 일부터 시작하는 것이 좋습니다. 
+```xml
+<web-app>
+
+</web-app>
+```
+- 이 안에 웹 서버가 웹 브라우저로부터 URL을 받았을 때 서블릿 클래스를 찾아서 호출하기 위해 필요한 정보를 기록해야 합니다.
+```xml
+<web-app>
+	<servlet>
+		<!-- 서블릿 클래스의 이름이 들어갈 부분 -->
+	</servlet>
+	<servlet-mapping>
+		<!-- 서블릿 클래스를 호출할 때 사용할 URL이 들어갈 부분 -->
+	</servlet-mapping>
+</web-app>
+```
+
+- 작성 예시
+```xml
+<web-app>
+	<servlet>
+		<servlet-name>hundred-servlet</servlet>
+		<servlet-class>myservlet.HundredServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>hundred-servlet</servlet-name>
+		<url-pattern>/hundred</url-pattern>
+	</servlet-mapping>
+</web-app>
+```
+
+- 이것으로 서블릿 클래스의 등록에 필요한 기본적인 코드는 만들어졌습니다. 하지만 이 코드는 아직 온전한 web.xml 파일이 될수 없습니다. 
+- tomcat9 소스 폴더의 예시 web.xml을 살펴보면 \<web-app\> 시작 태그 안에 상당히 복잡한 내용이 들어가 있습니다. 모든 web.xml파일 안에는 반드시 써 넣어야 하는 두 가지 정보가 포함되어 있는데, 하나는 web.xml 파일의 작성에 사용된 문법의 식발자이고, 다른 하나는 그 문법의 버전입니다.
+```xml
+<web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee                       http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+...
+</web-app>
+```
+- xmlns="http://xmlns.jcp.org/xml/ns/javaee" : web.xml 파일의 작성에 사용되는 문법의 식별자
+- version="4.0" : 그 문법의 버전
+
+#### src/main/webapp/WEB-INF/web.xml
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee                       http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+	<servlet>
+		<servlet-name>hundred-servlet</servlet-name>
+		<servlet-class>myservlet.HundredServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>hundred-servlet</servlet-name>
+		<url-pattern>/hundred</url-pattern>
+	</servlet-mapping>
+</web-app>
+```
+- Servers 탭의 tomcat v9.0 Server at localhost를 클릭 하고 오른쪽 끝에 위치한 실행 버튼을 클릭하면 웹서버가 실행이 됩니다.
+- http://localhost:8080/jspWeb/hundred을 입력하여 결과 확인
+- 실행 결과
+```
+1부터 100까지 합은 = 5050
+```
+
+- 서블릿 3.0 버전 이후 부터 **@WebServlet** 애너테이션을 사용할 수 있으며 web.xml에 servlet 등록 설정을 간소화 할 수 있습니다.
+
+#### src/main/java/myservlet/HundredServlet2.java
+```java
+package myservlet;
+
+import javax.servlet.http.*;
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+
+import java.io.*;
+
+@WebServlet("/hundred2")
+public class HundredServlet2 extends HttpServlet {
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int total = 0;
+		for(int i = 1; i < 101; i++)
+			total += i;
+		
+		response.setContentType("text/html; charset=utf-8");
+		PrintWriter out = response.getWriter();
+		out.println("<html>");
+		out.println("<body>");
+		out.printf("1부터 100까지 합은 = %d", total);
+		out.println("</body>");
+		out.println("</html>");
+	}
+}
+```
+
+### XML 문법의 기초
+- XML은 HTML과 마찬가지로 텍스트 내용에 태그(또는 마크업)를 첨가하기 위해서 사용되는 문법입니다. 이 언어는 언뜻 보기에 HTML과 비슷해 보입니다. 태그가 \<로 시작해서 \>로 끝나는 것도 그렇고, 주석이 \<!--로 시작해서 --\>로 끝나는 것도 그렇습니다. 하지만 좀 더 자세히 살펴보면 서로 다른 점이 상당히 많습니다. 
+- 첫째. XML 문서의 제일 앞에는 **XML 선언**이 올 수 있습니다. XML 선언은 XML 문서 작성에 사용된 XML 규격서의 버전과 XML 문서를 저장하는 데 사용된 문자 코드의 인코딩 방식을 표시하는 역할을 합니다.
+```
+<?xml version="1.0" encoding="UTF-8"?>
+```
+- 하지만 XML 문서에서 XML 선언이 생략될 수도 있습니다. 예를 들어 XML 문서의 내용이 ASCII 문자로만 구성되었을 경우에는 XML 선언을 생략해도 됩니다.
+- 둘째, HTML에서는 모든 문서의 작성 방법이 동일하지만, XML에서는 문서의 종류에 따라 문서 작성 방법이 달라질 수 있습니다. 예를 들어 web.xml 문서의 루트 요소는(root element, 문서의 최상위 요소)는 \<web-app\>여야 하지만, 톰캣의 server.xml과 tomcat-users.xml 문서의 루트 요소sms 각각 \<server\>와 \<tomcat-users\>여야 합니다.
+- 셋째, HTML에서는 요소 이름과 속성(애트리뷰트) 이름에 있는 대소문자를 구분하지 않지만, XML에서는 엄격하게 구분합니다.
 
