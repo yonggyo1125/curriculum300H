@@ -132,3 +132,4 @@
 ## 참고도서
 - [가메출판사 / 초보 웹 개발자를 위한 스프링5 프로그래밍 입문 / 최범균](http://www.yes24.com/Product/Goods/62268795)
 - [로드북 / 스프링 부트 쇼핑몰 프로젝트 with JPA / 변구훈](http://www.yes24.com/Product/Goods/103453774)
+- [비제이퍼블릭 / Vue.js 프로젝트 투입 일주일 전 / 고승원](http://www.yes24.com/Product/Goods/101926719)
