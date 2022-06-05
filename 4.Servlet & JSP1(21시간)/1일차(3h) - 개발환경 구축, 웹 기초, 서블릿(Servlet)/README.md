@@ -184,6 +184,25 @@ HTTP 헤더는 클라이언트와 서버가 요청 또는 응답으로 부가적
 ```
 - javax.servlet.http.HttpServlet 클래스는 javax.servlet.Servlet 인터페이스를 구현합니다. 사실 이 클래스는 Servlet 인터페이스를 직접 구현하는 것이 아니라, 상위 클래스인 javax.servlet.GenericServlet 클래스를 통해 간접적으로 구현합니다. 
 
+![images22](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/4.Servlet%20%26%20JSP1(21%EC%8B%9C%EA%B0%84)/1%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%B6%95%2C%20%EC%9B%B9%20%EA%B8%B0%EC%B4%88%2C%20%EC%84%9C%EB%B8%94%EB%A6%BF(Servlet)/images/images22.png)
+
+- 상속/구현 관계를 알아야 하는 이유는 서블릿 클래스를 작성하면서 이런 클래스의 인터페이스의 API 규격서를 찾아봐야 할 경우가 종종 있기 때문입니다.
+- 이 클래스의 인터페이스는 JDK의 표준 라이브러리가 아니라 J2EE(Java Platform Enterprise Edition)라는 확장 라이브러리에 속합니다. [Java EE8 API 문서](https://javaee.github.io/javaee-spec/javadocs/overview-summary.html)
+
+
+
+### 서블릿 클래스 작성하기 
+- 서블릿 클래스는 javax.servlet.http.HttpServlet 클래스를 상속받도록 만들어야 합니다. 
+- 서블릿 클래스는 public으로 만들어야 합니다. public으로 선언해야 하는 이유는 웹 컨테이너가 서블릿 객체를 만들 때 이 접근 권한이 필요하기 때문입니다.
+
+```
+public class HundredServlet extends HttpServlet {
+
+}
+```
+- 서블릿 클래스 안에 doGet 또는 doPost 메서드를 선언해야 합니다. 이 두 메서드는 javax.servlet.http.HttpServletResponse와 javax.servlet.http.HttpServletResponse 타입의 매개변수를 받아야 하고 메서드 밖으로 javax.servlet.ServletException과 java.io.IOException을 던질 수 있도록 선언해야 합니다.
+- 그런데 이 이름은 너무 길고 복잡해서 실무에서 프로그램을 작성하다가 생각나지 않을 수 있습니다. 이럴 때는 HttpServlet 클래스의 API 문서를 찾아보면 됩니다.
+> 작업시에 또는 학습시에는 꼭 문서를 열어 놓고 수시로 참고해 주세요.
 
 
 
