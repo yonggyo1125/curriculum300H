@@ -86,16 +86,25 @@
 
 ![images16](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/4.Servlet%20%26%20JSP1(21%EC%8B%9C%EA%B0%84)/1%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%B6%95%2C%20%EC%9B%B9%20%EA%B8%B0%EC%B4%88%2C%20%EC%84%9C%EB%B8%94%EB%A6%BF(Servlet)/images/images16.png)
 
-## 요청헤더(Request Header), 응답헤더(Response Header)
+## 헤더(header)
 HTTP 헤더는 클라이언트와 서버가 요청 또는 응답으로 부가적인 정보를 전송할 수 있도록 해줍니다. HTTP 헤더는 대소문자를 구분하지 않는 이름과 콜론 ':' 다음에 오는 값(줄 바꿈 없이)으로 이루어져있습니다. 값 앞에 붙은 빈 문자열은 무시됩니다.
 
+- <b>일반 헤더(General header)</b> : 요청과 응답 모두에 적용되지만 바디에서 최종적으로 전송되는 데이터와는 관련이 없는 헤더.
 - <b>요청헤더(Request header)</b>: 페치될 리소스나 클라이언트 자체에 대한 자세한 정보를 포함하는 헤더.
 - <b>응답헤더(Response header)</b>: 위치 또는 서버 자체에 대한 정보(이름, 버전 등)와 같이 응답에 대한 부가적인 정보를 갖는 헤더.
+- <b>엔티티 헤더(Entity header)</b>: 컨텐츠 길이나 MIME 타입과 같이 엔티티 바디에 대한 자세한 정보를 포함하는 헤더.
 
-#### HTTP 요청/응답
+### HTTP 요청/응답
+
 ![images17](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/4.Servlet%20%26%20JSP1(21%EC%8B%9C%EA%B0%84)/1%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%B6%95%2C%20%EC%9B%B9%20%EA%B8%B0%EC%B4%88%2C%20%EC%84%9C%EB%B8%94%EB%A6%BF(Servlet)/images/images17.png)
 
+- 요청과 응답은 모두 **헤더와 본문**을 가지고 있습니다. **헤더는 요청 또는 응답에 대한 정보를 가지고 있는 곳**이고 **본문은 서버와 클라이언트 간에 주고받을 실제 데이터를 담아두는 공간**입니다.
+- 개발자 도구의 Network 탭에서 요청 중 하나를 클릭해보면 더 상세하게 요청과 응답을 살펴볼 수 있습니다.
 
+#### 요청의 헤더와 본문
+
+
+#### 응답의 본문 
 
 
 ## GET방식
