@@ -510,7 +510,7 @@ public class BBSPostServlet extends HttpServlet {
 
 - <select 요소에서 multiple과 size 속성을 추가하여 두 항목 이상 선택 가능한 선택 상자를 만들수 있는데, 이럴 경우 동일한 name 파라미터로 넘어오는 값이 여러개가 될 수 있다. 이때 getParameter 메서드를 사용하면 그 중 1개만 선택이 가능한데, 이럴 땐 getParameterValues() 라는 메서드를 사용하시면 됩니다.
 
-```
+```xml
 <select name="fruits" multiple size=4>
 	<option value="사과">사과</option>
 	<option value="포도">포도</option>
@@ -520,6 +520,6 @@ public class BBSPostServlet extends HttpServlet {
 </select>
 ```
 
-```
+```java
 String[] names = request.getParameterValues("fruits");
 ```
