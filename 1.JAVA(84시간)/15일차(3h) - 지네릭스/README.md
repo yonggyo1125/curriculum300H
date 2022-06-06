@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/17X_OVVnRo89cp1W3EqHRj-y_cTREJg9R?usp=sharing)
+
 # 지네릭스
 
 ## 지네릭스란?
