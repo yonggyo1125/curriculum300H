@@ -418,6 +418,499 @@ public class MemberRegisterService {
 
 >의존은 변경에 의해 영향을 받는 관계를 의미한다. 예를 들어 MemberDao의 insert() 메서드의 이름을 insertMember()로 변경하면 이 메서드를 사용하는 MemberRegisterService 클래스의 소스 코드도 함께 변경된다. 이렇게 변경에 따른 영향이 전파되는 관계를 '의존' 한다고 표현한다.
 
+- 의존하는 대상이 있으면 그 대상을 구하는 방법이 필요하다. 가장 쉬운 방법은 의존 대상 객체를 직접 생성하는 것이다. 
+```java
+public class MemberRegisterService {
+	// 의존 객체를 직접 생성
+	private MemberDao memberDao = new MemberDao();
+}
+```
+- MemberRegisterService 클래스에서 의존하는 MemberDao 객체를 직접 생성하기 때문에 MemberRegisterService 객체를 생성하는 순간에 MemberDao 객체도 함께 생성된다.
+```java
+//의존하는 MemberDao의 객체도 함께 생성
+MemberRegisterService svc = new MemberRegisterService();
+```
+클래스 내부에서 직접 의존 객체를 생성하는 것이 쉽긴 하지만 유지보수 관점에서 문제점을 유발할 수 있다. 이렇게 의존하는 객체를 직접 생성하는 방식 외에 의존 객체를 구하는 또 다른 방법이 있는데 이는 DI와 서비스 로케이터이다. 이 중 스프링과 관련된 것은 **DI**로서 이 책에서는 DI를 이용해서 의존 객체를 구하는 방법에 관해 설명한다.
+
 ## DI를 통한 의존 처리
+DI(Dependency Injection, 의존 주입)는 의존하는 객체를 직접 생성하는 대신 의존 객체를 전달 받는 방식을 사용한다.
+
+#### src/main/java/spring/MemberRegisterService.java
+```java
+package spring;
+
+import java.time.LocalDateTime;
+
+public class MemberRegisterService {
+	private MemberDao memberDao;
+	
+	public MemberRegisterService(MemberDao memberDao) {
+		this.memberDao  = memberDao;
+	}
+	
+	public long regist(RegisterRequest req) {
+		Member member = memberDao.selectByEmail(req.getEmail());
+		if (member != null) {
+			throw new DuplicateMemberException("dup.email " + req.getEmail());
+		}
+		Member newMember = new Member(req.getEmail(), req.getPassword(), req.getName(), LocalDateTime.now());
+		memberDao.insert(newMember);
+		return newMember.getId();
+	}
+}
+```
+- 생성자를 통해 MemberRegisterService가 의존(Dependency)하고 있는 MemberDao 객체를 주입(Injection) 받은 것이다. 의존 객체를 직접 구하지 않고 생성자를 통해서 전달받기 때문에 이 코드는 DI(의존 주입) 패턴을 따르고 있다.
+
+- DI를 적용한 결과 MemberRegisterService 클래스를 사용하는 코드는 다음과 같이 MemberRegisterService 객체를 생성할 때 생성자에 MemberDao 객체를 전달해야 한다.
+```java
+MemberDao dao = new MemberDao();
+// 의존 객체를 생성자에 주입한다.
+MemberRegisterService svc = new MemberRegisterService(dao);
+```
+
+### DI와 의존 객체 변경의 유연함
+의존 객체를 직접 생성하는 방식은 필드나 생성자에서 new 연산자를 이용해서 객체를 생성한다. 회원 등록 기능을 제공하는 MemberRegisterService 클래스에서 다음 코드처럼 의존 객체를 직접 생성할 수 있다.
+```java
+public class MemberRegisterService {
+	private MemberDao memberDao = new MemberDao();
+	...
+}
+```
+
+회원의 암호 변경 기능을 제공하는 ChangePasswordService 클래스도 다음과 같이 의존 객체를 직접 생성한다고 하자
+```java
+public class ChangePasswordService {
+	private MemberDao memberDao = new MemberDao();
+	...
+}
+```
+
+MemberDao 클래스는 회원 데이터를 데이터베이스에 저장한다고 가정해보자. 이 상태에서 회원 데이터의 빠른 조회를 위해 캐시를 적용해야 하는 상황이 발생했다. 그래서 MemberDao 클래스를 상속받은 CachedMemberDao 클래스를 만들었다.
+```java
+public class CachedMemberDao extends MemberDao {
+	...
+}
+```
+캐시 기능을 적용한 CachedMemberDao를 사용하려면 MemberRegisterService 클래스의 ChangePasswordService 클래스의 코드를 다음과 같이 변경해 주어야 한다.
+```java
+public class MemberRegisterService {
+	private MemberDao memberDao = new MemberDao();
+	...
+}
+
+public class ChangePasswordService {
+	private MemberDao memberDao = new MemberDao();
+	...
+}
+```
+
+생성할 의존 클래스의 변경에 따른 소스 수정
+```java
+public class MemberRegisterService {
+	private MemberDao memberDao = new CachedMemberDao();
+	...
+}
+
+public class ChangePasswordService {
+	private MemberDao memberDao = new CachedMemberDao();
+	...
+}
+```
+- 만약 MemberDao 객체가 필요한 클래스가 세 개라면 세 클래스 모두 동일하게 소스 코드를 변경해야 한다.
+- 동일한 상황에서 DI를 사용하면 수정할 코드가 줄어든다. 예를 들어 다음과 같이 생성자를 통해서 의존 객체를 주입 받도록 구현했다고 하자.
+```java
+public class MemberRegisterService {
+	private MemberDao memberDao;
+	
+	public MemberRegisterService(MemberDao memberDao) {
+		this.memberDao  = memberDao;
+	}
+	...
+}
+
+public class ChangePasswordService {
+	private MemberDao memberDao;
+	
+	public ChangePasswordService(MemberDao memberDao) {
+		this.memberDao  = memberDao;
+	}
+	...
+}
+```
+
+두 클래스의 객체를 생성하는 코드는 다음과 같다.
+```java
+MemberDao memberDao = new MemberDao();
+MemberRegisterService regSvc = new MemberRegisterService(memberDao);
+ChangePasswordService pwdSvc = new ChangePasswordService(memberDao);
+```
+
+이제 MemberDao 대신 CachedMemberDao를 사용하도록 수정해보면, 수정해야 할 소스 코드는 한 곳 뿐이다. 즉, MemberDao 객체를 생성하는 코드만 변경하면 된다.
+```java
+MemberDao memberDao = new CachedMemberDao();
+MemberRegisterService regSvc = new MemberRegisterService(memberDao);
+ChangePasswordService pwdSvc = new ChangePasswordService(memberDao);
+```
+DI를 사용하면 MemberDao 객체를 사용하는 클래스가 세 개여도 변경할 곳은 의존 주입 대상이 되는 객체를 생성하는 코드 한 곳뿐이다. 앞서 의존 객체를 직접 생성했던 방식에 비해 변경할 코드가 한 곳으로 집중되는 것을 알 수 있다.
+
+
+### 예제 프로젝트 만들기
+- 회원 데이터 관련 클래스 
+	- Member
+	- WrongIdPasswordException
+	- MemberDao
+- 회원 가입 처리 관련 클래스
+	- DuplicateMemberException
+	- RegisterRequest
+	- MemberRegisterService
+- 암호 변경 관련 클래스
+	- MemberNotFoundException
+	- ChangePasswordService
+	
+
+#### src/main/java/spring/Member.java
+```
+package spring;
+
+import java.time.LocalDateTime;
+
+public class Member {
+
+	private Long id;
+	private String email;
+	private String password;
+	private String name;
+	private LocalDateTime registerDateTime;
+
+	public Member(String email, String password, 
+			String name, LocalDateTime regDateTime) {
+		this.email = email;
+		this.password = password;
+		this.name = name;
+		this.registerDateTime = regDateTime;
+	}
+
+	void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public LocalDateTime getRegisterDateTime() {
+		return registerDateTime;
+	}
+
+	public void changePassword(String oldPassword, String newPassword) {
+		if (!password.equals(oldPassword))
+			throw new WrongIdPasswordException();
+		this.password = newPassword;
+	}
+
+}
+```
+#### src/main/java/spring/WrongIdPasswordException.java
+```java
+package spring;
+
+public class WrongIdPasswordException extends RuntimeException {
+
+}
+```
+#### src/main/java/spring/MemberDao.java
+```java
+public class ChangePasswordService {
+
+	private MemberDao memberDao;
+
+	public void changePassword(String email, String oldPwd, String newPwd) {
+		Member member = memberDao.selectByEmail(email);
+		if (member == null)
+			throw new MemberNotFoundException();
+
+		member.changePassword(oldPwd, newPwd);
+
+		memberDao.update(member);
+	}
+
+	public void setMemberDao(MemberDao memberDao) {
+		this.memberDao = memberDao;
+	}
+
+}
+```
+#### src/main/java/spring/DuplicateMemberException.java
+```java
+package spring;
+
+public class DuplicateMemberException extends RuntimeException {
+
+	public DuplicateMemberException(String message) {
+		super(message);
+	}
+
+}
+```
+
+#### src/main/java/spring/RegisterRequest.java
+```java
+package spring;
+
+public class RegisterRequest {
+
+	private String email;
+	private String password;
+	private String confirmPassword;
+	private String name;
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean isPasswordEqualToConfirmPassword() {
+		return password.equals(confirmPassword);
+	}
+}
+```
+
+#### src/main/java/spring/MemberNotFoundException.java
+```java
+package spring;
+
+public class MemberNotFoundException extends RuntimeException {
+
+}
+```
+#### src/main/java/spring/ChangePasswordService.java
+```java
+package spring;
+
+public class ChangePasswordService {
+
+	private MemberDao memberDao;
+
+	public void changePassword(String email, String oldPwd, String newPwd) {
+		Member member = memberDao.selectByEmail(email);
+		if (member == null)
+			throw new MemberNotFoundException();
+
+		member.changePassword(oldPwd, newPwd);
+
+		memberDao.update(member);
+	}
+
+	public void setMemberDao(MemberDao memberDao) {
+		this.memberDao = memberDao;
+	}
+
+}
+```
+- setMemberDao() 메서드로 의존하는 MemberDao를 전달받는다. 즉 세터(setter)를 통해서 의존 객체를 주입받는다.
 
 ## 객체 조립기
+#### src/main/java/assembler/Assembler.java
+```
+package assembler;
+
+import spring.ChangePasswordService;
+import spring.MemberDao;
+import spring.MemberRegisterService;
+
+public class Assembler {
+
+	private MemberDao memberDao;
+	private MemberRegisterService regSvc;
+	private ChangePasswordService pwdSvc;
+
+	public Assembler() {
+		memberDao = new MemberDao();
+		regSvc = new MemberRegisterService(memberDao);
+		pwdSvc = new ChangePasswordService();
+		pwdSvc.setMemberDao(memberDao);
+	}
+
+	public MemberDao getMemberDao() {
+		return memberDao;
+	}
+
+	public MemberRegisterService getMemberRegisterService() {
+		return regSvc;
+	}
+
+	public ChangePasswordService getChangePasswordService() {
+		return pwdSvc;
+	}
+
+}
+```
+-  main 메서드에서 의존 대상 객체를 생성하고 주입하는 방법이 나쁘진 않지만 이 방법보다 더 나은 방법은 객체를 생성하고 의존 객체를 주입해 주는 클래스는 따로 작성하는 것이다. 의존 객체를 주입한다는 것은 서로 다른 두 객체를 조립한다고 생각할 수 있는데, 이런 의미에서 위 클래스를 조립기라고도 표현한다.
+```
+public Assembler() {
+	memberDao = new MemberDao();
+	regSvc = new MemberRegisterService(memberDao);
+	pwdSvc = new ChangePasswordService();
+	pwdSvc.setMemberDao(memberDao);
+}
+```
+- MemberRegisterService는 생성자를 통해 MemberDao 객체를 주입 받고, ChangePasswordService는 세터를 통해 주입받는다. 결과적으로 Assembler가 생성한 객체는 다음과 같이 연결된다.
+
+![DI1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/1%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%B6%95%2C%20%EB%A9%94%EC%9D%B4%EB%B8%90%2C%20%EC%8A%A4%ED%94%84%EB%A7%81%20DI/images/DI1.png)
+
+
+Assembler 클래스를 사용하는 코드는 다음처럼 Assembler 객체를 생성한다. 그 다음에 get 메서드를 이용해서 필요한 객체를 구하고 그 객체를 사용한다.
+
+```java
+Assembler assembler = new Assembler();
+ChangePasswordService changePwdSvc = assembler.getChangePasswordService();
+changePwdSvc.changePassword("yonggyo00@kakao.com", "1234", newPwd);
+```
+- Assembler.getChangePasswordService()로 구현한 ChangePasswordService 객체는 **pwdSvc = new ChangePasswordService();**에서 생성된 객체이므로 세터를 통해서 MemberDao 객체를 주입받은 객체이다.
+
+- MemberDao 클래스가 아니라 MemberDao 클래스를 상속받은 CachedMemberDao 클래스를 사용해야 한다면 Assembler에서 객체를 초기화하는 코드만 변경하면 된다.
+```java
+// 의존 객체를 변경하려면 조립기 코드만 수정하면 된다.
+
+public Assembler() {
+	memberDao = new CachedMemberDao();
+	regSvc = new MemberRegisterService(memberDao);
+	pwdSvc = new ChangePasswordService();
+	pwdSvc.setMemberDao(memberDao);
+}
+```
+- 정리하면 조립기는 객체를 생성하고 의존 객체를 주입하는 기능을 제공한다. 
+- 또한 특정 객체가 필요한 곳에 객체를 제공한다.
+- 예를 들어 Assembler 클래스의 getMemberRegisterService() 메서드는 MemberRegisterService 객체가 필요한 곳에서 사용한다.
+
+#### src/main/java/main/MainForAssembler.java - 조립기 사용 예제
+```java
+package main;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import assembler.Assembler;
+import spring.ChangePasswordService;
+import spring.DuplicateMemberException;
+import spring.MemberNotFoundException;
+import spring.MemberRegisterService;
+import spring.RegisterRequest;
+import spring.WrongIdPasswordException;
+
+public class MainForAssembler {
+
+	public static void main(String[] args) throws IOException {
+		BufferedReader reader = 
+				new BufferedReader(new InputStreamReader(System.in));
+		while (true) {
+			System.out.println("명령어를 입력하세요:");
+			String command = reader.readLine();
+			if (command.equalsIgnoreCase("exit")) {
+				System.out.println("종료합니다.");
+				break;
+			}
+			if (command.startsWith("new ")) {
+				processNewCommand(command.split(" "));
+				continue;
+			} else if (command.startsWith("change ")) {
+				processChangeCommand(command.split(" "));
+				continue;
+			}
+			printHelp();
+		}
+	}
+
+	private static Assembler assembler = new Assembler();
+
+	private static void processNewCommand(String[] arg) {
+		if (arg.length != 5) {
+			printHelp();
+			return;
+		}
+		MemberRegisterService regSvc = assembler.getMemberRegisterService();
+		RegisterRequest req = new RegisterRequest();
+		req.setEmail(arg[1]);
+		req.setName(arg[2]);
+		req.setPassword(arg[3]);
+		req.setConfirmPassword(arg[4]);
+		
+		if (!req.isPasswordEqualToConfirmPassword()) {
+			System.out.println("암호와 확인이 일치하지 않습니다.\n");
+			return;
+		}
+		try {
+			regSvc.regist(req);
+			System.out.println("등록했습니다.\n");
+		} catch (DuplicateMemberException e) {
+			System.out.println("이미 존재하는 이메일입니다.\n");
+		}
+	}
+
+	private static void processChangeCommand(String[] arg) {
+		if (arg.length != 4) {
+			printHelp();
+			return;
+		}
+		ChangePasswordService changePwdSvc = 
+				assembler.getChangePasswordService();
+		try {
+			changePwdSvc.changePassword(arg[1], arg[2], arg[3]);
+			System.out.println("암호를 변경했습니다.\n");
+		} catch (MemberNotFoundException e) {
+			System.out.println("존재하지 않는 이메일입니다.\n");
+		} catch (WrongIdPasswordException e) {
+			System.out.println("이메일과 암호가 일치하지 않습니다.\n");
+		}
+	}
+
+	private static void printHelp() {
+		System.out.println();
+		System.out.println("잘못된 명령입니다. 아래 명령어 사용법을 확인하세요.");
+		System.out.println("명령어 사용법:");
+		System.out.println("new 이메일 이름 암호 암호확인");
+		System.out.println("change 이메일 현재비번 변경비번");
+		System.out.println();
+	}
+}
+```
