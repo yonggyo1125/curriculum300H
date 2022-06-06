@@ -329,7 +329,7 @@ public class Main {
 	
 - 어떤 구현 클래스를 사용하단, 각 구현 클래스는 설정 정보로부터 빈(Bean)이라고 불리는 객체를 생성하고 그 객체를 내부에 보관한다. 그리고 getBean() 메서드를 실행하면 해당하는 빈 객체를 제공한다. 예를 들어 앞서 작성한 Main.java 코드를 보면 다윽뫄 같이 설정 정보를 이용해서 빈 객체를 생성하고 해당 빈 객체를 제공하는 것을 알 수 있다.
 
-```
+```java
 // 1. 설정 정보를 이용해서 빈 객체를 생성한다.
 AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
 
@@ -344,7 +344,7 @@ Greeter g = ctx.getBean("greeter", Greeter.class);
 ### 싱글톤(SingleTon)객체
 
 #### src/main/java/day01/Main2.java
-```
+```java
 package day01;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -366,12 +366,12 @@ public class Main2 {
 
 (g1 == g2)의 결과가 true라는 것은 g1과 g2가 같은 객체라는 것을 의미한다. 즉 아래 코드에서 getBean() 메서드는 같은 객체를 반환하는 것이다.
 
-```
+```java
 Greeter g1 = ctx.getBean("greeter", Greeter.class);
 Greeter g2 = ctx.getBean("greeter", Greeter.class);
 ```
 별도 설정을 하지 않을 경우 스프링은 한 개의 빈 객체만을 생성하며, 이 떄 빈 객체는 "싱글톤(singleton) 범위를 갖는다"고 표현한다. 싱글톤은 단일 객체(single object)를 의미하는 단어로 스프링은 기본적으로 한 개의 @Bean 애노테이션에 대해 한 개의 빈 객체를 생성한다. 따라서 다음과 같은 설정을 사용하면 "greeter"에 해당하는 객체 한 개와 greeter1에 해당하는 객체 한 개, 이렇게 두 개의 빈 객체가 생성된다.
-```
+```java
 @Bean
 public Greeter greeter() {
 	Greeter g = new Greeter();
@@ -379,7 +379,7 @@ public Greeter greeter() {
 	return g;
 }
 ```
-```
+```java
 @Bean
 public Greeter greeter1() {
 	Greeter g = new Greeter();
@@ -392,6 +392,31 @@ public Greeter greeter1() {
 # 스프링 DI(Dependency Injection - 의존주입)
 
 ## 의존이란?
+DI는 **Dependency Injection**의 약자로 우리말로는 **의존 주입**이라고 번역한다. 이 단어의 의미를 이해하려면 먼저 의존(dependency)이 뭔지 알아야 하는데, 의존은 객체 간의 의존을 의미한다.  이해를 위해 회원 가입을 처리하는 기능을 구현한 다음 코드를 보자
+```java
+import java.time.LocalDateTime;
+
+public class MemberRegisterService {
+	private MemberDao memberDao = new MemberDao();
+	
+	public void regist(RegisterRequest req) {
+		// 이메일로 회원 데이터(Member) 조회
+		Member member = member.selectByEmail(req.getEmail());
+		if (member != null) {
+			// 같은 이메일을 가진 회원이 이미 존재하면 익셉션 발생
+			throw new DuplicateMemberException("dup email " + req.getEmail());
+		}
+		
+		// 같은 이메일을 가진 회원이 존재하지 않으면 DB에 삽입
+		Member newMember = new Member(req.getEmail(), req.getPassword(), req.getName(), LocalDateTime.now());
+		memberDao.insert(newMember);
+	}
+}
+```
+- MemberRegisterService 클래스가 DB 처리를 위해 MemberDao 클래스의 메서드를 사용한다는 점이다. 회원 데이터가 존재하는지 확인하기 위해 MemberDao 객체의 selectByEmail() 메서드를 실행하고, 회원 데이터를 DB에 삽입하기 위해 insert() 메서드를 실행한다.
+- 이렇게 한 클래스가 다른 클래스의 메서드를 실행 할 때 이를 **의존**한다고 표현한다. 앞서 코드에서 **MemberRegisterService 클래스가 MemberDao 클래스에 의존한다**고 표현할 수 있다.
+
+>의존은 변경에 의해 영향을 받는 관계를 의미한다. 예를 들어 MemberDao의 insert() 메서드의 이름을 insertMember()로 변경하면 이 메서드를 사용하는 MemberRegisterService 클래스의 소스 코드도 함께 변경된다. 이렇게 변경에 따른 영향이 전파되는 관계를 '의존' 한다고 표현한다.
 
 ## DI를 통한 의존 처리
 
