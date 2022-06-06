@@ -313,6 +313,81 @@ public class Main {
 - AnnotationConfigApplicationContext 클래스는 이 인터페이스를 알맞게 구현한 클래스 중 하나이다. AnnotationConfigApplicationContext  클래스는 자바 클래스에서 정보를 읽어와 객체 생성과 초기화를 수행한다.
 - XML 파일이나 그루비 설정 코드를 이용해서 객체 생성/초기화를 수행하는 클래스도 존재한다.
 
+#### AnnotationConfigApplicationContext 클래스 계층도 일부
+![maven10](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/1%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%B6%95%2C%20%EB%A9%94%EC%9D%B4%EB%B8%90%2C%20%EC%8A%A4%ED%94%84%EB%A7%81%20DI/images/maven10.png)<br>
+
+- 계층도를 보면 가장 상위 BeanFactory 인터페이스가 위치하고, 위에서 세 번째에 ApplicationContext 인터페이스, 그리고 가장 하단에 AnnotationConfigApplicationContext등의 구현 클래스가 위치한다. 더 많은 인터페이스가 존재하지만, 설명에 필요한 만큼만 계층도를 표시했다.
+
+- BeanFactory 인터페이스는 객체 생성과 검색에 대한 기능을 정의한다. 예를 들어 생성된 객체를 검색하는데 필요한 getBean() 메서드가 BeanFactory에 정의되어 있다. 객체를 검색하는 것 이외에 싱글톤/프로토타입 빈인지 확인하는 기능도 제공한다.
+
+- ApplicationContext 인터페이스는 메시지, 프로필/환경 변수 등을 처리할 수 있는 기능을 추가로 정의한다.
+
+- 앞서 예제에서 사용한 AnnotationConfigApplicationContext를 비롯해 계층도의 가장 하단에 위치한 세 계의 클래스는 BeanFactory와 ApplicationContext에 정의된 기능의 구현을 제공한다. 각 클래스의 차이점은 다음과 같다.
+	- AnnotationConfigApplicationContext : 자바 애노테이션을 이용한 클래스로부터 객체 설정 정보를 가져온다.
+	- GenericXmlApplicationContext : XML로 부터 객체 정보를 가져온다.
+	- GenericGroovyApplicationContext : 그루비 코드를 이용해 설정 정보를 가져온다.
+	
+- 어떤 구현 클래스를 사용하단, 각 구현 클래스는 설정 정보로부터 빈(Bean)이라고 불리는 객체를 생성하고 그 객체를 내부에 보관한다. 그리고 getBean() 메서드를 실행하면 해당하는 빈 객체를 제공한다. 예를 들어 앞서 작성한 Main.java 코드를 보면 다윽뫄 같이 설정 정보를 이용해서 빈 객체를 생성하고 해당 빈 객체를 제공하는 것을 알 수 있다.
+
+```
+// 1. 설정 정보를 이용해서 빈 객체를 생성한다.
+AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+
+// 2. 빈 객체를 제공한다.
+Greeter g = ctx.getBean("greeter", Greeter.class);
+```
+
+- ApplicationContext(또는 BeanFactory)는 빈 객체의 생성, 초기화, 보관, 제거 등을 관리하고 있어 ApplicationContext를 컨터이너(Container)라고도 부른다. 강의에서도 ApplicationContext나 BeanFactory 등을 스프링 컨테이너라고 표현할 것이다.
+
+- 스프링 컨테이너는 내부적으로 빈 객체와 빈 이름을 연결하는 정보를 갖는다. 예를 들어 day01.Greeter 타입의 객체를 greeter라는 이름의 빈으로 설정했다고 하면 컨터이너는 greeter 이름과 Greeter 객체를 연결한 정보를 관리한다.<br>이름과 실제 객체의 관계뿐만 아니라 실제 객체의 생성, 초기화, 의존 주입 등 스프링 컨테이너 객체 관리를 위한 다양한 기능을 제공한다.
+
+### 싱글톤(SingleTon)객체
+
+#### src/main/java/day01/Main2.java
+```
+package day01;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class Main2 {
+	public static void main(String[] args) {
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(AppContext.class);
+		Greeter g1 = ctx.getBean("greeter", Greeter.class);
+		Greeter g2 = ctx.getBean("greeter", Greeter.class);
+		System.out.println("(g1 == g2) = " + (g1 == g2));
+		ctx.close();
+	}
+}
+```
+- 실행 결과
+```
+(g1 == g2) = true
+```
+
+(g1 == g2)의 결과가 true라는 것은 g1과 g2가 같은 객체라는 것을 의미한다. 즉 아래 코드에서 getBean() 메서드는 같은 객체를 반환하는 것이다.
+
+```
+Greeter g1 = ctx.getBean("greeter", Greeter.class);
+Greeter g2 = ctx.getBean("greeter", Greeter.class);
+```
+별도 설정을 하지 않을 경우 스프링은 한 개의 빈 객체만을 생성하며, 이 떄 빈 객체는 "싱글톤(singleton) 범위를 갖는다"고 표현한다. 싱글톤은 단일 객체(single object)를 의미하는 단어로 스프링은 기본적으로 한 개의 @Bean 애노테이션에 대해 한 개의 빈 객체를 생성한다. 따라서 다음과 같은 설정을 사용하면 "greeter"에 해당하는 객체 한 개와 greeter1에 해당하는 객체 한 개, 이렇게 두 개의 빈 객체가 생성된다.
+```
+@Bean
+public Greeter greeter() {
+	Greeter g = new Greeter();
+	g.setFormat("%s, 안녕하세요!");
+	return g;
+}
+```
+```
+@Bean
+public Greeter greeter1() {
+	Greeter g = new Greeter();
+	g.setFormat("안녕하세요, %s님!");
+	return g;
+}
+```
+
 * * *
 # 스프링 DI(Dependency Injection - 의존주입)
 
