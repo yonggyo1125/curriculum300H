@@ -1,4 +1,8 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/19ZPRp3VRtLMwZGy5jMvUJF_q3xbDAvXr?usp=sharing)
+
 # 열거형(enums)
+
 ## 열거형이란?
 - 자바는 C언어와 달리 열거형라는 것이 존재하지 않았으나 JDK1.5부터 추가되었다.
 - 자바의 열거형은 C언어의 열거형보다 더 향상된 특징을 가진다.
