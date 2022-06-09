@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1UvpzDzYhyKp6zgJu082GgFE7f23bSntV?usp=sharing)
+
 # 쓰레드
 
 ## 프로세스와 쓰레드
