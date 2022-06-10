@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1g4wLMVV_u-o5TkLAf7PglVAvwS36rAiT?usp=sharing)
+
 # 람다식(Lamba expression)
 
 ## 람다식이란?
