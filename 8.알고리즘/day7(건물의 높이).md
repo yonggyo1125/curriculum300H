@@ -4,7 +4,7 @@
  - 건물의 높이를 구하시오.
  
 # 답안
- ```
+```
  public class BuildingHeight {
 
 	public static void main(String[] args) {
@@ -14,4 +14,4 @@
 		System.out.printf("건물의 높이 %.2fm", height);
 	}
 }
- ```
+```
