@@ -1507,6 +1507,115 @@ public @interface Controller {
 - @Controller 애노테이션은 웹 MVC와 관련이 있고 @Repository 애노테이션은 DB 연동과 관련있다.
 
 ## 컴포넌트 스캔에 따른 충돌 처리
+excludeFilters 속성을 사용하면 스캔할 때 특정 대상을 자동 등록 대상에서 제외할 수 있다. 다음 코드는 excludeFilters 속성의 사용 예를 보여준다.
+```java
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.ComponentScan.Filter;
+
+@Configuration
+@ComponentScan(basePackages = {"spring"},
+   excludeFilters = @Filter(type = FilterType.REGEX, pattern=="spring\\..*Dao"))
+public class AppCtxWithExclude {
+	@Bean
+	public MemberDao memberDao() {
+		return new MemberDao();
+	}
+	
+	@Bean
+	public MemberPrinter memberPrinter() {
+		return new MemberPrinter();
+	}
+}
+```
+- 이 코드는 @Filter 애노테이션의 type 속성으로 FilterType.REGEX를 주었다. 이는 정규표현식을 사용해서 제외 대상을 지정한다는 것을 의미한다.
+- Pattern 속성은 FilterType에 적용할 값을 설정한다. 위 설정에서는 "spring."으로 시작하고 Dao로 끝나는 정규표현식을 지정했으므로 spring.MemberDao 클래스를 컴포넌트 스캔 대상에서 제외한다.
+<br><br>
+- FilterType.ASPECTJ를 필터 타입으로 설정할 수도 있다. 이 타입을 사용하면 정규표현식 대신 AspectJ 패턴을 사용해서 대상을 지정한다.
+```java
+@Configuration
+@ComponentScan(basePackages = {"spring"},
+   excludeFilters = @Filter(type = FilterType.ASPECTJ, pattern = "spring.*Dao"))
+public class AppCtxWithExclude {
+	@Bean
+	public MemberDao memberDao() {
+		return new MemberDao();
+	}
+}
+```
+- AspectJ 패턴은 정규표현식과 다른데, 이에 관련된 내용은 [3일차 - AOP 프로그래밍](https://github.com/yonggyo1125/curriculum300H/tree/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)) 에서 학습할 예정입니다. 
+- AspectJ 패턴이 동작하려면 의존 대상에 aspectjweaver 모듈을 추가해야 한다.
+```xml
+<dependency>
+    <groupId>org.aspectj</groupId>
+    <artifactId>aspectjweaver</artifactId>
+    <version>1.9.9.1</version>
+</dependency>
+```
+- patterns 속성은 String[] 타입이므로 배열을 이용해서 패턴을 한 개 이상 지정할 수 있다.
+<br><br>
+- 특정 애노테이션을 붙인 타입을 컴포넌트 대상에서 제외할 수도 있다.
+```java
+@Retention(RUNTIME)
+@Target(TYPE)
+public @interface NoProduct {
+}
+
+@Retention(RUNTIME)
+@Target(TYPE)
+public @interface ManualBean {
+}
+```
+- 이 두 애노테이션을 붙인 클래스를 컴포넌트 스캔 대상에서 제외하려면 다음과 같이 excludeFilters 속성을 설정한다.
+```java
+@Configuration
+@ComponentScan(basePackages = {"spring", "spring2"}, 
+	excludeFilters = @Filter(type=FilterType.ANNOTATION, classes = {NoProduct.class, ManualBean.class}))
+public class AppCtxWithExclude {
+	@Bean
+	public MemberDao memberDao() {
+		return new MemberDao();
+	}
+	...
+}
+```
+- type 속성 값으로 FilterType.ANNOTATION을 사용하면 classes속성에 필터로 사용될 애노테이션 타입을 값으로 준다.
+- 이 코드는 @ManualBean 애노테이션을 제외 대상에 추가했으므로 다음 클래스를 컴포넌트 스캔 대상에서 제외한다.
+```java
+@ManualBean 
+@Component
+public class MemberDao {
+	...
+}
+```
+
+특정 타입이나 그 하위 타입을 컴포넌트 스캔 대상에서 제외하려면 ASSIGNABLE_TYPE을 FilterType으로 사용한다.
+```java
+@Configuration
+@ComponentScan(basePackages = {"spring"},
+	excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE,
+		classes = MemberDAO.class ))
+public class AppCtxWithExclude {
+	@Bean
+	public MemberDao memberDao() {
+		return new MemberDao();
+	}
+	...
+}
+```
+classes 속성에는 제외할 타입 목록을 지정한다. 위 설정은 제외할 타입이 한 개이므로 배열 표기를 사용하지 않았다.<br><br>
+
+설정할 필터가 두 개 이상이면 @ComponentScan의 excludeFilters 속성에 배열을 사용해서 @Filter 목록을 전달하면 된다.
+```java
+@Configuration
+@ComponentScan(basePackages = {"spring"}, 
+	excludeFilters = {
+		@Filter(type = FilterType.ANNOTATION, classes = ManualBean.class),
+		@Filter(type = FilterType.REGEX, pattern = "spring2\\.*")
+	})
+```
+
+
 
 ### 빈 이름 충돌
 spring 패키지와 spring2 패키지에 MemberRegisterService 클래스가 존재하고 두 클래스 모두 @Component 애노테이션을 붙였다고 하자. 이 상태에서 다음 @ComponentScan 애노테이션을 사용하게 되면 예외(BeanDefinitionStoreException)가 발생한다.
@@ -1556,3 +1665,4 @@ public class AppCtx {
 
 * * *
 # 빈 라이프 사이클과 범위
+## 컨테이너 초기화와 종료
