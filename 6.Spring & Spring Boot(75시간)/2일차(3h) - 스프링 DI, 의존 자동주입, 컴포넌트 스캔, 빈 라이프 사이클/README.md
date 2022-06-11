@@ -1367,6 +1367,192 @@ info yonggyo00@kakao.com
 
 * * *
 # 컴포넌트 스캔
+자동 주입과 함께 사용되는 추가 기능이 컴포넌트 스캔이다. 컴포넌트 스캔은 스프링이 직접 클래스를 검색해서 빈으로 등록해주는 기능이다. 설정 클래스에 빈으로 등록하지 않아도 원하는 클래스를 빈으로 등록할 수 있으므로 컴포넌트 스캔 기능을 사용하면 설정 코드가 크게 줄어든다.
+
+## @Component 애노테이션으로 스캔 대상 지정
+- 스프링으로 검색해서 빈으로 등록할 수 있으려면 클래스에 @Component 애노테이션을 붙여야 한다. 
+- @Component 애노테이션은 해당 클래스를 스캔 대상으로 표시한
+다. 
+
+#### src/main/java/spring/MemberDao.java
+```java
+package spring;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class MemberDao {
+	... 생략
+}
+```
+- 앞서 작성한 다음 클래스에도 MemberDao와 마찬가지로 @Component 애너테이션을 붙여보세요.
+	- ChangePasswordService
+	- MemberDao
+	- MemberRegisterService
+	
+- MemberInfoPrinter 클래스에는 다음과 같이 @Component 애노테이션에 속성 값을 준다.
+
+#### src/main/java/spring/MemberInfoPrinter.java
+```java
+package spring;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component("infoPrinter")
+public class MemberInfoPrinter {
+	... 생략
+}
+```
+
+- @Component 애노테이션에 값을 주었는지에 따라 빈으로 등록할 때 사용할 이름이 결정된다. @Component 애노테이션에 값을 주지 않는 경우 클래스의 이름의 첫 글자를 소문자로 바꾼 이름을 빈 이름으로 사용한다. 
+- 예를 들어 클래스 이름이 MemberDao이면 빈 이름으로 "memberDao"를 사용하고 클래스 이름이 MemberRegisterService이면 빈 이름으로 "memberRegisterService"를 사용한다.
+- @Component 애노테이션 값을 주면 그 값을 빈 이름으로 사용한다. MemberInfoPrinter 클래스는 빈 이름으로 "infoPrinter"를 사용한다.
+
+- MemberListPrinter 클래스도 다음과 같이 @Component 애노테이션을 설정한다.
+```java 
+... 생략
+import org.springframework.stereotype.Component;
+... 생략
+
+@Component("listPrinter")
+public class MemberListPrinter {
+	... 생략
+}
+```
+
+## @ComponentScan 애노테이션으로 스캔 설정
+@Component 애노테이션을 붙인 클래스를 스캔해서 스프링 빈으로 등록하려면 설정 클래스에 @ComponentScan 애노테이션을 적용해야 한다. 설정 클래스인 AppCtx에 @ComponentScan 애노테이션을 적용한 코드는 다음과 같다.
+
+#### src/main/java/config/AppCtx.java
+```
+package config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+import spring.MemberPrinter;
+import spring.VersionPrinter;
+
+@Configuration
+@ComponentScan(basePackages= {"spring"})
+public class AppCtx {
+	
+	@Bean
+	public MemberPrinter memberPrinter() {
+		return new MemberPrinter();
+	}
+	
+	@Bean
+	public VersionPrinter versionPrinter() {
+		VersionPrinter versionPrinter = new VersionPrinter();
+		versionPrinter.setMajorVersion(5);
+		versionPrinter.setMinorVersion(0);
+		return versionPrinter;
+	}
+}
+```
+## 예제 실행
+MainForSpring 클래스에서 일부 수정할 코드가 있다. MainForSpring 코드를 보면 다음과 같이 이름으로 빈을 검색하는 코드가 있다.
+```java
+// processNewCommand() 메서드
+MemberRegisterService regSvc = ctx.getBean(MemberRegisterService.class);
+
+// processChangeCommand() 메서드
+ChangePasswordService changePwdSvc = ctx.getBean("changePwdSvc", ChangePasswordService.class);
+
+// processListCommand() 메서드
+MemberListPrinter listPrinter = ctx.getBean("listPrinter", MemberListPrinter.class);
+
+// processInfoCommand() 메서드
+MemberInfoPrinter infoPrinter = ctx.getBean("infoPrinter", MemberInfoPrinter.class);
+
+// processVersionCommand() 메서드
+VersionPrinter versionPrinter = ctx.getBean("versionPrinter", VersionPrinter.class);
+```
+- 이 중에서 MemberRegisterService 타입 빈과 ChangePasswordService 타입의 빈은 이름이 달라졌다. 이 두 클래스에 @Component 애노테이션을 붙일 때 속성값을 주지 않았는데. 이 경우 클래스 이름의 첫 글자를 소문자로 바꾼 이름을 빈 이름으로 사용한다. 
+- 따라서 MemberRegisterService 타입 빈 객체의 이름은 "memberRegisterService"가 되고 ChangePasswordService 타입 빈 객체의 이름은 "changePasswordService"가 된다.
+- MemberListPrinter 클래스의 MemberInfoPrinter 클래스는 @Component 애노테이션 속성값으로 빈 이름을 알맞게 지정했으므로 MainForSpring에서 빈을 구하는 코드를 수정할 필요가 없다.
+
+
+## 스캔 대상에서 제외하거나 포함하기
+
+### 기본 스캔 대상
+@Component 애노테이션을 붙인 클래스만 컴포넌트 스캔 대상에 포함되는 것은 아니다. 다음 애노테이션을 붙인 클래스가 컴포넌트 스캔 대상에 포함된다.
+- @Component(org.springframework.stereotype 패키지)
+- @Controller(org.springframework.stereotype 패키지)
+- @Service(org.springframework.stereotype 패키지)
+- @Repository(org.springframework.stereotype 패키지)
+- @Aspect(org.aspectj.lang.annotation 패키지)
+- @Configuration(org.springframework.context.annotation 패키지)
+<br><br>
+@Aspect 애노테이션을 제외한 나머지 애노테이션은 실제로는 @Component 애노테이션에 대한 특수 애노테이션이다. 예를 들어 @Controller 애노테이션은 다음과 같다.
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Component
+public @interface Controller {
+	@AliasFor(annotation = Component.class)
+	String value() defualt "";
+}
+```
+- @Component 애노테이션이 붙어 있는데, 스프링은 @Controller 애노테이션을 @Component 애노테이션과 동일하게 컴포넌트 스캔 대상에 포함한다. 
+- @Controller 애노테이션이나 @Repository 애노테이션 등은 컴포넌트 스캔 대상이 될 뿐만 아니라 스프링프레임워크에서 특별한 기능과 연관되어 있다. 
+- @Controller 애노테이션은 웹 MVC와 관련이 있고 @Repository 애노테이션은 DB 연동과 관련있다.
+
+## 컴포넌트 스캔에 따른 충돌 처리
+
+### 빈 이름 충돌
+spring 패키지와 spring2 패키지에 MemberRegisterService 클래스가 존재하고 두 클래스 모두 @Component 애노테이션을 붙였다고 하자. 이 상태에서 다음 @ComponentScan 애노테이션을 사용하게 되면 예외(BeanDefinitionStoreException)가 발생한다.
+```java
+@Configuration
+@ComponentScan(basePackages={"spring", "spring2"})
+public class AppCtx {
+	...
+}
+```
+이런 문제는 컴포넌트 스캔 과정에서 쉽게 발생할 수 있다. 이렇게 컴포넌트 스캔 과정에서 서로 다른 타입인데 같은 빈 이름을 사용하는 경우가 있다면 둘 중 하나에 명시적으로 빈 이름을 지정해서 이름 충돌을 피해야 한다.
+
+### 수동 등록한 빈과 충돌
+앞서 MemberDao 클래스에 @Component 애노테이션을 붙였다.
+```java
+@Component
+public class MemberDao {
+	...
+}
+```
+MemberDao 클래스는 컴포넌트 스캔 대상이다. 자동 등록된 빈의 이름은 클래스 이름의 첫 글자를 소문자로 바꾼 "memberDao"이다. 그런데 다음과 같이 설정 클래스에 직접 MemberDao 클래스를 "memberDao"라는 이름의 빈으로 등록하게 되면 어떻게 될까?
+```java
+@Configuration
+@ComponentScan(basePackages={"spring"})
+public class AppCtx {
+	@Bean
+	public MemberDao memberDao() {
+		MemberDao memberDao = new MemberDao();
+		return memberDao;
+	}
+}
+```
+- 스캔할 때 사용하는 빈 이름과 수동 등록한 빈 이름이 같은 경우 **수동 등록한 빈이 우선한다.** 즉, MemberDao 타입의 빈은 AppCtx에서 정의한 한 개만 존재한다.
+- 다음과 같이 다른 이름을 사용한다면 어떻게 될까?
+```java
+@Configuration
+@ComponentScan(basePackages = {"spring"})
+public class AppCtx {
+	@Bean
+	public MemberDao memberDao2() {
+		MemberDao memberDao = new MemberDao();
+		return memberDao;
+	}
+}
+```
+이 경우 스캔을 통해 등록한 "memberDao" 빈과 수동 등록한 "memberDao2" 빈이 모두 존재한다. MemberDao 타입의 빈이 두 개 생성되므로 자동 주입하는 코드는 @Qualifier 애노테이션을 사용해서 알맞은 빈을 선택해야 한다.
 
 * * *
 # 빈 라이프 사이클과 범위
