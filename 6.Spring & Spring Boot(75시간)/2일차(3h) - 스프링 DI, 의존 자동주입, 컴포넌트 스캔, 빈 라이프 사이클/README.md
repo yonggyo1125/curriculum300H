@@ -784,6 +784,30 @@ public class AppConfImport {
 ```
 > **다중 @Import**<br>MainForSpring에서 AppConfImport를 사용하도록 수정했다면, 이후 다른 설정 클래스를 추가해도 MainForSpring을 수정할 필요가 없다. @Import를 사용해서 포함한 설정 클래스가 다시 @Import를 사용할 수 있다. 이렇게 하면 설정 클래스를 변경해도 AnnotationConfApplicationContext를 생성하는 코드는 최상위 설정 클래스 한 개만 사용하면 된다.
 
+## getBean 메서드 사용
+지금까지 생성한 예제는  getBean() 메서드를 이용해서 사용할 빈 객체를 구했다.
+```java
+VersionPrinter versionPrinter = ctx.getBean("versionPrinter", VersionPrinter.class);
+```
+- getBean() 메서드의 첫 번째 인자는 빈의 이름이고 두 번째 인자는 빈의 타입이다. 
+- getBean() 메서드를 호출할 때 존재하지 않는 빈 이름을 사용하거나 타입이 다르면 익셉션이 발생한다.
+	- 없는 빈 이름 사용시 - NoSuchBeanDefinitionException
+	- 타입이 다른 경우 - BeanNotOfRequiredTypeException
+- 빈 이름을 지정하지 않고 타입만으로 빈을 구할 수 있다.
+```
+VersionPrinter versionPrinter = ctx.getBean(MemberPrinter.class);
+```
+- 이 때 해당 타입의 빈 객체가 한 개만 존재하면 해당 빈을 구해서 반환한다. 해당 타입의 빈 객체가 존재하지 않으면 익셉션이 발생한다(NoSuchBeanDefinitionException).
+- 같은 타입의 빈 객체가 두개 이상 존재할 수도 있다. 이 경우 NoUniqueBeanDefinitionException이 발생한다.
+
+> getBean() 메서드는 BeanFactory 인터페이스에 정의되어 있다. getBean() 메서드를 실제 구현한 클래스는 AbstractApplicationContext이다.
+
+## 주입 대상 객체를 모두 빈 객체로 설정해야 하는가?
+- 주입할 객체가 꼭 스프링 빈이어야 할 필요는 없다.  다만 객체를 스프링 빈으로 등록할 때와 등록하지 않을 때의 차이는 스프링 컨테이너가 객체를 관리하는지 여부이다.
+- 스프링 컨테이너는 자동 주입, 라이프사이클 관리 등 단순 객체 생성 외에 객체 관리를 위한 다양한 기능을 제공하는데 빈으로 등록한 객체에만 기능을 적용한다.
+- 스프링 컨테이너가 제공하는 관리 기능이 필요 없고 getBean() 메서드로 구현할 필요가 없다면 빈 객체로 꼭 등록해야 하는 것은 아니다.
+- 최근에는 의존 자동 주입 기능을 프로젝트 전반에 걸쳐 사용하는 추세이기 때문에 의존 주입 대상은 스프링 빈으로 등록하는 것이 보통이다.
+
 
 * * *
 # 의존 자동 주입
