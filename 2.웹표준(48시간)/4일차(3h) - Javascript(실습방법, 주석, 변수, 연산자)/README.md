@@ -12,9 +12,11 @@
 		<br>
 		- 방법1. 콘솔(REPL(Read Eval Print Loop))에서 실행하는 방법
 		- 방법2. js 파일로 실행하는 방법
-			```
-			node 파일명.js 
-			```
+		
+		```
+		node 파일명.js 
+		```
+		
 		- [nodejs 다운로드](https://nodejs.org/ko/)
 		
 	- HTML문서 파일로 작성하여 브라우저에서 확인
