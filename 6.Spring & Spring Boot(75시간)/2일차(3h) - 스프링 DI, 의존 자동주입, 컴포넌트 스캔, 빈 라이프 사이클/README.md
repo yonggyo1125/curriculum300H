@@ -655,7 +655,7 @@ private MemberDao memberDao;
 
 - @Autowired 애노테이션을 이용해서 다른 설정 파일에 정의한 빈을 필드에 할당했다면 설정 메서드에서 이 필드를 사용해서 필요한 빈을 주입하면 된다. 
 
-```
+```java
 @Autowired
 private MemberDao memberDao;
 	
@@ -669,6 +669,69 @@ public MemberListPrinter listPrinter() {
 ```
 
 설정 클래스가 두 개 이상이어도 스프링 컨테이너를 생성하는 코드는 크게 다르지 않다. 다음과 같이 매개변수로 설정 클래스를 추가로 전달하면 된다.
+```java
+ctx = new AnnotationConfigApplicationContext(AppConf1.class, AppConf2.class);
+```
+- AnnotationConfigApplicationContext의 생성자의 인자는 가변 인자이기 때문에 설정 클래스의 목록을 콤마로 구분해서 전달하면 된다.
+
+### @Configuration 애노테이션, 빈, @Autowired 애노테이션
+@Autowired 애노테이션은 스프링 빈에 의존하는 다른 빈을 자동으로 주입하고 싶을 때 사용한다.
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class MemberInfoPrinter {
+	@Autowired
+	private MemberDao memDao;
+	
+	@Autowired
+	private MemberPrinter printer;
+	
+	public void printMemberInfo(Spring email) {
+		Member member = memDao.selectByEmail(email);
+		if (member == null) {
+			System.out.println("데이터 없음\n");
+			return;
+		}
+		printer.print(member);
+		System.out.println();
+	}
+	
+	...
+}
+```
+두 필드에 @Autowired 애노테이션을 붙였다. 이렇게 @Autowired 애노테이션을 의존 주입 대상에 붙이면 다음 코드처럼 스프링 설정 클래스의 @Bean 메서드에서 의존 주입을 위한 코드를 작성하지 않아도 된다.
+```java
+@Bean
+public MemberInfoPrinter infoPrinter() {
+	MemberInfoPrinter infoPrinter = new MemberInfoPrinter();
+	// 세터 메서드를 사용해서 의존 주입을 하지 않아도
+	// 스프링 컨터네이가 @Autowired를 붙인 필드에 
+	// 자동으로 해당 타입의 빈 객체를 주입
+	return infoPrinter;
+}
+```
+
+```java
+@Configuration
+public class AppConf2 {
+	@Autowired
+	private MemberDao memberDao;
+	
+	@Autowired
+	private MemberPrinter memberPrinter;
+	...
+}
+```
+- 스프링 컨테이너는 설정 클래스에서 사용한 @Autowired에 대해서도 자동 주입을 처리한다. 실제로 스프링은 @Configuration 애노테이션이 붙은 설정 클래스를 내부적으로 스프링 빈으로 등록한다. 그리고 다른 빈과 마찬가지로 @Autowired가 붙은 대상에 대해 알맞은 빈을 자동으로 주입한다.
+- 즉, 스프링 컨테이너는 AppConf2 객체를 빈으로 등록하고 @Autowired 애노테이션이 붙은 두 필드 memberDao와 memberPrinter에  해당 타입의 빈 객체를 주입한다. 실제 다음 코드를 실행하면 스프링 컨테이너가 @Configuration 애노테이션을 붙인 설정 클래스를 스프링 빈으로 등록한다는 것을 확인할 수 있다.
+```java
+AbstractApplicationContext ctx = new AnnotationConfigApplicationContext(AppConf1.class, AppConf2.class);
+
+// @Configuration 설정 클래스도 빈으로 등록함
+AppConf1 appConf1 = ctx.getBean(AppConf1.class);
+System.out.println(AppConf1 != null); // true 출력
+```
+
 
 * * *
 # 의존 자동 주입
