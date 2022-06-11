@@ -1665,4 +1665,308 @@ public class AppCtx {
 
 * * *
 # 빈 라이프 사이클과 범위
+
 ## 컨테이너 초기화와 종료
+스프링 컨테이너는 **초기화와 종료**라는 라이픗하이클을 갖는다.
+- 1. 컨테이너 초기화
+```java
+AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(AppContext.class);
+```
+	- AnnotationConfigApplicationContext의 생성자를 이용해서 컨텍스트 객체를 생성하는데 이 시점에 스프링 컨테이너를 초기화한다. 
+	- 스프링 컨테이너는 설정 클래스에서 정보를 읽어와 알맞은 빈 객체를 생성하고 각 빈을 연결(의존 주입)하는 작업을 수행한다.
+	
+- 2. 컨테이너에서 빈 객체를 구해서 사용
+```java
+Greeter g = ctx.getBean("greeter", Greeter.class);
+String msg = g.greet("스프링");
+System.out.println(msg);
+```
+	- 컨테이너 초기화가 완료되면 컨테이너를 사용할 수 있다. 
+	- 컨테이너를 사용한다는 것은 getBean()과 같은 메서드를 이용해서 컨테이너에 보관된 빈 객체를 구한다는 것을 뜻한다.
+
+- 3. 컨테이너 종료
+```java
+ctx.close();
+```
+	- 컨테이너 사용이 끝나면 컨테이너를 종료한다. 컨테이너를 종료할 때 사용하는 메서드가 close() 메서드이다.
+	- close() 메서드는 AbstractApplicationContext 클래스에 정의되어 있다. 
+	- 자바 설정을 사용하는 AnnotationConfigApplicationContext 클래스나 XML 설정을 사용하는 GenericXmlApplicationContext 클래스 모두 AbstractApplicationContext 클래스를 상속받고 있다. 따라서 앞서 코드처럼 close() 메서드를 이용해서 컨테이너를 종료할 수 있다.
+	
+- 컨테이너를 초기화하고 종료할 때는 다음의 작업도 함께 수행한다.
+	- **컨테이너 초기화** : 빈 객체의 생성, 의존 주입, 초기화
+	- **컨테이너 종료** : 빈 객체의 소멸
+	
+- 스프링 컨테이너의 라이프사이클에 따라 빈 객체도 자연스럽게 생성과 소멸이라는 라이프사이클을 갖는다.
+
+#### 실습 프로젝트 생성 
+- 1. 프로젝트 생성
+	```
+	mvn archetype:generate
+	```
+	- groupId, artifactId는 적절하게 입력해 줍니다.
+
+- 2. pom.xml
+	- 자바 실습 버전을 최신버전(17)로 변경합니다.
+	- spring-context 의존성을 [mvnrepository](https://mvnrepository.com) 에서 검색하여 다음과 같이 추가합니다.
+	```xml
+	... 생략
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+	</properties>
+	
+	... 생략
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.3.20</version>
+		</dependency>
+	
+		... 생략
+	</dependencies>
+	```
+- 3. 이클립스에서 Import - Existing Maven Projects를 클릭하여 생성된 폴더를 선택하여 생성해 줍니다.
+
+## 스프링 빈 객체의 라이프사이클 
+스프링 컨테이너는 빈 객체의 라이프사이클을 관리한다. 
+#### 빈 객체의 라이프 사이클 
+객체 생성 -> 의존 설정 -> 초기화 -> 소멸
+<br><br>
+- 스프링 컨테이너를 초기화할 때 스프링 컨테이너는 가장 먼저 빈 객체를 생성하고 의존을 설정한다. 
+- 의존 자동 주입을 통한 의존 설정이 이 시점에 수행된다. 
+- 모든 의존 설정이 완료되면 빈 객체의 초기화를 수행한다. 빈 객체를 초기화하기 위해 스프링은 빈 객체의 지정된 메서드를 호출한다.
+- 스프링 컨테이너를 종료하면 스프링 컨테이너는 빈 객체의 소멸을 처리한다. 이때에도 지정된 메서ㄷ를 호출한다.
+
+### 빈 객체의 초기화와 소멸 : 스프링 인터페이스
+- 스프링 컨테이너는 빈 객체를 초기화하고 소멸하기 위해 빈 객체의 지정한 메서드를 호출한다. 
+- 스프링은 다음의 두 인터페이스에 이 메서드를 정의하고 있다.
+	- org.springframework.beans.factory.InitializingBean
+	- org.springframework.beans.factory.DisposableBean
+```java
+public interface InitializingBean {
+	void afterPropertiesSet() throws Exception;
+}
+
+public interface DisposableBean {
+	void destroy() throws Exception;
+}
+```
+- 빈 객체가 InitializingBean 인터페이스를 구현하면 스프링 컨테이너는 초기화 과정에서 빈 객체의 afterPropertiesSet() 메서드를 실행한다.
+- 빈 객체를 생성한 뒤에 초기화 과정이 필요하면 InitializingBean 인터페이스를 상속하고 afterPropertiesSet() 메서드를 알맞게 구현하면 된다.
+<br>
+- 스프링 컨테이너는 빈 객체가 DisposableBean 인터페이스를 구현한 경우 소멸 과정에서 빈 객체의 destroy() 메서드를 실행한다.
+- 빈 객체의 소멸 과정이 필요하면 DisposableBean 인터페이스를 상속하고 destroy() 메서드를 알맞게 구현하면 된다.
+
+#### src/main/java/spring/Client.java
+```java
+package spring;
+
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+public class Client implements InitializingBean, DisposableBean {
+	private String host;
+	
+	public void setHost(String host) {
+		this.host = host;
+	}
+	
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		System.out.println("Client.afterPropertiesSet() 실행");
+	}
+	
+	public void send() {
+		System.out.println("Client.send() to " + host);
+	}
+	
+	@Override
+	public void destroy() throws Exception {
+		System.out.println("Client.destroy() 실행");
+	}
+}
+```
+
+#### src/main/java/config/AppCtx.java
+```java
+package config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import spring.Client;
+
+@Configuration
+public class AppCtx {
+	
+	@Bean
+	public Client client() {
+		Client client = new Client();
+		client.setHost("host");
+		return client;
+	}
+}
+```
+#### src/main/java/main/Main.java
+```java
+package main;
+
+import java.io.IOException;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+
+import config.AppCtx;
+import spring.Client;
+
+public class Main {
+
+	public static void main(String[] args) throws IOException {
+		AbstractApplicationContext ctx = new AnnotationConfigApplicationContext(AppCtx.class);
+		
+		Client client = ctx.getBean(Client.class);
+		client.send();
+		
+		ctx.close();
+	}
+}
+```
+- 실행 결과
+```
+Client.afterPropertiesSet() 실행
+Client.send() to host
+Client.destroy() 실행
+```
+
+### 빈 객체의 초기화와 소멸 : 커스텀 메서드
+- 모든 클래스가 InitializingBean 인터페이스와  DisposableBean 인터페이스를 상속받아 구현할 수 있는 것은 아니다. 직접 구현한 클래스가 아닌 외부에서 제공받은 클래스를 스프링 빈 객체로 설정하고 싶을 때도 있다. 이 경우 소스 코드를 받지 않았다면 두 인터페이스를 구현하도록 수정할 수 없다. 
+- 이렇게 InitializingBean 인터페이스와 DisposableBean 인터페이스를 구현할 수 없거나 이 두 인터페이스를 사용하고 싶지 않은 경우에는 스프링 설정에서 직접 메서드를 지정할 수 있다.
+
+- 방법은 @Bean 태그에서 initMethod 속성과 destroyMethod 속성를 사용해서 초기화 메서드와 소멸 메서드의 이름을 지정하면 된다.
+
+#### src/main/java/spring/Client2.java
+```java
+package spring;
+
+public class Client2 {
+	private String host;
+	
+	public void setHost(String host) {
+		this.host = host;
+	}
+	
+	public void connect() {
+		System.out.println("Client2.connect() 실행");
+	}
+	
+	public void send() {
+		System.out.println("Client.send() to " + host);
+	}
+	
+	public void close() {
+		System.out.println("Client2.close() 실행");
+	}
+}
+```
+
+#### src/main/java/config/AppCtx.java
+```
+... 생략 
+import spring.Client;
+import spring.Client2;
+
+@Configuration
+public class AppCtx {
+
+	... 생략 
+	
+	@Bean(initMethod="connect", destroyMethod="close")
+	public Client2 client2() {
+		Client2 client = new Client2();
+		client.setHost("host");
+		return client;
+	}
+}
+```
+> initMethod 속성과 destroyMethod 속성에 지정한 메서드는 매개변수가 없어야 한다. 이 두 속성에 지정한 메서드에 매개변수가 존재할 경우 스프링 컨테이너는 예외를 발생시킨다. 
+
+#### src/main/java/main/Main2.java
+```java
+package main;
+
+import java.io.IOException;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+
+import config.AppCtx;
+import spring.Client2;
+
+public class Main2 {
+
+	public static void main(String[] args) throws IOException {
+		AbstractApplicationContext ctx = new AnnotationConfigApplicationContext(AppCtx.class);
+		
+		Client2 client = ctx.getBean(Client2.class);
+		client.send();
+		
+		ctx.close();
+	}
+}
+```
+- 실행 결과
+```
+Client.afterPropertiesSet() 실행
+Client2.connect() 실행
+Client.send() to host
+Client2.close() 실행
+Client.destroy() 실행
+```
+## 빈 객체의 생성과 관리 범위
+- 스프링 컨테이너는 빈 객체를 한 개만 생성한다고 합니다.
+- 예를 들어 아래 코드와 같이 동일한 이름을 갖는 빈 객체를 구하면 client1과 client2는 동일한 빈 객체를 참조합니다.
+```java
+Client client1 = ctx.getBean("client", Client.class);
+Client client2 = ctx.getBean("client", Client.class);
+// client1 == client -> true
+```
+- 이와 같이 한 식별자에 대해 한 개의 객체만 존재하는 빈은 <b>싱글톤(singleton) 범위(scope)</b>를 갖는다. 별도 설정을 하지 않으면 빈은 싱글톤 범위를 갖는다.
+- 사용 빈도가 낮긴 하지만 프로토타입 범위의 빈을 설정할 수도 있다. 빈의 범위를 프로토타입으로 지정하면 빈 객체를 구할 때 마다 매번 새로운 객체를 생성한다.
+```java
+// client 빈의 범위가 프로토타입일 경우, 매번 새로운 객체를 생성
+Client client1 = ctx.getBean("client", Client.class);
+Client client2 = ctx.getBean("client", Client.class);
+// client1 != client2 -> true
+```
+- 특정 빈을 프로토타입 범위로 지정하려면 다음과 같이 값으로 "prototype"을 갖는 **Scope 애노테이션**을 @Bean 애노테이션과 함께 사용하면 된다.
+```java
+import org.springframework.context.annotation.Scope;
+
+@Configuration
+public class AppCtxWithPrototype {
+	@Bean
+	@Scope("prototype")
+	public Client client() {
+		Client client = new Client();
+		client.setHost("host");
+		return client;
+	}
+}
+```
+- 싱글톤 범위를 명시적으로 지정하고 싶다면 @Scope 애노테이션 값으로 "singleton"을 주면 된다.
+```java
+@Bean(initMethod = "connect", destroyMethod = "close")
+@Scope("singleton")
+public Client2 client2() {
+	Client2 client = new Client2();
+	client.setHost("host");
+	return client;
+}
+```
+- 프로토타입 범위를 갖는 빈은 완전한 라이프사이클을 따르지 않는다는 점에 주의해야 한다.
+- 스프링 컨터이너는 프로토타입의 빈 객체를 생성하고 프로퍼티를 설정하고 초기화 작업까지는 수행하지만 컨테이너를 종료한다고 해서 생성자 프로토타입 빈 객체의 소멸 메서드를 실행하지는 않는다.
+- 따라서 프로토타입 범위의 빈을 사용할 때에는 빈 객체의 소명 처리를 코드에서 직접 해야 한다.
