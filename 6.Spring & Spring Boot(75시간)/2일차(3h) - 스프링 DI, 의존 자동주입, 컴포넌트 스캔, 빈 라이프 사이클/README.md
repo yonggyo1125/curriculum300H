@@ -731,6 +731,58 @@ AbstractApplicationContext ctx = new AnnotationConfigApplicationContext(AppConf1
 AppConf1 appConf1 = ctx.getBean(AppConf1.class);
 System.out.println(AppConf1 != null); // true 출력
 ```
+### @Import 애노테이션 사용
+두 개 이상의 설정 파일을 사용하는 또 다른 방법은 @Import 애노테이션을 사용하는 것이다. @Import 애노테이션은 함께 사용할 설정 클래스를 지정한다.
+
+#### src/main/java/config/AppConfImport.java
+```java
+package config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+import spring.MemberDao;
+import spring.MemberPrinter;
+
+@Configuration
+@Import(AppConf2.class)
+public class AppConfImport {
+	
+	@Bean
+	public MemberDao memberDao() {
+		return new MemberDao();
+	}
+	
+	@Bean
+	public MemberPrinter memberPrinter() {
+		return new MemberPrinter();
+	}
+}
+```
+AppConfImport 설정 클래스를 사용하면, @Import 애노테이션으로 지정한 AppConf2 설정 클래스도 함께 사용하기 때문에 스프링 컨테이너를 생성할 때 AppConf2 설정 클래스를 지정할 필요가 없다.
+
+#### src/main/java/config/MainForSpring.java
+```java
+public class MainForSpring {
+	private static ApplicationContext ctx = null;
+	
+	public static void main(String[] args) throws IOException {
+		ctx = new AnnotationConfigApplicationContext(AppConfImport.class);
+		...
+	}
+	...
+}
+```
+@Import 애노테이션은 다음과 같이 배열을 이용해서 두 개 이상의 설정 클래스도 지정할 수 있다.
+```
+@Configuration
+@Import({ AppConf1.class, AppConf2.class })
+public class AppConfImport {
+
+}
+```
+> **다중 @Import**<br>MainForSpring에서 AppConfImport를 사용하도록 수정했다면, 이후 다른 설정 클래스를 추가해도 MainForSpring을 수정할 필요가 없다. @Import를 사용해서 포함한 설정 클래스가 다시 @Import를 사용할 수 있다. 이렇게 하면 설정 클래스를 변경해도 AnnotationConfApplicationContext를 생성하는 코드는 최상위 설정 클래스 한 개만 사용하면 된다.
 
 
 * * *
