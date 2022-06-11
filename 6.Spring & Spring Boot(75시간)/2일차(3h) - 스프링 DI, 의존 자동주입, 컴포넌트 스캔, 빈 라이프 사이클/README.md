@@ -811,6 +811,559 @@ VersionPrinter versionPrinter = ctx.getBean(MemberPrinter.class);
 
 * * *
 # 의존 자동 주입
+- 의존 대상을 설정 코드에서 직접 주입하기 않고 스프링이 자동으로 의존하는 빈 객체를 주입해주는 기능도 있다. 이를 자동 주입이라 한다.
+- 스프링에서 의존 자동 주입을 설정하려면 @Autowired 애노테이션이나 @Resource 애노테이션을 사용하면 된다. 스프링에서는 주고 @Autowired를 많이 사용한다.
+
+> @javax.annotation.Resource 애노테이션은 자바에서 제공하는 애노테이션으로 스프링은 @Resource 애노테이션뿐만 아니라 자바EE에서 제공하는 @javax.inject.Inject 애노테이션을 지원한다. 스프링은 @Autowired 애노테이션과 유사하게 이 두 애노테이션에 대해 자동 주입을 적용한다. 
+
+## @Autowired 애노테이션을 이용한 의존 자동 주입
+- 자동 주입 기능을 사용하면 스프링이 알아서 의존 객체를 찾아서 주입한다.
+- 자동 주입 기능을 사용하는 방법은 의존을 주입할 대상에 @Autowired 애노테이션을 붙이기만 하면 된다.
+
+#### src/main/java/spring/ChangePasswordService.java
+```java
+package spring;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class ChangePasswordService {
+	
+	@Autowired
+	private MemberDao memberDao;
+
+	public void changePassword(String email, String oldPwd, String newPwd) {
+		Member member = memberDao.selectByEmail(email);
+		if (member == null)
+			throw new MemberNotFoundException();
+
+		member.changePassword(oldPwd, newPwd);
+
+		memberDao.update(member);
+	}
+
+	public void setMemberDao(MemberDao memberDao) {
+		this.memberDao = memberDao;
+	}
+
+}
+```
+
+```java
+@Autowired
+private MemberDao memberDao;
+```
+- memberDao 필드에 @Autowired 애노테이션을 붙였다. @Autowired  애노테이션을 붙이면 설정 클래스에서 의존을 주입하지 않아도 된다. 
+- 필드에 @Autowired 애노테이션이 붙어 있으면 스프링이 해당 타입의 빈 객체를 찾아서 필드에 할당한다.
+<br>
+- @Autowired 애노테이션을 memberDao 필드에 붙였으므로 다음과 같이 AppCtx 클래스의 @Bean 설정 메서드에서 의존을 주입하는 코드를 삭제하면 된다.  
+- changePwdSvc() 메서드에서 생성한 ChangePasswordService 객체의 setMemberDao() 메서드를 호출하지 않는다. setMemberDao()를 호출하서 MemberDao 빈 객체를 주입하지 않아도 스프링이 MemberDao 타입의 빈 객체를 주입하기 때문이다.
+#### src/main/java/config/AppCtx.java
+```java
+...
+@Configuration
+public class AppCtx {
+	...
+	@Bean
+	public ChangePasswordService changePwdSvc() {
+		ChangePasswordService pwdSvc = new ChangePasswordService();
+		return pwdSvc;
+	}
+	...
+}
+```
+의존을 주입하지 않아도 스프링이 @Autowired를 붙인 필드에 해당 타입의 빈 객체를 찾아서 주입한다.
+<br>
+<br>
+- @Autowired 애노테이션은 메서드에도 붙일 수 있다.
+#### src/main/java/spring/MemberInfoPrinter.java
+```java
+package spring;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class MemberInfoPrinter {
+
+	private MemberDao memDao;
+	private MemberPrinter printer;
+
+	public void printMemberInfo(String email) {
+		Member member = memDao.selectByEmail(email);
+		if (member == null) {
+			System.out.println("데이터 없음\n");
+			return;
+		}
+		printer.print(member);
+		System.out.println();
+	}
+	
+	@Autowired
+	public void setMemberDao(MemberDao memberDao) {
+		this.memDao = memberDao;
+	}
+	
+	@Autowired
+	public void setPrinter(MemberPrinter printer) {
+		this.printer = printer;
+	}
+
+}
+```
+#### src/main/java/config/AppCtx.java
+```java
+...
+@Configuration
+public class AppCtx {
+	...
+	@Bean
+	public MemberInfoPrinter infoPrinter() {
+		MemberInfoPrinter infoPrinter = new MemberInfoPrinter();
+		return infoPrinter;
+	}
+	...
+}
+```
+- MemberInfoPrinter 객체의 두 세터 메서드를 호출 하지 않도록 수정했으며 정상적으로 동작한다.
+- 빈 객체의 메서드에 @Autowired 애노테이션을 붙이면 스프링은 해당 메서드를 호출한다. 이때 메서드 매개변수 타입에 해당하는 빈 객체를 찾아서 주입한다.
+
+>@Autowired 애노테이션을 필드나 세터 메서드에 붙이면 스프링은 타입이 일치하는 빈 객체를 찾아서 주입한다.
+
+#### src/main/java/spring/MemberRegisterService.java
+```java
+...
+import org.springframework.beans.factory.annotation.Autowired;
+...
+public class MemberRegisterService {
+	@Autowired
+	private MemberDao memberDao;
+
+	public MemberRegisterService() {
+		
+	}
+	
+	public MemberRegisterService(MemberDao memberDao) {
+		this.memberDao = memberDao;
+	}
+	
+	...
+}
+```
+memberDao  필드에 @Autowired 애노테이션을 붙였고 매개변수 없는 생성자를 추가하였다.
+
+#### src/main/java/spring/MemberListPrinter.java
+```java
+...
+import org.springframework.beans.factory.annotation.Autowired;
+...
+
+
+public class MemberListPrinter {
+
+	private MemberDao memberDao;
+	private MemberPrinter printer;
+
+	public MemberListPrinter() {
+		
+	}
+	
+	...
+	
+	@Autowired
+	public void setMemberDao(MemberDao memberDao) {
+		this.memberDao = memberDao;
+	}
+	
+	@Autowired
+	public void setMemberPrinter(MemberPrinter printer) {
+		this.printer = printer;
+	}
+}
+```
+
+#### src/main/java/config/AppCtx.java
+```java
+...
+@Configuration
+public class AppCtx {
+	...
+	@Bean
+	public MemberListPrinter listPrinter() {
+		return new MemberListPrinter();
+	}
+	...
+}
+```
+
+### 일치하는 빈이 없는 경우
+@Autowired 애노테이션을 적용한 대상에 일치하는 빈이 없으면 UnsatisfiedDependencyException이 발생한다.
+```java
+...
+@Configuration
+public class AppCtx {
+
+	/**
+	@Bean
+	public MemberDao memberDao() {
+		return new MemberDao();
+	}
+	*/
+	
+	@Bean
+	public MemberRegisterService memberRegSvc() {
+		return new MemberRegisterService();
+	}
+	...
+}
+```
+memberDao() 메서드를 주석처리하고 MainForSpring을 실행하면 예외가 발생하면서 제대로 실행되지 않으며 다음과 같은 에러 메세지가 출력된다.
+```
+6월 11, 2022 8:11:56 오후 org.springframework.context.support.AbstractApplicationContext refresh
+경고: Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'memberRegSvc': Unsatisfied dependency expressed through field 'memberDao'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'spring.MemberDao' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+Exception in thread "main" org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'memberRegSvc': Unsatisfied dependency expressed through field 'memberDao'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'spring.MemberDao' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: 
+... 생략
+```
+이 에러 메세지는 @Autowired 애노테이션을 붙인 MemberRegisterService의 memberDao 필드에 주입할 MemberDao 빈이 존재하지 않아 에러가 발생했다는 사실을 알려준다.
+<br>
+<br>
+반대로 @Autowired 애노테이션을 붙인 주입 대상에 일치하는 빈이 두 개 이상이라면?
+```java
+	/**
+	@Bean
+	public MemberPrinter memberPrinter() {
+		return new MemberPrinter();
+	}
+	*/
+	
+	@Bean
+	public MemberPrinter memberPrinter1() {
+		return new MemberPrinter();
+	}
+	
+	@Bean
+	public MemberPrinter memberPrinter2() {
+		return new MemberPrinter();
+	}
+```
+memberPrinter1(), memberPrinter2() 메서드를 추가한 뒤 memberPrinter()를 주석처리하고 MainForSpring을 실행하면 다음의 예외 메세지가 출력된다.
+```
+월 11, 2022 8:16:44 오후 org.springframework.context.support.AbstractApplicationContext refresh
+경고: Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'listPrinter': Unsatisfied dependency expressed through method 'setMemberPrinter' parameter 0; nested exception is org.springframework.beans.factory.NoUniqueBeanDefinitionException: No qualifying bean of type 'spring.MemberPrinter' available: expected single matching bean but found 2: memberPrinter1,memberPrinter2
+Exception in thread "main" org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'listPrinter': Unsatisfied dependency expressed through method 'setMemberPrinter' parameter 0; nested exception is org.springframework.beans.factory.NoUniqueBeanDefinitionException: No qualifying bean of type 'spring.MemberPrinter' available: expected single matching bean but found 2: memberPrinter1,memberPrinter2
+7) 
+... 생략
+```
+자동 주임을 하려면 해당 타입을 가진 빈이 어떤 빈인지 정확하게 한정할 수 있어야 하는데 MemberPrinter, 타입의 빈이 두 개여서 어떤 빈을 자동 주입 대상으로 선택해야 할지 한정할 수 없다. 이 경우 스프링은 자동 주입에 실패하고 예외를 발생시킨다.
+
+## @Qualifier 애노테이션을 이용한 의존 객체 선택
+- 자동 주입 가능한 빈이 두 개 이상이라면 자동 주입할 빈을 지정할 수 있는 방법이 필요하다. 이때 @Qualifier 애노테이션을 사용한다. @Qualifier 애노테이션을 사용하면 자동 주입 대상 빈을 한정할 수 있다.
+- @Qualifier 애노테이션은 두 위치에서 사용가능하다
+- 첫 번째는 @Bean 애노테이션을 붙인 빈 설정 메서드이다.
+```java
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+... 생략
+
+@Configuration
+public class AppCtx {
+	
+	... 생략
+	
+	@Bean
+	@Qualifier("printer")
+	public MemberPrinter memberPrinter1() {
+		return new MemberPrinter();
+	}
+	
+	@Bean
+	public MemberPrinter memberPrinter2() {
+		return new MemberPrinter();
+	}
+	
+	... 생략
+}
+```
+이 코드에서 memberPrinter1() 메서드에 "printer" 값을 갖는 @Qualifier 애노테이션을 붙였다. 이 설정은 해당 빈의 한정 값으로 "printer"를 지정한다.<br><br>
+이렇게 지정한 한정 값은 @Autowired 애노테이션에서 자동 주입할 빈을 한정할 떄 사용한다. 이곳이 @Qualifier 애노테이션을 사용하는 두 번째 위치이다. 
+```java 
+public class MemberListPrinter {
+	private MemberDao memberDao;
+	private MemberPrinter printer;
+	
+	... 생략
+	
+	@Autowired
+	@Qualified("printer")
+	public void setMemberPrinter(MemberPrinter printer) {
+		this.printer = printer;
+	}
+}
+```
+setMemberPrinter() 메서드에 @Autowired 애노테이션을 붙였으므로 MemberPrinter 타입의 빈을 자동 주입한다. 이때 @Qualifier 애노테이션 값이 "printer"이므로 한정 값이 "printer"인 빈을 의존 주입 후보로 사용한다. 앞서 스프링 설정 클래스에서 @Qualifier 애노테이션의 값으로 "printer"를 준 MemberPrinter 타입의 빈(memberPrinter1)을 자동 주입 대상으로 사용한다.<br>
+MemberListPrinter 클래스뿐 아니라 MemberInfoPrinter의 setPrinter() 메서드에도 @Qualifier("printer") 애노테이션을 붙여서 의존 주입 대상을 설정한다. MemberPrinter 타입 빈을 주입받는 모든 @Autowired 애노테이션에 @Qualifier 애노테이션을 붙였으므로 다시 MainForSpring을 실행해보면 정상 동작한다.
+
+### 빈 이름과 기본 한정자
+빈 설정에 @Qualifier 애노테이션이 없으면 빈의 이름을 한정자로 지정한다.
+```java 
+@Configuration
+public class AppCtx2 {
+	@Bean
+	public MemberPrinter printer() {
+		return new MemberPrinter();
+	}
+	
+	@Bean
+	@Qualifier("mprinter")
+	public MemberPrinter printer2() {
+		return new MemberPrinter();
+	}
+	
+	@Bean
+	public MemberInfoPrinter2 infoPrinter() {
+		MemberInfoPrinter2 infoPrinter = new MemberInfoPrinter2();
+		return infoPrinter;
+	}
+}
+```
+- printer() 메서드로 정의한 빈의 한정자는 빈 이름인 "printer"가 된다. printer2빈은 @Qualifier 애노테이션 값은 "mprinter"가 한정자가 된다.
+
+- @Autowired 애노테이션도 @Qualifier 애노테이션이 없으면 필드나 파라미터 이름을 한정자로 사용한다. 
+
+#### 빈 이름과 한정자 관계
+
+|빈 이름|@Qualifier|한정자|
+|printer||printer|
+|printer2|mprinter|mprinter|
+|infoPrinter||infoPrinter|
+
+## @Autowired 애노테이션의 필수 여부
+MemberPrinter 코드를 다음과 같이 변경해보자.
+
+#### src/main/java/spring/MemberPrinter.java
+```java
+package spring;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.format.*;
+
+public class MemberPrinter {
+	private DateTimeFormatter dateTimeFormatter;
+	
+	public void print(Member member) {
+		if (dateTimeFormatter == null) {
+			System.out.printf(
+					"회원정보: 아이디=%d, 이메일=%s, 이름=%s, 등록일=%tF\n",
+					member.getId(), member.getEmail(),
+					member.getName(), member.getRegisterDateTime());
+		} else {
+			System.out.printf(
+					"회원정보: 아이디=%d, 이메일=%s, 이름=%s, 등록일=%s\n",
+					member.getId(), member.getEmail(),
+					member.getName(),
+					dateTimeFormatter.format(member.getRegisterDateTime()));
+		}
+	}
+	
+	@Autowired
+	public void setDateFormatter(DateTimeFormatter dateTimeFormatter) {
+		this.dateTimeFormatter = dateTimeFormatter;
+	}
+}
+```
+- MainForSpring 실행 결과
+```
+6월 11, 2022 9:10:25 오후 org.springframework.context.support.AbstractApplicationContext refresh
+경고: Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'memberPrinter': Unsatisfied dependency expressed through method 'setDateFormatter' parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'java.time.format.DateTimeFormatter' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+Exception in thread "main" org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'memberPrinter': Unsatisfied dependency expressed through method 'setDateFormatter' parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'java.time.format.DateTimeFormatter' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+... 생략
+```
+dateTimeFormatter 필드가 null이면 날짜 형식을 %tF로 출력하고 이 필드가 null이 아니면 dateTimeFormatter를 이용해서 날짜 형식을 맞춰 출력하도록 print() 메서드를 수정했다. 세터 메서드는 @Autowired 애노테이션을 이용해서 자동 주입하도록 했다.<br><br>
+print() 메서드는 dateTimeFormatter가 null인 경우에도 알맞게 동작한다. 즉 반드시 setDateFormatter()를 통해서 의존 객체를 주입할 필요는 없다. setDateFormatter()에 주입할 빈이 존재하지 않아도 MemberPrinter가 동작하는데는 문제가 없다.<br><br>
+그런데 @Autowired 애노테이션은 기본적으로 @Autowired 애노테이션을 붙인 타입에 해당하는 빈이 존재하지 않으면 익셉션을 발생한다. 따라서 setDateFormatter() 메서드에서 필요로 하는 DateTimeFormatter 타입의 빈이 존재하지 않으면 익셉션이 발생한다. MemberPrinter는 setDateFormatter() 메서드에 자동 주입할 빈이 존재하지 않으면 익셉션이 발생하기보다는 그냥 dateTimeFormatter 필드가 null이면 된다.<br><br>
+이렇게 자동 주입할 대상이 필수가 아닌 경우에는 **@Autowired 애노테이션의 required 속성**을 다음과 같이 **false로 지정**하면 된다.
+```java
+... 생략
+public class MemberPrinter {
+	private DateTimeFormatter dateTimeFormatter;
+	
+	public void print(Member member) {
+		... 생략
+	}
+	
+	@Autowired(required = false)
+	public void setDateFormatter(DateTimeFormatter dateTimeFormatter) {
+		this.dateTimeFormatter = dateTimeFormatter;
+	}
+}
+```
+- @Autowired 애노테이션의 required 속성을 false로 지정하면 매칭되는 빈이 없어도 익셉션이 발생하지 않으며 자동 주입을 수행하지 않는다. 위 예에서 DateTimeFormatter 타입의 빈이 존재하지 않으면 익셉션을 발생하지 않고 setDateFormatter() 메서드를 실행하지 않는다.
+
+- 스프링 5 버전 부터는 @Autowired 애노테이션의 required 속성을 false로 하는 대신 다음과 같이 의존 주입 대상에 **자바1.8에서 도입된 Optional을 사용**해도 된다.
+```java
+public class MemberPrinter {
+	private DateTimeFormatter dateTimeFormatter;
+	
+	public void print(Member member) {
+		... 생략 
+	}
+	
+	@Autowired
+	public void setDateFormatter(Optional<DateTimeFormatter> formatterOpt) {
+		if (formatterOpt.isPresent()) {
+			this.dateTimeFormatter = formatterOpt.get();
+		} else {
+			this.dateTimeFormatter = null;
+		}
+	}
+}
+```
+- 자동 주입 대상 타입이 Optional인 경우, 일치하는 빈이 존재하지 않으면 값이 없는 Optional을 인자로 전달하고(익셉션이 발생하지 않는다). 일치하는 빈이 존재하면 해당 빈을 값으로 갖는 Optional을 인자로 전달한다. Optional을 사용하는 코드는 값 존재 여부에 따라 알맞게 의존 객체를 사용하면 된다. 위 코드는 Optional#isPresent() 메서드가 true이면 값이 존재하므로 해당 값을 dateTImeFormatter 필드에 할당한다. 즉, DateTimeFormatter 타입 빈을 주입 받아 dateTimeFormatter 필드에 할당한다. 값이 존재하지 않으면 주입 받은 빈 객체가 없으므로 dateTimeFormatter 필드에 null을 할당한다.
+
+- 필수 여부를 지정하는 세번째 방법은 **@Nullable 애노테이션**을 사용하는 것이다.
+```java
+import org.springframework.lang.Nullable;
+
+public class MemberPrinter {
+	private DateTimeFormatter dateTimeFormatter;
+	
+	public void print(Member member) {
+		... 생략 
+	}
+	
+	@Autowired
+	public void setDateFormatter(@Nullable DateTimeFormatter dateTimeFormatter) {
+		this.dateTimeFormatter = dateTimeFormatter;
+	}
+}
+```
+- @Autowired 애노테이션을 붙인 세터 메서드에서 @Nullable 애노테이션을 의존 주입 대상 매개변수에 붙이면, 스프링 컨테이너는 세터 메서드를 호출할 때 자동 주입할 빈이 존재하면 해당 빈을 인자로 전달하고, 존재하지 않으면 인자로 null을 전달한다.
+- @Autowired 애노테이션의 required 속성을 false로 할 때와 차이점은 @Nullable애노테이션을 사용하면 자동 주입할 빈이 존재하지 않아도 메서드가 호출된다는 점이다. 
+- @Autowired 애노테이션의 경우 required 속성이 false인데 대상 빈이 존재하지 않으면 세터 메서드를 호출하지 않는다.<br><br>
+
+앞서 설명한 세 가지 방식은 필드에도 그대로 적용된다. 필드에 @Autowired,. 애노테이션을 사용했다면 required 속성을 false로 지정하거나 Optional을 사용하거나 @Nullable 애노테이션을 사용해서 필수 여부를 지정할 수 있다.
+- required 속성을 false로 지정한 예
+```java 
+public class MemberPrinter {
+	@Autowired(required=false)
+	private DateTimeFormatter dateTimeFormatter;
+	
+	public void print(Member member) {
+		... 생략
+	}
+} 
+```
+- 필드 타입으로 Optional을 사용한 예
+```java
+public class MemberPrinter {
+	@Autowired
+	private Optional<DateTimeFormatter> formatterOpt;
+	
+	public void print(Member member) {
+		DateTimeFormatter dateTimeFormatter = formatterOpt.orElse(null);
+		if (dateTImeFormatter == null) {
+			... 생략
+		} else {
+			... 생략 
+		}
+	}
+}
+```
+- @Nullable 애노테이션 사용 예
+```java
+public class MemberPrinter {
+	@Autowired
+	@Nullable
+	private DateTimeFormatter dateTimeFormatter;
+	
+	public void print(Member member) {
+		... 생략
+	}
+}
+```
+
+### 생성자 초기화 필수 여부 지정 방식 동작 이해
+#### src/main/java/spring/MemberPrinter.java
+```java
+package spring;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.format.*;
+
+public class MemberPrinter {
+	private DateTimeFormatter dateTimeFormatter;
+	
+	public MemberPrinter() {
+		dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
+	}
+	
+	public void print(Member member) {
+		if (dateTimeFormatter == null) {
+			System.out.printf(
+					"회원정보: 아이디=%d, 이메일=%s, 이름=%s, 등록일=%tF\n",
+					member.getId(), member.getEmail(),
+					member.getName(), member.getRegisterDateTime());
+		} else {
+			System.out.printf(
+					"회원정보: 아이디=%d, 이메일=%s, 이름=%s, 등록일=%s\n",
+					member.getId(), member.getEmail(),
+					member.getName(),
+					dateTimeFormatter.format(member.getRegisterDateTime()));
+		}
+	}
+	
+	@Autowired(required = false)
+	public void setDateFormatter(DateTimeFormatter dateTimeFormatter) {
+		this.dateTimeFormatter = dateTimeFormatter;
+	}
+}
+```
+- MainForSpring 실행 결과
+```
+명령어를 입력하세요:
+new yonggyo00@kakao.com 이용교 1234 1234
+등록했습니다.
+
+명령어를 입력하세요:
+info yonggyo00@kakao.com
+회원정보: 아이디=1, 이메일=yonggyo00@kakao.com, 이름=이용교, 등록일=2022년 06월 11일
+
+명령어를 입력하세요:
+```
+- 이 코드는 기본 생성자에서 dateTimeFormatter 필드의 값을 초기화 한다. 또한 @Autowired 애노테이션의 required 속성은 false로 지정했다.
+- DateTimeFormatter 타입의 빈이 존재하지 않은 상태에서 MainForSpring을 실행한 뒤 info 명령어로 회원 정보를 출력해보면 기본 생성자에서 초기화한 DateTimeFormatter를 사용해서 회원의 가입 일자를 출력하는 것을 확인할 수 있다.
+- 이 실행 결과를 통해 @Autowired 애노테이션의 required 속성이 false이면 일치하는 빈이 존재하지 않을 때 자동 주입대상이 되는 필드나 메서드에 null을 전달하지 않는다는 것을 알 수 있다. 만약 일치하는 빈이 존재하지 않을 때 setDateFormatter() 메서드에 null을 인자로 주어 호출한다면 기본 생성자에서 초기화한 DateTimeFormatter의 형식으로 출력하지 않을 것이다.<br><br>
+- @Autowired(required = false) 대신에 @Nullable을 사용하도록 바꿔보자
+#### src/main/java/spring/MemberPrinter.java
+```
+public class MemberPrinter {
+	private DateTimeFormatter dateTimeFormatter;
+	
+	public MemberPrinter() {
+		//dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
+	}
+	
+	public void print(Member member) {
+		... 생략
+	}
+	
+	@Autowired(required = false)
+	public void setDateFormatter(@Nullable DateTimeFormatter dateTimeFormatter) {
+		this.dateTimeFormatter = dateTimeFormatter;
+	}
+}
+```
+- MainForSpring 실행 결과
+```java
+명령어를 입력하세요:
+new yonggyo00@kakao.com 이용교 1234 1234
+등록했습니다.
+
+명령어를 입력하세요:
+info yonggyo00@kakao.com
+회원정보: 아이디=1, 이메일=yonggyo00@kakao.com, 이름=이용교, 등록일=2022-06-11
+```
+- @Nullable 애노테이션을 사용할 경우 스프링 컨테이너는 의존 주입 대상이 존재하지 않으면 null을 값으로 전달한다.
+- 위 예의 경우 setDateFormatter() 메서드에 null을 전달한다. 스프링 컨테이너는 빈을 초기화하기 위해 기본 생성자를 이용해서 객체를 생성하고 의존 자동 주입을 처리하기 위해 setDateFormatter() 메서드를 호출한다.
 
 * * *
 # 컴포넌트 스캔
