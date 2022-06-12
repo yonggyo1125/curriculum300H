@@ -21,7 +21,11 @@
 # 자바스크립트 기초 문법 
 
 ## 자바스크립트 사용하는 방법
-- <script></script>
-
+- <script></script> 태그 안쪽에 소스코드를 넣어서 사용하는 방법
+```javascript
+<script>
+  alert("안녕하세요.");
+</script>
+```
 ## 자바스크립트 주석 처리 
 	
