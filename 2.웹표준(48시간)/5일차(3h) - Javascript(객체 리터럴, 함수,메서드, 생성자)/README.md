@@ -95,6 +95,7 @@ person.getLoginInfo();
 - 생성된 객체는 메모리의 영역을 차지하는 한 덩어리가 됩니다. 
 - 객체 타입의 값을 변수에 대입하면 그 변수에는 객체의 참조(메모리에서의 위치 정보)가 저장됩니다. 
 
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20Javascript(%EA%B0%9D%EC%B2%B4%20%EB%A6%AC%ED%84%B0%EB%9F%B4%2C%20%ED%95%A8%EC%88%98%2C%EB%A9%94%EC%84%9C%EB%93%9C%2C%20%EC%83%9D%EC%84%B1%EC%9E%90)/images/image1.png)
 
 - 변수에 저장된 객체의 참조는 다른 원시값과 마찬가지로 다른 변수에 저장할 수 있음
 ```javascript
@@ -103,6 +104,8 @@ console.log(a.suit); // -> 하트
 a.suit = "스페이드";
 console.log(a.suit); // -> 스페이드
 console.log(card.suit); // 스페이드
+
+![image2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20Javascript(%EA%B0%9D%EC%B2%B4%20%EB%A6%AC%ED%84%B0%EB%9F%B4%2C%20%ED%95%A8%EC%88%98%2C%EB%A9%94%EC%84%9C%EB%93%9C%2C%20%EC%83%9D%EC%84%B1%EC%9E%90)/images/image2.png)
 ```
 
 
