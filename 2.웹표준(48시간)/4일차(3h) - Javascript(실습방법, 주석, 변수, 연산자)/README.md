@@ -319,6 +319,7 @@ switch (변수) {
 - 값1로 매칭이 되면 코드1, 코드2가 실행이 됩니다.
 
 ## 반복문
+
 ### while 문
 ```javascript
 while (조건식) {
@@ -373,3 +374,107 @@ for(초기값; 조건식; 증감식) {
 	}
 }
 ```
+* * * 
+# ECMAScript 6 부터 추가된 데이터 타입
+## 심벌
+심벌은 ECMAScript6 부터 추가된 원시 값입니다. 심벌은 자기 자신을 제외한 그 어떤 값과도 다른 유일무의한 값입니다.
+
+### 심벌의 생성
+심벌은 Symbol()을 사용해서 생성합니다.
+```javascript
+var sym1 = Symbol();
+```
+Symbol()은 호출할 때마다 새로운 값을 만듭니다. 이를 확인하기 위해 또 다른 심벌을 생성해 보겠습니다.
+```javascript
+var sym2 = Symbol();
+```
+다음처럼 sym1 값과 sym2 값이 다르다는 사실을 확인할 수 있습니다.
+```javascript
+console.log(sym1 == sym2); // false
+```
+또한 Symbol()에 인수를 전달하면 생성된 심벌의 설명을 덧붙일 수 있습니다.
+```javascript
+var HEART = Symbol("하트");
+``` 
+심벌의 설명은 toString() 메서드를 사용해서도 확인할 수 있습니다.
+```javascript
+console.log(HEART.toString()); // Symbol(하트)
+```
+예를 들어 오셀로 케임을 만들 때 칸의 상태를 값으로 표현하는 코드를 작성한다고 가정해 보면 다음과 같이 칸의 상태를 숫자와 같은 값으로 표현할 수 있습니다.
+```javascript
+var NONE = 0; 
+var BLACK = -1;
+var WHITE = 1;
+```
+
+이 코드에서 숫자 자체의 특별한 의미가 없습니다. 칸의 상태를 cell 변수에 저장한다고 가정했을 때, cell 값을 확인하려면 cell == WHITE라고 작성해야 프로그램이 읽기 쉬워질 것입니다. 게다다 cell == 1이라고 작성해도 아무런 문제없이 동작합니다. 그러나 이러한 행위는 프로그램을 읽기 어렵게 만들므로 바람직하지 않습니다. **심벌을 활용하면 앞의 코드를 다음처럼 고칠 수 있습니다.**
+```javascript
+var NON = Symbol("none");
+var BLACK = Symbol("black");
+var WHITE = Symbol("white");
+```
+**심벌은 유일무이한 값입니다.** 따라서 이렇게 수정하면 변수 cell 값을 확인할 때 NONE, BLACK, WHITE만 사용하도록 제한할 수 있습니다.
+
+### 심벌과 문자열 연결하기
+Symbol.for()를 활용하면 문자열과 연결된 심벌을 생성할 수 있습니다.
+```javascript
+var sym1 = Symbol.for("club");
+```
+그러면 전역 레지스트리에 심벌이 만들어집니다. 또한 전역 레지스트리에서 그 심벌을 위에 지정한 문자열로 불러올 수 있습니다.
+```javascript
+var sym2 = Symbol.for("club");
+console.log(sym1 == sym2); // true
+```
+이 기능을 활용하면 코드의 어느 부분에서도 같은 심벌을 공유할 수 있습니다. 심벌과 연결된 문자열은 Symbol.keyFor()로 구현할 수 있습니다.
+```javascript
+var sym1 = Symbol.for("club");
+var sym2 = Symbol("club");
+console.log(Symbol.keyFor(sym1)); // club
+console.log(Symbol.keyFor(sym2)); // undefined
+```
+
+## 템플릿 리터럴
+- 템플릿 리터럴은 ECMAScript6 부터 추가된 문자열 표현 구문입니다. 
+- 템플릿이란 이부만 변경해서 반복하거나 재사용할 수 있는 틀을 말합니다. 템플릿 리터럴을 사용하면 표현식의 값을 문자열에 추가하거나 여러 줄의 문자열을 표현할 수 있습니다. 
+
+### 기본적인 사용법
+템플릿 리터럴은 역따옴표(\`)로 묶은 문자열입니다. 간단한 템플릿 리터럴은 큰 따옴표 또는 작은 따옴표로 묶은 문자열과 모습이 같습니다.
+```javascript
+`I'm going to learn Javascript.`
+```
+문자열 리터럴에서 줄 바꿈 문자를 표현할 때는 이스케이프 시퀀스(\n)를 사용했지만, 템플릿 리터를을 사용하면 일반적인 줄 바꿈 문자를 사용할 수 있습니다.
+```javascript
+var t =`Main errs as long as 
+he strives.`;
+```
+이 문자열을 문자열 리터럴로 표현하면 다음과 같은 모습이 됩니다.
+```javascript
+var t ="Main errs as long as\nhe strives.";
+```
+물론 템플릿 리터럴에서도 이스케이스 시퀀스를 사용할 수 있습니다.
+```javascript
+var t =`Main errs as long as\nhe strives.`;
+```
+이스케이프 시퀀스 문자를 그대로 출력하려면 템플릿 리터럴 앞에 String.raw를 붙입니다.
+```javascript
+var t =String.raw`Main errs as long as\nhe strives.`;
+```
+이 문자열을 문자열 리터럴로 표현하면 다음과 같은 모습이 됩니다.
+```javascript
+var t ="Main errs as long as\\nhe strives.";
+```
+> 템플릿 리터럴 앞에 붙은 String.raw는 태그 함수라고 부릅니다.
+
+### 보간 표현식
+- 템플릿 리터럴 안에는 플레이스 홀더를 넣을 수 있습니다. 플레이스 홀더는 ${...}로 표기합니다.
+- 자바스크립트 엔진은 플레이스 홀더 안에 든 ... 부분을 표현식으로 간주하여 평가(evaluation)합니다. 이를 활용하여 문자열 안에 변수나 표현식의 결과값을 삽입할 수 있습니다.
+```javascript
+var a = 2, b = 3;
+console.log(`${a} + ${b} = ${a+b}`);
+var now = new Date();
+console.log(`오늘은 ${now.getMonth() + 1}월 ${now.getDate()}일 입니다.`);
+```
+- 모든 코드에서 ${} 안에 든 표현식이 평가되어 문자열로 바뀌었다는 사실을 확인할 수 있습니다.
+- ECMAScript5 까지는 문자열에 변수 값을 삽입할 때 더하기(+) 연산자로 문자열을 연결하는 방법을 사용했지만 보간 표현식을 활용하면 좀 더 알아보기 쉽게 작성할 수 있습니다.
+
+>**플레스이 홀더**<br>플레이스 홀더는 실제 내용물을 나중에 삽입할 수 있도록 확보한 장소라는 뜻으로 쓰입니다. 프로그래밍 언어에서 플레이스 홀더는 사용자의 입력 값처럼 실행 시점에 외부에서 주어지는 값을 표현식에 반영하고자 할 때 그것이 들어갈 수 있도록 마련한 장소를 뜻합니다.
