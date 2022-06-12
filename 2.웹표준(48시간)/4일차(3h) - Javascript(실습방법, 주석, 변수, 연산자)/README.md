@@ -27,5 +27,13 @@
   alert("안녕하세요.");
 </script>
 ```
+- <script> 태그에 src 속성에 외부 javascript를 불러와서 사용하는 방법
+```javascript
+<script src="js/script.js"></script>
+```
+- HTML 요소의 이벤트 속성에 정의 하는 방법(**권장 하지 않음**)
+```
+<div onclick=\"alert('안녕하세요');\">인사</div>
+```
 ## 자바스크립트 주석 처리 
 	
