@@ -110,7 +110,95 @@ console.log(card.suit); // 스페이드
 
 
 * * *
-# 함수, 메서드
+# 함수
+- 일련의 처리를 하나로 모아 언제든 호출할 수 있도록 만들어 놓은것
+- 수학 함수와 비슷
+- 함수의 입력 값을 인수, 함수의 출력 값을 반환값
+```javascript 
+function 함수명 (매개변수) {   
+	처리 로직 
+ 
+   return 출력 반환값
+}
+```
+## 함수 선언문으로 함수 정의하기
+- 함수는 function 키워드를 사용해서 정의
+```javascript
+function square(x) {    
+	var result = x * x; 
+	
+	return result; 
+}  
+``` 
+- square - 함수 이름
+- x - 매개변수
+- var result = x \* x - 처리 로직 
+- return result - 처리 후 반환값 
+- 참조) 함수명 캐멀 표기법
+
+## 함수 호출
+함수를 호출하려면 함수 이름 뒤에 소괄호 인수를 묶어 입력
+```javascript
+square(3); // 9
+```
+## 매개변수
+
+함수는 매개변수를 여러 개 받을 수 있음
+- 매개변수가 여러 개라면 매개변수와 매개변수를 쉼표(,)로 구분
+```javascript
+function add(a, b) {   
+	var c = a + b;
+	return c;
+}
+```
+- 인수를 받지 않는 함수도 정의할 수 있음
+```javascript
+function bark() {    
+	console.log(”멍멍”); 
+};
+
+bark(); // 멍멍 
+console.log(bark()); // undefined - 반환값이 없으므로
+```
+
+## 함수의 실행흐름
+- 호출된 코드에 있는 인수가 함수 정의문에 대입된다. 
+- 함수 정의문의 중괄호 안에 작성된 플그램이 순차적으로 실행된다.
+- return 문이 실행되면 호출된 코드로 돌아간다. return 문의 값은 함수의 반환값이 된다.
+- return 문이 실행되지 않은 상태로 마지막 문장이 실행되면, 호출한 코드로 돌아간 후에 
+- undefined가 함수의 반환값이 된다.
+
+## 함수 선언문의 끌어올림
+- 자바스크립트 엔진은 변수 선언문과 마찬가지로 함수 선언문을 프로그램의 첫머리로 끌어올림
+- 따라서 함수 선언문은 프로그램 어떤 위치에서도 작성할 수 있다.
+
+```javascript
+console.log(square(5)); // 25 
+function square(x) {  return x * x; }
+```
+
+## 값으로서의 함수
+- 자바스크립트에서는 함수가 객체입니다. 
+- 함수를 선언하면 내부적으로는 그 함수 이름을 변수 이름으로 한 변수와 함수 객체가 만들어지고, 그 변수에 함수 객체의 참조가 저장됩니다.
+- 이 변수 값을 다른 변수에 할당하면 그 변수 이름으로 함수를 실행할 수 있습니다.
+```javascript
+var sq = square;
+console.log(sq(5)); // 25 
+```
+- 함수를 다른 함수의 인수로 넘길 수도 있습니다.
+```javascript
+function callback(scrollTop) {
+    console.log(`이벤트 콜백 부분 - 인수${scrollTop}`);
+
+    return scrollTop;
+}
+
+function goTop(callback) {
+   var scrollTop = window.pageYOffset;
+   
+   return callback(scrollTop);
+}
+```
 
 * * * 
 # 생성자
