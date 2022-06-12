@@ -1,7 +1,54 @@
 # 내장 객체
-## 내장 생성자
+자바스크립트에는 처음부터 사용할 수 있는 내장 객체(빌트인 오브젝트)가 마련되어 있습니다. 내장 객체는 자바스크립트라는 프로그래밍 언어의 뼈대를 구성합니다.
 
-## Date 생성자
+## 내장 생성자
+- 자바스크립트에서 사용할 수 있는 생성자에는 사용자가 정의하는 생성자 외에도 자바스크립트에 처음부터 포함된 **내장 생성자**가 있습니다.
+- ECMAScript5에서 사용할 수 있는 주요 내장 생성자는 다음과 같습니다. 이 생성자는 모든 자바스크립트 실행 환경에서 사용할 수 있습니다. 내장 생성자에는 이미 유용한 프로퍼티와 메서드가 마련되어 있으므로 내장 생성자를 이용하여 객체를 생성하면 다양한 작업을 쉽게 처리할 수 있습니다.
+
+#### ES5의 내장 생성자
+
+|생성자 이름|생성되는 객체|학습 URL|
+|----|-------|----|
+|Object|일반 객체|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Object)|
+|String|문자열 객체|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/String)|
+|Number|숫자 객체|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Number)|
+|Boolean|논리값 객체|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Boolean)|
+|Array|배열|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array)|
+|Date|날짜와 시간을 다루는 객체|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Date)|
+|Function|함수 객체|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Function)|
+|RegExp|정규표현식 객체|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/RegExp)|
+|Error|오류 객체|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Error)|
+|EvalError|eval() 함수와 관련된 오류를 표현하는 객체|
+|InternalError|자바스크립트 내부에서 발생한 오류를 표현하는 객체||
+|RangeError|값이 허용 범위를 넘었을 때 발생하는 오류를 표현하는 객체||
+|SyntaxError|문법에 어긋날 때 발생한 오류를 표현하는 객체||
+|TypeError|값이 기대한 타입이 아닐 때 발생한 오류를 표현하는 객체||
+|URIError|잘못된 URI를 만났을 때 발생한 오류를 표현하는 객체||
+
+#### ES6부터 추가된 주요 내장 생성자
+
+|생성자 이름|생성되는 객체|학습 URL|
+|----|-------|----|
+|Symbol|심벌을 생성|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Symbol)|
+|Int8Array8|부호가 있는 8비트 정수 배열을 생성||
+|Uint8Array8|부호가 없는 8비트 정수 배열을 생성||
+|Int16Array16|부호가 있는 16비트 정수 배열을 생성||
+|Uint16Array16|부호가 없는 16비트 정수 배열을 생성||
+|Int32Array32|부호가 있는 32비트 정수 배열을 생성||
+|Uint32Array32|부호가 없는 32비트 정수 배열을 생성||
+|Float32Array32|32비트 부동 소수점 배열을 생성||
+|Float64Array64|64비트 부동 소수점 배열을 생성||
+|ArrayBuffer|고정 길이 이진 데이터 버퍼를 생성|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer)|
+|DataView|ArrayBuffer를 읽고 쓸 수 있는 수단을 제공|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/DataView)|
+|Promise|처리 지연 및 비동기 처리를 관리하는 수단을 제공|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Promise)|
+|Generator|제너레이터 함수를 다룰 수 있는 수단을 제공||
+|GeneratorFunction|제너레이터 함수를 생성||
+|Proxy|객체의 기본적인 동작을 제정의하는 기능을 제공||
+|Map|key/value 맵을 생성|[학습 URL](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)|
+|Set|중복을 허용하지 않는 데이터 집합을 생성|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Set)|
+|WeakMap|약한 참조를 유지하는 key/value 맵을 생성|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/WeakMap)|
+|WeekSet|약한 참조를 유지하는 고유한 데이터 집합을 생성|[학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/WeakSet)|
+
 
 
 ## Function 생성자
