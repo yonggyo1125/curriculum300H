@@ -104,10 +104,9 @@ console.log(a.suit); // -> 하트
 a.suit = "스페이드";
 console.log(a.suit); // -> 스페이드
 console.log(card.suit); // 스페이드
-
-![image2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20Javascript(%EA%B0%9D%EC%B2%B4%20%EB%A6%AC%ED%84%B0%EB%9F%B4%2C%20%ED%95%A8%EC%88%98%2C%EB%A9%94%EC%84%9C%EB%93%9C%2C%20%EC%83%9D%EC%84%B1%EC%9E%90)/images/image2.png)
 ```
 
+![image2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20Javascript(%EA%B0%9D%EC%B2%B4%20%EB%A6%AC%ED%84%B0%EB%9F%B4%2C%20%ED%95%A8%EC%88%98%2C%EB%A9%94%EC%84%9C%EB%93%9C%2C%20%EC%83%9D%EC%84%B1%EC%9E%90)/images/image2.png)
 
 * * *
 # 함수
@@ -115,7 +114,7 @@ console.log(card.suit); // 스페이드
 - 수학 함수와 비슷
 - 함수의 입력 값을 인수, 함수의 출력 값을 반환값
 ```javascript 
-function 함수명 (매개변수) {   
+function 함수명 (인수) {   
 	처리 로직 
  
    return 출력 반환값
@@ -131,7 +130,7 @@ function square(x) {
 }  
 ``` 
 - square - 함수 이름
-- x - 매개변수
+- x - 인수
 - var result = x \* x - 처리 로직 
 - return result - 처리 후 반환값 
 - 참조) 함수명 캐멀 표기법
@@ -141,10 +140,10 @@ function square(x) {
 ```javascript
 square(3); // 9
 ```
-## 매개변수
+## 인수
 
-함수는 매개변수를 여러 개 받을 수 있음
-- 매개변수가 여러 개라면 매개변수와 매개변수를 쉼표(,)로 구분
+함수는 인수를 여러 개 받을 수 있음
+- 인수가 여러 개라면 인수와 인수를 쉼표(,)로 구분
 ```javascript
 function add(a, b) {   
 	var c = a + b;
@@ -180,6 +179,9 @@ function square(x) {  return x * x; }
 ## 값으로서의 함수
 - 자바스크립트에서는 함수가 객체입니다. 
 - 함수를 선언하면 내부적으로는 그 함수 이름을 변수 이름으로 한 변수와 함수 객체가 만들어지고, 그 변수에 함수 객체의 참조가 저장됩니다.
+
+![image3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20Javascript(%EA%B0%9D%EC%B2%B4%20%EB%A6%AC%ED%84%B0%EB%9F%B4%2C%20%ED%95%A8%EC%88%98%2C%EB%A9%94%EC%84%9C%EB%93%9C%2C%20%EC%83%9D%EC%84%B1%EC%9E%90)/images/image3.png)
+
 - 이 변수 값을 다른 변수에 할당하면 그 변수 이름으로 함수를 실행할 수 있습니다.
 ```javascript
 var sq = square;
@@ -199,7 +201,212 @@ function goTop(callback) {
    return callback(scrollTop);
 }
 ```
+## 참조에 의한 호출과 값에 의한 호출 
+- 원시값을 함수에 인수로 넘겼을때는 대입되어 복사가 됩니다.
+- 객체 값을 인수로 넘겼을때 객체의 참조가 대입되어 복사 됩니다.
 
+- 즉 객체의 값을 인수로 넘기게 되면 인자와 인수가 동일하게 변경이 됩니다
+(동일한 데이터의 주소를 참조하므로)
+
+- 원시값은 값 자체가 복사가 되므로 인자와 인수가 각각 유지가 됩니다.
+
+
+## 변수의 유효범위 
+### 전역 유효 범위와 지역 유효범위
+전역변수
+- 함수 바깥에서 선언된 변수
+- 유효 범위는 전체 프로그램
+
+지역변수
+- 함수 안에서 선언된 변수
+- 함수 인자 
+- 유효범위는 변수가 선언된 함수 내부
+
+![image4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20Javascript(%EA%B0%9D%EC%B2%B4%20%EB%A6%AC%ED%84%B0%EB%9F%B4%2C%20%ED%95%A8%EC%88%98%2C%EB%A9%94%EC%84%9C%EB%93%9C%2C%20%EC%83%9D%EC%84%B1%EC%9E%90)/images/image4.png)
+
+### 변수의 충돌
+- 변수에 유효 범위가 있는 이유는 프로그램의 다른 부분에서 선언된 이름이 같은 변수와 충돌하지 않도록 하기 위해서입니다.
+- 다른 함수 내부에서 선언된 각각의 지역변수는 모두 선언된 함수 내부에서만 유효하므로 이름이 같아도 충돌하지 않습니다.
+- 함수 안에서 변수 이름을 지을 때는 다른 함수 안에서 사용하는 변수 이름까지 신경쓸  필요 없음
+- 전역변수와 지역변수 이름이 같아지면 전역변수를 숨기고 지역변수를 사용
+
+```javascript
+var a = "global";
+function f() {   
+	var a = "local";
+	console.log(a); // -> local
+	return a;
+}
+f();
+console.log(a); // -> global
+```
+
+### 함수 안에서 변수 선언과 변수 끌어올림
+- 함수 안에서 선언된 지역변수의 유효범위는 함수 전체입니다.
+- 함수 중간 부분에서 변수를 선언하더라도 변수는 함수의 첫머리로 끌어올립니다.
+```javascript
+function f() {
+	console.log(a); // undefined -> 끌어올리지 않는다면 Reference Error 발생
+	var a = "local";
+	console.log(a); // -> local 
+	return a;
+} 
+```
+
+### 함수 안에서 변수 선언 생략
+- 변수를 선언하지 않은 상태에서 값을 대입하면 전역변수로 선언됨
+- 지역변수로써만 정의하는 경우는 반드시 변수 선언을 해야 함 
+```javascript
+예) var a = "local"; 
+```
+```javascript
+function f() {    
+	a = "local";
+	console.log(a); // -> local
+    return a; 
+}
+
+f();
+console.log(a);// local
+```
+
+## 블록 유효 범위 : let과 const
+### let 선언자
+let 문은 블록 유효 범위를 갖는 지역변수를 선언합니다. 사용법은 var문과 같다.
+```javascript    
+    let x = "outer x";
+    {
+      let x = "inner x";
+      let y = "inner y";
+      console.log(x); // -> inner x
+      console.log(y); // inner y
+    }
+    console.log(x); // -> outer x
+    console.log(y); // -> ReferenceError : y is not defined
+```
+
+### const 선언자
+- const 문은 블록 유효 범위를 가지면서 한 번만 할당할 수 있는 변수(상수)를 선언한다.
+- const로 선언한 상수는 let 문으로 선언한 변수처럼 동작한다.
+- 단, 반드시 초기화해야 한다는 차이점이 있다.
+```javascript
+const c = 2; 
+```
+- const 문으로 선언한 변수에 다시 대입을 시도하면 타입 오류가 발생
+```javascript
+c = 5; // -> uncaught TypeError
+```
+- const 문으로 선언한 상수 값은 수정할 수 없지만, 상수값이 객체이거나 배열일 경우 프로퍼티 또는 프로퍼티 값을 수정할 수 있다.
+```javascript
+const origin = {x:1, y:2};
+origin.x = 3;
+console.log(origin); // -> Object {x:3, y:2}
+```
+
+## 함수 리터럴로 함수 정의하기
+- 함수는 리터럴로도 정의할 수 있다
+```javascript
+var square = function(x) { 
+	return x * x; 
+};
+```
+- function(x) { ... } 부분이 함수 리터럴
+- 함수 리터럴은 이름이 없느 함수 이므로 익명함수 또는 무명함수라고 한다
+- 함수 선언문에서는 끝에 세미콜론(;)을 붙일 필요가 없으나 함수 리터럴을 사용할땐 끝에 세미콜론(;)을 붙여야 한다
+- 함수 리터럴로 정의한 함수는 끌어올리지 않는다
+```javascript
+console.log(square(3)); // -> TypeError : square is not a function
+var square = function(x) { return x * x; }
+```
+- 익명함수에도 이름을 붙일 수 있다
+```javascript
+var square = function sq(x) { return x * x; };
+```
+sq라는 함수 이름은 함수 안에서만 유효하며 함수 바깥에서는 sq라는 이름으로 함수를 호출할 수 없다.
+
+## 객체의 메서드 
+- 객체의 프로퍼티 중에서 함수 객체의 참조를 값으로 담고 있는 프로퍼티를 메서드라 한다
+- 메서드를 정의할 때는 프로퍼티 값으로 함수 리터럴을 대입합니다.
+```javascript  
+  var circle = {
+    center : { x : 1.0, y: 2.0 },  // 원의 중점을 표현하는 객체
+    radius : 2.5,  // 원의 반지름
+    area : function() {   // 원의 넓이를 구하는 메서드
+	return Math.PI * this.radius * this.radius;
+    }
+  };
+```  
+- 함수 객체 안에 적힌 this는 그 함수를 메서드로 가지고 있는 객체를 가리킨다<br>
+   (즉, circle,  this.radius -> circle.radius)   
+- 메서드 호출
+```javascript
+   circle.area(); 
+```
+
+- 메서드 또한 프로퍼티의 일종이므로 나중에 추가 할 수 있다
+```javascript
+   circle.translate = function(a, b) {
+      this.center.x = this.center.x + a;
+      this.center.y = this.center.y + b; 
+   };
+   
+ circle.translate(1,2);
+ circle.center; // Object { x = 2, y = 4 }
+```
+
+## 즉시 실행 함수 
+- 자바스크립트에는 익명 함수를 정의하고 곧바로 실행하는 '즉시 실행 함수'라는 구분이 있음
+```javascript
+(function() { .. })();
+```
+- 즉시 실행 함수에도 인수를 넘길 수 있음
+```javascript
+(function (a, b) {  
+ return a + b;
+})(1,2);
+```
+
+- 반환값 역시 받을 수 있음
+```javascript
+var x = (function(a,b) { 
+  return a + b;
+})(a,b);
+```
+## 가변길이 인수 목록(Arguments 객체)
+- 모든 함수에 있는 지역변수로 arguments로 접근
+- 유사 배열 객체 이며 다음과 같이 접근 가능
+```javascript
+  arguments[0]; // 첫 번째 인수 값
+  arguments[1]; // 두번째 인수 값
+  ... 
+  arguments[n-1] : // n번째 인수 값
+```
+- arguments.length : 인수 개수
+- arguments.callee : 현재 실행되고 있는 함수의 참조
+
+```javascript
+function f(x, y) {  
+	arguments[1] = 3;  
+	console.log(”x = “ + x + “, y = “ + y);
+}
+
+f(1,2); // -> x = 1, y = 3;
+```
+
+- 가변 변수로 인수로 지정하는 방법도 있음<br>
+  가변 변수는 ...변수명
+```javascript
+function abc(a, ...b) {
+ 
+}
+abc(1, 2,3,4,5);로 호출한다면 
+a는 1, b는 [2,3,4,5]
+```
+## 함수를 활용하면 얻을 수 있는 장점
+- 재사용할 수 있다
+- 만든 프로그램을 이해하기 쉽다
+- 프로그램 수정이 간단해진다 
+ 
 * * * 
 # 생성자
 
