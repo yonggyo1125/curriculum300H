@@ -179,7 +179,7 @@
 				<td>A = A + B</td>
 			</tr>
 			<tr>
-				<td>A \*= B</td>
+				<td>A *= B</td>
 				<td>A = A \* B</td>
 			<tr>
 			<tr>
