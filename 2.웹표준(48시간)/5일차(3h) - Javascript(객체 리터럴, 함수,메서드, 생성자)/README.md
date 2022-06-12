@@ -409,4 +409,124 @@ a는 1, b는 [2,3,4,5]
  
 * * * 
 # 생성자
+생성자를 사용하면 이름이 같은 메서드와 프로퍼티를 가진 객체를 여러개를 효율적으로 생성할수 있다
 
+## 생성자로 객체 생성하기
+자바스크립트에서는 생성자라고 하는 함수로 객체를 생성할 수 있다.
+```javascript
+function Card(suit, rank) {
+	this.suit = suit;
+    this.rank = rank;
+}
+
+var card = new Card("하트", "A");
+console.log(card); //-> Card { suit: "하트", rank : "A" }
+```
+### 생성자
+- new 연산자로 객체를 생성할 것이라 기대하고 만든 함수를 생성자라고 한다.
+- 생성자는 일반 함수와 구분할 수 있도록 관용적으로 첫 글자를 대문자로 쓴다(파스칼 표기법).
+- 생성자 안에서 this.프로퍼티 이름에 값을 대입하면 그 이름을 가진 프로퍼티에 값이 할당된 객체가 생성된다.       
+- 생성자와 new 연산자로 생성한 객체를 생성자의 인스턴스라고 부른다.
+- 앞의 예) var card = new Card("하트", "A"); 객체 리터럴로 고쳐 쓸 수 있다.
+```javascript
+var card = {};
+card.suit = "하트";
+card.rank = "A";
+```
+### 생성자의 역할
+- 생성자는 객체를 생성하고 초기화 하는 역할    
+- 생성자 이름은 같지만 프로퍼티 값이 다른 객체(인스턴스)를 생성할 수 있다.
+```javascript
+var card1 = new Card("하트", "A");
+var card2 = new Card("클럽", "K");
+var card3 = new Card("스페이드", "2");  
+```
+
+### 객체 리터럴과 생성자의 차이
+객체 리터럴은 생성자 함수가 이미 생성된 상태, 즉 객체가 변수에 대입된 상태이다. 따라서 new 연산자를 사용하여 객체를 여러개 생성할 수 없다.
+
+- **생성자 함수**
+	- 생성자 함수는 prototype 객체로 이뤄져 있고 구성요소로 constructor(생성자)와 __proto__(링커 – 상속받은 객체)로 구성되어 있다
+	 
+	- 생성자 함수는 생성자(constructor)가 있어 이를 new 연산자로 여러 변수에 대입하여 객체를 생성할 수 있다. 
+- **객체 리터럴 **
+	- 객체 리터럴은 이미 abc라는 변수에 {}라는 객체가 대입된 상태 이므로 내부적으로는 new 연산자로 생성된 상태이다. 따라서 prototype 객체는 존재 하지 않고 __proto__(링커)만 노출이 되며, 상속 관계(Object를 상속 받음)만 나타나게 된다. 
+	- 즉, 객체 리터럴은 prototype객체가 없고 contructor가 없으므로 new 연산자로 생성 할 수 없다.
+	- 생성자 함수도 new 연산자를 이용하여 생성된 인스턴스는 객체 리터럴과 동일한 상태
+	- 객체(인스턴스) a 역시 __proto__만 존재하며 객체 상속 관계만 나타냅니다.
+
+### 메서드를 가진 객체를 생성하는 생성자
+생성자에서 this.프로퍼티 이름에 함수의 참조를 대입하면 메서드를 정의할 수 있다.
+```javascript
+function Circle(center, radius) {
+	this.center = center;
+	this.radius = radius;
+	this.area = function() {
+		return Math.PI * this.radius * this.radius;
+	};  
+}
+
+var p = {x:0, y: 0};
+var c = new Circle(p, 2.0);
+console.log(“넓이 = ”+ c.area());
+```
+this는 생성된 객체(인스턴스)를 가리킨다.
+```
+function abc(a, b) {       
+	this.a = a;
+	this.b = b;    
+}
+    
+var obj1 = new abc(1,2); -> this는 obj1를 가리킴
+var obj2 = new abc(3,4); -> this는 obj2를 가리킴
+```
+## 프로토타입
+### 생성자 안에서 메서드를 정의하는 방식의 문제점
+생성자 안에서 this 뒤에 메서드를 정의하면 그 생성자로 생성한 모든 인스턴스에 똑같은 메서드가 추가됩니다. 따라서 메서드를 포함한 생성자로 인스턴스를 여러개 생성하면 같은 작업을 하는 인스턴스 개수만큼 생성하게 되며 결과적으로 그만큼의 메모리를 소비하게 된다.
+
+```javascript
+function Circle(center, radius) {
+	this.center = center;
+	this.radius = radius;
+	this.area = function() {
+		return Math.PI * this.radius * this.radius;
+	};
+}
+
+var c1 = new Circle({x:0, y: 0}, 2.0);
+var c2 = new Circle({x:0, y: 1}, 3.0);
+var c3 = new Circle({x:1, y: 0}, 1.0);
+
+console.log(c1.area === c2.area) // false  -> 생성된 생성자 내부에 있는 area메소드 이므로 서로 다르다(즉, 서로 다른 메모리에 있다)
+```
+
+![image5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20Javascript(%EA%B0%9D%EC%B2%B4%20%EB%A6%AC%ED%84%B0%EB%9F%B4%2C%20%ED%95%A8%EC%88%98%2C%EB%A9%94%EC%84%9C%EB%93%9C%2C%20%EC%83%9D%EC%84%B1%EC%9E%90)/images/image5.png)
+
+### 프로토타입 객체
+자바스크립트에서는 함수도 객체이므로 함수 객체가 기본적으로 prototype 프로퍼티를 갖고 있다.
+```javascript
+function F() {}; 
+console.log(F.prototype); // -> Object {}
+```
+- 함수의 prototype 프로퍼티가 가리키는 객체를 그 함수의 프로토타입 객체라고 한다
+- 프로토타입 객체의 프로퍼티는 생성자로 생성한 모든 인스턴스에서 그 인스턴스의 프로퍼티처럼 사용할 수 있다.
+- 인스턴스에 아무것도 정의 하지 않더라도(즉, 객체를 생성하지 않더라도) 처음부터 사용할 수 있는 것 
+- 1번만 생성자 Prototype 프로퍼티에 정의하면 인스턴스 생성시에 생성자 함수안에 포함 되지않더라도 계속 접근 및 사용이 가능 - 메모리 절약 가능
+```javascript
+function Circle(center, radius) {      
+	this.center = center;
+	this.radius = radius;
+} 
+// Circle 생성자의 prototype 프로퍼티에 area 메서드를 추가
+Circle.prototype.area = function() {      
+	return Math.PI * this.radius * this.radius;   
+};
+   
+var c1 = new Circle({x:0, y: 0}, 2.0);
+var c2 = new Circle({x:0, y: 1}, 3.0);
+var c3 = new Circle({x:1, y: 0}, 1.0);
+  
+console.log(c1.area === c2.area); // true  c1.area와 c2.area는 Circle.prototype.area를 서로 공유하므로 동일하다
+```
+
+![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20Javascript(%EA%B0%9D%EC%B2%B4%20%EB%A6%AC%ED%84%B0%EB%9F%B4%2C%20%ED%95%A8%EC%88%98%2C%EB%A9%94%EC%84%9C%EB%93%9C%2C%20%EC%83%9D%EC%84%B1%EC%9E%90)/images/image6.png)
