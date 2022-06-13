@@ -1,4 +1,8 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1-l5UKFrsZJ3miAIcECuN2rKNrfceZ0YF?usp=sharing)
+
 # 스트림(Stream)
+
 ## 스트림이란?
 - 데이터 소스가 무엇이든 간에 같은 방식으로 다룰 수 있게 데이터를 추상화 하고 데이터를 다루는데 자주 사용되는 메서드들을 정의해 놓음
 - 데이터 소스가 무엇이든 간에 같은 방식으로 다룰 수 있게 되면서 코드의 재사용성이 높아진다.
