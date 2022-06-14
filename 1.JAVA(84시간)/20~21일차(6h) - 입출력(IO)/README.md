@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1zCi3G6NNdGvqsE-c12CCa5dPpgHEOXPN?usp=sharing)
+
 # 입출력(I/O)
 
 ## 자바에서의 입출력
