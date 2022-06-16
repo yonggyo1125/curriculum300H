@@ -1,4 +1,5 @@
 # 네트워킹
+[동영상 링크](https://drive.google.com/drive/folders/1mskKi5CT-eAGfj-oDUjWre840m75PJjh?usp=sharing)
 
 ## InetAddress
 자바에서는 IP주소를 다루기 위한 클래스로 InetAddress를 제공하며 다음과 같은 메서드가 정의되어 있다.
