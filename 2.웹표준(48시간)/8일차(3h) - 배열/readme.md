@@ -196,13 +196,358 @@ a.hasOwnProperty("4");
 			<td>toString()</td>
 			<td>배열의 요소를 문자열로 변환한 뒤 쉼표로 연결해서 반환한다.</td>
 		</tr>
+		<tr>
+			<td rowspan='12'>반복<br>메서드</td>
+			<td>entries()</td>
+			<td>배열 요소의 인덱스와 값이 요소로 들어 있는 배열을 값으로 반환하는 이터레이터를 반환한다.</td>
+		</tr>
+		<tr>
+			<td>every(callback)</td>
+			<td>배열의 모든 요소가 callback 조건에 부합하는지 판정한다.</td>
+		</tr>
+		<tr>
+			<td>filter(callback)</td>
+			<td>callback조건에 부합하는 배열 요소만 담은 새로운 배열을 생성한다.</td>
+		</tr>
+		<tr>
+			<td>find(callback, [, thisArg])</td>
+			<td>callback 조건에 부합하는 첫 번째 배열 요소를 반환한다.</td>
+		</tr>
+		<tr>
+			<td>findIndex(callback, [, thisArg])</td>
+			<td>callback 조건에 부합하는 첫 번째 배열 요소의 인덱스를 반환한다.</td>
+		</tr>
+		<tr>
+			<td>forEach(callback [, thisArg])</td>
+			<td>배열의 요소를 callback을 사용하여 차례대로 처리한다.</td>
+		</tr>
+		<tr>
+			<td>keys()</td>
+			<td>배열 요소의 인덱스를 값으로 가지는 이터레이터를 반환한다.</td>
+		</tr>
+		<tr>
+			<td>map(callback [, thisArg])</td>
+			<td>배열의 요소를 callback으로 처리한 결과물을 배열로 반환한다.</td>
+		</tr>
+		<tr>
+			<td>reduce(callback [, inital])</td>
+			<td>이웃한 배열 요소를 배열의 오른쪽부터 차례대로 callback으로 처리하여 하나의 값으로 만들어 반환한다(initial은 초깃값).
+		</tr>
+		<tr>
+			<td>reduceRight(callback [, initial])</td>
+			<td>이웃한 배열 요소를 배열의 오른쪽부터 차례대로 callback으로 처리하여 하나의 값으로 만들어 반환한다(initial은 초기값).</td>
+		</tr>
+		<tr>
+			<td>some(callback [, thisArg])</td>
+			<td>배열 요소 단 하나라도 callback 조건에 부합하는지 판정한다.</td>
+		</tr>
+		<tr>
+			<td>values()</td>
+			<td>배열 요소의 데이터를 값으로 가지는 이터레이터를 반환한다.</td>
+		</tr>
 	</tbody>
 </table>
 
 
 ## 다차원 배열
+자바스크립트는 다차원 배열을 정의하기 위한 문법은 제공하지 않지만, 배열에 배열을 중첩하면 다차원 배열과 비슷한 기능을 구현할 수 있습니다.
 
+
+### 2차원 배열의 생성
+2차원 배열을 생성하는 방법은 다음과 같습니다.
+
+```javascript
+var x = new Array(3); // 우변을 배열 리터럴 []로 표기할 수도 있음 
+for(var i = 0; i < 3; i++) {
+	x[i] = new Array(3); // 우변을 배열 리터럴 []로 표기할 수도 있음
+}
+
+// 2차원 배열에 값을 대입
+for(var count = 1, i = 0; i < 3; i++) {
+	for(var j = 0; j < 3; j++) {
+		x[i][j] = count++;
+	}
+}
+```
+
+이 코드를 배열 리터럴을 사용해 다음과 같이 표현할 수 있습니다.
+```javascript
+var x = [
+	[1, 2, 3],
+	[4, 5, 6],
+	[7, 8, 9]
+];
+```
+2차원 배열의 요소를 읽고 쓸 때는 [] 연산자를 두 번 사용합니다. 행 번호가 i고 열 번호가 j인 요소는 x[i][j]로 표기합니다.
 
 ## 유사배열
+자바스크립트 프로그램에서는 배열은 아니지만 배열로 처리할 수 있는 객체를 다양한 상황에서 사용합니다.
+
+### 유사 배열 객체
+자바스크립트에서 배열이란 곧 Array 타입의 객체를 말합니다. Array 타입의 객체는 다음과 같은 장점이 있습니다.
+- 0 이상의 정수 값을 프로퍼티 이름으로 갖는다.
+- length 프로퍼티가 있으며, 요소를 추가하거나 삭제하면 length 프로퍼티 값이 바뀐다. 또한 length 프로퍼티 값을 줄이면 그에 따라 배열 크기가 줄어든다.
+- 프로토타입이 Array.prototype이므로 Array.prototype의 메서드를 상속받아서 사용할 수 있다. 또한 instanceof 연산자로 평가하면 Array 생성자 함수로 생성된 객체로 표시된다.
+
+그러나 이러한 성질 중에서 프로퍼티 이름이 0이상의 정수이며 length 프로퍼티가 있는 객체는 대부분 배열로 다룰 수 있습니다. 이러한 객체를 **유사 배열 객체**라고 합니다.<br><br>
+예를 들어 다음 객체가 유사 배열 객체입니다.
+- 함수의 인수를 저장한 Arguments 객체
+- DOM의 document.getElementsByTagName 메서드, document.getElementsByName 메서드 등이 반환하는 NodeList 객체
+
+유사 배열 객체는 다음과 같은 방법으로 직접 생성할 수 있습니다.
+```javascript
+// 유사 배열 객체를 생성해서 값을 대입한다.
+var a = {};
+for(var i = 0; i < 10; i++) {
+	a[i] = i;
+}
+a.length = 10;
+
+// 유사 배열 객체의 요소 합을 구한다
+for(var i = 0, sum = 0; i < a.length; i++) sum += a[i];
+console.log(sum);
+```
+유사 배열 객체는 Array.prototype의 메서드를 사용할 수 없습니다. 그러나 배열로 참조하거나 대입할 수 있으며 for 문이나 for/in 문으로 반복 처리를 할 수 있습니다. 따라서 많은 자바스크립트 프로그램에서 배열로 다룰 수 있습니다. <br>
+그러나 요소의 추가와 삭제 또는 length 프로퍼티값을 요소의 개수와 연계하는 등의 처리는 배열처럼 동작하지 않습니다.
+
+### Array.prototype의 메서드를 유사 배열 객체에서 사용하기
+유사 배열 객체는 Array.prototype의 메서드를 직접 사용할 수 없습니다. 그러나 Function.prototype.call 메서드로 간접 호출하면 사용할 수 있습니다.
+
+```javascript
+var a = {0:"A", 1: "B", 2: "C", length: 3};
+Array.prototype.join.call(a, ","); // -> "A,B,C"
+Array.prototype.push.call(a, "D");
+// -> Object {0: "A", 1: "B", 2: "C", 3 : "D", length : 4}
+Array.prototype.slice.call(a, 0); //  -> ["A", "B", "C", "D"] : 진짜 배열로 변환
+var a = {0: 1, 1: 2, 2: 3, length: 3};
+Array.prototype.map.call(a, function(c) { return v*v; }); // -> [1, 4, 9]
+```
+이처럼 Array.prototype의 메서드를 유사 배열 객체에 적용할 수는 있지만 concat 메서드를 제외한 나머지 배열 메서드는 배열처럼 동작하지 않습니다.
+```javascript
+var a = {0: "A", 1: "B", 2: "C", length: 3};
+Array.prototype.concat.call(a, ["D", "E"]);
+// -> [{0: "A", 1: "B", 2: "C", length : 3}, "D", "E"]
+```
 
 ## ECMAScript6+에 추가된 기능
+
+### 비구조화 할당
+비구조화 할당(Destructuring)은 배열, 객체, 반복 가능한 객체에서 값을 꺼내어 그 값을 별도의 변수에 대입하는 문장입니다.
+
+#### 배열의 비구조화 할당
+**기본적인 사용법**<br>
+```javascript
+var [a, b] = [1, 2];  // var a = 1, b = 2와 같음
+```
+- 이 문장을 실행하면 변수 a와 b를 선언한 후 우변의 배열에서 요소를 하나씩 꺼내어 인덱스 순서대로 a, b에 대입합니다. 우변의 배열을 분할하여 좌변의 변수에 할당하므로 분할 할당이라고도 합니다.
+- 우변이 배열일 때 좌변의 변수 쌍을 표현하는 문법은 배열 리터럴과 비슷합니다. 즉, 변수를 쉼표로 구분하고 대괄호로 묶습니다.<br><br>
+- **이미 선언된 변수를 비구조화 할당하는 예**
+```javascript
+[a, b] = [2*a, 3*b];  // a = 2*a, b = 3*b와 같음
+[a, b] = [b, a] = // a 값과 b 값을 교환함
+```
+- 이때 우변의 값의 개수와 좌변 변수의 개수가 같을 필요는 없습니다.
+- 좌변의 변수 개수가 우변의 값 개수보다 많으면 좌변의 남는 변수에는 undefined가 값으로 할당됩니다.
+- 우변의 값 개수가 좌변의 변수 개수보다 많으면 남은 값은 무시됩니다. 
+- 또한 변수가 없는 인덱스 값도 무시됩니다.
+```javascript
+[a, b, c] = [1, 2]; // a = 1, b = 2, c = undefined와 같음
+[a, b] = [1, 2, 3]; // a = 1, b = 2와 같음, 3은 무시됨
+[,a,,b] = [1, 2, 3, 4]; // a = 2, b = 4와 같음
+```
+- 배열 비구조화 할당 표현식의 값은 우변 값이 됩니다.
+```javascript
+var array, first, second;
+array = [first, second] = [1,2,3,4];
+// first = 1, second = 2, array = [1, 2, 3, 4]와 같음 
+```
+<br>
+** 나머지 요소**<br>
+배열의 비구조화 할당을 할 때는 함수의 나머지 매개변수와 마찬가지로 전개 연산자인 ...을 사용하여 나머지 요소(rest elements)를 이용할 수 있습니다.
+```javascript
+[a,b, ...rest] = [1, 2, 3, 4]; // a = 2, b = 2, rest = [3, 4]와 같음
+```
+좌변의 ...rest 부분이 나머지 요소이며, 변수 rest에는 할당되지 않은 우변의 남은 요소들이 배열로 할당됩니다.<br><br>
+**요소의 기본값**<br>
+배열의 비구조화 할당을 할 때는 함수의 인수와 마찬가지로 기본값을 설정할 수 있습니다. 비구조화 할당하는 좌변의 변수에 undefined가 할당되면 undefined 대신에 기본값을 할당합니다.
+```javascript
+[a=0, b=1, c=2] = [1, 2];  // a = 1, b = 2, c = 2와 같음
+```
+
+#### 객체의 비구조화 할당
+**기본적인 사용법**<br>
+객체도 비구조화 할당을 할 수 있습니다. 이때 좌변에는 객체 리터럴과 비슷한 문법을 사용합니다. 프로퍼티를 쉽표로 구분하고 중괄호로 묶어줍니다. 이 프로퍼티의 이름은 우변의 프로퍼티 이름이며 프로퍼티 값으로는 임의의 변수를 사용할 수 있습니다.
+```javascript
+var {a: x, b: y} = {a: 1, b: 2};  // x = 1, y = 2와 같음
+```
+<br>
+이미 선언된 변수를 비구조화 할당하는 예
+```javascript
+{a: x, b: y} = {a: y, b: x};  // x 값과 y 값을 교환한다.
+```
+<br>
+좌변의 변수에 호응하는 프로퍼티 이름이 오른쪽에 없으면 그 변수에는 undefined가 할당됩니다.
+```javascript
+{a: x, b: y} = {a: 1, c: 2};  // x = 1, y = undefined와 같음
+```
+<br>
+우변에 값이 있지만 그에 대응하는 이름의 변수가 좌변에 없으면 무시됩니다.
+```javascript 
+{a: x, b: y} = {a: 1, b: 2, c: 3}; // x = 1, y = 2와 같음. 3은 무시됨
+```
+<br>
+다음 코드는 Math 객체의 프로퍼티를 변수에 대입합니다.
+```javascript
+var {sin: sin, cos: cos, tan: tan, PI: PI} = Math;
+// var = sin = Math.sign, cos = Math.cos, tan = Math.tan, PI = Math.PI와 같음
+```
+이렇게 만들어 두면 Math.sin(Math.PI / 3)이라는 코드를 sin(Math.PI / 3)으로 간결하게 표현할 수 있습니다.<br><br>
+**프로터피의 기본값**<br>
+배열의 비구조화 할당을 할 때는 함수의 인수와 마찬가지로 기본값을 설정할 수 있습니다. 비구조화 할당하는 좌변의 변수에 undefined가 할당되면 그 대신에 기본값을 할당합니다.
+```javascript
+{a: x = 1, b: y=2, c: z=3} = {a: 2, b: 4}; // x = 2, y = 4, z = 3과 같음
+```
+<br><br>
+**프로퍼티 이름 생략하기**<br>
+좌변에는 변수 이름만 쉼표로 구분해서 작성할 수 있습니다. 이때는 프로퍼티 이름이 변수의 이름이 됩니다.
+```javascript
+{a, b} = {a: 1, b: 2}; // {a: a, b: b} = {a: 1, b: 2}와 같음
+var {sin, cos, tan, PI} = Math;
+//var sin = Math.sin, cos = Math.cos, tan = Math.tan, PI = Math.PI와 같음
+```
+프로퍼티 이름을 생략한 상태에서도 기본값을 지정할 수 있습니다.
+```javascript
+{a=1, b=2, c=3} = {a: 2, b: 4}; // a = 2, b = 4, c = 3과 같음
+```
+<br><br>
+**반복 가능한 객체의 비구조화 할당**<br>
+우변에 반복 가능한(이터러블한)객체가 있을 때도 비구조화 할당을 할 수 있습니다. 이때 좌변에는 리터럴과 비슷한 문법을 사용합니다.
+```javascript
+var [a, b, c] = "ABC"; // var a = "A", B = "B", c = "C"와 같음
+function* createNumbers(from, to) {
+	while(from <= to) yield from++;
+}
+var [a,b,c,d,e] = createNumbers(10, 15);
+// a = 10, b = 11, c = 12, d = 13, e = 14와 같음 
+```
+<br><br>
+**중첩된 자료 구조의 비구조화 할당**<br>
+중첩된 객체나 배열에도 비구조화 할당을 적용할 수 있습니다.<br>
+```javascript
+var [a, [b, c]] = [1, [2, 3]]; // var a = 1, b = 2, c = 3과 같음
+var {a: x, b : {c: y, d: z}} = {a: 1, b: {c: 2, d: 3}};
+// var x = 1, y = 2, z = 3과 같음
+var person = {name: "Tom", age: 17, hobby: ["Tennis", "Music"]};
+var {name, age, hobby:[hobby1]} = person;
+// var name = "Tom", age = 17, hobby1 = "Tennis"와 같음
+```
+
+### 전개 연산사
+...은 전개 연산자(spread operator)라고 합니다. 전개 연산자는 반복 가능한(이터러블한) 객체를 반환하는 표현식 앞에 표기하며. 이를 통해 반복 가능한 객체를 배열 리터럴 또는 함수의 인수 목록으로 펼칠 수 있습니다.
+```javascript
+[..."ABC"]  // -> ["A", "B", "C"]
+f(..."ABC")  // f("A", "B", "C")와 같음
+[1, ...[2, 3, 4], 5]  // -> [1, 2, 3, 4, 5]
+f(...[1, 2, 3])  // f(1, 2, 3)과 같음
+```
+다음 코드는 제너레이터가 만든 이터레이터를 배열 리터럴 안에 펼치는 예입니다.
+```javascript
+function* createNumbers(from, to) {
+	while(from <= to) yield from++;
+}
+var iter = createNumbers(10, 15);
+[...iter]  // -> [10, 11, 12, 13, 14, 15]
+```
+배열 두 개를 연결할 때는 보통 Array.prototype.concat 메서드를 사용하지만 전개 연산자를 활용하면 Array.prototype.push 메서드로도 배열을 연결할 수 있습니다.
+```javascript
+var a = ["A", "B", "C"];
+a.push(...["D", "E"]);  // -> ["A", "B", "C", "D", "E"]
+```
+다음 코드는 배열 안의 최대값은 Math.max로 구합니다.
+```javascript
+var a = [5,2,3,7,1];
+Math.max(...a);
+```
+
+### Map
+Map 객체는 데이터는 수집하여 활용하기 위한 객체입니다. 값의 고유한 식별 정보인 **키**와 **값**의 쌍를 Map 객체 안에 저장해서 사용합니다. Map 객체 안에서 키는 고유한 값입니다. 따라서 Map 객체는 키로 값을 사상(Map)한 객체로 간주합니다. Map 객체는 외부에서 키를 사용하여 원하는 값을 추가/삭제/검색할 수 있습니다. 키와 값의 데이터 타입에는 제한이 없습니다.<br><br>
+Object 객체도 키와 값이 쌍을 이룬 프로퍼티가 모여서 만들어진 것입니다. 그런 의미에서 보면 Map 객체와 비슷해 보입니다. 하지만 Map 객체는 Object 객체와 비교했을 떄 다음과 같은 차이점이 있습니다.<br>
+- Map 객체에는 데이터를 수집하기 위한 다양한 메서드가 마련되어 있다.
+- Object 객체는 키로 문자열만 사용할 수 있지만 Map 객체는 키 타입에 제한이 없다.
+- Map 객체는 내부적으로 해시 테이블을 활용하기 때문에 데이터 검색 속도가 빠르다.
+- Map 객체는 반복 가능(이터러블)하여 for/of 문으로 순회하면 키와 값으로 구성된 배열을 반환한다.
+- Map 객체는 데이터 개수를 size 프로퍼티로 구할 수 있다. 하지만 Object 객체는 프로퍼티 개수를 수동으로 계산해야 한다.
+이처럼 Map 객체는 Object 객체보다 빠르기도 하지만 다양한 데이터 수집 기능까지 제공합니다.
+
+#### Map 객체의 생성
+Map 객체는 Map 생성자 함수로 생성합니다. 인수를 지정하지 않으면 데이터가 없는 빈 Map 객체가 생성됩니다.
+```javascript
+var map = new Map();
+console.log(map); // -> Map {}
+```
+<br><br>
+초기 데이터를 인수로 지정해서 생성할 수도 있습니다. 이때 초기 데이터는 요소를 두 개 이상 포함한 배열 [키, 값]을 그 값으로 가지는 반복 가능한(이터러블한) 객체입니다.
+```javascript
+var zip = new Map([["Tom", "131-8634"], ["Huck", "556-0002"]]);
+console.log(zip); // -> Map {"Tom" => "131-8634", "Huck" => "556-0002"}
+```
+다음 코드는 제너레이터로 이터레이터를 생성하는 방식으로 앞의 코드와 똑같은 작업을 처리합니다.
+```javascript
+function makeZip() {
+	yield ["Tom", "131-8634"];
+	yield ["Huck", "556-0002"];
+}
+var zips = makeZip();
+zip = new Map(zips);
+console.log(zip);  // -> Map {"Tom" => "131-8634", "Huck" => "556-0002"}
+```
+Map 객체 안에 저장된 데이터(키와 값의 쌍)의 개수는 size 프로퍼티로 구할 수 있습니다.
+```javascript
+console.log(zip.size); // -> 2
+```
+
+#### Map 객체의 메서드
+Map 객체는 Map.prototype 프로퍼티와 메서드를 상속받습니다.
+
+|메서드|설명|
+|-----|-----------|
+|clear()|Map 객체 안에 있는 모든 데이터를 삭제한다.|
+|delete(key)|Map 객체에서 key가 가리키는 데이터를 삭제한다.|
+|entries()|Map 객체가 가진 데이터(키와 값 쌍) 값을 저장한 이터레이터를 데이터를 삽입한 순서대로 반환한다.|
+|forEach(callback)|Map 객체의 모든 데이터를 대상으로 callback 함수를 실행한다. 이때 실행 순서는 데이터가 삽입된 순서이다.|
+|get(key)|Map 객체에서 key가 가리키는 데이터를 반환한다.|
+|has(key)|Map 객체에서 key가 가리키는 데이터가 있는지 판정한다.|
+|keys()|Map 객체에서 데이터 키를 값으로 가지는 이터레이터를 반환한다.|
+|set(key, value)|Map 객체에 키가 key고 값이 value인 데이터를 추가한다.|
+|values()|Map 객체에서 데이터 값을 값으로 가지는 이터레이터를 반환한다.|
+
+#### 데이터 추가하기
+Map 객체에 데이터를 추가할 때 set(key, value) 메서드를 사용합니다. key는 데이터의 키 값이 되며 value는 데이터의 값이 됩니다. 이미 그 키 값이 가리키는 데이터가 있다면 덮어씁니다.
+```javascript
+var zip = new Map();
+zip.set("Tom", "131-8634");
+zip.set("Huck", "556-0002");
+console.log(zip);  // -> Map {"Tom" => "131-8634", "Huck" => "556-0002"}
+```
+
+#### 값 읽기
+특정 키 값이 가리키는 데이터 값을 읽을 때는 get(key) 메서드를 사용합니다. key는 데이터의 키값 입니다.
+```javascript
+console.log(zip.get("Tom")); // -> 131-8634
+```
+지정한 키가 Map 객체 안에 없으면 undefined를 반환합니다.
+
+#### 데이터가 있는지 확인
+Map 객체 안에 특정 키를 가진 데이터가 있는지 확인하려면 has(key) 메서드를 사용합니다. key는 데이터의 키 값입니다.
+```javascript
+console.log(zip.has("Tom")); // true
+console.log(zip.has("Becky")); // false
+```
+
+#### 데이터의 삭제
+특정 키 값이 가리키는 데이터 값을 삭제하려면 delete(key) 메서드를 사용합니다. key는 데이터의 키 값입니다.
+```javascript
+
+```
+
+### Set
