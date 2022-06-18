@@ -116,6 +116,89 @@ a.hasOwnProperty("4");
 ## 배열의 메서드
 배열에는 Array 타입 객체이며 Array.prototype 프로퍼티를 상속받습니다. Array.prototype에는 수많은 메서드가 정의되어 있으며, 모든 배열은 이 메서드를 사용할 수 있습니다. 이들 메서드를 사용하면 직접 코드를 작성하지 않아도 다양한 배열을 처리할 수 있습니다.
 
+### Array.prototype의 메서드 목록
+- 수정 메서드는 원본 배열을 바로 수정합니다. 
+- 접근자 메서드는 배열을 다른 형태로 가공한 새로운 배열을 반환하며 원본 배열은 수정하지 않습니다.
+- 반복 메서드는 원본 배열의 모든 요소를 순회하며 특정한 작업을 수행합니다.
+
+<table>
+	<thead>
+	<tr>
+		<th>분류</th>
+		<th>메서드</th>
+		<th>설명</th>
+	</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td rowspan='9'>수정<br>메서드</td>
+			<td>copyWithin(target, begin, end)</td>
+			<td>begin~end-1 사이의 요소를 target의 위치에 복사한다.</td>
+		</tr>
+		<tr>
+			<td>fill(value, begin, end)</td>
+			<td>begin~end-1 사이의 요소를 target으로 대체한다.</td>
+		</tr>
+		<tr>
+			<td>pop()</td>
+			<td>배열의 마지막 요소를 잘라낸다</td>
+		</tr>
+		<tr>
+			<td>push(data)</td>
+			<td>배열 끝에 data 값을 배열 요소로 추가한다.</td>
+		</tr>
+		<tr>
+			<td>reverse()</td>
+			<td>배열의 요소를 역순으로 정렬한다.</td>
+		</tr>
+		<tr>
+			<td>shift()</td>
+			<td>배열의 첫 번째 요소를 잘라낸다</td>
+		</tr>
+		<tr>
+			<td>sort([callback])</td>
+			<td>배열의 요소를 callback이 구현한 방법에 따라 정렬한다.</td>
+		</tr>
+		<tr>
+			<td>splice(index, howmany, [,data ...])</td>
+			<td>index부터 howmany개의 배열 요소를  data로 대체한다.</td>
+		</tr>
+		<tr>
+			<td>unshift(data1, [, data2, ...])</td>
+			<td>인수로 지정한 데이터를 배열의 시작 부분에 추가한다.</td>
+		</tr>
+		<tr>
+			<td rowspan='7'>접근자<br>메서드</td>
+			<td>concat(array)</td>
+			<td>지정된 배열을 대상 배열에 연결한다.</td>
+		</tr>
+		<tr>
+			<td>indexOf(data, index)</td>
+			<td>data와 같은 첫 번째 배열 요소의 키를 검색한다(index는 검색을 시작하는 위치).</td>
+		</tr>
+		<tr>
+			<td>join(string)</td>
+			<td>배열의 요소를 string으로 연결한 문자열을 반환한다.</td>
+		</tr>
+		<tr>
+			<td>lastIndexOf(data, index)</td>
+			<td>data와 같은 마지막 배열 요소의 키를 검색한다(index는 검색을 시작하는 위치).</td>
+		</tr>
+		<tr>
+			<td>slice(begin, [, end])</td>
+			<td>begin~end-1 사이의 요소를 제거한 새로운 배열을 반환한다.</td>
+		</tr>
+		<tr>
+			<td>toLocaleString()</td>
+			<td>배열의 요소를 해당 지역에 맞는 언어로 번역한(지역화한) 문자열로 변환한 뒤 쉼표로 연결해서 반환한다.</td>
+		</tr>
+		<tr>
+			<td>toString()</td>
+			<td>배열의 요소를 문자열로 변환한 뒤 쉼표로 연결해서 반환한다.</td>
+		</tr>
+	</tbody>
+</table>
+
 
 ## 다차원 배열
 
