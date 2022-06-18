@@ -160,7 +160,7 @@ a.hasOwnProperty("4");
 			<td>배열의 요소를 callback이 구현한 방법에 따라 정렬한다.</td>
 		</tr>
 		<tr>
-			<td>splice(index, howmany, [,data ...])</td>
+			<td nowrap>splice(index, howmany, [,data ...])</td>
 			<td>index부터 howmany개의 배열 요소를  data로 대체한다.</td>
 		</tr>
 		<tr>
