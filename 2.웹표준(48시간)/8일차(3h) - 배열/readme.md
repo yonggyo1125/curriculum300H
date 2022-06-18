@@ -131,7 +131,7 @@ a.hasOwnProperty("4");
 	</thead>
 	<tbody>
 		<tr>
-			<td rowspan='9'>수정<br>메서드</td>
+			<td rowspan='9' nowrap>수정<br>메서드</td>
 			<td>copyWithin(target, begin, end)</td>
 			<td>begin~end-1 사이의 요소를 target의 위치에 복사한다.</td>
 		</tr>
@@ -168,7 +168,7 @@ a.hasOwnProperty("4");
 			<td>인수로 지정한 데이터를 배열의 시작 부분에 추가한다.</td>
 		</tr>
 		<tr>
-			<td rowspan='7'>접근자<br>메서드</td>
+			<td rowspan='7' nowrap>접근자<br>메서드</td>
 			<td>concat(array)</td>
 			<td>지정된 배열을 대상 배열에 연결한다.</td>
 		</tr>
