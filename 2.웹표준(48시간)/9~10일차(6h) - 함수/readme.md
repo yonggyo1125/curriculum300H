@@ -581,6 +581,130 @@ p = null;  // -> Object {x=1, y=2}를 참조하지 않게 됨
 가비지 컬렉터가 동작하므로 프로그래머는 필요한 객체를 생성하기만 하면 됩니다. 객체를 삭제한 다음 메모리에서 해제하는 작업은 가비지 컬렉터에게 위임하는 셈입니다. 이 덕분에 프로그래머는 메모리 관리를 전혀 고려하지 않아도 많은 것을 구현할 수 있습니다. 
 
 ## 클로저
+자바스크립트의 모든 함수는 클로저를 정의합니다. 클로저는 자바스크립트가 가진 가장 강력한 기능으로, 이를 활용하면 변수를 은닉하여 지속성을 보장하는 등의 다양한 기능을 구현할 수 있습니다.
+
+### 클로저
+클로저(closure, 함수 폐포)를 프로그래밍 언어적인 관점에서 설명하면 다음과 같은 동작을 하는 함수와 그 기능을 구현한 자료 구조의 모음이라고 할 수 있습니다.<br><br>
+**자기 자신이 정의된 환경에서 함수 안에 있는 자유 변수의 식별자 결정을 실행한다.**
+<br><br>
+
+![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/9~10%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%95%A8%EC%88%98/images/image7.png)
+
+이 코드에서 중첩 함수 g가 정의된 렉시컬 환경은 함수 g를 둘러싼 바깥 영역 전체입니다(연하늘 색으로 칠해진 부분). **이 렉시컬 환경에서 함수 g의 자유 변수 a와 b의 식별자 결정을 합니다.** 이것은 **변수의 식별자 결정**에서 설명한 다음의 메커니즘으로 구현되어 있습니다.
+- 함수 f를 호출할 때 함수 f의 렉시컬 환경 컴포넌트가 생성된다.
+- 그 후에 함수 g의 함수 선언문을 평가해서 함수 객체를 생성한다. 이 함수 객체의 렉시컬 환경 컴포넌트에는 함수 g의 코드, 함수 f의 렉시컬 컴포넌트 참조(이 안에 변수 b가 들어 있음). 전역 객체의 참조(이 안에 변수 a가 들어 있음)가 저장된다.
+- 함수 g를 호출해서 실행하면 그 시점에 함수 g의 렉시컬 환경 컴포넌트를 생성한다. 이와 동시에 함수g의 렉시컬 환경 컴포넌트를 생성한다. 이와 동시에 함수 g의 실행 문맥의 외부 렉시컬 환경 참조(__scope__)를 마치 체인처럼 거슬러 올라가서 자유 변수 a와 b 값을 참조한다.
+<br><br>
+즉, 함수 g의 함수 객체와 객체가 참조하는 렉시컬 환경 컴포넌트가 자유 변수 a,b의 식별자 결정을 위한 자료 구조라고 할 수 있습니다. 이 자료 구조는 함수 f가 호출되어 함수 g가 평가되는 시점에 생성됩니다. 따라서 자바스크립트의 클로저는 함수 객체와 렉시컬 환경 컴포넌트의 집합이라고 할 수 있습니다.
+<br><br>
+**클로저 = 함수 객체 + 렉시컬 환경 컴포넌트**<br>
+
+![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/9~10%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%95%A8%EC%88%98/images/image8.png)
+
+이 예에서 함수 g의 함수 객체가 있는 동안에는 클로저 안의 모든 렉시컬 환경 컴포넌트를 함수 g의 함수 객체가 참조하므로 클로저는 가비지 컬렉션 대상이 되지 않습니다. 따라서 함수 g의 함수 객체가 있는 한 클로저는 메모리에서 지워지지 않습니다.
+
+>클로저의 어원 : 위의 예에 등장한 함수 g는 열린 함수입니다. 그러나 유효 범위 체인으로 주변 환경의 변수 b와 a를 들여와서 실실적으로는 폐쇄 함수가 되었습니다. 이러한 **열려 있던 것을 닫는다**는 개념이 클로저(Closure)의 어원입니다.
+
+### 클로저의 성질
+카운터 함수를 만드는 함수 
+```javascript
+function makeCounter() {
+	var count = 0;
+	return f;
+	function f() {
+		return count++;
+	}
+}
+var counter = makeCounter();
+console.log(counter()); // -> 0
+console.log(counter()); // -> 1
+console.log(counter()); // -> 2
+```
+- (1) 외부 함수 makeCounter는 중첩 함수 f의 참조를 반환한다.
+- (2) 중첩 함수 f는 외부 함수 makeCounter의 지역변수 counter를 참조한다.
+
+![image10](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/9~10%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%95%A8%EC%88%98/images/image10.png)
+(1)로 인해 f의 함수 객체를 전역변수 counter가 참조합니다. (2)로 인해 함수 makeCounter의 렉시컬 환경 컴포넌트를 f의 함수 객체가 참조합니다. 그 결과 함수 makeCounter의 렉시컬 환경 컴포넌트를 전역 변수 counter가 f의 함수 객체로 간접적으로 참조하게 되므로 가비지 컬렉션의 대상이 되지 않습니다. 따라서 makeCounter 실행이 끝나서 호출자에 제어권이 넘어가도 makeCounter의 렉시컬 환경 컴포넌트가 메모리에서 지워지지 않게 됩니다. 지역 변수 count는 함수 makeCounter가 속한 렉시컬 환경 컴포넌트에 있는 선언적 환경 레코드의 프로퍼티이므로 이 또한 메모리에서 지워지지 않습니다.
+
+![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/9~10%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%95%A8%EC%88%98/images/image9.png)
+
+앞의 예에서 변수 count는 클로저 내부 상태로서 저장됩니다. 또한 count는 지역 변수이기 때문에 함수 바깥에서 읽거나 쓸 수 없습니다. 또한 함수 f가 클로저의 내부 상태를 바꾸는 메서드의 역할을 하고 있습니다. 이렇게 놓고 보니 클로저가 마치 객체와 같다는 생각이 듭니다.<br>
+앞의 예에서는 지역 변수 count가 객체의 프로퍼티에 해당하고 함수 f가 객체의 메서드에 해당합니다. 또한 객체의 프로퍼티를 외부에서 읽고 쓸수 있지만 클로저 내부 상태는 외부로부터 숨겨진 상태입니다.<br>
+객체 짛샹 프로그래밍에서는 객체의 프로퍼티를 외부로부터 은폐하는 행위를 가리켜 캡슐화라고 합니다. 즉, '**클로저는 캡술화된 객체**'라고 할 수 있습니다.<br><br>
+makeCounter()를 실행해서 함수 두 개를 생성해 보면 모두 별개의 카운터가 됩니다.
+```javascript
+var counter1 = makeCounter();
+var counter2 = makeCounter();
+console.log(counter1()); // -> 0
+console.log(counter2()); // -> 0
+console.log(counter1()); // -> 1
+console.log(counter2()); // -> 1
+```
+그 이유는 <b>makeCounter()를 호출할 때 마다 makeCounter()의 렉시컬 환경 컴포넌트가 새로 생성되기 때문</b>입니다. 따라서 <b>각 클로저는 서로 다른 내부 상태를 저장</b>합니다. <b>클로저를 객체로 간주하면 makeCounter()는 클로저라는 객체를 생성하는 팩토리 함수로 간주할 수 있습니다.<br><br>
+
+예제에서는 설명을 위해 중첩 함수에 f라는 이름을 붙였지만, 보통은 이름이 없는 익명 함수를 반환하는 방법을 자주 사용합니다.
+```
+function makeCounter() {
+	var count = 0;
+	return function() {
+		return count++;
+	};
+}
+
+var counter = makeCounter();
+
+console.log(counter()); // -> 0
+console.log(counter()); // -> 1
+console.log(counter()); // -> 2
+```
+
+#### 클로저를 이해하기 위한 핵심 사항
+- 외부 함수를 호출하면 그 함수의 렉시컬 환경 컴포넌트가 생성됩니다. 그리고 그 안에 중첩된 중첩 함수의 함수 객체를 생성해서 반환합니다. 그 결과 외부 함수의 렉시컬 환경 컴포넌트를 참조하는 중첩 함수가 정의한 클로저가 생성됩니다. 즉, 외부 함수는 클로저를 생성하는 팩토리 함수라고 할 수 있습니다.
+- 외부 함수가 속한 렉시컬 환경 컴포넌트는 클로저 내부 상태 자체입니다. 외부 함수가 호출될 때마다 새로 생성됩니다.
+- 중첩 함수의 함수 객체가 있는 한 외부 함수가 속한 렉시컬 환경 컴포넌트는 지워지지 않습니다. 외부 함수의 함수 객체가 사라져도 지워지지 않습니다.
+- 클로저 내부 상태(외부 함수의 지역 변수, 선언적 환경 레코드)는 외부로부터 은폐되어 있으며 중첩 함수 안에서만 읽거나 쓸 수 있습니다.
+
+### 클로저를 응용한 예제
+클로저를 사용하면 데이터와 데이터를 조작하는 함수를 하나로 묶을 수 있습니다. 객체 지향 프로그래밍에서 프로퍼티를 조작하는 메서드와 역할이 비슷합니다.
+
+#### 여러 개의 내부 상태와 메서드를 가진 클로저
+```javascript
+function Person(name, age) {
+	var _name = name;
+	var _age = age;
+	return {
+		getName : function() { return _name; },
+		getAge : function() { return _age; },
+		setAge : function(x) { _age = x; }
+	}
+}
+var person = Person("Tom", 10);
+console.log(person.getName()); // -> Tom
+console.log(person.getAge());  // -> 18
+person.setAge(19);
+console.log(person.getAge()); // -> 19
+```
+
+#### 함수 팩토리
+클로저를 활용하여 다양한 매개변수를 받는 함수를 여러 개 생성할 수 있습니다.
+```javascript
+function makeMultiplier(x) {
+	return function(y) {
+		return x*y;
+	};
+}
+var multi2 = makeMultiplier(2);
+var multi10 = makeMultiplier(10);
+console.log(multi2(3)); // -> 6
+console.log(multi10(3)); // -> 30
+```
+
+```javascript
+
+```
+
+## 이름 공간
+
 
 ## 객체써의 함수
 
