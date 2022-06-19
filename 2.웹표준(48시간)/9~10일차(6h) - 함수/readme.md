@@ -699,15 +699,254 @@ console.log(multi2(3)); // -> 6
 console.log(multi10(3)); // -> 30
 ```
 
-```javascript
+## 이름 공간
+### 전역 이름 공간의 오염
+전역 변수와 전역 함수를 전역 객체에서 선언하는 행위를 가리켜 **전역 유효 범위를 오염시킨다**고 합니다. 전역 유효 범위가 오염되면 다음과 같은 상황일 때 변수 이름과 함수 이름이 겹칠 수 있습니다.
+- 라리브러리 파일을 여러 개 읽어 들여 사용할 때
+- 규모가 큰 프로그램을 만들 때
+- 여러 사람이 한 프로그램을 만들 때
+전역 유효 범위 안에서 이름이 같은 변수나 함수를 선언하면 자바스크립트 엔진이 그 프로그램의 첫 머리로 끌어올려서 변수 또는 함수를 단 하나만 생성합니다. 그러면 다른 목적으로 사용하는 코드가 같은 변수와 함수를 공유하게 되므로 프로그램이 올바르게 동작하지 않을 수 있습니다. 게다가 프고르램 오류로 표시되지 않으므로 찾아내기도 어렵습니다.<br><br>
+이러한 예기치 않은 오류를 피하려면 전역 유효 범위의 오염을 최소화해야 합니다. 전역 변수의 오염을 방지하기 위한 몇 가지 기법을 소개 합니다.
 
+### 객체를 이름 공간으로 활용하기
+<b>이름 공간(name space)</b>이란 변수 이름과 함수 이름을 한곳에 모아 두어 이름 충돌을 미리 방지하고, 변수와 함수를 쉽게 가져다 쓸 수 있게 만든 매커니즘 입니다. Java와 C++ 등의 언어에서는 기본적으로 이름 공간 기능을 제공합니다. **자바스크립트에서는 기본적으로 이름 공간 기능을 제공하지 않지만 객체를 이름 공간으로 활용할 수 있습니다.**<br><br>
+객체를 이름 공간으로 활용하려면 모든 변수와 함수를 프로퍼티로 정의합니다. 예를 들어 다음과 같은 방법으로 myApp이라는 전역 변수를 이름 공간으로 활용할 수 있습니다.
+
+```javascript
+var myApp = myApp || {};
+```
+이렇게 작성해 두면 myApp이 이미 정의되어 있을 때는 그것을 사용하고 그렇지 않다면 빈 객체를 myApp에 할당합니다.
+
+```javascript
+myApp.name = "Tom";
+myApp.showName = function() { ... }
 ```
 
-## 이름 공간
+이렇게 되면 myApp만이 사용자가 정의한 전역 변수가 되므로 전역 유효 범위의 오염을 최소화할 수 있습니다.<br><br>
 
+또한 <b>부분 이름 공간(sub name space)</b>을 만들 수도 있습니다.
+
+```javascript
+myApp.view = {};
+myApp.controls = {};
+```
+
+각자의 부분 이름 공간 안에 필요한 변수 또는 함수를 프로퍼티에 정의해서 사용합니다.
+```javascript
+myApp.view.draw = function() { ... };
+myApp.controls.timeInterval = 16;
+```
+객체를 이름 공간으로 이용하면 변수 또는 함수 이름을 계층적으로 관리할 수 있습니다.
+
+### 함수를 이름 공간으로 활용하기
+함수 안에서 선언된 변수의 유효 범위는 함수 내부입니다. 따라서 그 변수를 함수 안에서는 읽기나 쓸 수 있지만 바깥에서는 읽거나 쓸 수 없습니다. 이 성질을 활용하면 함수를 이름 공간으로 활용할 수 있습니다.
+
+```javascript
+var x = "global x";
+(function() {
+	var x = "local x";
+	var y = "local y";
+})();
+console.log(x); // -> global x
+console.log(y); // -> Uncaught ReferenceError: y is not defined
+```
+<b>즉시 실행 함수(Immedicately-Invoked Function Expression)</b> 내부에서 선언한 변수인 x와 y는 이 함수의 지역변수이므로 전역 변수와 이름이 충돌하지 않습니다.
+
+#### 모듈 패턴 
+즉시 실행 함수를 사용하여 모듈로 정의하는 방법을 소개합니다. 모듈운 기능(함수) 여러 개를 하나로 묶은 것입니다. 일반적으로 모듈은 함수 여러 개와 함수가 공유하는 데이터로 구성됩니다.
+
+```javascript
+var Module = Module || {};
+(function(_Module) {
+	var name = "NoName";   // 프라이빗 변수
+	function getName() {  // 프라이빗 함수
+		return name;
+	}
+	_Module.showName = function() { // 퍼블릭 함수 
+		console.log(getName());
+	};
+	_Module.setName = function(x) { // 퍼블릭 함수
+		name = x;
+	};
+})(Module);
+Module.setName("Tom");
+Module.showName(); // -> Tom
+```
 
 ## 객체써의 함수
+자바스크립트에서는 함수도 일종의 객체입니다. 따라서 함수는 값을 처리할 수 있으며 프로퍼티와 메서드도 가지고 있습니다.
+
+### 함수는 객체
+자바스크립트의 함수는 Function 객체입니다. 따라서 다른 객체와 마찬가지로 다음과 같은 특징이 있습니다.
+- 함수는 변수나 프로퍼티나 배열 요소에 대입할 수 있다.
+- 함수는 함수의 인수로 사용할 수 있다.
+- 함수는 함수의 반환값으로 사용할 수 있다.
+- 함수는 프로퍼티와 메서드를 가질 수 있다.
+- 함수는 이름 없는 리터럴로 표현할 수 있다(익명 함수).
+- 함수는 동적으로 생성할 수 있다.
+
+일반적으로 이러한 작업이 가능한 객체를 가리켜 **일급 객체**라고 합니다. 일급 객체인 함수는 **일급 함수**라고 합니다.  따라서 자바스크립트의 함수는 일급 함수지만 C나 Java와 같은 프로그래밍 언어의 함수는 일급 함수가 아닙니다.<br><br>
+자바스크립트는 함수가 일급 객체이므로 함수형 언어처럼 함수형 프로그래밍을 할 수 있습니다.
+
+### 함수의 프로퍼티
+
+|프로퍼티 이름|설명|
+|-----|--------|
+|caller|현재 실행 중인 함수를 호출한 함수|
+|length|함수의 인자 개수|
+|name|함수를 표시할 때 사용하는 이름|
+|prototype|프로토타입 객체의 참조|
+
+또한 함수는 Function 생성자의 prototype 객체(Function.prototype)의 프로퍼티를 상속받아 사용합니다.
+
+|프로퍼티 이름|설명|
+|apply()|선택한 this의 인수를 사용하여 함수를 호출한다. 인수는 배열 객체다.|
+|bind()|선택한 this의 인수를 적용한 새로운 함수를 반환한다.|
+|call()|선택한 this와 인수를 사용하여 함수를 호출한다. 인수는 쉼표로 구분한 값이다.|
+|constructor|Function 생성자의 참조|
+|toString()|함수의 소스 코드를 문자열로 만들어 반환한다.|
+
+### apply와 call 메서드
+- Function 객체의 메서드에는 apply와 call이 있습니다. 
+- this 값과 함수의 인수를 사용하여 함수를 실행하는 메서드입니다. 
+- apply와 call의 동작은 본질적으로 같습니다. 차이점은 함수에 인수를 넘기는 방법뿐입니다. 
+- apply의 인수는 배열이고 call의 인수는 쉼표로 구분한 값의 목록입니다.
+
+```javascript
+function say(greeting, honorifics) {
+	console.log(greetings + " " + honorifics + this.name);
+}
+var tom = { name : "Tom Sawyer"};
+var becky = { name: "Becky Thatcher" };
+
+say.apply(tom, ["Hello", "Mr."]); // -> "Hello! Mr. Tom Sawyer"
+say.apply(becky, ["Hi!", "Ms."]); // -> "Hi! Ms. Becky Thatcher"
+
+say.call(tom, "Hello", "Mr."); // -> "Hello! Mr. Tom Sawyer"
+say.call(becky, "Hi!", "Ms."); // -> "Hi! Ms. Becky Thatcher"
+```
+
+### bind 메서드
+Function 객체의 bind 메서드는 객체에 함수를 바인드합니다. 
+```javascript
+function say(greetings, honorifics) {
+	console.log(greetings + " " + honorifics + this.name);
+}
+
+var tom = { name : "Tom Sawyer"};
+var sayToTom = say.bind(tom); 
+sayToTom("Hello", "Mr."); // -> "Hello! Mr. Tom Sawyer"
+```
+이 코드에서 sayToTom 함수를 호출하면 항상 this가 객체 tom을 가리킵니다. 이처럼 say.bind(tom)은 tom 객체를 함수 say의 this로 설정한 새로운 함수를 만들어서 반환합니다.
+
+### 함수에 프로퍼티 추가하기
+다른 객체와 마찬가지로 함수에도 프로퍼티를 추가할 수 있습니다.
+```javascript
+function f(x) { ... }
+f.p = a;
+f.g = function() { ... };
+```
+Function 객체에 추가된 프로퍼티는 그 함수를 실행하지 않아도 읽거나 쓸 수 있습니다. 함수의 프로퍼티에는 일반적으로 그 함수의 작업과 관련된 데이터와 메서드를 저장합니다. 물론 이들을 전역 변수에 저장해도 같은 작업을 할 수 있습니다. 하지만 전역 변수를 사용하면 전역 유효 범위를 오염시켜 버리므로 변수 이름의 충돌을 늘 경계해야 합니다. 그러나 이를 함수의 프로퍼티로 작성하면 함수 객체가 이름 공간의 역할을 하기 때문에 문제가 발생하지 않습니다.
+
+```javascript
+function fibonacci(n) {
+	if (n<2) return n;
+	if (!(n in fibonacci)) {
+		fibonacci[n] = fibonacci(n-1) + fibonacci(n-2);
+	}
+	return fibonacci[n];
+}
+
+for (var i = 0; i <= 20; i++) {
+	console.log((" " + i).slice(-2) + ":" + finbonacci(i));
+}
+```
+
+## 고차 함수
+- 고차 함수란 함수를 인수로 받는 함수 또는 함수를 반환하는 함수를 말합니다.
+- 자바스크립트의 함수는 일급 객체이고 함수의 인수로 함수를 넘길 수 있으며 함수를 반환할 수 있으므로 고차 함수를 쉽게 정의할 수 있습니다. 
+- 고차 함수를 사용하면 처리 패턴이 같은 작업을 추상화하여 하나로 합칠 수 있습니다.
+- 고차 함수는 함수형 프로그래밍을 할 때 자주 사용합니다.
+
+### 간단한 예
+```javascript
+digits = "";
+for (var i = 0; i < 10; i++) {
+	digits += i;
+}
+
+console.log(digits);
+
+randomChars = ""';
+for(var i = 0; i < 8; i++) {
+	randomChars += String.fromCharCode(Math.random() + 26) + "a".charCodeAt(0));
+}
+console.log(randomChars); 
+```
+위 코드의 공통 부분을 고차함수로 만들어서 하나로 만들어 봅니다.
+```javascript
+function joinString(n, f) {
+	var s = "";
+	for(var i = 0; i<n; i++) {
+		s += f(i);
+	}
+	return s;
+}
+
+var digits = joinStrings(10, function(i) { return i; });
+var randomChars = joinString(8, function(i) {
+	return String.fromCharCode(Math.floor(Math.random()*26) + "a".charCodeAt(0));
+});
+console.log(digits); 
+console.log(randomChars);
+```
+
+### 메모이제이션
+```javascript
+function memorize(f) {
+	var cache = {};
+	return function(x) {
+		if (cache[x] == undefined) cache[x] = f(x);
+		return cache[x];
+	};
+}
+
+var fibonacci = memorize(function(n) {
+	if (n<2) return n;
+	return fibonacci(n-1) + fibonacci(n-2);
+});
+
+for(var i = 0; i <= 20; i++) {
+	console.log(("  "+ i).slice(-2) + ":" + fibonacci(i));
+}
+```
 
 ## 콜백함수
+자바스크립트의 함수는 일급 객체이며 다른 함수에 인수로 넘겨질 수 있습니다. 다음과 같이 다른 함수에 인수로 넘겨지는 함수를 가리켜 콜백 함수라고 부릅니다.
+```javascript
+f(g, ...);
+...
+function f(callback, ...) {
+	... 
+	callback();
+	...
+}
+```
+이 코드에서 함수 f의 인수로 넘겨진 함수인 g가 콜백 함수 입니다. 이렇게 작성하면 호출한 함수 f안에서 특정 콜백 함수를 실행시켜서 그 콜백 함수에 제어권을 부여할 수 있습니다.
+
+### 이벤트 처리기
+이벤트 처리기는 특정 이벤트가 발생했을때 실행하도록 등록하는 함수입니다.
+```javascript
+button.onclick = function() { ... }
+```
+이는 함수를 호출할 때 무언가 사건이 발생하면 콜백 함수를 실행하도록 인수로 넘기는 행위와 닯아 있습니다. 
+```javascript
+button.addEventListener("click", function() { ... }, false);
+```
+
+### 타이머
+```javascript
+setInterval(function() { ... }, 2000);
+```
 
 ## ECMAScript6+에 추가된 기능
