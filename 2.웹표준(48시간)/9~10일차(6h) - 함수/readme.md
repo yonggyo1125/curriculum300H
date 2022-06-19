@@ -156,6 +156,7 @@ x(1, 2);  // x = 1, y = 3
 ```
 <br>
 arguments 변수를 활용하면 인수 개수가 일정하지 않은 가변 인수 함수를 정의할 수 있습니다.
+
 ```javascript
 function myConcat(separator) {
 	var s = "";
