@@ -547,7 +547,171 @@ console.log(zip.has("Becky")); // false
 #### 데이터의 삭제
 특정 키 값이 가리키는 데이터 값을 삭제하려면 delete(key) 메서드를 사용합니다. key는 데이터의 키 값입니다.
 ```javascript
+zip.delete("Huck");
+```
+Map 객체 안에 있는 모든 데이터를 삭제하려면 clear 메서드를 사용합니다.
+```javascript
+zip.clear();
+```
+#### 모든 키 값의 열거
+keys 메서드는 Map 객체가 가진 데이터의 키 값을 가진 이터레이터를 반환합니다.
+```javascript
+var zip = new Map([["Tom", "131-8634"], ["Huck", "556-0002"]]);
+var iter = zip.values();
+for(var v of iter) console.log(v);  // 131-8634, 556-0002의 순서대로 출력
+```
 
+#### 모든 데이터의 열거
+entries 메서드는 Map 객체가 가진 데이터(키, 값)을 가진 이터레이터를 반환합니다.
+```javascript
+var zip = new Map([["Tom", "131-8634"], ["Huck", "556-0002"]]);
+var iter = zip.entries();
+for(var v of iter) console.log(v);
+// ["Tom", "131-8634"], ["Huck", "556-0002"]의 순서대로 출력
+```
+Map 객체는 그 자체가 반복 가능한(이터러블한) 객체입니다. 이를 활용하여 Map 객체의 데이터를 열거할 수도 있습니다.
+```javascript
+var zip = new Map([["Tom", "131-8634"], ["Huck", "556-0002"]]);
+for(var v of zip) console.log(v);
+// ["Tom", "131-8634"], ["Huck", "556-0002"]의 순서대로 출력
+```
+비구조화 할당을 활용하면 키 값과 값을 꺼내는 코드를 더욱 간결하게 작성할 수 있습니다.
+```javascript
+var zip = new Map([["Tom", "131-8634"], ["Huck", "556-0002"]]);
+for(var [key, value] of zip) console.log(key, value);
+// Tom  131-8634, Huck 556-0002의 순서대로 출력
+```
+#### 모든 데이터를 함수로 처리하기
+forEach 메서드를 활용하면 인수로 받은 함수를 Map 객체의 모든 데이터에 적용할 수 있습니다.<br>
+forEach 메서드에 인수로 넘긴 함수는 다음과 같은 인수를 받습니다.
+- value : 현재 처리하는 데이터 값
+- key : 현재 처리하는 데이터 키
+- map : 처리 중인 Map 객체
+<br>
+다음 예는 Map 객체의 데이터 목록을 표시합니다.
+```javascript
+var zip = new Map([["Tom", "131-86634"], ["Huck", "556-0002"]])
+zip.forEach(function(value, key, map) {
+	console.log(key + " => " + value);
+});
+// -> Tom => 131-8634
+// Huck => 556-0002
 ```
 
 ### Set
+Set 객체는 중복되지 않는 유일한 데이터를 수집하여 활용하기 위한 객체입니다. Set 객체는 데이터 값의 단순 집합(Set)으로 간주합니다. Set 객체는 외부에서 키를 사용하여 데이터 값을 추가/삭제/검색할 수 있습니다. 값의 데이터 타입에는 제한이 없습니다. 객체 타입도 사용할 수 있고 원시 타입도 사용할 수 있습니다.
+
+#### Set 객체의 생성
+Set 객체는 Set 생성자 함수로 생성합니다. 인수를 넘기지 않으면 데이터가 없는 빈 Set 객체가 생성되빈다.
+```javascript
+var set = new Set();
+console.log(set); // Set {}
+```
+
+초기 데이터를 인수로 지정해서 생성할 수도 있습니다. 이때의 초기 데이터는 값을 가지는 반복 가능한(이터러블한) 객체입니다.
+```javascript
+var zip = new Set(["131-8634", "556-0002"]);
+```
+다음 코드는 제너레이터로 이터레이터를 생성해서 앞의 코드와 같은 작업을 합니다.
+```javascript
+function makeZip() {
+	yield "131-8634";
+	yield "556-0002";
+}
+
+var zips = makeZip();
+zip = new Set(zips);
+console.log(zip);	// Set {"131-8634", "556-0002"}
+```
+Set 객체 안에 저장된 데이터(키와 값의 쌍) 개수는 size 프로퍼티로 구할 수 있습니다.
+```javascript
+console.log(zip.size);  // 2
+```
+#### 동일성의 정의
+Set 객체에서 값 동일성은 일치(===) 연산자가 정의하는 동일성과는 약간 차이가 납니다. Set 객체에서는 NaN과 NaN이 같으며 +0과 -0이 같습니다.
+
+#### Set 객체의 메서드
+Set 객체는 Set.prototype에서 프로퍼티와 메서드를 상속받습니다.
+
+|메서드|설명|
+|-----|----------|
+|add(value)|Set 객체에 데이터 값 value를 추가한다.|
+|clear()|Set 객체 안의 모든 데이터를 삭제한다.|
+|delete(value)|Set 객체에서 value를 값으로 갖는 데이터를 삭제한다.|
+|values()|Set 객체에서 데이터 값을 값으로 갖는 이터레이터를 반환한다.|
+|forEach(callback)|Set 객체의 모든 데이터를 대상으로 callback 함수를 실행한다.|
+|has(value)|Set 객체에서 value를 값으로 갖는 데이터가 있는지 판별한다.|
+|keys()|Set 객체에서 데이터 값을 값으로 갖는 이터레이터를 반환한다.|
+|values()|Set 객체에서 데이터를 값으로 갖는 이터레이터를 반환한다.|
+> keys 메서드는 values 메서드와 같습니다. 원래 Set 객체에는 필요없는 메서드지만 Map 객체와 Set 객체의 유사성을 유지하는 데 필요합니다.
+
+#### 데이터 추가
+Set 객체에 데이터를 추가할 때는 add(value) 메서드를 사용합니다. value는 데이터 값으로 반환값은  Set 객체 입니다.
+```javascript
+var zip = new Set();
+zip.add("131-8634");
+zip.add"556-0002");
+console.log(zip);  // -> Set {"131-8634", "556-0002"}
+```
+
+#### 데이터가 있는지 확인
+Set 객체 안에 특정 값을 갖는 데이터가 있는지 확인하려면 has(value) 메서드를 사용합니다. value는 데이터 값입니다.
+```javascript
+console.log(zip.has("131-8634"));	// true
+console.log(zip.has("154-0000"));	// false
+```
+
+#### 데이터의 삭제
+Set 객체 안에서 특정한 값에 대응하는 데이터를 삭제하려면 delete(value) 메서드를 사용합니다. value는 데이터 값입니다.
+```javascript
+zip.delete("131-8634");
+```
+Set 객체 안에 있는 모든 데이터를 삭제하려면 clear 메서드를 사용합니다.
+```javascript
+zip.clear();
+```
+
+#### 전체 데이터 값의 열거
+keys와 values 메서드는 Set 객체가 가진 데이터 값을 저장한 이터레이터를 반환합니다.
+```javascript
+var zip = new Set(["131-8634", "556-0002"]);
+var iter = zip.keys();
+for(var v of iter) console.log(v); // 131-8634, 556-0002의 순서대로 출력
+```
+<br>
+entries 메서드는 Set 객체가 가진 데이터인 [값, 값]을 저장한 이터레이터를 반환합니다. 똑같은 데이터 값을 두 개나 갖고 있는 이유는 Map의 entries 메서드와 출력 형식을 통일하기 위해서 입니다.
+```javascript
+var zip = new Set(["131-8634", "556-0002"]);
+var iter = zip.entries();
+for(var v of iter) console.log(v);
+// ["131-8634", "131-8634"], ["556-0002", "556-0002"]의 순서대로 출력
+```
+<br>
+Set 객체는 그 자체가 반복 가능한(이터러블한) 객체이므로 이를 활용하여 Set 객체의 데이터를 열거할 수도 있습니다.
+```javascript
+var zip = new Set(["131-8634", "556-0002"]);
+for(var v of zip) console.log(v);
+// 131-8634, 556-0002의 순서대로 출력
+```
+
+#### 모든 데이터를 함수로 처리하기
+forEach 메서드를 활용하면 인수로 받은 함수를 Set 객체의 모든 데이터에 적용할 수 있습니다.<br>forEach 메서드에 넘긴 함수는 다음과 같은 인수를 받습니다.
+- 첫 번쨰 인수 value1 : 현재 처리하는 데이터 값
+- 두 번째 인수 value2 : 현재 처리하는 데이터 값
+- 세 번째 인수 set : 처리 중인 Set 객체
+첫 번째 인수와 두 번째 인수는 모두 현재 처리하는 데이터 값입니다. 같은 내용의 인수를 중복해서 받는 이유는 Map.prototype.forEach와 Array.prototype.forEach 메서드의 인터페이스를 통일하기 위해서입니다.<br>
+다음 코드는 Set 객체의 데이터 목록을 표시하는 예입니다.
+```javascript
+var zip = new Set(["131-8634", "556-0002"]);
+
+zip.forEach(function(value1, value2, map) {
+	console.log(value1 + " => " + value2);
+});
+// -> 131->8634 => 131-8634
+// 556-0002 => 556-0002
+```
+#### WeakMap과 WeakSet
+Map이나 Set과 유사한 객체로 WeekMap과 WeekSet을 들 수 있습니다. 이들 객체는 데이터의 키 값을 약한 참조로 관리합니다. 키 값이 약한 참조라는 말은 다른 객체가 참조하고 있는 객체라도 가비지 컬렉션의 대상이 될 수 있다는 뜻입니다. 즉, WeakMap과 WeakSet에 저장된 데이터라 하더라도 키 값으로 사용한 원본 객체를 참조하는 객체가 없어지면 가비지 컬렉션의 대상이 됩니다. WeakMap과 WeakSet에서는 키 값을 약한 참조로 관리하기 때문에 다음과 같은 제약 사항이 있습니다.
+- 키 값으로 객체만 사용할 수 있다.
+- 키 값 목록은 가져올 수 없다.
+- 반복 가능한 객체가 아니므로 for/of 문으로는 열거할 수 없다.
