@@ -170,6 +170,7 @@ console.log(myConcat("/", "apple", "orange", "peach")); // apple/orange/peach
 ```
 <br>
 arguments[]는 유사 배열 객체입니다. 하지만 다음과 같은 방법을 사용하면 배열 객체로 변환할 수 있습니다.
+
 ```javascript
 var params = [].slice(arguments);
 ```
