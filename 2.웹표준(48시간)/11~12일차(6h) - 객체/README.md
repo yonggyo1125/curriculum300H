@@ -89,6 +89,7 @@ obj.sayHello();  // -> "Hello! Huck"
 
 - 앞의 코드에서 등장한 객체 세 개는 __proto__ 프로퍼티를 사용한 연결 고리로 묶여 있습니다. 
 
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/11~12%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9D%EC%B2%B4/images/image1.png)
 
 
 
