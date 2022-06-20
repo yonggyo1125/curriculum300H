@@ -178,7 +178,7 @@ var params = [].slice(arguments);
 ## 재귀 함수
 함수가 자기 자신을 호출하는 행위를 가리켜 <b>재귀 호출(recursive call)</b>이라고 합니다. 이러한 재귀 호출을 수행하는 함수를 **재귀 함수**라고 합니다.
 
-### 재귀 함수릐 기본
+### 재귀 함수의 기본
 ```javascript
 function fact(n) {
 	if (n <= 1) return 1;
@@ -950,3 +950,263 @@ setInterval(function() { ... }, 2000);
 ```
 
 ## ECMAScript6+에 추가된 기능
+
+### 화살표 함수 표현식으로 함수 정의하기
+ECMAScript6 부터 추가된 화살표 함수 표현식은 함수 리터럴(익명 함수)의 단축 표현입니다.
+
+#### 화살표 함수 표현식의 작성법
+
+다음 문장은 기존의 함수 리터럴로 함수를 정의한 것입니다.
+```javascript
+var square = function(x) { return x*x;  };
+```
+
+이를 화살표 함수 표션식으로 작성하면 다음과 같습니다.
+```javascript
+var square = (x) => { return x*x; };
+```
+
+인수가 여러 개 있으면 인수를 쉼표로 구분합니다.
+```javascript
+var f = (x, y, z) => { ... };
+```
+
+인수가 하나만 있으면 인수를 묶는 괄호를 생략할 수 있습니다.
+```javascript
+var square = x => { return x*x; };
+```
+
+인수가 없으면 인수를 묶는 괄호를 생략할 수 없습니다.
+```javascript
+var f = () => { ... };
+```
+
+함수 몸통의 문장이 return뿐이면 중괄호와 return 키워드를 생략할 수 있습니다.
+```javascript
+var square = x => x*x;
+```
+
+화살표 함수도 즉시 실행 함수로 사용할 수 있습니다.
+```javascript
+(x => x*x)(3); // -> 9
+```
+
+#### 함수 리터럴과 화살표 함수의 차이점
+- **this의 값이 함수를 정의할 때 결정된다**<br>
+함수 리터럴로 정의된 this 값은 함수를 호출할 대 결정됩니다. 그러나 **화살표 함수의 this 값은 함수를 정의할 때 결정됩니다. 즉, 화살표 함수 바깥의 this값이 화살표 함수의 this 값이 됩니다.**
+```javascript
+var obj = {
+	say : function() {
+		console.log(this);  // -> [object Object]
+		var f = function() { console.log(this); };  // -> [object Window]
+		f();
+		var g = () => console.log(this);  // -> [object Object]
+		g();
+	}
+};
+obj.say();
+```
+이 예제의 함수 f는 say라는 함수의 중첩 함수이며 this의 값은 전역 객체를 가리킵니다.  한편 화살표 함수 g의 this 값은 함수 g를 정의한 익명함수의 this의 값인 객체 obj를 가리킵니다.<br>
+화살표 함수는 call이나 apply 메서드를 사용하여 this를 바꾸어 호출해도 this 값이 바뀌지 않습니다.
+```javascript
+var f = function() { console.log(this.name); };
+var g = console.log(this.name);
+var tom = { name : "Tom" };
+f.call(tom); // -> "Tom"
+g.call(tom); // -> ""
+```
+
+- **arguments 변수가 없다**<br>
+화살표 함수 안에는 arguments 변수가 정의되어 있지 않으므로 사용할 수 없습니다.
+```javascript
+var f = () -> console.log(arguments);
+f();  // -> ReferenceError : arguments is not defined
+```
+
+- **생성자로 사용할 수 없다**<br>
+화살표 함수 앞에 new 연산자를 붙여서 호출할 수 없습니다.
+```javascript
+var Person = (name, age) => { this.name = name; this.age = age; };
+var tom = new Person("Tom", 17); // -> TypeError: Person is not a constructor 
+```
+
+- **yield 키워드를 사용할 수 없다**<br>
+화살표 함수 안에서는 yield 키워드를 사용할 수 없습니다. 따라서 화살표 함수는 제너레이터로 사용할 수 없습니다.
+
+### 인수에 추가된 기능 
+#### 나머지 매개변수
+ECMAScript 6부터는 함수의 인자가 들어가는 부분에 ...을 입력하면 그 만큼 인수를 배열로 받을 수 있습니다. 이렇게 ...으로 표현한 인자를 나머지 매개변수(rest parameter)라고 부릅니다.
+```javascript
+function f(a, b, ...args) {
+	console.log(a, b, args);
+}
+
+f(1, 2, 3, 4, 5, 6);  // -> 1,2, [3, 4, 5, 6]
+```
+함수에 가변 인수를 이용하려면 ECMAScript 5까지는 arguments 변수를 사용해야 했습니다. 하지만 arguments는 배열이 아닌 유사 배열 객체이므로 forEach 등의 배열 메서드로 조작하려면 배열로 변환해야 해서 번거로웠습니다. 나머지 매개변수는 인수를 배열로 받기 때문에 덜 번거롭습니다.<br><br>
+화살표 함수 안에서는 arguments를 사용할 수 없지만 나머지 매개변수를 사용하면 화살표 함수안에서도 가변 인수를 이용할 수 있습니다.
+```javascript
+var sum = (...args) => {
+	for(var i = 0, s = 0; i < args.length; i++) s+=args[i];
+	return s;
+};
+sum(1, 2, 3, 4, 5); // -> 15
+```
+
+#### 인수의 기본값
+ECMAScript 6부터는 함수의 인자에 대입(=) 연산자를 사용해서 기본값을 설정할 수 있습니다. 기본값을 설정한 인자에 호응하는 인수를 생략하거나 undefined를 넘기면 대입 연산자의 우변의 값이 기본값이 됩니다.<br>
+```javascript
+function multiply(a, b = 1) {
+	return a*b;
+}
+multiply(3); // -> 3
+multiply(3, 2); // -> 6
+```
+
+다른 인자의 값도 기본값으로 사용할 수 있습니다.
+```javascript
+function add(a, b=a+1) { return a+b; }
+add(2);  // -> 5
+add(2, 1);  // -> 3
+```
+
+### 이터레이터와  for/of 문
+ECMAScript 6부터 추가된 이터레이터와 그와 관련된 제어 구문인 for/of 문을 배웁니다. 이터레이터와 나중에 언급하는 제너레이터는 ECMAScript 6부터 추가된 기능 중 가장 강력한 기능일 뿐만 아니라 ECMAScript 6의 새로운 기능을 이해하는 데 핵심이 되는 요소입니다.
+
+#### 이터레이션
+이터레이션(iteration)은 반복 처리라는 뜻으로 데이터 안의 요소를 연속적으로 꺼내는 행위를 말합니다. 예를 들어 배열의 forEach 메서드는 배열의 요소를 순차적으로 검색하여 그 값을 함수의 인수로 넘기기를 반복합니다.
+```javascript
+var a = [5, 4, 3];
+a.forEach(function(val) { console.log(val); });
+```
+
+#### 이터레이터
+이터레이터(iterator)란 <b>반복 처리(iteration)이 가능한 객체</b>를 말합니다. 앞의 forEach메서드는 배열의 요소를 꺼내 그 값을 함수의 인수로 넘기고, 그 작업이 끝나면 배열의 다음 요소를 꺼내 함수의 인수로 넘기기를 반복합니다. 이 작업은 내부적으로 처리되므로 개발자는 각 처리 단계를 제어할 수 없습니다. 그러나 ECMAScript 6부터는 추가된 이터레이터를 사용하면 개발자가 반복 처리를 단계별로 제어할 수 있습니다.<br><br>
+ECMAScript6의 이터레이터가 무엇인지 설명하기 앞서 이터레이터의 예를 보겠습니다. 다음 예는 배열의 이터레이터입니다. 배열은 Symbol.iterator 메서드를 가지고 있습니다. Symbol.iterator는 자바스크립트에 내장되어 있는 특별한 의미를 가진 심벌(내장 심벌)입니다. @@iterator라고 표기하고 이터레이터 심벌이라고 읽습니다. 배열의 **Symbol.iterator 메서드**는 이터레이터를 반환하는 함수입니다.
+```javascript
+var a = [5, 4, 3];
+var iter = a[Symbol.iterator]();
+console.log(iter.next()); // -> {value: 5, done: false}
+console.log(iter.next()); // -> {value: 4, done: false}
+console.log(iter.next()); // -> {value: 3, done: false}
+console.log(iter.next()); // -> {value: undefined, done: true}
+console.log(iter.next()); // -> {value: undefined, done: true}
+```
+이처럼 iter의 next 메서드를 호출할 때마다 <b>이터레이터 리절트(iterator result)</b>라는 객체가 반환됩니다. 이터레이터 리절트 value와 done 프로퍼티를 갖는 객체입니다. next 메서드가 호출될 때마다 value 프로퍼티에는 차례대로 꺼내진 배열 요소의 값이 저장되고 done 프로퍼티에는 요소의 열거가 끝났는지를 뜻하는 논리값이 저장됩니다.<br><br>
+
+ECMAScript6의 이터레이터는 일반적으로 다음 두 가지 항목을 만족하는 객체입니다.
+- next 메서드를 가진다.
+- next 메서드의 반환값은 value 프로퍼티와 done 프로퍼티를 가진 객체이다. 이때 value에는 꺼낸 값이 저장되고 done에는 반복이 끝났는지를 뜻하는 논리값이 저장된다.
+
+#### 반복 가능한 객체와 for/of 문
+이터레이터를 사용해서 이터레이션(반복)을 하려면 개발자가 적절한 처리를 직접 작성해야 합니다.
+```javascript
+var a = [5, 4, 3];
+var iter = a[Symbol.iterator]();
+while(true) {
+	var iteratorResult = iter.next();
+	if (iteratorResult.done == true) break;
+	var v = iteratorResult.value;
+	console.log(v);
+}
+```
+
+for/of 문을 사용하면 이러한 반복 처리를 자동으로 하도록 만들 수 있습니다. 
+```javascript
+var a = [5, 4, 3];
+for(var v of a) console.log(v);
+```
+
+일반적으로 for/of 문은 다음 두 가지 조건을 만족하는 객체를 반복 처리합니다.
+- Symbol.iterator 메서드를 가지고 있다.
+- Symbol.iterator 메서드는 반환값으로 이터레이터를 반환한다.
+
+Symbol.iterator 메서드를 가진 객체를 <b>반복가능(이터러블, iterable)</b>한 객체라고 합니다. 다음 생성자로 생성한 내장 객체는 처음부터 Symbol.iterator 메서드를 내장하고 있습니다. 즉, 반복 가능(이터러블)합니다.
+```
+Array, String, TypedArray, Map, Set
+```
+```javascript
+for(var v of "ABC") console.log(v);  // "A", "B", "C"를 순서대로 표시한다.
+```
+반복 가능한 객체는 <b>for/of문, 전개 연산자, yield\*, 비구조화 할당</b> 등에 활용할 수 있습니다.
+
+
+### 제너레이터
+제너레이터는 다음과 같은 성질을 지닌 함수입니다.
+- 반복 가능한 이터레이터를 값으로 반환한다.
+- 작업의 일시 정지와 재시작이 가능하며 자신의 상태를 관리한다.
+
+제너레이터는 이터레이터의 반복 처리를 강력하게 지원합니다. 제너레이터를 활용하면 반복 알고리즘을 독자적으로 구현한 이터레이터보다 유연하게 표현할 수 있습니다.
+
+#### 제너레이터의 정의와 실행
+제너레이터는 function\* 문으로 정의한 함수이며, 하나 이상의 yield 표현식을 포함합니다. 
+```javascript
+function* gen() {
+	yield 1;  // 포인트 1
+	yield 2; // 포인트 2
+	yield 3; // 포인트 3
+}
+
+var iter = gen();
+console.log(iter.next());  // -> {value: 1, done: false}
+console.log(iter.next());  // -> {value: 2, done: false}
+console.log(iter.next());  // -> {value: 3, done: false}
+console.log(iter.next());  // -> {value: undefined, done: true}
+```
+- 제너레이터 함수인 gen은 호출해도 바로 실행되지 않습니다. 그 대신 이터레이터를 반환합니다. 앞의 예에서는 이터레이터 변수 iter에 대입합니다.
+- 이터레이터의 next 메서드가 호출되면 함수의 첫 번째 yield 연산자의 위치(**포인트 1**)까지 실행하며 결과값으로 이터레이터 리절트를 반환합니다. 이터레이터 리절트의 value 프로퍼티 값으로 yield 표현식에 지정한 값을 저장하고, done 프로퍼티 값으로 제너레이터 함수를 끝까지 실행했는지 저장합니다. **이때 제너레이터 함수의 내부 처리는 포인트 1에서 일시 정지 상태**가 됩니다.
+- 또 다시 이터레이터의 **next 메서드가 호출**되면 **일시 정지한 위치에 있는 처리를 재개**합니다. 그리고 제너레이터 함수 안의 다음 번 yield 연산자의 위치(**포인트 2**)까지 실행합니다. 마찬가지로 value 프로퍼티와 done 프로퍼티를 가진 **이터레이터 리절트를 반환하고 처리를 일시 정지**합니다.
+- 이터레이터의 **next 메서드가 호출된 후 멈추었던 처리를 재개**합니다.  그리고 제너레이터 함수 안에 있는 다음 yield 연산자의 위치까지 실행합니다. 마찬가지로 value 프로퍼티의 done 프로퍼티를 가진 이터레이터 **리절트를 반환하고 처리를 일시 정지**합니다.
+- 이터레이터의 next 메서드가 호출되어 함수 처리가 **마지막 yield에 도착**했습니다. **value 프로퍼티 값이 undefined고 done 프로퍼티 값이 true인 이터레이터 리절트를 반환**합니다.
+<br><br>
+즉, 제너레이터 함수의 **yield**는 프로그램이 **일시적으로 정지하는 위치** 입니다. 그리고 제너레이터로 생성한 이터레이터의 **next 메서드**는 제너레이터 함수의 상태를 **일시 정지 상태에서 실행상태로 바꾸는 역할**을 합니다. 이때 이터레이터 객체는 처리를 재개할 수 있도록 제너레이터 함수의 내부 상태를 모두 저장합니다.
+
+![image11](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/9~10%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%95%A8%EC%88%98/images/image11.png)
+
+
+```javascript
+function createNumbers(from, to) {
+	while( from <= to) yield from++;
+}
+
+var iter = createNumbers(10, 20);
+for(var v of iter) console.log(v);  // 10~20 사이의 정수를 순서대로 출력한다.
+```
+
+### 템플릿 리터럴의 태그 함수
+
+#### 태그가 지정된 템플릿 리터럴
+템플릿 리터럴 앞에 함수 이름을 적으면 템플릿 리터럴의 내용을 인수로 받는 함수를 호출할 수 있습니다.
+```javascript
+func`${a} + ${b} = ${a+b}`
+```
+
+이 코드에서 func 부분을 <b>태그 함수(tag function)</b>라고 합니다. 태그 함수의 첫 번째 인수는 문자열을 요소로 담은 배열입니다. 이 배열의 요소는 템플릿 리터럴 안의 문자열을 ${...}를 기준으로 분할한 문자열입니다. 두 번째 이후 인수로는 각 ${...} 안에 지정된 표현식을 평가한 값이 순서대로 들어갑니다. 태그 함수의 반환값이 반드시 문자열일 필요는 없으며 그 어떤 값도 반환할 수 있습니다.
+```javascript
+function list() { return arguments; }
+var t = list`a${1}b${2}c${3}`;
+console.log(t);  // Arguments(4) [Array(4), 1, 2, 3, callee: ƒ, Symbol(Symbol.iterator): ƒ] 
+```
+
+
+```javascript
+function htmlEscape(strings, ...values) {
+	var result = strings[0];
+	for(var i=0; i<values.length; i++) {
+		result += escape(values[i]) + strings[i+1];
+	}
+	return result;
+	function escape(s) {
+		return s.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt")
+				.replace(/'/g, "&#039;")
+				.replace(/"/g, "&quot;")
+				.replace(/`/g, "&#096;");
+	}
+}
+var userinput = "<script>alert('test');</script>";
+var message = htmlEscape`<p>${userinput}</p>`;
+console.log(message); 
+// <p>&lt;script&gtalert(&#039;test&#039;);&lt;/script&gt</p>
+```
