@@ -330,6 +330,134 @@ Object 생성자는 객체를 생성하는 것보다 일반적인 객체를 조�
 
 
 #### Object.prototype의 메서드
+자바스크립트의 내장 생성자가 소유한 프로토타입 객체의 프로토타입은 Object.prototype입니다. 따라서 내장 생성자로 생성한 모든 인스턴스는 Object.prototype의 메서드를 사용할 수 있습ㄴ디ㅏ.
+
+|메서드 이름|설명|
+|----|--------|
+|hasOwnProperty(key)|호출한 객체가 문자열 key를 이름으로 가진 프로퍼티를 소유하는지를 뜻하는 논리값을 반환한다.|
+|isPrototypeOf(obj)|호출한 객체가 인수 obj에 지정한 객체의 프로토타입(인자)를 뜻하는 논리값을 반환한다.|
+|propertyIsEnumerable(key)|호출한 객체가 문자열 key를 이름으로 가진 프로퍼티를 열거할 수 있는지를 뜻하는 논리값을 반환한다. 이 메서드를 호출한 객체가 소유한 프로퍼티만 판정하며 프로토타입의 프로퍼티는 판정하지 않는다.|
+|toString()|호출한 객체를 뜻하는 문자열을 반환한다.|
+|toLocaleString()|toString 메서드와 같다.|
+|valueOf()|호출한 객체의 원시 값을 반환한다.|
+
+예를 들어 Date 생성자로 객체를 생성해 보겠습니다.
+```javascript
+var day = new Date();
+```
+이때 인스턴스 day의 프로토타입은 Date.prototype이므로 인스턴스 day에서는 Date.prototype의 프로퍼티의 메서드를 사용할 수 있습니다.
+```javascript
+console.log()day.getMonth()); // -> 6
+```
+Date.prototype의 프로토타입은 Object.prototype으로 되어 있습니다. 따라서 인스턴스 day에서 Object.prototype의 메서드와 프로퍼티를 사용할 수 있습니다.
+```javascript
+console.log(day.hasOwnProperty("length")); // false
+```
+이처럼 내장 생성자의 모든 인스턴스는 Object.prototype의 프로퍼티와 메서드를 상속하며, Object.prototype의 프로토타입은 null을 가리킵니다. 즉, Object.prototype은 인스턴스에서 프로토타입 체인을 따라 거슬러 올라갈 수 있는 마지막 단계의 객체입니다.
+
+![image5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/11~12%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9D%EC%B2%B4/images/image5.png)
+
+앞의 그림에서 Date.prototype과 Object.prototype에는 이름이 같은 메서드(toString과 valueOf)가 있지만 프로토타입 체인에서는 호출한 인스턴스와 가까운 Date.prototype의 메서드를 사용합니다.
+
+### Object.create로 객체 생성하기
+Object.create 메서드를 사용하면 명시적으로 프로토타입을 지정해서 객체를 생성할 수 있습니다. 이 메서드를 활용하면 가장 간단하게 상속을 표현할 수 있습니다.<br>
+Object.create 메서드의 첫 번째 인수는 생성할 객체의 프로토타입입니다. 두 번째 인수를 지정하면 생성할 객체의 프로퍼티도 지정할 수 있습니다. 두 번째 인수는 선택 사항입니다.
+
+```javascript
+var person1 = {
+	name: "Tom",
+	sayHello: function() { console.log("Hello! " + this.name); }
+};
+
+var person2 = Object.create(person1);
+person2.name = "Huck";
+person2.sayHello(); // -> Hello! Huck
+```
+
+person2는 person1의 name 프로터티와 sayHello 메서드를 상속받았습니다. 하지만 person2 객체는 name 프로퍼티를 가지고 있으므로 person2는 person2의 name 프로퍼티 값을 사용합니다.
+
+![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/11~12%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9D%EC%B2%B4/images/image6.png)
+
+인수에 null을 넘기면 프로토타입이 없는 객체를 생성할 수 있습니다.
+```javascript
+var blankObject = Object.create(null);
+```
+이 객체는 프로토타입도 프로퍼티도 없는 이른바 백지 상태의 객체입니다.
+
+![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/11~12%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9D%EC%B2%B4/images/image7.png)
+
+이를 활용하면 순수한 프로퍼티 집합(해시 테이블)을 만들 수 있습니다. 그러나 이 객체는 Object.prototype을 상속받지 않았으므로 toString()이나 valueOf() 등의 기본적인 메서드조차 사용할 수 없습니다.<br><br>
+객체 리터럴로 생성한 빈 객체 ({})와 똑같은 객체를 생성하려면 인수로 Object.prototype을 넘깁니다.
+```javascript
+var obj = Object.create(Object.prototype);
+```
+## 접근자 프로퍼티
+접근자 프로퍼티를 사용하면 프로퍼티를 읽고 쓸 때 원하는 작업을 자동으로 처리할 수 있습니다.
+
+### 프로퍼티의 종류
+- **데이터 프로퍼티** : 값을 저장하기 위한 프로퍼티
+- **접근자 프로퍼티** : 값이 없음. 프로퍼티를 읽거나 쓸 때 호출하는 함수를 값 대신에 지정할 수 있는 프로퍼티
+
+> 지금까지 설명한 모든 프로퍼티는 데이터 프로퍼티입니다.
+
+### 접근자 프로퍼티
+- **접근자**란 객체 지향 프로그래밍에서 객체가 가진 프로퍼티 값을 객체 바깥에서 읽거나 쓸 수 있도록 제공하는 메서드를 말합니다. 
+- 객체의 프로퍼티를 객체 바깥에서 직접 조작하는 행위는 데이터의 유지 보수성을 해치는 주요한 원인입니다. 
+- 접근자 프로퍼티를 사용하면 데이터를 부적절하게 변경하는 것을 막고 특정 데이터를 외부로부터 숨길 수 있으며 외부에서 데이터를 읽으려고 시도할 떄 적절한 값으로 가공해서 넘길 수 있습니다.
+- 자바스크립트의 접근자 프로퍼티는 객체에 접근자를 정의할 수 있게 합니다. 
+- 접근자 프로퍼티를 사용하여 프로퍼티를 읽고 쓸 수 있게 하면 프로그램의 유지 보수성을 높일 수 있습니다.
+<br>
+- 접근자 프로퍼티 하나에 대해 그 프로퍼티를 읽을 때 처리를 담당하는 <b>게터 함수(getter)</b>와 쓸 때의 처리를 담당하는 <b>세터 함수(setter)</b>를 정의할 수 있습니다.
+- 접근자 프로퍼티는 getter와 setter 중에서 하나만 정의할 수도 있지만 모두 정의할 수도 있습니다.
+
+```javascript
+var person = {
+	_name: "Tom",
+	get name() {
+		return this._name;
+	},
+	set name(value) {
+		var src = value.charAt(0).toUpperCase() + value.substring(1);
+		this._name = str;
+	}
+};
+console.log(person.name); // true
+person.name = "huck";  // 접근자 프로퍼티에 값을 대입한다.
+console.log(person.name);  // -> Huck
+```
+- 이 예제에서는 name이라는 이름의 접근자 프로퍼티를 정의합니다. 접근자 프로퍼티 name은 데이터 프로퍼티 \_name의 값을 읽고 쓰는 일을 담당하고 있습니다. 같은 값을 쓸 때는 문자열의 첫 글자를 대문자로 바꾼 후에 \_name 프로퍼티에 대입합니다.
+- 접근자 프로퍼티에 getter와 setter를 정의하려면 function 키워드 대신 **get이나 set 키워드**를 사용한 함수를 작성합니다.
+- getter에는 인수가 없고 setter는 인수를 한 개 받습니다. getter와 setter는 일반 함수와 마찬가지로 중괄호 안에 모든 처리를 작성할 수 있습니다. 
+- 접근자 프로퍼티의 값을 읽으려모고 시도하면 getter가 호출되고 값을 쓰려고 시도하면 setter가 호출됩니다.
+- getter가 없는 접근자 프로퍼티를 읽으려고 시도하면 undefined가 반환됩니다. 
+- setter가 없는 접근자 프로퍼티를 쓰려고 시도하면 아무것도 실행되지 않으며 제어권이 곧장 호출자에게 되돌아옵니다.
+- Strict 모드에서 setter가 없는 접근자 프로퍼티를 쓰려고 시도하면 오류가 발생합니다.
+- 이 예제에서는 접근자 프로퍼티로 데이터 프로퍼티 \_name을 읽고 쓰지만 다른 변수나 객체도 접근자 프로퍼티를 읽거나 쓸 수 있습니다. 또한 getter와 setter는 데이터 프로퍼티와 일기와 쓰기를 비롯한 다른 작업도 할 수 있습니다.
+- 접근자 프로퍼티 꼬한 데이터 프로퍼티와 마찬가지로 delete 연산자로 삭제할 수 있습니다.
+```javascript
+delete person.name;
+```
+
+### 데이터의 캡슐화
+접근자 프로퍼티를 이용해서 간접적으로 데이터 프로퍼티를 읽거나 쓸수 있게 만들었지만 여전히 데이터 프로퍼티를 직접 읽고 쓸 수 있습니다. **즉시 실행 함수로 클로저를 생성하면 데이터를 객체 외부에서 읽고 쓸 수 없도록 숨기고 접근자 프로퍼티로만 읽고 쓰도록 만들 수 있습니다.**
+```javascript
+var person = (function() {
+	var _name = "Tom";  // 프라이빗 변수
+	return {
+		get name() {
+			return _name;
+		},
+		set name(value) {
+			var str = value.charAt(0).toUpperCase() + value.substring(1);
+			_name = str;
+		}
+	};
+})();
+console.log(person.name);  // -> Tom
+person.name = "Huck"; 	// 접근자 프로퍼티에 값을 대입한다.
+console.log(person.name);  // -> Huck
+```
+이 코드의 변수 \_name은 즉시 실행 함수의 지역 변수이므로 함수 바깥에서 읽거나 쓸 수 없습니다.
 
 ## 프로퍼티(속성)
 
