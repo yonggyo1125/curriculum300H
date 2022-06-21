@@ -459,7 +459,82 @@ console.log(person.name);  // -> Huck
 ```
 이 코드의 변수 \_name은 즉시 실행 함수의 지역 변수이므로 함수 바깥에서 읽거나 쓸 수 없습니다.
 
-## 프로퍼티(속성)
+## 프로퍼티의 속성
+프로퍼티는 프로퍼티의 이름과 값이 한 쌍을 이룬 것이지만 이와는 별개로 내부적인 속성을 몇 개 더 가지고 있습니다. ECMAScript 3에서도 열거가 가능한지를 뜻하는 내부 속성은 있었지만 그것을 수정하는 수단은 제공하지 않았습니다. ECMAScript 5부터는 쓰기 기능 여부와 재정 가능 여부를 뜻하는 내부 속성 두 개, 접근자 프로퍼티, 내부 속성을 조작할 수 있는 수단이 추가되었습니다.<br><br>
+
+프로퍼티는 다음과 같은 세 가지 내부 속성을 가지며 각 속성 값은 논리값입니다.
+
+#### 쓰기 가능(writable)
+프로퍼티에 쓰기가 가능한지를 뜻하는 속성입니다. 이 속성 값이 true면 프로퍼티 값을 수정할 수 있습니다.
+
+#### 열거 가능(enumerable)
+프로퍼티가 for/in 문이나 Object.keys 등의 반복문으로 찾을 수 있는 대상인지를(열거 가능) 뜻하는 속성입니다.
+
+#### 재정의 가능(configurable)
+ 프로퍼티 내부 속성을 수정할 수 있는지를 뜻하는 속성입니다. 이 속성 값이 true면 delete 연산자로 그 프로퍼티를 제거할 수 있으며 프로퍼티가 가진 내부 속성을 수정할 수 있습니다.<br><br>
+ 
+- 객체에 새로운 프로퍼티를 추가하면 기본적으로 그 프로퍼티의 기본 속성이 <b>쓰기 가능/열거 가능/재정의 가능</b>으로 설정됩니다.
+- 내장 생성자가 가지고 있는 프로토타입 객체의 프로퍼티 대부분의 내장 속성은 <b>쓰기 가능/열거 불가능/재정의 가능</b> 입니다.
+- **데이터 프로퍼티** :  값(value), 쓰기 가능(writable), 열거 가능(enumerable), 재정의 가능(configurable)이라는 네 개의 속성을 갖습니다.
+- **접근자 프로퍼티** : 읽기(get), 쓰기(set), 열거 가능(enumerable), 재정의 가능(configurable)이라는 네 개의 속성을 갖습니다.
+
+![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/11~12%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9D%EC%B2%B4/images/image8.png)
+
+### 프로퍼티 디스크립터와 프로퍼티를 읽고 쓰는 메서드
+프로퍼티 속성은 **프로퍼티 디스크립터**(프로퍼티 기술자)로 설정할 수 있습니다.
+
+#### 프로퍼티 디스크립터
+프로퍼티 디스크립터는 프로퍼티의 속성 값을 뜻하는 객체입니다. 이 객체가 가진 프로퍼티 이름은 프로퍼티가 가진 속성 이름과 같습니다.<br>
+- **데이터 프로퍼티의 프로퍼티 디스크립터**는 다음 네 개의 프로퍼티를 가진 객체입니다.
+```javascript
+{
+	value: 프로퍼티의 값,
+	writable: 논리값,
+	enumerable: 논리값,
+	configurable: 논리값
+}
+```
+- **접근자 프로퍼티의 프로퍼티 디스크립터**는 다음 네 개의 프로퍼티를 가진 객체입니다.
+```javascript
+{
+	get: getter 함수값,
+	set: setter 함수값,
+	enumerable: 논리값,
+	configurable: 논리값
+}
+```
+
+#### 프로퍼티 디스크립터 가져오기 : Object.getOwnPropertyDescriptor
+- Object.getOwnPropertyDescriptor 메서드는 객체 프로퍼티의 프로퍼티 디스크립터를 가져옵니다. 
+- 첫 번째 인수는 객체의 참조이고 두 번째 인수는 프로퍼티 이름을 뜻하는 문자열입니다. 
+```javascript
+var tom = { name : "Tom" };
+Object.getOwnPropertyDescriptor(tom, "name");
+// -> {value: "Tom", writable: true, enumerable: true, configurable: true}
+```
+- 프로토타입으로 상속받은 프로퍼티나 없는 프로퍼티를 지정하면 undefined를 반환합니다.
+```javascript
+Object.getOwnPropertyDescriptor({}, "name");  // -> undefined
+Object.getOwnPropertyDescriptor(tom, "toString");  // -> undefined
+```
+이처럼 Object.getOwnPropertyDescriptor 메서드는 그 객체의 프로퍼티 디스크립터만 가져올 수 있습니다.
+
+#### 객체의 프로퍼티 설정하기 : Object.defineProperty
+- Object.defineProperty 메서드는 객체의 프로퍼티에 프로퍼티 디스크립터를 설정합니다. 
+- 첫 번째 인수는 객체의 참조, 두 번째 인수는 프로퍼티의 이름을 뜻하는 문자열, 세 번째 인수는 프로퍼티 디스크립터의 참조입니다.
+- 실행 후에는 수정한 객체의 참조를 반환합니다.
+```javascript
+var obj = {};
+Object.defineProperty(obj, "name", {
+	value: "Tom", 
+	writable: true,
+	enumerable: false,
+	configurable: true
+});
+Object.getOwnPropertyDescriptor(obj, "name");
+// -> {value: "Tom", writable: true, enumerable: false, configurable: true}
+```
+이 메서드를 사용할 때 프로퍼티 디스크립터의 각 프로퍼티는 생략할 수 있습니다.
 
 ## 객체 잠그기
 
