@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/16963qZyb3dJCiEeNoStuAwLzXQXnWaQt?usp=sharing)
+
+
 # HTML
 
 ## 정의
