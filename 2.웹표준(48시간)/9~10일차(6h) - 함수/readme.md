@@ -625,6 +625,7 @@ console.log(counter()); // -> 2
 - (2) 중첩 함수 f는 외부 함수 makeCounter의 지역변수 counter를 참조한다.
 
 ![image10](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/9~10%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%95%A8%EC%88%98/images/image10.png)
+
 (1)로 인해 f의 함수 객체를 전역변수 counter가 참조합니다. (2)로 인해 함수 makeCounter의 렉시컬 환경 컴포넌트를 f의 함수 객체가 참조합니다. 그 결과 함수 makeCounter의 렉시컬 환경 컴포넌트를 전역 변수 counter가 f의 함수 객체로 간접적으로 참조하게 되므로 가비지 컬렉션의 대상이 되지 않습니다. 따라서 makeCounter 실행이 끝나서 호출자에 제어권이 넘어가도 makeCounter의 렉시컬 환경 컴포넌트가 메모리에서 지워지지 않게 됩니다. 지역 변수 count는 함수 makeCounter가 속한 렉시컬 환경 컴포넌트에 있는 선언적 환경 레코드의 프로퍼티이므로 이 또한 메모리에서 지워지지 않습니다.
 
 ![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/9~10%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%95%A8%EC%88%98/images/image9.png)
