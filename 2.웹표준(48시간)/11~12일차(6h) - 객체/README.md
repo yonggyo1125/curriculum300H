@@ -693,8 +693,126 @@ console.log(Object.prototype.propertyIsEnumerable("toString"));  // -> false : �
 
 ## 프로퍼티의 열거
 
+### for/in 문
+for/in문은 객체와 객체의 프로토타입 체인에서 열거할 수 있는 프로퍼티를 찾아내어 꺼내는 반복문입니다.
+
+```javascript
+var person1 = { name: "Tom", age: 17 };
+var person2 = Object.create(person1);
+person2.name = "Huck";
+for(var p in person2) console.log(p);   // name, age ... 순서대로 표시됨
+```
+앞 코드의 person2 객체가 사용할 수 있는 프로퍼티는 이 객체가 소유한 프로퍼티인 name, person1에서 상속받은 프로퍼티인 name과 age입니다.  물론 Object.prototype에서 상속받은 toString 등의 프로퍼티도 사용할 수 있습니다. 이때 person2 객체는 person1 객체에서 상속받은 name 프로퍼티 대신 객체 자신이 소유한 name 프로퍼티를 사용하게 됩니다. Object.prototype의 프로퍼티는 열거할 수 없으므로 for/in 문으로는 찾아낼 수 없습니다.<br><br>
+
+```javascript
+var a = [0, 2, 4, 6, 8];
+a.name = "evens";
+for(var i in a) console.log(i);  // 0, 1, 2, 3, 4, name의 순서대로 표시됨.
+```
+
+자바스크립트의 배열은  Array타입의 객체이며 Array 객체의 각 요소는 프로퍼티입니다. 즉, 요소의 인덱스는 프로퍼티의 이름이며 요소 값은 프로퍼티 값입니다. 또한 배열은 Array.prototype에서 상속받은 length, push 등의 프로퍼티와 Object.prototype에서 상속받은 프로퍼티를 사용할 수 있습니다. 그러나 Array.prototype과 Object.prototype의 프로퍼티는 열거할 수 없기 때문에 for/in 문으로는 찾아낼 수 없습니다.
+
+### Object.keys 메서드
+
+Object.keys. 메서드는 지정한 객체가 소유한 프로퍼티 중에서 열거할 수 있는 프로퍼티 이름만 배열로 만들어 반환합니다.
+
+```javascript
+var group = { groupName: "Tennis circle" };
+var person = Object.create(group);
+person.name = "Tom";
+person.age = 17;
+person.sayHello = function() { console.log("Hello! " + this.name); };
+Object.defineProperty(person, "sayHello", {enumerable: false});
+console.log(Object.keys(person));  // -> {"name", "age"}
+```
+앞 코드의 person 객체에서 사용할 수 있는 프로프터는 이 객체가 소유한 프로퍼티인 name, age, sayHello와 group에서 상속받은 프로퍼티인 groupName 입니다. 물론 Object.prototype에서 상속받은 프로퍼티도 사용할 수 있습니다. Object.keys 메서드는 이 중에서 해당 객체가 소유한 프로퍼티이면서 열거할 수 있는 프로퍼티인 name과 age의 이름만 배열로 만들어서 반환합니다. 이처럼 **해당 객체가 소유한 프로퍼티 이름만 조회하는 용도로는 Object.keys 메서드가 적합니다.**
+
+
+### Object.getOwnPropertyNames 메서드 
+
+Object.getOwnPropertyNames 메서드도 인수로 지정한 객체가 소유한 프로퍼티 이름을 배열로 만들어서 반환합니다. 그때 **열거할 수 있는 프로퍼티와 열거할 수 없는 프로퍼티의 이름 모두 배열로 만드는 점이 특징**입니다.
+
+```javascript
+console.log(Object.getOwnPropertyNames(person));  // -> ["name", "age", "sayHello"]
+```
+
+Object.keys 메서드는 열거할 수 없는 프로퍼티인 sayHello는 열거하지 않았지만 getOwnPropertyNames 메서드는 열거할 수 없는 프로퍼티까지 모두 열거합니다.
 
 ## 객체 잠그기
+
+객체를 잠가 수정할 수 없게 만드는 방법을 알아봅니다. 객체를 잠글 때는 객체의 확장 가능 속성, 재정의 가능 속성, 쓰기 가능 속성을 설정합니다. ECMAScript 5부터 이 속성들을 한꺼번에 설정할 수 있는 메서드가 추가되었으며 잠금 강도에 따라 3단계 잠금이 가능해졌습니다.
+
+### 확장 가능 속성
+
+- 객체의 확장 가능(extensible) 속성은 **객체에 새로운 프로퍼티를 추가할 수 있는지를 결정합니다.**
+- 확장 가능 속성 값이 true로 설정된 객체에는 새로운 프로퍼티를 추가할 수 있지만 false로 설정된 객체에는 추가할 수 없습니다. 
+- 사용자가 정의한 객체와 내장 객체는 기본적으로 확장이 가능하지만 호스트 객체의 확장 가능한 속성은 자바스크립트 실행 환경에 따라 설정된 값이 다릅니다.
+
+### 확장 방지 : Object.preventExtensions 메서드
+- Object.preventExtensions메서드는 인수로 받은 객체를 확장할 수 없게 만듭니다.
+- 이 메서드로 확장할 수 없게 만든 객체는 두 번 다시 프로퍼티를 추가할 수 없게 됩니다.
+
+```javascript
+var person = { name : "Tom" };
+Object.preventExtensions(person);
+person.age = 17;
+console.log("age" in person); // -> false
+```
+
+- 이처럼 확장할 수 없는 객체에 프로퍼티를 추가하는 명령은 무시됩니다. 
+- 또한 Strict 모드에서 setter가 없는 접근자 프로퍼티를 쓰려고 시도하면 오류가 발생합니다.
+- **Object.isExtensible** 메서드를 사용하면 지정한 객체가 확장 가능한지 확인할 수 있습니다.
+
+```javascript
+console.log(Object.isExtensible(person));  // -> false
+```
+
+### 밀봉 : Object.seal 메서드
+
+- <b>Object.seal 메서드</b>는 인수로 받은 객체를 밀봉합니다. **밀봉이란 객체에 프로퍼티를 추가하는 것을 금지하고 기존의 모든 프로퍼티를 재정의할 수 없게 만드는 것**을 말합니다. 
+- 다시 말해 객체를 밀봉하면 프로퍼티의 추가, 삭제, 수정을 할 수 없고 값의 **읽기와 쓰기만 가능해집니다.** 
+
+```javascript
+var person = { name: "Tom" };
+Object.seal(person);
+person.age = 17;
+delete person.name;
+Object.defineProperty(person, "name", {enumerable: false});
+console.log("name" in person);  // -> true : name이 삭제되지 않았음
+console.log("age" in person); // -> false : age가 추가되지 않았음
+console.log(Object.getOwnPropertyDescriptor(person, "name"));
+// -> {value: "Huck", writable: true, enumerable: true, configurable: false}
+person.name = "Huck";
+console.log(person);
+```
+- 밀봉된 객체를 대상으로 한 프로퍼티의 추가, 삭제, 수정 명령은 무시됩니다.
+- 또한 strict 모드에서 밀봉한 객체를 대상으로 프로퍼티 추가, 삭제, 수정 명령을 내리면 오류가 발생합니다.
+- **Object.isSealed** 메서드를 사용하면 인수로 받은 객체가 밀봉된 상태인지 확인할 수 있습니다.
+
+```javascript
+console.log(Object.isSealed(person));  // -> true
+```
+
+
+### 동결 : Object.freeze 메서드
+
+- <b>Object.freeze 메서드</b>는 인수로 받은 객체를 동결합니다. 
+- 동결이란 객체에 프로퍼티를 추가하는 것을 금지하고 기존의 모든 프로퍼티를 재정의할 수 없게 만들며 데이터 프로퍼티를 쓸 수 없게 만드는 것입니다.
+- 다시 말해 객체를 동결하면 객체의 프로퍼티가 일기만 가능한 상태가 됩니다.
+- 단, 객체에 접근자 프로퍼티가 정의되어 있다면 게터 함수와 세터 함수 모두를 호출할 수 있습니다.
+
+```javascript
+var person = { name : "Tom" };
+Object.freeze(person);
+```
+- 이렇게 설정하면 person 객체의 프로퍼티는 읽기만 가능한 상태가 됩니다.
+- <b>Object.isFrozen 메서드</b>를 사용하면 인수로 받은 객체가 동결된 상태인지 확인할 수 있습니다.
+
+```javascript
+console.log(Object.isFrozon(person));  // -> true
+```
+
+## JSON
 
 ## 클래스 구문
 
