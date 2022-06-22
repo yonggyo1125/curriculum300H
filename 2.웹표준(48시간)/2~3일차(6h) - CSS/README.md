@@ -1,8 +1,13 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/10U5Rlr84oGaLIKwN9kTV_R3I5tjwZo2u?usp=sharing)
+
+
 # CSS
 - CSS(Cascading Style Sheet)는 HTML과 같은 마크업 언어로 작성된 문서에 색상, 폰트, 각 요소의 위치 변경, 백그라운드 및 간단한 애니메이션(transition) 등의 효과를 주어 보다 보기 좋게 꾸며 주는 역할을 합니다.
 
 
 ## HTML에서 CSS를 적용하는 방법
+
 ### HTML 요소 속성으로써 적용하는 방법
 - HTML의 각 태그에서 style 속성으로 적용하는 방법이 있습니다. 
 ```
