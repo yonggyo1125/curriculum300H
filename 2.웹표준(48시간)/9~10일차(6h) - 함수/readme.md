@@ -195,6 +195,7 @@ var fact = function f(x) {
 ```
 <br>
 arguments.callee를 사용하면 이름이 없는 익명 함수도 재귀호출을 할 수 있습니다. arguments.callee가 지금 실행 중인 함수를 가리키기 때문입니다.
+
 ```javascript
 var fact = function(n) {
 	if (n <= 1) return 1;
@@ -202,11 +203,11 @@ var fact = function(n) {
 }	
 ```
 <br>
-재귀 함수를 정의할 때는 다음 두 가지 사항에 유의해야 합니ㅏㄷ.
+재귀 함수를 정의할 때는 다음 두 가지 사항에 유의해야 합니다.
 - 재귀 호출은 반드시 멈춰야 한다.<br>
 	함수가 자신을 호출하면 무한한 연쇄 호출로 이어지므로 프로그램이 멈추지 않을 가능성이 있습니다. 따라서 재귀 호출이 중간에 멈출 수 있도록 만들어야 합니다.
 	
-	![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/9~10%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%95%A8%EC%88%98/images/image1.png)
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/9~10%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%95%A8%EC%88%98/images/image1.png)
 	
 
 - 재귀 호출로 문제를 간단하게 해결할 수 있을 때만 사용한다.
