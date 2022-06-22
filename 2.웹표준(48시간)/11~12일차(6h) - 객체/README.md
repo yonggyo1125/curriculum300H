@@ -5,12 +5,14 @@
 자바 스크립트의 객체는 이름과 값을 한 쌍으로 묶은 집합입니다. 이름과 값이 한 쌍을 이룬 것을 프로퍼티라고 하고, 그것의 이름을 프로퍼티 이름 또는 키(key)라고 합니다.  값으로는 모든 데이터르 타입의 데이터(원시 값, 객체)를 저장할 수 있으며, 함수의 참조를 값으로 가진 프로퍼티는 메서드라는 이름으로 부릅니다.<br>
 자바스크립트로 이러한 객체를 생성하려면 다음 세 가지 방법을 사용합니다.
 
-- **객체 리터럴로 생성하는 방법**<br>
+- **객체 리터럴로 생성하는 방법**
+
 ```javascript
 var card = { suit: "하트", rank: "A" };
 ```
 
-- **생성자로 생성하는 방법**<br>
+- **생성자로 생성하는 방법**
+
 ```javascript
 function Card(suit, rank) {
 	this.suit = suit; 
@@ -20,7 +22,8 @@ function Card(suit, rank) {
 var card = new Card("하트", "A");
 ```
 
-- **Object.create로 생성하는 방법**<br>
+- **Object.create로 생성하는 방법**
+
 ```javascript
 var card = Object.create(Object.prototype, {
 	suit: {
@@ -65,11 +68,13 @@ var card = Object.create(Object.prototype, {
 var obj = {};
 console.log(obj.__proto__); // -> Object {}
 ```
+
 - 단 모든 자바스크립트 실행 환경이 __proto__ 프로퍼티를 지원하는 것은 아니므로 주의하세요.
 
 #### 프로토타입 체인
 - 객체의 __proto__ 프로퍼티는 그 객체에 상속을 해 준 부모 객체를 가리킵니다. 
 - 객체는 __proto__ 프로퍼티가 가리키는 부모 객체의 프로퍼티를 사용할 수 있습니다.
+
 ```javascript
 var objA = {
 	name: "Tom",
@@ -126,6 +131,7 @@ ECMAScript 6부터는 객체의 프로토타입을 설정하는 메서드인 Obj
 
 ### new 연산자의 역할
 생성자를 new 연산자로 호출해서 인스턴스를 생성하면 내부적으로는 어떤 작업을 할까요? 다음은 new 연산자가 수행하는 내부적인 작업을 설명합니다.
+
 ```javascript
 function Circle(center, radius) {
 	this.center = center;
@@ -138,15 +144,18 @@ Circle.prototype.area = function() {
 ```
 
 Circle 생성자로 인스턴스를 생성할 때는 다음과 같이 new 연산자를 사용했습니다.
+
 ```javascript
 var c = new Circle({x : 0, y: 0}, 2.0);
 ```
 new 연산자로 Circle 생성자를 사용하면 내부적으로는 다음과 같은 작업을 수행합니다.
 - (1) 빈 객체를 생성합니다.
+
 ```javascript
 var newObj = {};
 ```
 - (2) Circle.prototype을 생성된 객체의 프로토타입으로 설정합니다.
+
 ```javascript
 newObj.__proto__ = Circle.prototype;
 ```
@@ -520,6 +529,7 @@ Object.getOwnPropertyDescriptor(tom, "toString");  // -> undefined
 이처럼 Object.getOwnPropertyDescriptor 메서드는 그 객체의 프로퍼티 디스크립터만 가져올 수 있습니다.
 
 #### 객체의 프로퍼티 설정하기 : Object.defineProperty
+
 - Object.defineProperty 메서드는 객체의 프로퍼티에 프로퍼티 디스크립터를 설정합니다. 
 - 첫 번째 인수는 객체의 참조, 두 번째 인수는 프로퍼티의 이름을 뜻하는 문자열, 세 번째 인수는 프로퍼티 디스크립터의 참조입니다.
 - 실행 후에는 수정한 객체의 참조를 반환합니다.
@@ -534,7 +544,155 @@ Object.defineProperty(obj, "name", {
 Object.getOwnPropertyDescriptor(obj, "name");
 // -> {value: "Tom", writable: true, enumerable: false, configurable: true}
 ```
-이 메서드를 사용할 때 프로퍼티 디스크립터의 각 프로퍼티는 생략할 수 있습니다.
+이 메서드를 사용할 때 프로퍼티 디스크립터의 각 프로퍼티는 생략할 수 있습니다. 디스크립ㅌ어의 일부 프로퍼티를 생략한 후에 특정 객체에 새로운 프로퍼티를 추가하면 새로운 프로퍼티의 속성 값 중에서 프로퍼티 디스크립터에서 생략한 프로퍼티에 대응하는 속성 값이 false 또는 undefined로 설정됩니다. 디스크립터에서 일부 프로퍼티를 생략한 후에 특정 객체가 갖고 있는 프로퍼티를 수정하면 그 프로퍼티의 속성 값 중에서 프로퍼티 디스크립터에서 생략한 프로퍼티에 대응하는 속성 값은 수정하지 않습니다.<br><br>
+
+다음은 프로퍼티의 쓰기 가능 속성을 바꾸는 예입니다.
+
+```javascript
+var person = { name: "Tom" };
+Object.defineProperty(person, "name", {
+	writable: false,
+});
+Object.getOwnPropertyDescriptor(person, "name");
+// -> {value: "Tom", writable: false, enumerable: true, configurable: true}
+person.name = "Huck";
+console.log(person.name); // -> Tom
+```
+
+이 코드는 Person 객체를 생성한 후에 name 프로퍼티를 수정할 수 없게 만듭니다. 그러면 person.name에 값을 대입해도 무시됩니다.<br><br>
+
+다음은 프로퍼티의 열거 가능 속성을 바꾸는 예입니다.
+
+```javascript
+var person = {
+	name: "Tom",
+	age: 17,
+	sayHello: function() { console.log("Hello! " + this.name); }
+};
+
+Object.defineProperty(person, "sayHello", {enumerable: false});
+for(var p in person) console.log(p);  // name, age ... 순서대로 표시됨
+```
+
+이 코드는 객체 person의 프로퍼티인 sayHello를 열거할 수 없도록 설정합니다. 그러면 sayHello는 열거할 수 없는 프로퍼티가 되므로 for/in 문을 사용해서 person의 프로퍼티를 열거해도 sayHello는 열거하지 않습니다. 또한 객체 person이 상속받은 Object.prototype 프로퍼티도 열거할 수 없습니다.<br><br>
+
+다음은 프로퍼티의 재정의 가능 속성을 바꾸는 예입니다.
+
+```javascript
+var person = { name: "Tom", age: 17, sex: "남" };
+Object.defineProperty(person, "age", {configurable: false});
+delete person.age;
+console.log(person.age); // -> 17
+Object.defineProperty(person, "age", {enumerable: false});
+// -> Uncaught TypeError: Cannot redefine property: age
+Object.defineProperty(person, "age", {writable: false});
+```
+
+앞에서 예로 든 객체 person의 프로퍼티 중에서 age를 다시 정의할 수 없도록 설정합니다. 그러면 delete 문으로 person.age를 삭제하라는 명령이 무시됩니다.  또한 age의 enumerable의 configurable 속성을 바꾸려고 시도하면 오류가 발생합니다. 단, writable 속성만큼은 true일 때 false로 바꿀 수 있습니다. 즉, 한 번 configurable 속성 값을 false로 바꾸면 writable 속성 값이 true일 때 false로 바꿀 수 있을 뿐, 그 외의 내부 속성 값은 바꿀 수 없게 된다는 점에 유의하세요. 특히 configurable 속성 값은 true로 되돌릴 수 없습니다.
+
+#### 객체의 프로퍼티 속성 여러 개를 한꺼번에 설정하기 : Object.defineProperties
+
+Object.defineProperties 메서드는 객체가 가진 프로퍼티 여러 개에 각각의 프로퍼티 디스크립터를 설정하여 첫 번째 인수는 객체의 참조입니다. 두 번째 인수는 새롭게 설정 또는 변경하고자 하는 프로퍼티 이름이 키로 지정된 프로퍼티 여러 개가 모인 객체이며, 각 키 값은 프로퍼티 디스크립터의 참조입니다. 실행 후에는 수정된 객체의 참조를 반환합니다.
+
+```javascript
+var person = Object.defineProperties({}, {
+	_name: {
+		value: "Tom",
+		writable: true,
+		enumerable: true,
+		configurable: true
+	},
+	name: {
+		get: function() { return this._name; },
+		set: function(value) {
+			var str = value.charAt(0).toUpperCase() + value.substring(1);
+			this._name = str;
+		},
+		enumerable: true,
+		configurable: true
+	}
+});
+Object.getOwnPropertyDescriptor(person, "name");
+// -> {enumerable: true, configurable: true}
+```
+
+### Object.create의 두 번째 인수
+
+앞서 Object.create 메서드의 첫 번째 인수로 프로포타입을 넘겨서 객체를 생성하는 방법을 배웠습니다. 이번에는 새로 생성할 객체가 포함할 프로퍼티 목록을 Object.create 메서드의 두 번째 인수로 넘겨서 새로운 객체를 생성하는 방법을 소개합니다. 두 번째 인수로는 Object.defineProperties 메서드의 두 번째 인수와 마찬가지로 프로퍼티 디스크립터를 넘깁니다.
+
+```javascript
+var group = {
+	groupName: "Tennis circle",
+	sayGroupName: function() { console.log("belong to " + this.groupName); }
+};
+
+var person = Object.create(group, {
+	name: {
+		value: "Tom",
+		writable: true,
+		enumerable: true,
+		configurable: true
+	},
+	age: {
+		value: 10,
+		writable: true,
+		enumerable: true,
+		configurable: true,
+	},
+	sayName: {
+		value: function() { console.log("I'm " + this.name); },
+		writable: true,
+		enumerable: false, 
+		configurable: true
+	}
+});
+console.log(person);  // -> Object {name: "Tom", age: 18}
+console.log(person.groupName);  // -> Tennis circle
+person.sayGroupName();  // -> belong to Tennis circle
+person.sayName();  // -> I'm Tom
+```
+이 코드에서 person 객체의 프로토타입으로 group 객체를 사용합니다. 따라서 person 객체가 group 객체의 groupName 프로퍼티와  sayGroupName 메서드를 상속받습니다. person 객체는 name 프로퍼티의 age 프로퍼티와 sayName 메서드를 자신의 것으로 소유합니다.<br><br>
+이처럼 Object.create 메서드를 사용하면 프로토타입, 프로퍼티 값, 프로퍼티 속성을 모두 설정한 객체를 생성할 수 있습니다.
+
+## 프로퍼티가 있는지 확인하기
+
+### in 연산자
+
+in 연산자는 객체 안에 지명한 프로퍼티가 있는지 검색하며, 그 검색 대상은 **그 객체가 소유한 프로퍼티와 상속받은 프로퍼티 모두**입니다.
+
+```javascript
+var person = { name : "Tom" };
+console.log("name" in person);  // -> true : 이 객체가 소유한 프로퍼티
+console.log("age" in person);  // -> false : 프로퍼티가 없음
+console.log("toString" in person); // -> true : person은 toString을 상속받았음 
+```
+
+### hasOwnProperty 메서드
+
+hasOwnProperty 메서드는 지명한 프로퍼티가 **그 객체가 소유한 프로퍼티면 true를 반환**하고 **상속받은 프로퍼티면 false를 반환**합니다.
+
+```javascript
+var person = { name: "Tom" };
+console.log(person.hasOwnProperty("name"));  // -> true : 이 객체가 소유한 프로퍼티
+console.log(person.hasOwnProperty("toString")); // -> false : 상속받은 프로퍼티
+```
+앞 코드에서 name 프로퍼티는 person 객체의 소유이므로 hasOwnProperty 메서드가 true를 반환합니다. 하지만 toString 메서드는 Object.prototype에서 상속받은 메서드이며 person 객체에도 toString 메서드가 없기 때문에 hasOwnProperty 메서드가 false를 반환합니다.
+
+### propertyIsEnumerable 메서드
+
+propertyIsEnumerable 메서드는 지정한 프로퍼티가 **그 객체가 소유한 프로퍼티이며 열거할 수 있을 때 true를 반환**합니다.
+
+```javascript
+var person1 = { name: "Tom", age: 17 };
+var person2 = Object.create(person1);
+person2.name = "Huck";
+console.log(person2.propertyIsEnumerable("name"));  // -> true : 이 객체가 소유한 열거 가능 프로퍼티
+console.log(person2.propertyIsEnumerable("age"));  // -> false : 상속받은 프로퍼티
+console.log(Object.prototype.propertyIsEnumerable("toString"));  // -> false : 열거할 수 없는 프로퍼티
+```
+
+## 프로퍼티의 열거
+
 
 ## 객체 잠그기
 
