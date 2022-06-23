@@ -25,6 +25,34 @@
 - (8) 모든 리소스를 읽어 들인 후에는 <b>document.readyState</b> 프로퍼티 값이 "<b>complete</b>"로 바뀝니다.  마지막으로 웹 브라우저는 <b>Window 객체를 생대로 load 이벤트를 발생</b>시킵니다.
 - (9) 이 시점부터 다양한 이벤트(사용자 정의 이벤트, 네트워크 이벤트)를 수신하며, 이벤트가 발생하면 이벤트 처리기가 비동기로 호출됩니다.
 
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9B%B9%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%20%EA%B0%9D%EC%B2%B4/images/images1.png)
+
+- 여기에서 window.load 이벤트는 모든 리소스를 읽어 들인 후에 발생합니다. 
+- HTML 문서를 다 읽어 들이지 못한 상태에서 자바스크립트로 HTML 요소를 조작하면 조작할 요소 객체가 없으므로 자바스크립트 코드가 의도대로 동작하지 않습니다.
+- 이런 상황을 만나지 않으려면 window.onload의 이벤트 처리기에 초기화 스크립트를 등록합니다. HTML 문서를 다 읽어 들인 후에 각 HTML 요소의 이벤트 처리기 등록과 같은 초기화 작업을 해야 하기 때문입니다.
+- 여기에서 이미지 등의 외부 리소스를 읽어 들이는 시점이 DOM 트리 구축이 끝난 후라는 점에 유의하세요. load 이벤트는 이미지 등의 외부 리소스를 모두 읽어 들인 후에 발생하기 때문에 외부 리소스를 읽어 들이는 시간이 걸리는 만큼 사용자가 기다려야 하는 시간도 길어집니다.
+- 이를 방지하려면 load 이벤트 대신 <b>DOMContentLoaded</b> 이벤트의 이벤트 처리기에 초기화 작업을 작성한 함수를 등록합니다. 
+
+```javascript
+document.addEventListener("DOMContentLoaded", function(e) {
+	// 초기화 작업을 작성 
+}, false);
+```
+
+이렇게 작성하면 사용자가 오래 기다리지 않고도 웹 페이지를 조작할 수 있게 됩니다.
+
+#### async와 defer 속성
+- <code>async</code>와 defer 속성은 script  요소의 논리 속성으로 HTML5부터 추가된 속성입니다. 
+- 둘 다 src 속성을 가진 script 요소에는 적용할 수 있지만 인라인 스크립트에는 사용할 수 없습니다.
+- 이들 속성을 사용하면 자바스크립트 코드를 실행할 때 HTML 구문 분석을 막지 않습니다. 
+- 현재의 주요 웹브라우저에서는 두 개의 속성을 모두 지원하고 있습니다.
+
+```javascript
+<script async src="../scripts/sample.js"></script>
+<script defer src="../scripts/sample.js"></script>
+```
+
+- script 요소에 <b>async 속성</b>을 설정하면 script 요소와 코드가 비동기적으로 실행됩니다. 즉, HTML 문서의 구문 분석 처리를 막지 않으며 script 요소의 코드를 최대한 빨리 실행합니다. 여러 개의 script 요소에 async 속성을 설정하면 다 읽어 들인 코드부터 비동기적으로 실행하므로 실행 순서가 보장되지 않습니다. 읽어 들이는 순서에 의존하는 script 요소에는 async 속성을 설정하지 말아야 합니다.
 
 
 
