@@ -1168,11 +1168,43 @@ Circle.prototype.toString = function() {
 
 ## 클래스 구문
 
-### 클래스 구분의 기본
+### 클래스 구문의 기본
 - ECMAScript 6부터는 생성자를 정의하는 새로운 문법인 클래스 구분이 추가되었습니다.
 - 클래스 구문 종류에는 **클래스 선언문**과 **클래스 표현식**이 있습니다. 
 
+```javascript
+function Circle(center, radius) {
+	this.center = center;
+	this.radius = radius;
+}
+Circle.prototype.area = function() {
+	return Math.PI * this.radius * this.radius;
+};
+```
+- 앞의 코드를 클래스 구문으로 고치면 다음과 같은 모습이 됩니다.
 
+```javascript
+class Circle {
+	// 생성자를 사용한 초기화
+	constructor(center, radius) {
+		this.center = center;
+		this.radius = radius;
+	}
+	
+	// prototype 메서드
+	area() {
+		return Math.PI * this.radius * this.radius;
+	}
+}
+```
+
+- 앞의 코드로 생성자 함수 Circle을 정의하게 됩니다.
+- 실제 인스턴스를 생성해 봅니다.
+
+```javascript
+var c = new Circle({x: 0, y: 0}, 2);
+console.log(c.area());
+```
 
 ## ECMAScript6+에 추가된 객체의 기능
 
