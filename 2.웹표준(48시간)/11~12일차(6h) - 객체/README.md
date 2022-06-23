@@ -415,8 +415,9 @@ var obj = Object.create(Object.prototype);
 - 접근자 프로퍼티를 사용하면 데이터를 부적절하게 변경하는 것을 막고 특정 데이터를 외부로부터 숨길 수 있으며 외부에서 데이터를 읽으려고 시도할 떄 적절한 값으로 가공해서 넘길 수 있습니다.
 - 자바스크립트의 접근자 프로퍼티는 객체에 접근자를 정의할 수 있게 합니다. 
 - 접근자 프로퍼티를 사용하여 프로퍼티를 읽고 쓸 수 있게 하면 프로그램의 유지 보수성을 높일 수 있습니다.
-<br>
+
 - 접근자 프로퍼티 하나에 대해 그 프로퍼티를 읽을 때 처리를 담당하는 <b>게터 함수(getter)</b>와 쓸 때의 처리를 담당하는 <b>세터 함수(setter)</b>를 정의할 수 있습니다.
+
 - 접근자 프로퍼티는 getter와 setter 중에서 하나만 정의할 수도 있지만 모두 정의할 수도 있습니다.
 
 ```javascript
@@ -1205,6 +1206,96 @@ class Circle {
 var c = new Circle({x: 0, y: 0}, 2);
 console.log(c.area());
 ```
+
+#### 클래스 선언문을 작성하는 방법 정리
+
+- class 키워드 뒤에 생성자 함수의 이름을 표기합니다. 이 함수의 이름은 클래스 이름입니다.
+- { ... } 안은 <b>클래스 몸통(class body)</b>이라고 합니다. 클래스 몸통에는 클래스 멤버를 정의합니다. **클래스 멤버**는 함수 선언문에서 function 키워드를 생략한 표현식입니다.
+- 클래스 멤버인 constructor() { ... } 에는 특별한 의미가 있습니다. constructor는 생성자로 객체를 생성할 때 초기화 처리를 담당하는 메서드입니다. 지금까지 생성자 함수에 작성했던 작업들을 이곳에 작성해서 객체에 프로퍼티를 추가합니다.
+- constructor 다음에 작성된 클래스 멤버는 생성자 함수의 prototype에 메서드로 추가됩니다.
+<br><br>
+
+클래스 선언문으로 정의한 생성자는 함수 선언문으로 정의한 생성자와 같습니다. 그러나 <b>클래스 선언문과 함수 선언문은 다음 차이점이 있습니다.</b>
+
+ - 클래스 선언문은 자바스크립트 엔진이 끌어올리지 않습니다. 따라서 생성자를 사용하기 전에 클래스 선언문을 작성해야 합니다.
+ - 클래스 선언문은 한 번만 작성할 수 있습니다. 같은 이름을 가진 클래스 선언문을 두 번 이상 작성하면 타입 오류가 발생합니다.
+ - 클래스 선언문에 정의한 생성자만 따로 호출할 수 없습니다.
+
+<br><br>
+
+앞에서 본 생성자는 클래스 표현식으로 정의할 수 있습니다.
+
+```javascript
+var Circle = class {
+	// 생성자를 사용한 초기화
+	constructor(center, radius) {
+		this.center = center;
+		this.radius = radius;
+	}
+	
+	// prototype 메서드
+	area() {
+		return Math.PI * this.radius * this.radius;
+	}
+};
+```
+
+class 다음에는 모든 식별자를 이름으로 사용할 수 있습니다.
+
+```javascript
+var Class = class Kreis { ... };
+```
+
+- 단, 이렇게 표기한 이름(앞의 예에서는 Kreis)은 클래스 몸통 안에서만 유효합니다. 
+- 클래스 표현식은 익명함수를 대입할 때와 마찬가지로 실행 시점에 변수에 할당되므로 자바스크립트 엔진이 끌어올리지 않습ㄴ디ㅏ.
+- 또한 같은 이름을 가진 클래스 선언문을 여러 개 작성할 수 있습니다.
+
+### 접근자 작성하기
+
+```javascript
+class Person {
+	// 생성자를 사용한 초기화
+	constructor(name) {
+		this.name = name;
+	}
+	
+	// prototype 메서드
+	get name() {
+		return this._name;
+	}
+	
+	set name(value) {
+		this._name = value;
+	}
+	
+	sayName() {
+		console.log(this.name);
+	}
+}
+```
+
+클래스 멤버 앞에 **get 키워드**를 사용하면 게터가 되고. **set 키워드**를 사용하면 세터가 됩니다. 
+
+```javascript
+var person = new Person("Tom");
+console.log(person.name);  // -> Tom
+person.name = "Huck";
+console.log(person.name); // -> Huck
+person.sayName();  // -> Huck
+```
+
+- 생성자 Person으로 생성한 인스턴스 person에는 name이라는 접근자 프로퍼티가 정의되어 있습니다. 
+- name이라는 세터 프로퍼티에 값을 대입하면 객체에는 객체에는 \_name이라는 프로퍼티가 추가되고 그 값을 \_name 프로퍼티에 저장합니다. 
+- constructor 멤버 안의 다음 코드는 생성자의 인수인 name 값을 세터 프로퍼티인 person.name에 대입합니다. 
+
+```javascript
+this.name = name;
+```
+
+- 그리고 constructor가 인수로 받은 name, name 접근자 프로퍼티, \_name 프로퍼티는 모두 다른 존재라는 점에 유의하세요. 
+- 또한 게터와 세터가 Person.prototype에 정의됩니다.
+
+
 
 ## ECMAScript6+에 추가된 객체의 기능
 
