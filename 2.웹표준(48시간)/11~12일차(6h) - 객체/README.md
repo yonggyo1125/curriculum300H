@@ -1295,6 +1295,117 @@ this.name = name;
 - 그리고 constructor가 인수로 받은 name, name 접근자 프로퍼티, \_name 프로퍼티는 모두 다른 존재라는 점에 유의하세요. 
 - 또한 게터와 세터가 Person.prototype에 정의됩니다.
 
+### 정적 메서드 작성하기
+
+- class 구문을 사용하면 생성자 함수에 메서드를 추가할 수도 있습니다. 
+- class 구문에서는 생성자의 메서드를 정적 메서드라는 이름으로 부릅니다.
+- 정적 메서드를 정의하려면 클래스 멤버 앞에 <b>static 키워드</b>를 붙여 줍니다.
+
+```javascript
+class Person {
+	constructor(name) {
+		this.name = name;
+		Person.personCount++;
+	}
+	get name() {
+		return this._name;
+	}
+	set name(value) {
+		this._name = value;
+	}
+	
+	sayName() {
+		console.log(this.name);
+	}
+	// 정적 메서드 
+	static count() {
+		return Person.personCount;
+	}
+}
+Person.personCount = 0;
+```
+
+다음 코드는 Person 생성자의 프로퍼티 PersonCount에 Person 생성자를 호출한 횟수를 기록합니다. 정적 메서드 count는 Person.personCount 값을 출력합니다.
+
+```javascript
+var person1 = new Person("Tom");
+console.log(Person.count()); // -> 1
+var person2 = new Person("Huck");
+console.log(Person.count()); // -> 2
+```
+
+### 상속으로 클래스 확장하기
+
+- <b>extends 키워드</b>를 클래스 선언문이나 클래스 표현식에 붙여 주면 다른 생성자를 상속받을 수 있습니다. 그리고 생성자에 새로운 메서드를 추가해서 확장할 수 있습니다.
+- 이 방법은 prototype을 상속하고 새로운 메서드를 추가하는 등의 간단한 작업만 할 수 있습니다.
+- 앞의 예인 Ellipse를 Circle에 상속할 때처럼 <b>프로퍼티 속성까지 바꾸어 가며 상속하는 방법은 지원하지 않습니다.</b>
+
+```javascript
+class Circle {
+	constructor(center, radio) {
+		this.center = center;
+		this.radius = radius;
+	}
+	
+	area() {
+		return Math.PI * this.radius * this.radius;
+	}
+	
+	toString() {
+		return "Circle "
+			+ "중심점 (" + this.center.x + ", " + this.center.y 
+			+ "), 반지름 = " + this.radius;
+	}
+}
+
+class Ball extends Circle {
+	move(dx, dy) {
+		this.center.x += dx;
+		this.center.y += dy;
+	}
+}
+```
+
+Ball 생성자로 인스턴스를 생성해 봅니다.
+
+```javascript
+var ball = new Ball({x: 0, y: 0}, 2);
+console.log(ball.toString());  // -> Circle 중심점 (0, 0), 반지름 = 2
+console.log(ball.area()); // -> 32.56637...
+ball.move(1, 2);
+console.log(ball.toString()); // -> Circle 중심점 (1, 2), 반지름 = 2
+```
+
+이처럼 Ball 생성자의 인스턴스가 Circle 생성자의 프로퍼티와 메서드 외에도 새로 추가된 move 메서드를 사용할 수 있음을 확인할 수 있습니다.
+
+### 슈퍼 타입의 메서드 호출하기
+
+- 서브 타입의 생성자는 슈퍼타입의 생성자의 메서드를 덮어쓸 수 있습니다.
+- 이때 <b>super 키워드</b>를 활용하면 서브 타입의 생성자가 슈퍼 타입 생성자의 메서드를 호출할 수 있습니다.
+
+```javascript
+class Ball extends Circle {
+	move(dx, dy) {
+		this.center.x += dx;
+		this.center.y += dy;
+	}
+	
+	toString() {
+		var str = super.toString();
+		return str.replace("Circle", "Ball");
+	}
+}
+```
+
+- 이 예에서는 Circle의 toString 메서드를 새로운 메서드로 덮어쓰고 있습니다. 그리고 슈퍼타입 생성자 Circle의 메서드인 toString을 super 키워드로 호출해서 사용하고 있습니다. 
+- 이 Ball 생성자로 인스턴스를 생성하면 다음과 같은 결과가 나옵니다.
+
+```javascript
+var ball = new Ball({x: 0, y: 0}, 2);
+console.log(ball.toString());  // -> Circle 중심점 (0,0), 반지름 = 2
+```
+
+> 클래스 구문은 함수를 정의한다. 클래스를 정의하지 않는다.<br><br>ECMAScript 6부터 추가된 클래스 구문은 생성자 함수를 간결하게 작성하기 위한 문법 요소라는 점에서 C++나 Java 등의 클래스와는 차이가 있습니다. 클래스 구문이 추가되었음에도 자바스크립트의 객체 지향 매커니즘은 바뀐 것이 없습니다. 클래스 구문을 사용할 때는 늘 이점에 유의하세요. 클래스 구문은 그 배경지식인 자바스크립트 객체의 메커니즘과 프로토타입 상속을 제대로 이해한 후에 사용해야 합니다.
 
 
 ## ECMAScript6+에 추가된 객체의 기능
