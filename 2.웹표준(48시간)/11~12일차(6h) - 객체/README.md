@@ -1015,7 +1015,8 @@ Ellipse.prototype.getArea = function() {
 	return Math.PI * this.a * this.b
 };
 
-// Object.prototype.toString = function() {
+// Object.prototype.toString을 덮어쓴다.
+Object.prototype.toString = function() {
 	return "Ellipse "  + this.a + " " + this.b;
 };
 ```
@@ -1038,13 +1039,140 @@ console.log(ellipse.toString()); // Ellipse 5 3
 ```
 
 ### 생성자의 prototype 상속하기
+먼저 Circle 생성자를 다음과 같이 정의합니다.
 
+```javascript
+function Circle(r) {
+	this.a = r;
+	this.b = r;
+}
+```
+
+이 생성자로 원 객체를 생성합니다.
+
+```javascript
+var circle = new Circle(2);
+```
+
+- circle의 프로토타입은 Circle.prototype이고 Circle.prototype의 프로토타입은 Object.prototype입니다. 
+- Circle 생성자의 인스턴스 circle에서 Ellipse.prototype의 메서드를 사용하려면 Circle.prototype이 Ellipse.prototype을 상속받아야 합니다. 
+- 따라서 circle의 프로토타입 체인에 Ellipse.prototype을 삽입합니다. 
+- 이를 위해 Circle.prototype을 Ellipse.prototype을 프로토타입으로 가지는 객체로 바꿉니다. 
+- 이때 기존의 Circle.prototype을 대체할 새로운 Circle.prototype의 constructor 프로퍼티의 value 속성을 Circle로 설정합니다. 
+- 이를 실제로 구현하면 다음과 같습니다.
+
+```javascript 
+function Ellipse(a, b) {
+	this.a = a;  // 장축 방향 반지름
+	this.a = b;  // 단축 방향 반지름
+}
+
+// 타원의 넓이를 계산하는 메서드
+Ellipse.prototype.getArea = function() {
+	return Math.PI * this.a * this.b
+};
+
+// Object.prototype.toString을 덮어쓴다.
+Object.prototype.toString = function() {
+	return "Ellipse "  + this.a + " " + this.b;
+};
+
+function Circle(r) {
+	this.a = r;
+	this.b = r;
+}
+
+Circle.prototype = Object.create(Ellipse.prototype, {
+	constructor: {
+		configurable: true,
+		enumerable: true,
+		value: Circle,
+		writable: true
+	}
+});
+```
+- 그리고 Circle.prototype.toString 메서드를 정의해서 Ellipse.prototype.toString 메서드를 덮어씁니다.
+
+```javascript
+Circle.prototype.toString = function() {
+	return "Circle " + this.a + " " + this.b;
+};
+```
+
+- 이렇게 수정한 다음 Circle 생성자로 인스턴스 circle을 생성합니다.
+
+```javascript
+var circle = new Circle(2);
+```
+
+- 이제 circle의 프로토타입 체인은 다음 그림과 같아집니다.
 
 ![image11](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/11~12%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9D%EC%B2%B4/images/image11.png)
 
+- 이렇게 되면 circle 인스턴스가 Ellipse.prototype의 메서드를 사용할 수 있게 됩니다.
 
+```javascript
+console.log(circle.getArea());
+console.log(circle.toString());
+```
+
+
+### 생성자 빌려오기
+
+- 앞서 소개한 방법에서는 Ellipse 생성자 안에서 정의한 프로퍼티(this.a와 this.b)를 Circle 생성자 안에서 다시 정의합니다. 
+- 이번에는 Ellipse 생성자에서 만든 프로퍼티를 Circle 생성자 안으로 가져오도록 만들겠습니다. 
+- 이를 구현하려면 Circle 생성자에서 Ellipse 생성자를 call 메서드로 호출합니다.
+- 그리고 Ellipse.prototype을 Circle.prototype에 상속합니다.
+
+```javascript
+function Circle(r) {
+	// Ellipse 생성자를 빌려와서 프로퍼티를 정의합니다.
+	Ellipse.call(this, r, r);
+	
+	// 이곳에서 새로운 프로퍼티를 작성하거나 기존의 프로퍼티를 덮어쓸 수 있음
+}
+
+Circle.prototype = Object.create(Ellipse.prototype, {
+	constructor: {
+		configurable: true,
+		enumerable: true,
+		value: Circle,
+		writable: true
+	}
+});
+Circle.prototype.toString = function() {
+	return "Circle " + this.a + " " + this.b;
+};
+```
+- 이제 circle 생성자 안에서 프로퍼티를 별도로 생성하지 않아도 Ellipse의 생성자를 빌려서 자동으로 프로퍼티를 생성할 수 있게 되었습니다.
+
+```javascript
+var circle = new Circle(2);
+console.log(circle.getArea());
+console.log(circle.toString());
+```
+
+### 슈퍼 타입의 메서드 이용하기
+- 지금까지 사용한 방법은 Circle.prototype.toString 메서드를 새로 정의해서 Ellipse.prototype.toString 메서드를 덮어쓰는 방식입니다. 
+- 이 메서드를 새로 정의하는 대신에 Ellipse.prototype 메서드를 이용해서 정의해 보겠습니다.
+
+```javascript
+// 슈퍼 타입의 toString 메서드를 이용해서 Circle.prototype.toString을 정의한다.
+Circle.prototype.toString = function() {
+	var str = Ellipse.prototype.toString.call(this);
+	return str.replace("Ellipse", "Circle");
+};
+```
+- 지금까지 생성자를 상속하는 모든 방법을 설명하였습니다. 
+- 이러한 생성자 상속 방법은 클래스 기반 객체 지향 언어의 고전적 상속을 흉내 낸다고 하여 <b>가상의 전통적 상속(pseudo classical inheritance)</b>이라는 이름으로도 부릅니다.
 
 ## 클래스 구문
+
+### 클래스 구분의 기본
+- ECMAScript 6부터는 생성자를 정의하는 새로운 문법인 클래스 구분이 추가되었습니다.
+- 클래스 구문 종류에는 **클래스 선언문**과 **클래스 표현식**이 있습니다. 
+
+
 
 ## ECMAScript6+에 추가된 객체의 기능
 
