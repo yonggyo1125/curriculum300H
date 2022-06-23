@@ -813,7 +813,212 @@ console.log(Object.isFrozon(person));  // -> true
 ```
 
 ## JSON
+JSON을 사용하면 다른 프로그래밍 언어와의 데이터 송수긴이 간단해집니다. 웹 어플리케이션에서는 서버와 웹 클라이언트가 데이터가 주고받을 때 JSON을 자주 사용합니다.
+
+### JSON 
+- JSON(Javascript Object Notation)은 자바스크립트 객체를 문자열로 표현하는 데이터 포맷입니다. 
+- JSON을 사용하면 객체를 **직렬화**할 수 있습니다. 
+- **직렬화**컴퓨터의 메모리 속에 있는 객체를 똑같은 객체로 환원할 수 있는 문자열로 변환하는 과정을 말합니다.
+
+### 표기 방법
+JSON의 포맷은 **자바스크립트의 리터럴 표기법에 기반**을 두고 있습니다.  JSON은 자바스크립트 리터럴 표기법의 부분 집합입니다. 따라서 자바스크립트 리터럴로 표현할 수 있는 데이터 일부를 표현할 수 있습니다.<br><br>
+
+예를 들면 다음과 같은 객체 리터럴이 있다고 합시다.
+
+```javascript
+{name: "Tom", age: 17, marriage: false, date: [2, 5, null]};
+```
+
+이 객체 리터럴을 JSON 데이터로 바꾸면 다음과 같아집니다.
+
+```javascript
+'{"name":"Tom", "age":17, "marriage":false, "data":[2, 5, null]}'
+```
+
+- 이처럼 JSON 데이터는 그 전체를 작은따옴표로 묶은 문자열 입니다. 
+- 이때 객체의 프로퍼티 이름은 큰따옴표로 묶어야 합니다. 
+
+#### JSON의 데이터 타입과 표기법
+
+|데이터 타입|표기 예|설명|
+|----|------|-----------|
+|숫자|12.345|정수와 부동소수점의 10진수 표기만 가능하다. 부동소수점은 지수 표기법도 사용할 수 있다.|
+|문자열|"abc"|큰따옴표로 묶어야 한다. 이스케이스 시퀀스도 포함할 수 있다.|
+|논리값|true|true 또는 false|
+|null값|null||
+|배열|[1, "abc", true]|모든 데이터 타입을 배열의 요소로 사용할 수 있다.|
+|객체|{"x":1, "y":"abc"}|프로퍼티 이름은 큰따옴표로 묶은 문자열로 표기한다.|
+
+### JSON의 변환과 환원
+
+#### JSON.stringify : 자바스크립트 객체를 JSON 문자열로 변환하기
+
+```javascript
+JSON.stringify(value[, replacer[, space]])
+```
+-  **value** : JSON으로 변환할 객체를 지정합니다.
+- **replacer** : 함수 또는 배열을 지정합니다. 함수를 지정하면 문자열로 만드는 프로퍼티의 키와 값을 함수의 인수로 받아서 프로퍼티 값을 표현하는 문자열을 반환합니다. 배열을 지정하면 배열의 요소로 객체의 프로퍼티 이름을 필터링 합니다.
+- **space** : 출력하는 문자열을 구분할 때 사용할 공백 문자를 지정합니다.
+<br><br>
+JSON.stringify 메서드를 사용할 때는 다음 사항에 유의
+	- NaN, Infinity, -Infinity는 null로 직렬화된다.
+	- Date 객체는 ISO 포맷의 날짜 문자열로 직렬화된다. 단, JSON.parse는 이 문자열을 그대로 출력한다.
+	- Function, RegExp, Error 객체, undefined, 심벌은 직렬화할 수 없다.
+	- 객체 자신이 가지고 있는 열거 가능한 프로퍼티만 직렬화된다.
+	- 직렬화할 수 없는 프로퍼티는 문자열로 출력되지 않는다.
+	- 프로퍼티 중에서 키가 심벌인 프로퍼티는 직렬화되지 않는다.
+
+#### JSON.parse : JSON 문자열을 자바스크립트 객체로 환원하기
+
+```javascript
+JSON.parse(text[, reviver]);
+```
+- **text** : 자바스크립트의 객체로 환원하고자 하는 JSON 문자열을 지정합니다.
+- **reviver** : 프로퍼티의 키와 값을 인수로 받는 함수를 지정할 수 있습니다. 이 함수는 환원될 객체의 프로퍼티 값을 반환해야 합니다.
+
+#### JSON을 활용한 객체의 깊은 복사
+- 객체를 단순히 변수에 대입하면 얕은 복사를 합니다.
+
+```javascript
+var copy = obj;
+```
+
+- 이렇게 대입하면 이 코드의 obj와 copy가 똑같은 객체를 참조합니다. JSON.stringify와 JSON.parse 메서드를 사용하면 깊은 복사를 할 수 있습니다.
+
+```javascript
+var copy = JSON.parse(JSON.stringify(obj));
+```
+
+- 이 방법을 사용하면 중첩된 객체도 올바르게 복사할 수 있습니다. 단, 가장 아래에 중첩된 객체의 프로퍼티(말단 프로퍼티)는 값의 타입이 원시 타입(primitive type)이어야 합니다.
+
+```javascript
+var point = {x:0, y:0};
+var circle = {center:point, radius:2};
+var copy = JSON.parse(JSON.stringify(circle));
+```
+
+- 이 방법은 말단 프로퍼티 값이 Date, function, RegExp 객체이거나 프로퍼티 이름이 심벌일 때는 올바르게 동작하지 않습니다.  
+- 어떠한 상황에서나 깊은 복사를 올바르게 수행하려면 <b>Object.assign 메서드</b>를 사용하세요.
 
 ## 클래스 구문
 
 ## ECMAScript6+에 추가된 객체의 기능
+
+### 프로퍼티 이름으로 심벌 사용하기
+
+ECMAScript 5까지는 객체의 프로퍼티 이름으로 식별자나 문자열만 사용할 수 있었습니다. EMCAScript 6부터는 심벌을 프로퍼티 이름으로 사용할 수 있게 되었습니다.
+
+```javascript
+var obj = {};
+var s = Symbol("heart");
+obj[s] = 3;
+console.log(obj);  // ->Object { Symbol(heart): 3}
+```
+
+계산된 프로퍼티 이름(Computed Property names)을 활용하면 객체 리터럴로 객체를 정의할 때 프로퍼티 이름으로 심벌을 사용할 수 있습니다.
+
+```javascript
+var obj = { [Symbol("heart")]: "A" };
+```
+심벌은 그 어떤 값과도 다른 유일무이한 값입니다. 따라서 함수 안에서 심벌을 생성하여 그것을 속성 이름으로 사용하고 그 프로퍼티에 값을 할당하면 함수 바깥에서 프로퍼티 값을 읽거나 쓸 수 없습니다. 즉, 명시적으로 객체의 프로퍼티를 숨길 수 있습니다. 실제로 이름이 심벌로 작성된 프로퍼티는 다음 방법으로 찾아낼 수 없습니다.
+
+- for/in 반복문
+- Object.keys
+- Object.getOwnPropertyNames
+
+단, ECMAScript 6부터 추가된 Object.getOwnPropertySymbols 메서드를 사용하면 객체 안에서 이름을 심벌로 지정한 프로퍼티 이름 목록을 가져올 수 있으므로 완전히 숨길 수는 없습니다.
+
+><b>심벌과 하위 호환성</b><br><br>심벌은 ECMAScript 6부터 새롭게 도입된 값입니다. 심벌이 추가된 이유는 여러 가지가 있지만 ECMAScript 6 이전에 작성된 프로그램에 영향을 주지 않고 새로운 기능을 추가하기 위해서입니다.<br> 예를 들어 for/of 반복문은 반복 가능한 객체를 대상으로 사용할 수 있습니다. 이때 임의의 객체 a가 반복 가능한지 여부는 a[Symbol.iterator]처럼 Symbol.iterator 심벌을 이름으로 가지는 메서드가 있는지로 판단합니다. 또한 객체를 순회할 때도 Symbol.iterator를 프로퍼티 이름으로 가지는 메서드가 반환하는 이터레이터를 사용합니다. 심벌을 자바스크립트 사양에 추가하지 않았다면 어떤 상황이 벌어졌을까요? 예를 들어 메서드 이름을 a["iterator"]라는 식으로 추가하면 for/in 반복문이나 Object.keys 메서드 등으로 조회할 수 있게 됩니다. 그러면 기존의 프로그램에 영향을 끼쳐 원활하게 동작하지 않을 수 있습니다. 자바스크립트 자체의 추가 기능을 심벌을 이름으로 사용하는 특수한 메서드에 구현하면 이러한 문제를 피할 수 있습니다.<br><br> 실제로 ECMAScript 6부터는 Symbol.iterator를 비롯한 내장 심벌이 여러 개 정의되어 있으며, 그 대부분을 새로 추가된 메서드 이름으로 사용하고 있습니다. 이러한 의미에서 심벌은 추후에 언어 사양을 확장하기 위한 메커니즘의 일부분으로 도입되었다고 볼 수 있습니다.
+
+
+#### 내장 생성자 prototype의 안전한 확장
+
+- 일반적으로 Array와 Date등 기본 생성자의 prototype에 메서드를 추가해서 확장하는 방법은 권장되지 않습니다. 사용자가 추가한  메서드 이름이 다른 자바스크립트 라이브러리나 미래의 자바스크립트 사양에 추가될 메서드 이름과 겹칠 가능성이 있기 때문입니다.
+- 심벌을 사용하면 메서드 이름이 겹치는 것을 피하면서도 기본 생성자의 prototype을 확장할 수 있습니다.
+
+```javascript
+Array.prototype[Symbol.for("shuffle")] = function() {
+	var a = this;
+	var m = a.length, t, i;
+	while(m) {
+		i = Math.floor(Math.random()*m--);
+		t = a[m];
+		a[m] = a[i];
+		a[i] = t;
+	}
+	return this;
+};
+var array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+// 값을 무작위로 섞기 때문에 실행할 때마다 출력되는 값이 다르다.
+console.log(array[Symbol.for("shuffle")]()); 
+```
+
+### 객체 리터럴에 추가된 기능
+
+#### 계산된 프로퍼티 이름(Computed Property names)
+
+```javascript
+{ [계산식]: value }
+```
+
+- 대괄호로 묶인 임의의 계산식이 평가된 값을 프로퍼티 이름으로 사용할 수 있게 되었습니다.
+- 평가한 값이 Symbol 타입이라면 그대로 사용하고 그렇지 않다면 문자열 타입으로 변환합니다.
+
+```javascript
+var prop = "name", i = 1;
+var obj = { [prop+i]: "Tom" };
+console.log(obj);  // -> Object {name1: "Tom"}
+var obj = { [Symbol("heart")]: "A" };
+console.log(obj);  // -> Object {Symbol(heart): "A"}
+```
+- 객체 리터럴에서 심벌을 프로퍼티 이름으로 사용하려면 [Symbol("heart")] 처럼 심벌을 대괄호로 묶어 줍니다.
+
+#### 프로퍼티 정의의 약식 표기 : { prop }
+변수 prop가 선언되어 있을 때 { prop }를 { prop: prop }로 사용할 수 있게 되었습니다.  즉, 프로퍼티 이름이 변수 이름과 같을 때 { prop }로 줄여서 표현할 수 있게 된 것입니다.
+
+```javascript
+var prop = 2;
+var obj = { prop };
+console.log(obj);  // -> Object {prop: 2}
+```
+
+#### 메서드 정의의 약식 표기 : { method() {} }
+- 프로퍼티 값으로 함수를 지정할 때 사용하는 약식 표기법이 추가되었습니다.
+
+```javascript
+var person = {
+	name: "Tom",
+	sayHello() { console.log("Hello! " + this.name); }
+};
+
+person.sayHello();  // -> "Hello! Tom"
+```
+
+- 앞의 코드는 다음 코드와 거의 같습니다.
+
+```javascript
+var person = {
+	name: "Tom",
+	sayHello: function() { console.log("Hello! " + this.name); }
+};
+```
+- 하지만 다음과 같은 차이점이 있습니다.
+	- { method() {} }는 생성자로 사용할 수 없다. 즉, prototype 프로퍼티를 가지지 않으므로 new 연산자로 인스턴스를 생성할 수 없다. 
+	- { method() {} }는 super 키워드를 사용할 수 있다.
+	
+#### 제너레이터 정의의 약식표기 {*generate() {} }
+
+- 프로퍼티의 값이 제너레이터 함수일 때 사용할 수 있는 약식 표기법입니다.
+
+```javascript
+var obj = {
+	*range(n) { for(var i = 0; i < n; i++) yield i; }
+};
+
+var it = obj.range(10);
+console.log(it.next().value); // -> 0
+console.log(it.next().value); // -> 1
+console.log(it.next().value); // -> 2
+```
+- 이 표기법을 사용하면 super 키워드를 사용할 수 있습니다.
