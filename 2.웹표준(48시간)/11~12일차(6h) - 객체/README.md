@@ -900,6 +900,150 @@ var copy = JSON.parse(JSON.stringify(circle));
 - 이 방법은 말단 프로퍼티 값이 Date, function, RegExp 객체이거나 프로퍼티 이름이 심벌일 때는 올바르게 동작하지 않습니다.  
 - 어떠한 상황에서나 깊은 복사를 올바르게 수행하려면 <b>Object.assign 메서드</b>를 사용하세요.
 
+## 생성자
+
+### 생성자를 정의하는 방법
+
+- (1) 함수 선언문으로 정의하는 방법
+
+```javascript
+function Card(suit, rank) {
+	this.suit = suit;
+	this.rank = rank;
+}
+
+Card.prototype.show = function() {
+	console.log(this.suit * this.rank);
+};
+```
+
+- (2) 함수 리터럴로 정의하는 방법
+
+```javascript
+var Card = function(suit, rank) {
+	this.suit = suit;
+	this.rank = rank;
+};
+Card.prototype.show = function() {
+	console.log(this.suit + this.rank);
+};
+```
+
+- (3) 클래스 선언문으로 정의하는 방법
+
+```javascript
+class Card {
+	constructor (suit, rank) {
+		this.suit = suit;
+		this.rank = rank;
+	}
+	show() {
+		console.log(this.suit + this.rank);
+	}
+	
+}
+```
+
+- (4) 클래스 표현식으로 정의하는 방법
+
+```javascript
+var Card = class {
+	constructor(suit, rank) {
+		this.suit = suit;
+		this.rank = rank;
+	}
+	show() {
+		console.log(this.suit + this.rank);
+	}
+}
+```
+(1)의 함수 선언문으로 정의한 생성자는 자바스크립트 엔진이 프로그램 시작 부분으로 끌어 올립니다. (2), (3), (4)로 정의한 생성자는 끌어올리지 않습니다. 따라서 (2), (3), (4)로 정의한 생성자는 호출하기 전에 정의해야 합니다.
+
+### 생성자로 접근자 프로퍼티 정의하기
+
+```javascript
+function Person(name) {
+	Object.definePropery(this, "name", {
+		get: function() {
+			return name;
+		},
+		set: function(newName) {
+			name = newName;
+		},
+		enumerable: true,
+		configurable: true
+	});
+}
+Person.prototype.sayName = function() {
+	console.log(this.name);
+};
+```
+- Person 생성자로 생성한 인스턴스의 name 프로퍼티는 접근자 프로퍼티이며 인수로 받은 지역 변수 name 값을 읽고 씁니다. 
+- Person 생성자가 인수로 받은 name과 접근자 프로퍼티 name의 차이점에 주목하면, 인수로 받은 name이 클로저 안에 저장된 프라이빗(private) 변수가 되었습니다. 
+- 이는 게터 함수와 세터 함수가 인수로 받은 name을 참조하여 클로저 안에 저장했기 때문입니다.
+
+```javascript
+var person = new Person("Tom");
+console.log(p.name); // -> Tom
+p.name = "Huck";
+console.log(p.name); // -> Huck
+p.sayName();  // -> Huck 
+```
+
+## 생성자 상속
+- C++나 Java처럼 클래스를 이용하는 객체 지향 언어에서는 객체 설계도라고 할 수 있는 클래스를 상속할 수 있습니다. 상속으로 이미 정의된 클래스의 코드를 재사용하고 새로운 기능을 추가해서 클래스를 확장할 수 있습니다.
+
+- 자바스크립트에서는 생성자가 클래스 역할을 대신합니다. 자바스크립트는 생성자 상속 메커니즘 대신 **객체의 프로토타입 상속 매커니즘을 채택한 언어**입니다. 하지만 **생성자 또한 객체이므로 객체의 프로토타입 상속을 활용하면 생성자 상속을 구현할 수 있습니다.**
+
+- C++나 Java 등에서는 상속하는 상위 클래스를 슈퍼클래스, 상속 받은 하위 클래스를 서브 클래스라고 부릅니다.
+- 자바스크립트에서는 클래스가 없으므로 상속하는 생성자를 **슈퍼 타입 생성자**, 상속을 받은 생성자를 **서브 타입 생성자** 부릅니다.
+
+### 슈퍼타입 생성자의 예
+
+#### 타원의 장축 방향 반지음과 단축 방향 반지름
+
+![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/11~12%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9D%EC%B2%B4/images/image9.png)
+
+```javascript
+function Ellipse(a, b) {
+	this.a = a;  // 장축 방향 반지름
+	this.a = b;  // 단축 방향 반지름
+}
+
+// 타원의 넓이를 계산하는 메서드
+Ellipse.prototype.getArea = function() {
+	return Math.PI * this.a * this.b
+};
+
+// Object.prototype.toString = function() {
+	return "Ellipse "  + this.a + " " + this.b;
+};
+```
+
+이 생성자로 인스턴스를 생성해 봅니다.
+
+```javascript
+var ellipse = new Ellipse(5, 3);
+```
+
+이제 ellipse의 프로토타입 체인은 다음 그림과 같아집니다.
+
+![image10](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/11~12%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9D%EC%B2%B4/images/image10.png)
+
+이를 이용해 인스턴스 ellipse는 자신이 갖고 있지 않은 메서드 Ellipse.prototype과 Object.prototype에서 상속받아 사용할 수 있습니다.
+
+```javascript 
+console.log(ellipse.getArea());  // 47.123888980...
+console.log(ellipse.toString()); // Ellipse 5 3
+```
+
+### 생성자의 prototype 상속하기
+
+
+![image11](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/11~12%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9D%EC%B2%B4/images/image11.png)
+
+
+
 ## 클래스 구문
 
 ## ECMAScript6+에 추가된 객체의 기능
