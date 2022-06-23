@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 이렇게 작성하면 사용자가 오래 기다리지 않고도 웹 페이지를 조작할 수 있게 됩니다.
 
 #### async와 defer 속성
-- <code>async</code>와 defer 속성은 script  요소의 논리 속성으로 HTML5부터 추가된 속성입니다. 
+- <code>async</code>와 <code>defer</code> 속성은 script  요소의 논리 속성으로 HTML5부터 추가된 속성입니다. 
 - 둘 다 src 속성을 가진 script 요소에는 적용할 수 있지만 인라인 스크립트에는 사용할 수 없습니다.
 - 이들 속성을 사용하면 자바스크립트 코드를 실행할 때 HTML 구문 분석을 막지 않습니다. 
 - 현재의 주요 웹브라우저에서는 두 개의 속성을 모두 지원하고 있습니다.
@@ -52,7 +52,17 @@ document.addEventListener("DOMContentLoaded", function(e) {
 <script defer src="../scripts/sample.js"></script>
 ```
 
-- script 요소에 <b>async 속성</b>을 설정하면 script 요소와 코드가 비동기적으로 실행됩니다. 즉, HTML 문서의 구문 분석 처리를 막지 않으며 script 요소의 코드를 최대한 빨리 실행합니다. 여러 개의 script 요소에 async 속성을 설정하면 다 읽어 들인 코드부터 비동기적으로 실행하므로 실행 순서가 보장되지 않습니다. 읽어 들이는 순서에 의존하는 script 요소에는 async 속성을 설정하지 말아야 합니다.
+- script 요소에 <code>async</code> 속성을 설정하면 script 요소와 코드가 비동기적으로 실행됩니다. 즉, HTML 문서의 구문 분석 처리를 막지 않으며 script 요소의 코드를 최대한 빨리 실행합니다. 여러 개의 script 요소에 async 속성을 설정하면 다 읽어 들인 코드부터 비동기적으로 실행하므로 실행 순서가 보장되지 않습니다. 읽어 들이는 순서에 의존하는 script 요소에는 async 속성을 설정하지 말아야 합니다.
+
+- <code>defer</code> 속성을 설정한 script 요소는 DOM 트리 구축이 끝난 후에 실행됩니다. DOM 구축이 끝난 시점에 실행되기 때문에 자바스크립트 코드로 요소 객체에 이벤트 처리기를 등록하는 등의 초기화 작업을 할 수 있습니다. 따아서 <b>defer 속성은 DOMContentLoaded 이벤트의 대안으로 활용할 수 있습니다.</b>
+
+
+### CSS와 렌더링
+
+
+### 웹 브라우저 렌더링 엔진과 자바스크립트 엔진
+
+### Window 객체
 
 
 
