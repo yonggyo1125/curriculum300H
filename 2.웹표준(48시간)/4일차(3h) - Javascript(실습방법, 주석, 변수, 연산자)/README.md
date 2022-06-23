@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1PPBuHDhDH6w-w7zk9SlgfqSWEGOexWOq?usp=sharing)
+
 # 실습방법 안내 
 - 자바스크립트 실습 환경 
 	- 웹브라우저 콘솔 
