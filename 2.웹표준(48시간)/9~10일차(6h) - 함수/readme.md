@@ -272,7 +272,7 @@ LexicalEnvironment: {
 	// 환경 레코드
 	EnvironmentRecord: {},
 	// 외부 렉시컬 환경 참조
-	OuterLexicalEnvironment Reference: {}
+	OuterLexicalEnvironmentReference: {}
 }
 ```
 
