@@ -129,12 +129,107 @@ document
 |pageXOffset, pageYOffset|각각 scrollX, scrollY와 같다.|
 
 
+#### Window 객체의 주요 메서드
+
+|메서드|설명|
+|-----|-----------|
+|alert(message)|경고 대화상자를 표시한다.|
+|prompt(message, default)|입력 대화상자를 표시한다.|
+|confirm(question)|확인 대화상자를 표시한다.|
+|setTimeout(callback, interval)|interval(ms)마다 callback을 호출한다.|
+|setInterval(callback, delay)|delay(ms) 후에 callback을 호출한다.|
+|clearTimeout(timeoutId)|timeId의 setTimeout을 취소한다.|
+|clearInterval(intervalId)|intervalId의 setInterval을 취소한다.|
+|blur()|창에서 포커스를 제거한다.|
+|focus()|창에 포커스를 준다.|
+|close()|창을 닫는다.|
+|open()|새로운 창을 연다.|
+|moveBy(x, y)|창을 수평으로 x, 수직으로 y만큼 이동한다.|
+|moveTo(x, y)|창을 좌표 (x, y)로 이동한다.|
+|resizeBy(width, height)|창의 너비를 width, 높이를 height만큼 키운다.|
+|resizeTo(width, height)|창의 너비를 width, 높이를 height로 설정한다.|
+|scrollBy(x, y)|스크롤을 수평으로 x, 수직으로 y만큼 이동한다.|
+|scrollTo(x, y)|스크롤을 좌표 (x,y)로 이동한다.|
+|print()|창 안에서 문서를 인쇄하는 대화상자를 연다.|
 
 * * * 
 ## Location 객체
+- Location 객체는 창에 표시되는 URL을 관리합니다.
+- Location 객체는 window.Location 또는 location으로 참조할 수 있습니다.
+- document.location 또한 Location 객체를 참조합니다.
+- Location 객체의 프로퍼티는 수정할 수 있으며, 그 값을 수정하면 필요에 따라 웹 서버에 수정을 요청하고 응답에 따라 창을 갱신합니다.
 
+#### Location 객체의 프로퍼티
+
+```
+http://www.example.com:80/test/index.html?q=value#anchor
+```
+
+|프로퍼티|설명|예|
+|----|------|-------|
+|hash|앵커 부분|#anchor|
+|host|호스트 이름:포트번호|www.example.com:80|
+|hostname|호스트 이름|www.example.com|
+|href|전체 URL|http://www.example.com:80/test/index.html?q=value#anchor|
+|pathname|웹 사이트의 루트를 기준으로 한 상대 경로|/test|
+|port|포트번호|80|
+|protocol|프로토콜|http|
+|search|질의 문자열|?q=value|
+
+#### Location 객체의 메서드
+
+|메서드|설명|
+|----|-------|
+|assign(url)|url이 가리키는 문서를 읽는다. 웹 브라우저의 이력에 남는다.|
+|reload()|문서를 다시 읽어 들인다.|
+|replace(url)|url로 이동한다. 웹 브라우너의 이력에 남지 않는다.|
+|toString()|location.href 값을 반환한다.|
+
+- 다음 두 코드는 모두 해당 URL이 가리키는 문서를 읽어 들입니다.
+
+```javascript
+location.href="https://naver.com");
+location.assign("https://naver.com")
+```
+	- 두 코드는 모두 읽어 들이기 이전의 URL을 이력을 남기므로, '뒤로 가기' 버튼을 사용해서 되돌아갈 수 있습니다.
+- URL이 가리키는 문서를 읽어 들일 때 이력을 남기지 않으므로 replace 메서드를 사용합니다.
+
+```javascript
+location.replace("https://naver.com");
+```
+	- 이때는 읽어 들이기 이전의 URL이 이력에서 삭제되므로 '뒤로 가지' 버튼으로 되돌아갈 수 없습니다.
+	
+- URL에는 상대 경로를 지정할 수도 있습니다. 상대 경로를 지정하면 이전 웹 페이지의 사이트 루트에 대한 상대 URL로 인식합니다. 다음 코드는 3초 후에 같은 사이트의 다른 페이지로 이동(리다이렉트)gksms dPdlqslek.
+
+```javascript
+setTimeout(function() {
+	location.replace("/book/bookList.asp");
+}, 3000);
+```
+
+- reload 메서드를 사용하면 현재의 페이지를 다시 읽어 들일 수 있습니다.
+
+```javascript
+location.reload();
+```
+
+- hash 프로퍼티에 HTML 요소의 id 속성 값을 대입하면 HTML 요소로 스크롤합니다.
+
+```javascript
+location.hash = "#header";  // id = "header"인 HTML 요소로 스크롤하기
+```
+
+- search 프로퍼티의 값을 바꾸면 서버에 질의 문자열을 보냅니다.
+
+```javascript
+location.search = "some data";
+// URL 끝에 "?some%20data"를 덧붙여 서버에 보낸다.
+```
+	- 이때 search 프로퍼티에 저장된 값은 URL 인코딩되어 서버로 전송됩니다.
+	
 * * * 
 ## History 객체
+
 
 * * * 
 ## Naviator 객체
