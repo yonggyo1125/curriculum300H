@@ -231,16 +231,256 @@ location.search = "some data";
 	
 * * * 
 ## History 객체
+- History 객체는 창의 웹 페이지 열람 이력을 관리합니다. 
+- History 객체는 window.history 또는 history로 참조할 수 있습니다.
 
+#### History 객체의 프로퍼티
+
+|프로퍼티|설명|
+|-----|--------|
+|length|현재 세션의 이력 개수(읽기 전용)|
+|scrollRestoration|웹 페이지를 이동한 후에 동작하는 웹 브아루저의 자동 스크롤 기능을 켜거나 끄는 값. "auto" 또는 "manual"이 들어갈 수 있다.|
+|state|pushState와 replaceState 메서드로 설정한 state 값(읽기 전용)|
+
+
+#### History 객체의 메서드
+
+|메서드|설명|
+|------|--------|
+|back()|창의 웹 페이지 열람 이력을 되돌린다.|
+|forward()|창의 웹 페이지 열람 이력을 하나 진행한다.|
+|go(number)|창의 웹페이지 열람 이력을 number만큼 진행한다. number 값이 음수면 그 만틈 되돌린다.|
+|pushState(state, title, url)|창의 웹 페이지 열람 이력을 추가한다. 페이지는 이동하지 않는다.|
+|replaceState(state, title, url)|현재 창의 열람 이력을 수정한다.|
+
+- 웹 페이지 열람 이력을 진행하거나 되돌아갈 때는 back과 forward 메서드를 사용합니다.
+
+```javascript
+history.back();  // 웹 페이지 열람 이력을 하나 되돌아간다.
+history.forward(); // 웹 페이지 열람 이력을 하나 진행한다.
+```
+
+- 건너뛸 횟수를 지정해야 웹 페이지 이력을 진행하거나 되돌아갈 때는 go 메서드를 사용합니다.
+
+```javascript
+history.go(-3);  // 웹 페이지 열람 이력을 세 개 되돌아간다
+history.go(2);  // 웹 페이지 열람 이력을 두 개 진행한다.
+```
+
+- 페이지를 전환하지 않고 웹 페이지 열람 이력만 추가하고자 할 때는 pushState 메서드를 사용합니다.
+
+```javascript
+history.pushState(null, null, "page2.html");
+```
+- pushState 메서드는 인수를 세 개 받습니다.
+	- **state** :  새롭게 추가되는 웹 페이지 열람 이력과 연결할 객체. pushState 이벤트의 state 프로퍼티 참조를 할 수 있다.
+	- **title** : 새로운 열람 웹 페이지 이력을 가리키는 문자열
+	- **url** : 새로운 열람 이력의 URL. pushState 메서드를 호출하더라도 이 URL이 가리키는 웹 페이지를 읽어 들이지 않는다. 이 인수는 생략할 수 있다. 이 인수를 생략하면 현재의 URL이 설정된다.
+
+<br>
+<br>
+
+- 똑같은 웹 페이지 위에서 열람 이력을 수정해도 pushstate 이벤트는 발생합니다. poststate 이벤트는 웹 브라우저의 뒤로가기, 앞으로 가기 버튼을 눌었을 때 또는 back, forward, go 메서드를 호출할 때 발생합니다.
+
+- pushState 메서드는 주로 Ajax방식으로 웹 페이지를 그릴 때 사용합니다. Ajax 방식은 웹 페이지를 이동하지 않고 페이지 내용만 수정합니다. 이때 웹 페이지 주소를 바꾸면 웹 페이지 열람 이력에 변경된 내용이 추가되지 않은 상태라 뒤로가기 버튼을 사용해서 되돌아갈 수 없습니다. 웹 페이지 내용이 바뀌었을 때 pushState 메서드로 웹 페이지 열람 이력에 저장해 두면 뒤로가기 버튼을 사용해서 되돌아갈 수 있습니다.
 
 * * * 
 ## Naviator 객체
 
-* * * 
-## Screen 객체
+- Navigator 객체는 스크립트가 실행 중인 웹 브라우저 등의 애플리케이션 정보를 관리합니다.
+- Navigator 객체는 window.navigator 또는 navigator로 참조할 수 있습니다. 
+
+#### Navigator 객체의 주요 프로퍼티
+
+|프로퍼티|설명|
+|-----|--------|
+|appCodeName|웹 브라우저의 내부 코드 네임. 정확하지 않음|
+|appName|웹 브라우저 이름. 정확하지 않음|
+|appVersion|웹 브라우저 버전. 정확하지 않음|
+|geolocation|단말기의 물리적 위치를 관리하는 Geolocation 객체|
+|language|웹 브라우저의 UI 언어("en", "en-US", "ko", "ko-KR", "fr" 등)|
+|mimeTypes[]|웹 브라우저가 지원하는 MIME 타입 목록을 저정한 MimeTypeArray 객체|
+|onLine|웹 브라우저가 네트워크에 연결되어 있는지를 뜻하는 논리값|
+|platform|웹 브라우저의 플랫폼. 윈도는 "win32" 맥은 "MacIntel"|
+|plugins|웹 브라우저에 설치된 플러그인 목록을 가리키는 Plugin 객체의 배열|
+|userAgent|웹 브라우저가 USER-AGENT 헤더에 보내는 문자열|
+
+#### Navigator 객체의 메서드
+
+|메서드|설명|
+|-----|--------|
+|javaEnabled()|Java를 사용할 수 있는지 뜻하는 논리값을 반환|
+|getUserMedia()|단말기의 마이크와 카메라에서 audio와 video 스트림을 반환|
+|registerContentHandler(mimeType, uri, title)|웹 사이트를 특정 MIME 타입과 연결|
+|registerContentHandler(mimeType, uri, title)|웹 사이트를 특정 프로토콜과 연결|
+|vibrate()|단말기를 진동시킴|
+
+- Navigator 객체는 브라우저 테스트에 활용합니다. 브라우저 테스트에 사용할 수 있는 Navigator 객체의 프로퍼티는 userAgent뿐이며 다른 프로퍼티에서는 웹 브라우저의 정확한 정보를 얻을 수 없습니다. 
+- 브라우저 테스트를 할 때는 userAgent 프로퍼티의 문자열을 정규 표현식으로 분석해서 웹 브라우저의 버전과 플랫폼 등의 정보에 따라 대응합니다.
 
 * * * 
+## Screen 객체
+- Screen 객체는 화면(모니터) 크기와 색상 등의 정보를 관리합니다.
+- Screen 객체는 window.screen 또는 screen으로 참조할 수 있습니다.
+
+#### Screen 객체의 주요 프로퍼티 
+
+|프로퍼티|설명|
+|-----|--------|
+|availTop|사용할 수 있는 화면의 첫 번째 픽셀의 y좌표|
+|availLeft|사용할 수 있는 화면의 첫 번째 픽셀의 x좌표|
+|availHeight|사용할 수 있는 화면의 높이|
+|availWidth|사용할 수 있는 화면의 너비|
+|colorDepth|화면의 색상 심도(비트 수) - 약 1,678만 색상이면 24|
+|pixelDepth|화면의 비트 심도(비트 수) - 약 1,678만 색상이면 24(IE9는 제공하지 않음)|
+|height|화면 높이|
+|width|화면 너비|
+|orientation|화면 방향|
+
+> colorDepth와 pixelDepth 프로퍼티는 픽셀 한 개가 표시할 수 있는 색상을 표현하기 위한 정보량을 담고 있으며, 그 단위는 비트입니다.
+
+- 사용할 수 있는 화면이란 화면에서 작업 표시줄 등을 제외한 나머지 부분을 뜻합니다. 
+- Screen 객체를 사용하면 웹 페이지가 어떤 크기의 단말기에 표시되고 있는지를 알 수 있습니다.
+- 예를 들어 스마트 폰 등의 작은 화면에 표시할 때 크기가 작은 글꼴을 사용하거나 이미지를 작게 표시하는 등의 대응이 필요할 때 사용할 수 있습니다.
+
+* * * 
+
 ## 창 제어하기
+
+- 웹 브라우저는 일반적으로 여러 개의 창과 탭을 표시합니다. 각각의 창과 탭은 별도의 <b>브라우징 컨텍스트</b>(사용자에게 표시되는 환경)를 제공합니다. 그리고 각각의 브라우징 컨텍스트는 별도의 Window 객체를 가집니다.
+
+- 각 브라우징 컨텍스트(창 또는 탭)는 상호 간의 독립적이며 다른 브라우징 컨텍스트에 간섭할 수 없습니다. 그러나 이 조건에는 예외가 있습니다. 그것은 브라우징 컨택스트를 열 때입니다. 이 경우의 부모 브라우징 컨텍스트와 자식 브라우징 컨텍스트는 상호작용이 가능합니다. 
+
+### 창 여닫기
+
+새로운 창 또는 탭을 열 때는 open 메서드를 사용합니다. open 메서드의 사용법은 다음과 같습니다.
+
+```javascript
+var w = open(url, 창의 이름, 옵션);
+```
+- open 메서드가 받는 인수의 의미는 다음과 같습니다.
+	- <b>url</b> : 새롭게 여는 창이 읽어 들이는 문서의 URL. 이 인수를 생략하면 빈 페이지가 표시된다.
+	- <b>창의 이름</b> : 새로운 창의 이름. 이미 이름이 같은 창이 있다면 새로 열지 않고 그 창에 표시된다.  이 인수를 생략하면 이름이 없는 창을 연다.
+	- <b>옵션</b> : 새로운 창의 설정 값(창의 크기 등)을 쉼표로 연결해서 표기한다. 생략하면 기본 크기로 표시된다. 탭을 표시할 수 있는 웹 브라우저에서는 새로운 탭으로 표시된다.
+
+- open 메서드는 새로운 창이 Window 객체를 반환합니다.
+- 세 번째 인수의 <b>옵션</b>은 옵션의 <b>이름=값</b>을 쉽표로 연결한 문자열이며, 사용할 수 있는 <b>옵션</b>의 목록은 다음과 같습니다.
+
+
+#### open 메서드로 설정할 수 있는 옵션의 이름
+
+|옵션의 이름|설명|
+|-----|---------|
+|width|창 너비|
+|height|창 높이|
+|location|주소 표시줄 표시 여부(yes 또는 no)|
+|scrollbars|스크롤 막대 표시 여부(yes 또는 no)|
+|toolbar|도구 모음 표시 여부(yes 또는 no)|
+|status|상태 표시줄 표시 여부(yes 또는 no)|
+|menubar|메뉴 막대 표시 여부(yes 또는 no)|
+
+열린 창을 닫을 때는 close 메서드를 사용합니다. close 메서드의 사용법은 다음과 같습니다.
+
+```javascript
+w.close();
+```
+
+```javascript
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>top page</title>
+	<script>
+		window.onload = function() {
+			var w;
+			document.getElementById("open").onclick = function() {
+				w = open("newpage.html", "new page", "width=400, height=300");
+			};
+			document.getElementById("close").onclick = function() {
+				if (w) w.close();
+			};
+		};
+	</script>
+</head>
+<body>
+	<p>
+		<input type="button" value="open" id="open">
+		<input type="button" value="close" id="close">
+	</p>
+</body>
+</html>
+```
+
+### 창 제어하기
+
+- open 메서드로 연 창은 위치와 크기를 바꾸거나 스크롤할 수 있습니다. 위치를 변경하려면 moveBy와 moveTo 메서드를 사용합니다.
+
+```javascript
+w.moveBy(10, 20);  // 수평 방향(오른쪽)으로 10px 이동하고 수직 방향(아래쪽)으로 20px 이동
+w.moveTo(100, 150);  // 창의 왼쪽 좌표(100, 150)로 이동
+```
+
+- 크기를 변경하려면 resizeBy와 resizeTo 메서드를 사용합니다.
+
+```javascript
+w.resizeBy(10, 20);  // 너비를 10px, 높이를 20px 키운다
+w.resizeTo(200, 150);  // 너비를 200px, 높이를 150px로 설정한다.
+```
+
+- 창에 표시되는 페이지를 스크롤하려면 scrollBy와 scrollTo를 사용합니다.
+
+```javascript
+w.scrollBy(0,100);  // 아래쪽으로 100px 스크롤한다.
+w.scrollTo(0,0);  // 시작 위치로 이동한다.
+```
+
+### 다른 창 참조하기
+
+- 부모 창과 부모 창이 open 메서드로 연 자식 창은 서로의 Window 객체를 참조할 수 있습니다. 그러면 상대 프로퍼티와 메서드를 참조할 수 있습니다. 
+- 그러나 상호 참조할 수 있는 경우는 동일 출처 정책을 만족할 때로 한정됩니다. 부모 창이 자식 창의 Window 객체를 참조할 때는 open 메서드가 반환한 값을 사용합니다.
+
+```javascript
+var w = open("newpage.html", "new page", "width=400, height=300");
+w.document.body.style.backgrounColor = "green";  // 자식 창의 배경색을 녹색으로 만듬
+```
+
+- 자식 창이 부모 창의 Window 객체를 참조할 떄는 자식 창의 Window 객체에 있는 opener 프로퍼티를 사용합니다.
+
+```javascript
+opener.document.body.style.backgroundColor = "red"; //  부모 창의 배경색을 빨간색으로 만듬
+```
+- 이 코드에서 등장한 document.body.style.backgroundColor는 문서의 body 요소의 배경색을 가리키는 CSS의 인라인 스타일입니다. 
+
+> <b>동일 출처 정책</b><br>동일 출처 정책(same origin policy)이란 웹 페이지 위에서 동작하는 프로그램(자바스크립트 등) 출처와 그 프로그램이 읽으려고 시도하는 데이터 출처가 서로 다를 경우에 리소스 간의 상호작용을 제한하는 정책을 말합니다.<br><br>여기에서 말하는 출처(origin)란 리소스 URL이 지닌 세 가지 식별 정보를 뜻합니다. 식별 정보는 프로토콜, 포트 번호, 호스트 이름으로 구성됩니다.  즉, 웹에서는 다음 세 가지 조건을 모두 충족하는 리소스를 가리켜 출처가 같은 리소스라고 합니다.<br><br>
+(1)프로토콜이 같다.<br>(2) 포트 번호가 같다.<br>(3) 호스트 이름이 같다.
 
 * * * 
 ## Document 객체
+- Document 객체는 창에 표시되고 있는 웹 페이지를 관리합니다. 
+- 이 객체로 웹 페이지의 내용물인 DOM 트리를 읽거나 쓸 수 있습니다. 
+- Document 객체는 클라이언트 측 자바스크립트에서 가장 중요한 객체입니다. 
+
+
+####  Document 객체의 주요 프로퍼티
+|프로퍼티|설명|
+|-----|--------|
+|characterSet|문서에 적용된 문자 인코딩(읽기 전용)|
+|cookie|문서의 cookies를 쉼표로 연결한 문자열|
+|domain|문서의 도메인(읽기 전용)|
+|lastModified|문서를 마지막 수정한 날(읽기 전용)|
+|location|window.location 프로퍼티와 마찬가지로 Location 객체를 가리킴|
+|readyState|문서를 읽어들인 상태읽기(읽기 전용)|
+|referrer|문서에 링크된 페이지 URL(읽기 전용)|
+|title|문서 제목|
+|URL|문서 URL(읽기 전용)|
+
+
+#### Document 객체 주요 메서드
+
+|메서드|설명|
+|-----|--------|
+|close()|document.open() 메서드로 연 문서를 닫는다.|
+|open()|문서를 쓰기 위해 연다.|
+|write(text)|document.open() 메서드로 연 문서에 기록한다.|
+|writeln(text)|document.open() 메서드로 연 문서에 기록하고 개행 문자를 추가한다.|
