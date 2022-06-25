@@ -385,7 +385,7 @@ var w = open(url, 창의 이름, 옵션);
 w.close();
 ```
 
-```javascript
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -452,8 +452,8 @@ opener.document.body.style.backgroundColor = "red"; //  부모 창의 배경색�
 ```
 - 이 코드에서 등장한 document.body.style.backgroundColor는 문서의 body 요소의 배경색을 가리키는 CSS의 인라인 스타일입니다. 
 
-> <b>동일 출처 정책</b><br>동일 출처 정책(same origin policy)이란 웹 페이지 위에서 동작하는 프로그램(자바스크립트 등) 출처와 그 프로그램이 읽으려고 시도하는 데이터 출처가 서로 다를 경우에 리소스 간의 상호작용을 제한하는 정책을 말합니다.<br><br>여기에서 말하는 출처(origin)란 리소스 URL이 지닌 세 가지 식별 정보를 뜻합니다. 식별 정보는 프로토콜, 포트 번호, 호스트 이름으로 구성됩니다.  즉, 웹에서는 다음 세 가지 조건을 모두 충족하는 리소스를 가리켜 출처가 같은 리소스라고 합니다.<br><br>
-(1)프로토콜이 같다.<br>(2) 포트 번호가 같다.<br>(3) 호스트 이름이 같다.
+> <b>동일 출처 정책</b><br>동일 출처 정책(same origin policy)이란 웹 페이지 위에서 동작하는 프로그램(자바스크립트 등) 출처와 그 프로그램이 읽으려고 시도하는 데이터 출처가 서로 다를 경우에 리소스 간의 상호작용을 제한하는 정책을 말합니다.<br><br>여기에서 말하는 출처(origin)란 리소스 URL이 지닌 세 가지 식별 정보를 뜻합니다. 식별 정보는 프로토콜, 포트 번호, 호스트 이름으로 구성됩니다.  즉, 웹에서는 다음 세 가지 조건을 모두 충족하는 리소스를 가리켜 출처가 같은 리소스라고 합니다.<br><br>(1) 프로토콜이 같다.<br>(2) 포트 번호가 같다.<br>(3) 호스트 이름이 같다.<br><br>특히 다른 도메인(호스트 이름)에 있는 리소스는 출처가 다르며, 기본적으로 출처가 다른 데이터는 읽어 들일 수 없습니다.<br><br>동일 출처 정책은 클라이언트 측 프로그램의 부담을 줄이면서 악성 프로그램의 실행을 막을 목적으로 마련되었습니다. 이는 클라이언트 측 프로그램잉을 할 때 보안성을 확보하기 위한 중요한 개념으로 자리 잡았습니다.
+
 
 * * * 
 ## Document 객체
@@ -484,3 +484,160 @@ opener.document.body.style.backgroundColor = "red"; //  부모 창의 배경색�
 |open()|문서를 쓰기 위해 연다.|
 |write(text)|document.open() 메서드로 연 문서에 기록한다.|
 |writeln(text)|document.open() 메서드로 연 문서에 기록하고 개행 문자를 추가한다.|
+
+
+* * * 
+## 문서 제어
+
+### DOM 트리 
+- 웹 페이지의 내용은 Document 객체가 관리합니다. 웹 브라우저가 웹 페이지를 읽어 들이면 렌더링 엔진은 웹 페이지의 HTML 문서 구문을 해석하고 Document 객체에서 문서 내용을 관리하는 DOM 트리라고 하는 객체의 트리 구조를 만듭니다. 구체적으로 다음 HTML 문서를 예로 들어 설명하겠습니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<title>간단한 HTML문서</title>
+		<meta  charset="UTF-8">
+	</head>
+	<body>
+		<h1>DOM이란?</h1>
+		<p><strong>Document Object Model</strong>의 줄입말입니다.</p>
+	</body>
+</html>
+```
+
+- 웹 브라우저가 HTML 문서를 읽어 들이면 다음 그림처럼 Document 객체로 시작하는 DOM 트리가 만들어집니다.
+- DOM 트리를 구성하는 객체 하나를 노드(Node)라고 합니다. 다음 세 종류의 노드가 기본적인 노드입니다.
+	- <b>문서 노드</b> : 전체 문서를 가리키는 Document 객체, document로 참조할 수 있다.
+	- <b>THML 요소 노드</b> : HTML 요소를 가리키는 객체(이 절에서는 요소 객체로 줄여서 부름)
+	- <b>텍스트 노그</b> : 텍스트를 가리키는 객체(이 절에서는 텍스트 객체로 줄여서 부름)
+	
+- HTML은 요소 뒤에 공백 문자(공백 문자, 탭 문자, 줄 바꿈 문자 등)가 여러 개 있어도 무시합니다. 
+- 그러나 DOM 트리는 요소 앞뒤에서 연속적인 공백 문자를 발견하면 텍스트로 취급하여 텍스트 노드로 생성합니다. 이렇게 공백 문자만으로 구성된 텍스트 노드를 공백 노드라고 합니다. 
+- 단, html 요소 안에 있는 첫 공백 문자와 마지막 공백 문자에 대해서는 공백노드를 생성하지 않습니다.
+
+- DOM 트리는 HTML 문서 안의 요소와 텍스트 사이의 포함관계를 표현합니다. 이 포함 관계는 부모-자식 관계라고 부르기도 합니다.  
+- 노드 A 바로 아래에 노드 B가 있을 때 A를 B의 <code>부모 노드</code>라고 하고 B를 A의 <code>자식 노드</code>라고 합니다. 
+- 같은 부모를 가진 같은 레벨의 노드를 <code>형제 노드</code>라고 합니다. 또한 그 노드가 포함된 노드는 그 노드의 자식 노드라고 하고, 그 노드를 포함한 노드는 <code>조상 노드</code>라고 합니다. 
+- Document 객체는 모든 노드의 조상 노드이며 DOM트리의 <code>루트</code>입니다.
+
+### 노드 객체의 프로퍼티
+
+#### 노드 객체의 DOM 트리 계층을 표현하는 프로퍼티
+
+|프로퍼티 이름|설명|
+|-----|-----------|
+|parentNode|이 노드의 부모 노드를 참조한다. Document 객체의 부모 노드는 null이 된다.|
+|childNodes|이 노드의 자식 노드의 참조를 저장한 유사 배열 객체(NodeList)|
+|firstChild|이 노드의 첫 번째 자식 노드, 자식 노드가 없을 때는 null이 된다.|
+|lastChild|이 노드의 마지막 자식 노드, 자식 노드가 없을 때는 null이 된다.|
+|nextSibling|이 노드의 같은 부모 노드를 가진 이 노드 다음의 형제 노드|
+|previousSibling|이 노드와 같은 부모 노드를 가진 이 노드 이전의 형제 노드|
+|nodeType|노드 유형을 뜻하는 숫자(1: 요소 노드, 3: 텍스트 노드, 9: Document)|
+|nodeValue|텍스트 노드의 텍스트 콘텐츠, 요소 노드에서는 null이 된다.|
+|nodeName|요소 노드는 대문자로 바뀐 요소 이름이 들어간다. 텍스트 노드는 "#text"가 들어간다.|
+
+- 노드가 가진 이런 프로퍼티를 활용하면 Document 객체를 타고 내려가 특정 요소 객체나 텍스트 객체를 참조할 수 있습니다. 
+- 예를 들어 앞서 예제인 HTML 문서의 body 요소 객체는 다음과 같은 다양한 방법으로 참조할 수 있습니다.
+
+```javascript
+document.childNodes[0].childNodes[2]
+document.firstChild.lastChild
+```
+
+- 하지만 이러한 참조 방법은 요소와 요소 사이에 있는 공백 문자의 영향을 받습니다. 
+- 공백 문자의 유무에 따라 요소 객체를 참조하는 방법을 바꿔야 해서 다루기가 불편합니다. 따라서 노드 객체를 참조할 떄는 앞에 작성한 코드처럼 Document 객체부터 자식 노드의 프로퍼티를 순서대로 타고 내려가는 경우가 드뭅니다. 보통은 요소의 id와 class 속성을 사용하여 원하는 요소 객체를 직접 가져옵니다.
+
+#### HTML 요소의 트리
+
+- HTML 문서 안의 요소에만 관심이 있는 경우도 childNodes와 firstChild로 노드를 참조하면 앞에서 이야기한 것처럼 공백 문자의 유무에 따라 검색 방법을 바꿔야 해서 불편합니다. 
+- 그래서 각 노드에서는 DOM 트리 안의 텍스트 노드를 무시하고 HTML 문서에서 요소의 계층 구조만 가져오기 위한 프로퍼티가 마련되어 있습니다.
+
+
+|프로퍼티 이름|설명|
+|-----|-----------|
+|children|이 요소의 자식 요소 참조를 저장한 유사 배열 객체(NodeList)|
+|parentElement|이 요소의 부모 요소 객체를 참조한다.|
+|firstElementChild|이 요소의 첫 번째 자식 요소 객체를 참조한다.|
+|lastElementChild|이 요소의 마지막 자식 요소 객체를 참조한다.|
+|nextElementSibling|이 요소와 같은 부모를 가진 이 요소 다음 형제 요소 객체를 참조한다.|
+|previousElementSibling|이 요소와 같은 부모를 가진 이 요소 이전의 형제 요소 객체를 참조한다.|
+|childElementCount|자식 요소 개수 children.length와 같다.|
+
+- 예를 들어 앞서 예제인 HTML 문서의 body 요소 객체는 다음과 같은 방법으로 참조할 수 있습니다.
+
+```javascript
+document.children[0].children[1]
+document.firstElementChild.lastElementChild
+```
+
+#### 주요 노드 객체
+
+|노드의 종류|생성자|nodeName|nodeValue|nodeType|
+|-----|-----|-----|-----|----|
+|문서 노드|HTMLDocument|"#document"|null|9|
+|요소 노드|HTMLElement|요소 이름(대문자)|null|1|
+|텍스트 노드|Text|"#text"|텍스트|3|
+|주석노드|Comment|"#comment"|주석 내용|8|
+|속성노드|Attr|속성 이름|속성 값|2|
+
+- 앞서 예제인 HTML 문서에서 일부 노드 생성자와 nodeName, nodeValue, nodeType 값을 출력해 보면 다음 코드의 주석과 같은 결과가 나옵니다.
+
+```javascript
+console.log(document.constructor);  // -> HTMLDocument() { ... }
+console.log(document.nodeName, document.nodeValue, document.nodeType); 
+// -> #document null 9
+var element = document.children[0].children[1].firstElementChild;
+console.log(element.constructor); // -> HTMLHeadingElement() { ... }
+console.log(element.nodeName, element.nodeValue, element.nodeType); 
+// -> H1 null 1
+```
+
+
+### 자바스크립트로 웹 페이지 제어하기
+
+- 자바스크립트를 사용하면 DOM 트리의 노드 객체를 가져와서 제어할 수 있습니다. 또한 자바스크립트로 스타일 규칙을 가져와서 제어할 수도 있습니다. <b>렌더링 엔진은 DOM 트리와 스타일 규칙이 바뀔 때마다 렌더 트리를 다시 구성해서 웹페리지를 다시 그립니다.</b>
+- 웹페이지를 사용자가 조작하거나 자바스크립트 코드로 DOM 트리나 스타일을 수정하면 렌더링 엔진은 그때마다 화면을 다시 렌더링합니다.
+- 렌더 트리를 다시 구성하고 다시 렌더링하는 처리는 일반적으로 시간이 많이 걸리는 작업입니다. 따라서 이러한 처리가 자주 발생하면 렌더링이 원활하지 않을 가능성이 있습니다. 
+- 웹 브라우저는 이러한 상황을 피하기 위해 렌더링 처리 횟수를 가능한 줄이는 최적화 처리를 합니다. 예를 들어 스타일의 수정 요청이 여러 번 반복되면 요청을 대기열에 모아 두고 마지막에 한꺼번에 처리합니다.
+
+## 노드 객체 가져오기
+자바스크립트로 HTML 요소를 제어하려면 그 전에 제어하고자 하는 요소 객체를 먼저 가져와야 합니다. 물론 Document 객체의 DOM 트리를 타고 올라가 요소 객체를 가져오는 방법도 있지만 Document 객체는 이보다 편리하게 요소 객체를 가져올 수 있는 메서드가 마련되어 있습니다.
+
+### id 속성으로 노드 가져오기
+
+```javascript
+document.getElementById(id 값);
+```
+
+
+### 요소 이름으로 노드 가져오기
+
+```javascript
+document.getElementsByTagName(요소의 태그 이름);
+```
+
+### class 속성 값으로 노드 가져오기
+
+```javascript
+document.getElementsByClassName(class의 이름);
+```
+
+### name 속성 값으로 노드 가져오기
+
+```javascript
+document.getElementsByName(name);
+```
+
+### CSS 선택자로 노드 가져오기
+
+```javascript
+document.querySelectorAll("선택자");
+```
+
+```javascript
+document.querySelector("선택자");
+```
+
+### Document 객체의 프로퍼티
+
