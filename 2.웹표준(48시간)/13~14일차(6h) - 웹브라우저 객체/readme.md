@@ -197,7 +197,8 @@ location.assign("https://naver.com")
 ```javascript
 location.replace("https://naver.com");
 ```
-	- 이때는 읽어 들이기 이전의 URL이 이력에서 삭제되므로 '뒤로 가지' 버튼으로 되돌아갈 수 없습니다.
+
+이때는 읽어 들이기 이전의 URL이 이력에서 삭제되므로 '뒤로 가지' 버튼으로 되돌아갈 수 없습니다.
 	
 - URL에는 상대 경로를 지정할 수도 있습니다. 상대 경로를 지정하면 이전 웹 페이지의 사이트 루트에 대한 상대 URL로 인식합니다. 다음 코드는 3초 후에 같은 사이트의 다른 페이지로 이동(리다이렉트)gksms dPdlqslek.
 
@@ -225,7 +226,8 @@ location.hash = "#header";  // id = "header"인 HTML 요소로 스크롤하기
 location.search = "some data";
 // URL 끝에 "?some%20data"를 덧붙여 서버에 보낸다.
 ```
-	- 이때 search 프로퍼티에 저장된 값은 URL 인코딩되어 서버로 전송됩니다.
+
+이때 search 프로퍼티에 저장된 값은 URL 인코딩되어 서버로 전송됩니다.
 	
 * * * 
 ## History 객체
