@@ -1274,5 +1274,240 @@ var rect = 요소 객체.getBoundingClientRect();
 ![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9B%B9%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%20%EA%B0%9D%EC%B2%B4/images/images8.png)
 
 
+#### 블록 박스의 박스 모델 
 
 ![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9B%B9%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%20%EA%B0%9D%EC%B2%B4/images/images9.png)
+
+### 뷰 포드의 크기 가져오기
+- 뷰 포트의 크기는 다음 프로퍼티에 담겨 있습니다.
+	- <code>document.documentElement.clientWidth</code> : 뷰 포트의 너비(스크롤 막대의 너비를 포함하지 않음)
+	- <code>document.documentElement.clientHeight</code> : 뷰 포트의 높이(스크롤 막대의 옾이를 포함하지 않음)
+
+- IE9 이후에 출시된 다른 웹 브라우저는 다음 프로퍼티도 제공합니다.
+	- <code>window.innerWidth</code> : 뷰 포트의 너비(스크롤 막대의 너비를 포함)
+	- <code>window.innerHeight</code> : 뷰 포토의 높이(스크롤 막대의 높이를 포함)
+	
+### 스크롤한 거리 구하기
+
+- 인터넷 익스플로러, 파이어 폭스
+	- <code>document.documentElement.scrollLeft</code> : X축 방향으로 스크롤한 거리
+	- <code>document.documentElement.scrollTop</code> : Y축 방향으로 스크롤한 거리
+	- ※ 크롬, 사파리, 오페라에도 같은 프로퍼티가 있지만 값이 항상 0입니다.
+	
+- 크롬, 사파리, 오페라, 엣지, 각 웹 브라우저의 Quirks Mode
+	- <code>document.body.scrollLeft</code> : X축 방향으로 스크롤한 거리
+	- <code>document.body.scrollTop</code> : Y축 방향으로 스크롤한 거리
+	- ※ 인터넷 익스플로러, 파이어폭스에도 같은 프로퍼티가 있지만 값이 항상 0입니다. 
+	
+- 파이어폭스, 크롬, 사파리, 오페라, 엣지, IE9 이상
+	- <code>window.pageXOffset</code> : X축 방향으로 스크롤한 거리
+	- <code>window.pageYOffset</code> : Y축 방향으로 스크롤한 거리
+	
+### 스크롤하기
+
+#### 특정 위치로 ㅅ그크롤하기
+window 객체의 scrollTo 메서드는 문서 좌표 (X,Y)를 인수로 받으며, 뷰 포트 좌표의 원점(표시 영역의 왼쪽 위 모서리)까지 스크롤합니다.
+
+```javascript
+window.scrollTo(X,Y);
+```
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+		<style>
+			.box {
+				display: inline-block;
+				padding: 100px;
+				margin: 100px;
+				margin-left: 0;
+				background-color: yellow;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="box" id="sec1">#sec1</div>
+		<br>
+		<div class="box" id="sec2">#sec2</div>
+		<br>
+		<div class="box" id="sec3">#sec3</div>
+		<script>
+			// 크롬을 비롯한 일부 웹브라우저에서는 스크롤 복원 기능을 꺼야 합니다.
+			if ('scrollRestoration' in history) {
+				history.scrollRestoration = 'manual';
+			}
+			var element = document.getElementById("sec3");
+			var rect = element.getBoundingClientRect();
+			scrollTo(rect.left + window.pageXOffset, rect.top + window.pageYOffset);
+		</script>
+	</body>
+</html>
+```
+
+#### 특정 거리만큼 스크롤하기
+- Window 객체의 scrollBy 메서드는 스크롤할 거리를 인수로 받아 문서를 그 거리만큼 스크롤합니다.
+
+```javascript
+window.scrollBy(dx, dy);
+```
+
+- 예를 들어 한 페이지 분량만큼(표시 영역 높이만큼) 스크롤하려면 다음과 같이 작성합니다.
+
+```javascript
+scrollBy(0, window.innerHeight);
+```
+
+#### 특정 요소가 있는 위치까지 스크롤하기
+- 요소 객체의 scrollIntroView 메서드는 그 요소가 웹 브라우저의 표시 영역에 들어올 때까지 스크롤 합니다.
+
+```javascript
+요소 객체.scrollInterView(alignWithTop);
+```
+
+- 인수 alignWidthTop은 선택 사항으로 생략하면 true로 간주합니다. alignWidthTop이 true면 요소가 표시 영역의 위쪽 끝에 오도록 스크롤합니다. false면 요소가 표시 영역의 아래쪽 끝에 오도록 스크롤합니다.
+- 앞 예제에서 id 속성 값이 "sec3"인 요소를 표시 영역의 위쪽 끝까지 스크롤하려면 코드를 다름과 같이 작성합니ㅏㄷ.
+
+```javascript
+var element = document.getElementById("sec3");
+element.scrollIntoView();
+```
+
+### HTML 요소의 위치 변경고하 렌더링 성능
+렌더 트리를 다시 구성하고 그리는 작업에는 시간이 걸립니다. 그래서 웹 브라우저는 이러한 상황을 피하고자 렌더링 처리 횟수를 가능한 줄이는 최적화 처리를 합니다. 그러나 요소의 위치와 크기를 변경하는 작업은 레이아웃 처리를 촉발하는 방아쇠가 되며, 최적화의 대상이 되지 않습니다. 레이아웃을 처리하려면 부모 요소까지 거슬러 올라가 계산해야 하며, 이는 렌더링 성능을 현저하게 떨어뜨리는 원인이 됩니다. 특히 position 루트부터 다시 계산해야 하므로 그만큼 시간이 걸립니다.  웹페이지의 렌더링 성능을 개선하고자 한다면 요소의 크기 변경과 위치 변경이 영향을 미치는 범위를 염두에 두어야 합니다.
+
+## HTML 폼
+
+- 폼에 입력한 데이터를 웹 서버로 보내고 웹 서버는 그 데이터를 처리한다. 그 결과를 사용자에게 반환하거나 데이터베이스에 저장한다.
+- 클라이언트 측 자바스크립트로 웹 애플리케이션을 만들 때 사용자 입력을 받는 사용자 인터페이스로 사용한다. 이때 데이터 처리는 클라이언트 측 자바스크립트 프로그램이 담당한다.
+
+### 폼 요소와 폼 컨트롤 요소
+- 웹 서버에 데이터를 보낼 때는 다음과 같은 과정을 거칩니다. 우선 form 요소를 작성하고 method와 action 속성을 지정합니다.
+	- <b>method 속성</b> : 데이터 전송 방법("POST" 또는 "GET")
+	- <b>action 속성</b> : 데이터를 처리하는 CGI 프로그램의 URL
+
+- 그 다음 form 요소 안에 사용자로부터 입력을 받는 input 요소 등의 폼 컨트롤 요소를 배치합니다.
+- 마지막으로 form 요소 안에 데이터를 전송하기 위한 submit 버튼과 데이터 입력을 취소하는 reset 버튼을 배치합니다. 
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>간단한 폼 예제</title>
+</head>
+<body>
+	<form method="post" action="./cgi-bin/post.cgi" name="questions" id="form1">
+		<h1>설문 조사</h1>
+		<p>
+			<label>이름 : </label>
+			<input type="text" name="name">
+		</p>
+		<p>
+			<label>성별 : </label>
+			<label><input type="radio" name="gender" value="male">남</label>
+			<label><input type="radio" name="gender" value="female">여</label>
+		</p>
+		<p>
+			<label>혈액형 : </label>
+			<select name="bloodtype" id="menu1">
+				<option>A형</option>
+				<option>B형</option>
+				<option>O형</option>
+				<option>AB형</option>
+			</select>
+		</p>
+		<p>
+			<h2>의견</h2>
+			<textarea name="opinion" rows="6" cols="80" placeholder="의견을 남겨주세요"></textarea>
+		</p>
+		<p>
+			<input type="submit" value="보내기">
+			<input type="reset" value="취소">
+		</p>
+	</form>
+</body>
+</html>
+```
+
+### 폼 요소와 폼 컨트롤 요소 가져오기
+
+#### DOM 메서드로 가져오는 방법
+- 폼 요소와 폼 컨트롤은 DOM의 표준 메서드를 사용하여 가져올 수 있습니다.
+
+```javascript
+var menu = document.getElementById("menu1");
+var options = menu.getElementsByTagName("option");
+```
+
+- querySelectorAll 메서드를 사용하면 성별 정보를 구하는 라디오 버튼 목록을 다음과 같이 가져올 수 있습니다.
+
+```javascript
+var inputs = document.querySelectorAll("#form1 input[type='radio']");
+```
+
+#### forms 프로퍼티로 form 요소 가져오기
+- 문서 안의 form 요소 목록은 Document 객체의 forms 프로퍼티에서도 가져올 수 있습니다. 
+- forms 프로퍼티 값은 HTMLCollection 객체 입니다.
+- HTMLCollection 객체의 요소는 배열 요소의 인덱스는 물론 id 속성 값, name 속성 값으로 가져올 수 있습니다.
+
+```javascript
+document.forms[0]   // 인덱스로 가져오기
+document.forms.form1 // id 속성 값으로 가져오기
+document.forms.questions // name 속성 값으로 가져오기
+```
+
+- 이 방법 중에서 인덱스로 폼 요소를 가져오는 방법은 특별한 목적이 있지 않은 한 사용하지 않는편이 좋습니다. 자바스크립트를 사용해서 form 요소를 문서에 동적으로 추가하면 이 인덱스가 다른 요소를 가리키게 될 가능성이 있기 때문입니다. 
+- 또한 name 속성을 가지는 form 요소의 목록은 다음 방법으로도 가져올 수 있습니다.
+
+```javascript
+document.questions;  // name 속성 값이 "questions"인 form 요소의 목록 
+```
+
+#### form 요소 객체의 자식 요소 객체 가져오기
+- form 요소 객체 자체도 유사 배열 객체이며, 해당 폼의 자식 요소인 폼 컨트롤 요소 객체를 배열의 요소로 갖고 있습니다. 
+- 배열의 요소는 HTMLCollection 객체와 마찬가지로 배열 요소의 인덱스, id 속성 값, name 속성 값으로 가져올 수 있습니다.
+- 예를 들어 혈액형 메뉴를 정의한 select 요소 객체를 다음과 같은 방법으로 가져올 수 있습니다.
+
+```javascript
+document.forms.form1[3]
+document.forms.form1.bloodtype
+document.forms.form1.menu1
+```
+- 또한 form 요소 객체는 elements 프로퍼티도 가지고 있습니다. elements 프로퍼티도 유사 배열 객체이며, 해당 폼의 자식 요소인 폼 컨트롤 요소 객체를 배열의 요소로 갖고 있습니다.
+- 배열의 요소는 HTMLCollection 객체와 마찬가지로 배열 요소의 인덱스, id 속성 값, name 속성 값으로 가져올 수 있습니다.
+
+```javascript
+document.forms.form1.elements[3]
+document.forms.form1.elements.bloodtype
+document.forms.form1.elements.menu1
+```
+
+- 앞의 두 번쨰 코드는 name 속성 값이 가리키는 요소의 개수에 따라 반환하는 값이 달라집니다. name 속성 값이 가리키는 요소가 하나일 때는 그 폼 컨트롤 요소 객체 자체를 반환합니다. name 속성 값이 가리키는 요소가 여러 개 일 때는 그 요소들을 담은 유사 배열 객체를 반환합니다.
+
+```javascript
+var inputs = document.forms.form1.elements.gender;
+```
+
+- 그러면 inputs에는 성별을 선택하는 두 개의 input 요소가 담긴 유사 배열 객체의 참조가 들어옵니다. 
+- 이때 사용자가 선택한 성별(input 요소의 value 속성 값)을 다음 코드로 가져올 수 있습니다.
+
+```javascript
+var gener_selected;
+for(var i = 0; i < inputs.length; i++) {
+	if(inputs[i].checked) gender_selected = inputs[i].value;
+}
+```
+
+
+## CSS 제어하기
+
+### 스타일 변경 방법
+
+### 인라인 스타일 제어하기
+
+
+#### 계산된 스타일 구하기
+
+### 클래스 제어로 스타일 변경
