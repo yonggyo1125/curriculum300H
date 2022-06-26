@@ -1598,4 +1598,95 @@ console.log(computedStyles.height); // -> 24px
 
 
 ### 클래스 제어로 스타일 변경
+- 요소의 인라인 스타일을 바꾸는 대신에 요소의 class 속성 값을 바꾸어 스타일을 제어하는 방법이 있습니다.
+- 이를 구현하려면 스타일 시트에 정의된 스타일을 요소의 class 속성으로 사용하도록 HTML 문서를 작성해야 합니다. 
+- 그 다음 자바스크립트 요소 객체의 className 프로퍼티에 기록된 class 속성 값을 바꿉니다. 
+- 요소의 class 속성 값을 바꾸면 그 요소에 적용되는 스타일도 바뀝니다. 
+- 이 방법을 활용하면 여러 요소의 스타일을 한꺼번에 바꿀 수 있습니다.
 
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+		<style>
+			.emphasize {
+				background-color: pink;
+			}
+		</style>
+	</head>
+	<body>
+		<h1 id="title">JavaScript</h1>
+		<script>
+			var element = document.getElementById("title");
+			element.onmouseover = function() {
+				element.className = "emphasize";
+			};
+			element.onmouseout = function() {
+				element.className = "";
+			};
+		</script>
+	</body>
+</html>
+```
+
+#### classList 프로퍼티
+- HTML 요소의 class 속성에는 여러 개의 클래스 이름을 공백 문자로 연결해서 지정할 수 있습니다. 이렇게 하면 요소가 여러 개의 CSS 클래스에 속하게 됩니다.
+
+```html
+<p class="note invisible" id="note1">...</p>
+```
+
+- 이때 특정 클래스 이름을 취득/수정/삭제하려면 복잡한 문자열 처리를 해야 합니다. "note invisible"처럼 여러 개의 클래스 이름을 공백 문자로 연결한 문자열이 들어가 있는 상태이기 때문입니다. 
+- 이런 상황에서 사용할 수 있도록 모든 요소 객체에는 classList 프로퍼티가 마련되어 있습니다. 
+- <code>classList</code> 속성 값은 <code>DOMTokenList</code> 객체 입니다. <code>DOMTokenList</code> 객체는 유사 배열 객체이며 읽기 전용입니다.
+- 이 객체는 HTMLCollection 객체와 마찬가지로 '살아 있는' 상태를 표현합니다. classList 객체의 배열 요소는 className 프로퍼티 값이 항상 반영된 상태입니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<p class="note invisible" id="note1">...</p>
+		<script>
+			var element = document.getElementById("note1");
+			var list = element.classList;
+			for(var i = 0; i < list.length; i++) {
+				console.log(list[i]);
+			}
+			// note, invisible을 순서대로 표시한다.
+		</script>
+	</body>
+</html>
+```
+
+#### DOMTokenList 객체의 메서드
+
+|메서드|설명|
+|----|------|
+|add(클래스 이름)|요소의 클래스 목록에 해당 클래스를 추가한다.|
+|remove(클래스 이름)|요소의 클래스 목록에서 해당 클래스를 삭제한다.|
+|toggle(클래스 이름)|요소의 클래스 목록에 해당 클래스가 없으면 추가하고 있으면 삭제한다.|
+|contains(클래스 이름)|요소의 클래스 목록에 해당 클래스가 있는지를 뜻하는 논리값을 반환한다.|
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<p class="note invisible" id="note1">...</p>
+		<script>
+			var element = document.getElementById("note1");
+			var list = element.classList;
+			list.toggle("invisible");
+			console.log(element.className); // note
+			list.toggle("invisible");
+			console.log(element.className); // note invisible
+		</script>
+	</body>
+</html>
+```
