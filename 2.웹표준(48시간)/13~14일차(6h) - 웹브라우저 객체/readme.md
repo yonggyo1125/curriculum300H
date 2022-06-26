@@ -613,35 +613,172 @@ console.log(element.nodeName, element.nodeValue, element.nodeType);
 자바스크립트로 HTML 요소를 제어하려면 그 전에 제어하고자 하는 요소 객체를 먼저 가져와야 합니다. 물론 Document 객체의 DOM 트리를 타고 올라가 요소 객체를 가져오는 방법도 있지만 Document 객체는 이보다 편리하게 요소 객체를 가져올 수 있는 메서드가 마련되어 있습니다.
 
 ### id 속성으로 노드 가져오기
+- HTML 문서의 요소에는 id 속성을 지정할 수 있습니다.
+- id 속성 값은 문서에서 유일한 값이어야 합니다. 따라서 id 속성 값으로 요소 하나를 가리킬 수 있습니다.
 
 ```javascript
 document.getElementById(id 값);
 ```
 
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<div id="first">첫 번째 div</div>
+		<div id="second">두 번째 div</div>
+		<div id="third">세 번째 div</div>
+		<script>
+			var element = document.getElementById("second");
+			element.innerHTML = "여기를 수정함"; // 두 번째 div 요소의 내용을 수정한다.
+		</script>
+	</body>
+</html>
+```
+
 
 ### 요소 이름으로 노드 가져오기
+- 인수로 넘긴 문자열과 같은 이름을 가진 태그 목록을 가져올 수 있습니다. 인수로는 태그 이름을 넘깁니다.
+- 태그 이름은 대소문자를 구별하지 않습니다.
+- getElementsByTagName 메서드는 반환값이 복수개의 요소 입니다. 이것은 일반적인 HTML 문서에는 이름이 같은 태그가 많이 사용되기 때문입니다. 
+- getElementsByTagName 메서드는 NodeList 객체를 반환합니다. NodeList 객체는 유사 배열 객체이며 읽기 전용입니다. 
+- 요소 이름 대신 와일드카드(\*)를 지정할 수도 있습니다. 이 경우에는 NodeList에 HTML 문서 안의 모든 요소를 담아서 반환합니다.
 
 ```javascript
 document.getElementsByTagName(요소의 태그 이름);
 ```
 
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<div id="first">첫 번째 div</div>
+		<div id="second">두 번째 div</div>
+		<div id="third">세 번째 div</div>
+		<script>
+			var elements = document.getElementsByTagName("div");
+			elements[2].innerHTML = "여기릴 수정함";  // 세 번째 div 요소의 내용을 수정한다.
+		</script>
+	</body>
+</html>
+```
+
+> <b>NodeList 객체</b><br>
+getElementsByTagName, getElementsByName, getElementsByClassName 메서드는 NodeList 객체를 반환합니다. 이는 length 프로퍼티를 가진 유사 배열 객체이며 for 문 등을 사용해서 순회할 수 있습니다.<br><br>
+NodeList 객체는 '살아 있는' 상태를 가리킵니다. 즉, 이 객체는 특정 시점의 정적인 상태를 표현하는 것이 아니라 HTML 문서의 변화에 따라 동적으로 바뀝니다. 예를 들어 div 요소가 없는 HTML 문서에서 다음 코드로 div 요소의 목록을 가져온다고 합시다.<br><br>
+var divs = document.getElementsByTagName("div");<br><br>
+그러면 divs라는 목록은 비어 있는 상태이며 length 프로퍼티 값도 0인 상태입니다. 하지만 나중에 div 요소를 추가하면 divs 목록에 그 요소가 추가되고 목록의 length 프로퍼티 값도 함께 증가합니다.<br><br>
+NodeList 객체가 '살아 있는' 상태를 표현한다는 것이 때로는 편리할 수 있지만, NodeList 객체를 순회하면서 요소를 추가해야 하는 상황에서는 주의를 기울여야 합니다. 이때는 아래와 같은 방법으로 NodeList 객체의 정적(Static) 복사본을 만들어 순회해야 합니다.<br><br>
+var staticList = Array.prototype.slice.call(divs, 0);
+
+
 ### class 속성 값으로 노드 가져오기
+- class 속성 값은 0개 이상의 식별자(클래스 이름)를 CSS에서 사용하는 공백 문자(공백, 탭 등)로 연결한 문자열로 표기합니다. 이 class 속성으로 class 속성 값을 갖는 요소의 집합이 정의됩니다. 즉, 똑같은 식별라 class 속성 값으로 포함된 요소들이 모인 집합 하나가 정의됩니다.
+- getElementsByClassName 메서드를 사용하면 특정 class  속성 값을 class 속성 값으로 가지는 요소 객체 목록(NodeList)을 가져올 수 있습니다.
 
 ```javascript
 document.getElementsByClassName(class의 이름);
 ```
 
+```httml
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="utf-8">
+	</head>
+	<body>
+		<div class="cat black">봄베이</div>
+		<div class="cat white">페르시안</div>
+		<div class="dog white">스피츠</div>
+		<script>
+			var cats = document.getElementsByClassName("cat");
+			for(var i = 0; i < cats.length; i++) {
+				console.log(i + " 번째 고양이 : " + cats[i].innerHTML);
+			}
+		</script>
+	</body>
+</html>
+```
+
+- 식별자 여러 개를 공백 문자로 연결한 문자열을 인수로 넘기면, 그 식별자들을 class 속성 값으로 갖는 요소의 목록을 가져올 수 있습니다.
+
+```javascript
+var whiteCats = document.getElemensByClassName("white cat");
+```
+
+- getElementsByClassName 메서드는 요소 객체에서도 사용할 수 있습니다. 이 경우에는 getElementsByClassName 메서드가 그 요소의 자식 요소 중에서 인수로 지정한 문자열을 class 속성 값으로 가지는 요소 객체를 NodeList에 담아서 반환합니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<p>
+			<strong class="important">Document Object Model</strong>의 줄임말입니다.
+		</p>
+		<script>
+			var paras = document.getElementsByTagName("p");
+			var firstParaImportants = paras[0].getElementsByClassName("important");
+			console.log(firstParaImportants);
+		</script>
+	</body>
+</html>
+```
+
 ### name 속성 값으로 노드 가져오기
+
+- name 속성은 그 요소 이름으로 지정할 때 사용하며 form과 input 등의 폼 컨트롤 요소, iframe, img, map, object 요소 등에 지정할 수 있습니다. 
+- name 속성 값은 class 속성 값과 마찬가지로 요소 여러 개를 대상으로 같은 값(이름)을 사용할 수 있습니다.
+- getElementsByName 메서드를 사용하면 특정 문자열을 name 속성 값으로 갖는 요소 객체 목록(NodeList)을 가져올 수 있습니다.
+- 인수는 name 속성 값입니다.
 
 ```javascript
 document.getElementsByName(name);
 ```
 
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<form>
+			<input type="checkbox" name="dog" value="pome">포메라니안<br>
+			<input type="checkbox" name="dog" value="dalma">달마시안<br>
+			<input type="checkbox" name="dog" value="bool">불독<br>
+		</form>
+		<script>
+			var dogs = document.getElementsByName("dog");
+			dogs[i].value = "corgi";
+			dogs[i].nextSiblings.nodeValue="윌시 코기";
+			for(var i = 0; i < dogs.length; i++) {
+				console.log(i + " 번째의 값 : " + dogs[i].value);
+			}
+		</script>
+	</body>
+</html>
+```
+
 ### CSS 선택자로 노드 가져오기
+
+- getElementssByTagName 메서드 등이 반환하는 NodeList와 달리 querySelectorAll 메서드가 반환하는 NodeList는 '살아 있는 상태'가 아닙니다.
+- NodeList에 포함된 요소는 메서드를 호출한 시점에 일치한 요소입니다. 
+- HTML 문서 내용이 바뀌어도 querySelectorAll 메서드가 반환한 NodeList는 바뀌지 않습니다. 
+- 또한 querySelectorAll 메서드는 일치한 요소가 없을 때 빈 NodeList를 반환합니다.
 
 ```javascript
 document.querySelectorAll("선택자");
 ```
+
+- querySelector 메서드는 지정한 선택자와 일치하는 요소 객체 중에서 문서 위치가 첫 번째인 요소 객체를 반환합니다.
 
 ```javascript
 document.querySelector("선택자");
@@ -672,3 +809,130 @@ document.querySelector("선택자");
 
 > document.embeds와 document.plugins는 같은 객체를 참조합니다.
 
+
+
+## 속성 값의 읽기와 쓰기
+
+### 요소의 속성 값
+
+대부분의 HTML 요소에는 속성을 설정해서 추가적인 정보를 더할 수 있습니다. 이를 활용해서 요소에 다른 요소와 구별되는 특별한 스타일을 입히거나 특별한 기능을 부여하기도 합니다.
+
+```html
+<a id="school" href="http://school.yonggyo.com">강의실</a>
+```
+
+이 a 요소에는 id속성과 href 속성이 설정되어 있습니다. 이처럼 속성은 <b>속성 이름 = 속성 값</b>으로 표기합니다.
+
+### 요소 객체의 프로퍼티로 요소의 속성을 읽고 쓰기
+- 요소 객체에는 요소의 일반적인 속성을 표현하기 위한 프로퍼티가 정의되어 있습니다.
+- 요소 객체에는 일반적인 HTML 속성(id, class, name, src, href, ...)과 이벤트 처리기 프로퍼티(onclick, onmousedown, ...) 등이 정의되어 있습니다. 
+- 일반적인 속성의 속성 이름은 다음과 같이 표기합니다.
+
+```
+요소 객체.속성 이름
+```
+
+- 이 프로퍼티는 읽기와 쓰기가 가능합니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<a id="school" href="http://school.yonggyo.com">강의실</a>
+		<script>
+			var anchor = document.getElementById("school");
+			console.log(anchor.href);  // -> http://school.yonggyo.com
+		</script>
+	</body>
+</html>
+```
+
+- 속성 프로퍼티는 쓰기가 가능하며 속성 값을 설정할 수 있습니다.
+
+
+```javascript
+anchor.href = "http://www.yonggyo.com";
+```
+
+- HTML 요소의 속성 이름은 대소문자를 구분하지 않지만 자바스크립트 요소 객체의 속성 프로퍼티는 대소문자를 구분합니다.
+- HTML 요소의 속성을 요소 객체의 속성 프로퍼티로 사용할 때는 소문자로 작성합니다. 
+- 단, 속성 이름이 여러 단어로 구성되었다면 두 번째 이 후 단어의 첫 글자를 대문자로 표기한 프로퍼티 이름을 사용합니다.
+
+```
+accept-charset  -> acceptCharSet  // form 요소에서 사용할 수 있음
+accesskey -> accessKey  // 전역 속성(모든 요소에서 사용할 수 있음)
+maxlength -> maxLength   // input 요소와 textarea 요소에서 사용할 수 있음
+tabindex -> tabIndex  // 전역 속성(모든 요소에서 사용할 수 있음)
+```
+
+- 몇몇 HTML 속성의 이름은 자바스크립트에서 예약어로 사용하고 있는 이름입니다. 따라서 이런 경우네는 속성 이름 앞에 HTML을 덧붙입니다.
+- 예를 들어 label 요소의 for 속성을 설정할 때 자바스크립트에서는 <code>htmlFor</code>를 사용하는 식입니다. 
+- 단, class 속성은 특별한 취급을 받으며 자바스크립트에서는 className 프로퍼티를 사용합니다.
+
+
+### 속성 값 가져오기
+- 요소 객체의 getAttrbute 메서드는 요소의 속성을 가져옵니다. 
+- 해당하는 속성이 없을 때는 null 또는 빈 문자열을 반환합니다.
+
+```javascript
+요소 객체.getAttribute(속성의 이름)
+```
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<form id="favorite">
+			<input type="checkbox" name="dog" value="pome">포레라니안<br>
+			<input type="checkbox" name="dog" value="dalma">달마시안<br>
+			<input type="checkbox" name="dog" value="bool">불독<br>
+		</form>
+		<script>
+			var result = [];
+			var fm = document.getElementById("favorite");
+			var list = fm.children;
+			for(var i = 0; i < list.length; i++) {
+				if (list[i].nodeName == "INPUT" && list[i].type == "checkbox") {
+					result.push(list[i]).getAttribute("value"));
+				}
+			}
+			console.log(result.join(","));  // -> pome,dalma,bool
+		</script>
+	</body>
+</html>
+```
+
+### 속성 값 설정하기
+- 요소 객체의 setAttribute 메서드는 요소의 속성을 설정합니다. 
+- 해당하는 속성이 없ㅇ을 때는 그 속성을 새롭게 추가한 후에 설정합니다.
+
+```javascript
+요소 객체.setAttribute(속성 이름, 속성 값)
+```
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<a id="school" href="http://school.yonggyo.com">강의실</a>
+		<script>
+			var anchor = document.getElementById("school");
+			anchor.setAttribute("href", "http://www.yonggy.com");
+			console.log(anchor);
+		</script>
+	</body>
+</html>
+```
+
+- getAttribute와 setAttribute 메서드는 요소 객체의 속성 프로퍼티에 비해 다음과 같은 장점이 있습니다.
+	- HTML의 일반적인 속성은 물론 모든 속성을 설정할 수 있습니다.
+	- 속성 이름을 프로그램 실행 중에 동적으로 설정할 수 있다.
