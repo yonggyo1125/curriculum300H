@@ -1505,9 +1505,97 @@ for(var i = 0; i < inputs.length; i++) {
 
 ### 스타일 변경 방법
 
+- 요소 객체의 style 속성 값을 수정하는 방법
+- 스타일 시트에 스타일을 클래스로 설정해 둔 다음 요소의 class 속성 값을 바꾸어 스타일을 전환하는 방법
+- 스타일 시트를 수정하는 방법
+
 ### 인라인 스타일 제어하기
 
 
+- 요소 객체에는 style 프로퍼티를 갖고 있습니다. 이 style 프로퍼티를 사용해서 개별 요소의 스타일을 제어할 수 있습니다.
+
+```javascript
+요소 객체.style.프로퍼티 이름 = 값;
+```
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<h1 id="title">Javascript</h1>
+	</body>
+</html>
+```
+
+- 이 요소를 마우스를 클릭했을 때 배경색을 분홍색으로 바꾸려면 코드를 다음과 같이 작성합니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<h1 id="title">Javascript</h1>
+		<script>
+			var element = document.getElementById("title");
+			element.onclick = function() {
+				element.style.backgroundColor = "pink";
+			};
+		</script>
+	</body>
+</html>
+```
+
+- 요소 객체가 가진 style 프로퍼티 값은 CSSStyleDeclaration 객체 입니다. CSSStyleDeclaration 객체는 CSS의 다양한 스타일과 대응하는 프로퍼티를 가지고 있으며, 이 프로퍼티 값을 바꾸면 요소 스타일을 바꿀 수 있습니다.
+- 이 CSSStyleDeclaration 객체의 프로퍼티 이름에는 일정한 법칙이 있습니다.
+	- CSS 프로퍼티 이름에 하이픈(-)이 없으면 그 이름을 그대로 사용한다.
+	- CSS의 프로퍼티 이름에 하이픈이 있으면 하이픈을 제거하고, 뒤 단어의 첫 글자를 대문자로 바꾼 문자열을 사용한다. 단, CSS의 프로퍼티 이름 앞에 하이픈이 있으면 하이픈을 삭제하고 그 뒤에 이어지는 단어를 소문자로 표기한다.
+
+```javascript
+font-size -> fontSize
+background-color -> backgroundColor
+-webkit-transform -> webkitTransform
+```
+- 단, float 프로퍼티만 예외적으로 cssFloat가 됩니다.
+
 #### 계산된 스타일 구하기
+- 요소의 스타일은 스타일 시트 여러 개와 각 요소의 style 속성에 작성한 인라인 스타일에 의해 결정됩니다.
+- 이 중에서 요소의 인라인 스타일은 스타일 요소 객체의 style 프로퍼티로 읽거나 쓸 수 있습니다. 웹 브라우저는 이렇게 다양한 위치에 작성된 스타일 규칙을 취합해서 요소에 적용할 스타일을 계산합니다. 
+- 이때는 스타일 시트 설정보다 style 속성에 작성된 값을 우선적으로 적용합니다. 따라서 자바스크립트로 요소의 스타일을 조작할 때는 style 프로퍼티를 사용하는 편이 좋습니다. 하지만 계산된 스타일을 style 프로퍼티로 구할 수 없을 때가 있습니다. 
+- 예를 들어 스타일 시트만으로 스타일을 지정한 요소의 style 객체를 확인해 보면 모든 프로퍼티 값이 빈 문자로 채워져 있습니다.
+
+- 요소의 계산된 스타일은 Window 객체의 <code>getComputedStyle</code> 메서드로 가져올 수 있습니다. 
+- getComputedStyle 메서드는 style 객체와 마찬가지로 CSSStyleDeclaration 객체를 반환합니다. 
+- CSSStyleDeclaration 객체는 '살아 있는' 상태를 표현합니다. 그러나 style 객체와 달리 getComputedStyle 메서드로 가져온 계산된 스타일은 읽기 전용입니다.
+
+```css
+p { color: red; }
+```
+
+```html
+<p id="note">...</p>
+```
+
+- 이 요소를 가리키는 style 객체의 color 프로퍼티와 with 프로퍼티 값을 확인해 봅니다.
+```javascript
+var element = document.getElementById("note");
+console.log(element.style.color);  // -> 
+console.log(element.style.height);  // -> 
+```
+- 모두 빈 문자가 채워져 있습니다. 이것은 인라인 스타일을 지정하지 않았기 때문입니다.
+- 같은 프로퍼티의 계산된 스타일을 getComputedStyle 메서드로 확인해 봅니다.
+
+```javascript
+var computedStyles = getComputedStyle(element);
+console.log(computedStyles.color);  // -> rgb(255, 0, 0)
+console.log(computedStyles.height); // -> 24px
+```
+- 이때 표시되는 계산된 스타일의 프로퍼티 값은 절대값입니다. 백분율 등의 상대값은 절대 값으로 바뀝니다.
+
 
 ### 클래스 제어로 스타일 변경
+
