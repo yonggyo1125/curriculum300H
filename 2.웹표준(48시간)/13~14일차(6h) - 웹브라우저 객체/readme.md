@@ -936,3 +936,343 @@ tabindex -> tabIndex  // 전역 속성(모든 요소에서 사용할 수 있음)
 - getAttribute와 setAttribute 메서드는 요소 객체의 속성 프로퍼티에 비해 다음과 같은 장점이 있습니다.
 	- HTML의 일반적인 속성은 물론 모든 속성을 설정할 수 있습니다.
 	- 속성 이름을 프로그램 실행 중에 동적으로 설정할 수 있다.
+	
+### 속성이 있는지 확인하기
+
+```javascript
+요소 객체.hasAtrribute(속성 이름)
+```
+
+### 속성 삭제하기
+
+```javascript
+요소 객체.removeAttribute(속성 이름)
+```
+
+### 전체 속성의 목록 가져오기ㅏ
+
+- 요소 객체에는 attributes 프로퍼티가 정의되어 있습니다. 
+- 이 프로퍼티는 NamedNodeMap 객체로 그 요소에 설정된 모든 속성의 속성 노드 객체가 담겨 있습니다.
+- NamedNodeMap 객체는 유사 배열 객체이며 읽기 전용입니다. 
+- NamedNodeMap 객체의 요소인 속성 노드 객체의 name 프로퍼티에는 속성 이름이 담겨 있으며, value 프로퍼티에는 속성 값이 담겨 있습니다.
+
+```javascript
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<p id="controls">
+			<input type="button" value="click" onClick="doSomething();">
+		</p>
+		<script>
+			var para = document.getElementById("controls");
+			var list = para.firstElementChild.attrbutes;
+			for(var i = 0; i < list.length; i++) {
+				console.log(list[i].name + ": " + list[i].value);
+			}
+		</script>
+	</body>
+</html>
+```
+
+- NamedNodeMap 객체의 요소는 배열의 인덱스는 물론 속성 값으로도 가져올 수 있습니다.
+
+```javascript
+console.log(list["type"].value);  // -> button
+console.log(list["value"].value);  // -> click
+console.log(list.onclick.value);  // -> doSomeThing();
+```
+
+## HTML 요소의 내용을 읽고 쓰기
+요소의 내용이라는 단어에는 다음 세 가지 의미가 함축되어 있습니다.
+- 요소 안의 HTML 코드 
+- 요소를 웹 페이지에 표시할 때의 텍스트 정보
+- 요소 객체 안의 노드의 계층 구조
+
+### innerHTML 프로퍼티
+- innerHTML 프로퍼티는 요소 안의 HTML 코드를 가리킵니다. innerHTML 프로퍼티를 사용해서 요소 안의 코드를 읽거나 쓸 수 있습니다. 
+
+```javascript
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<script>
+		var para = document.getElementById("cards");
+		console.log(para.innerHTML);
+	</script>
+</head>
+<body>
+	<h1>하트</h1>
+	<p id="cards">&hearts;하트는 <em>승려</em>라는 뜻입니다.</p>
+</body>
+</html>
+```
+- innerHTML 프로퍼티로 p 요소의 내용을 수정하면 요소의 내용이 대입한 코드로 바뀝니다.
+
+```javascript
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<script>
+		var para = document.getElementById("cards");
+		param.innerHTML = &diams;다이아는 <strong>상인</strong>이라는 뜻입니다.";
+		console.log(para.innerHTML);
+	</script>
+</head>
+<body>
+	<h1>하트</h1>
+	<p id="cards">&hearts;하트는 <em>승려</em>라는 뜻입니다.</p>
+</body>
+</html>
+```
+
+### textContent와 innerText 프로퍼티
+- textContent 프로퍼티는 요소의 내용을 웹 페이지에 표시했을 때의 텍스트 정보를 표시합니다.
+- textContent 프로퍼티 값은 지정한 요소의 자식 노드인 모든 텍스트 노드를 연결한 값입니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<script>
+		var para = document.getElementById("cards");
+		console.log(para.textContent);
+	</script>
+</head>
+<body>
+	<h1>하트</h1>
+	<p id="cards">&hearts;하트는 <em>승려</em>라는 뜻입니다.</p>
+</body>
+</html>
+```
+
+- 또한 textContent 프로퍼티에 텍스트를 대입하면 요소의 내용을 텍스트로 변환할 수 있습니다.
+
+
+
+## 노드 생성/삽입/삭제하기
+
+### 노드 생성하기
+- 새로운 요소 노드 객체를 생성할 때는 createElement 메서드를 사용합니다.
+
+```javascript
+var element = document.createElement(요소의 이름);
+```
+
+- 예를 들어 h1 요소를 만들 때는 코드를 다음과 같이 작성합니다.
+
+```javascript
+var headLine = document.createElement("h1");
+```
+
+- 이 코드의 headline에 설정된 프로퍼티 값은 다음과 같습니다. 
+
+```javascript
+console.log(headline.nodeName);   // -> "H1"
+console.log(headline.nodeType);   // -> 1
+```
+
+- 그러나 DOM 트리 계층 구조를 뜻하는 프로퍼티(parentNode, childNode 등) 값은 모두 null 입니다. 
+- 즉, createElement로 생성한 객체는 메모리에 생성되어 있을 뿐 문서의 DOM 트리와는 아무런 관계가 없습니다.
+
+- 새로운 텍스트 노드 객체를 생성할 때는 createTextNode 메서드를 사용합니다.
+
+```javascript
+var textnode = document.createTextNode(텍스트);
+```
+
+- 다음 코드는 새로운 텍스트 노드를 생성합니다.
+
+```javascript
+var textnode = document.createTextNode(텍스트);
+```
+
+- 다음 코드는 새로운 텍스트 노드를 생성합니다.
+
+```javascript
+var newtext = document.createTextNode("we only see what we know");
+```
+
+- createElement와 마찬가지로 createTextNode로 만든 노드 객체도 문서의 DOM 트리와는 아무런 관계가 없다는 점에 유의하세요.
+
+#### 노드 객체를 생성하는 주요 메서드
+
+|메서드|생성하는 노드 객체|
+|----|----------|
+|document.createElement(요소 이름)|요소 노드 객체|
+|document.createAttribute(속성 이름)|속성 노드 객체|
+|document.createTextNode(텍스트)|텍스트 노드 객체|
+|document.createComment(텍스트)|주석 노드 객체|
+|document.createDocumentFragment()|도큐먼트 프레그먼트|
+|document.importNode(다른 문서의 노드, deep)|다른 문서에 있는 노드를 복사한다. deep을 true로 설정하면 자식 노드까지 복사하고, false로 설정하면 얕은 복사를 한다.|
+|node.cloneNode(deep)|노드를 복사한다. deep을 true로 설정하면 자식 노드까지 복사하고 false로 설정하면 얕은 복사를 한다.|
+
+
+### 노드 삽입하기
+
+#### 요소의 마지막에 삽입하기 : appendChild 메서드
+
+```
+요소 노드.appendChild(삽입할 노드)
+```
+
+- appendChild 메서드로 노드 객체를 삽입하면 그 객체가 DOM 트리에 추가되고 DOM트리의 각 노드에 계층 구조를 정의하는 프로퍼티(parentNode, childNode 등)가 바뀝니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<ul id="doglist">
+			<li>포메라니안</li>
+			<li>달마시안</li>
+		</ul>
+	</body>
+</html>
+```
+
+- 이 문서의 ul 요소에 마지막 자식 요소로 <code><li>불독</li></code>를 삽입하려면 다음과 같은 코드를 작성합니다.
+
+```javascript
+var doglist = document.getElementById("doglist");
+var element = document.createElement("li");  // li 요소 객체를 생성한다.
+var text = document.createTextNode("불독");  // 텍스트 노드를 생성한다.
+doglist.appendChild(element); // ul 요소에 element를 삽입한다.
+element.appendChild(text);  // element에 텍스트 노드를 삽입한다.
+```
+
+![image5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9B%B9%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%20%EA%B0%9D%EC%B2%B4/images/images5.png)
+
+- 이 코드에서 doglist.appendChild(element)를 실행하기 전에 element.appendChild(text)를 실행해도 같은 결과가 나옵니다. 또한 텍스트 노드를 생성해서 대입하는 대신 다음 코드를 실행해도 같은 결과가 나옵니다.
+
+```javascript
+var doglist = document.getElementById("doglist");
+var element = document.createElement("li");  // li 요소 객체를 생성한다.
+element.textContent = "불독";  // 텍스트 노드를 생성한다.
+doglist.appendChild(element);  // ul 요소에 element를 삽입한다.
+```
+
+#### 지정한 자식 노드의 바로 앞에 삽입하기 : insertBefore 메서드
+
+```javascript
+요소 노드.insertBefore(삽입할 노드, 자식 노드)
+```
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<ul id="doglist">
+			<li>포메라니안</li>
+			<li>달마시안</li>
+		</ul>
+		<script>
+			var doglist = document.getElementById("doglist");
+			var element = document.createElement("li");
+			var text = document.createTextNode("불독");
+			doglist.insertBefore(element, doglist.children[1]);
+			// 두 번째 자식 요소의 바로 앞에 삽입
+			element.appendChild(text);
+		</script>
+	</body>
+</html>
+```
+
+![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9B%B9%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%20%EA%B0%9D%EC%B2%B4/images/images6.png)
+
+
+#### 노드 옮기기 
+- 이미 있는 노드를 appendChild와 insertBefore 메서드로 문서에 삽입하면 해당 노드를 현재 위치에서 삭제하고 새로운 위치에 삽입합니다. 
+- 결과적으로 그 노드는 이동하게 됩니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<ul id="doglist">
+			<li>포메라니안</li>
+			<li>달마시안</li>
+		</ul>
+		<script>
+			var doglist = document.getElementById("doglist");
+			doglist.appendChild(doglist.children[0]); // 첫 번째 자식 요소의 가장 끝에 삽입
+		</script>
+	</body>
+</html>
+```
+
+#### 노드 삭제하기
+```javascript
+노드.removeChild(자식 노드)
+```
+
+```javascript
+node.parentNode.removeChild(node);
+```
+
+#### 노드 치환하기
+
+```javascript
+노드.replaceChild(새로운 노드, 자식 노드)
+```
+
+- 해당 노드의 자식 노드만 치환할 수 있다는 점에 유의하세요.
+- 즉, 치환하려면 노드의 부모 노드에서 replaceChild 메서드를 호출합니다. 
+- 특정 노드인 node를 새로운 노드인 newnode로 치환하고자 할 때는 다음과 같이 작성합니다.
+
+```javascript
+node.parentNode.replaceChild(newnode, node);
+```
+
+## HTML 요소의 위치
+
+### HTML 요소의 위치를 표현하는 좌표계
+
+#### 뷰 포트 좌표계
+- 뷰 포트의 왼쪽 위 꼭짓점을 원점으로 하는 좌표계입니다.
+- 뷰 포트란 웹 브라우저에서 문서의 내용을 표시하는 영역을 말합니다. 이 영역은 메뉴, 도구 모음, 탭 등을 포함하지 않습니다.
+- 뷰 포트 좌표계는 <b>윈도우 좌표계</b>라고 부르기도 합니다.
+
+#### 문서 좌표계
+- 문서의 왼쪽 위 꼭짓점을 원점으로 하는 좌표계입니다.
+- 문서는 웹 브라우저 표시 영역(뷰 포트)안에 표시되는데, 문서를 스크롤하면 문서 좌표계의 원점이 뷰 포트를 따라 이돌합니다. 
+- 문서 좌표계를 따르는 요소의 좌표는 사용자가 문서를 스크롤해도 바뀌지 않으므로 뷰 포트 좌표계를 따르는 요소보다 다루기 쉽다는 특징이 있습니다.
+
+![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9B%B9%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%20%EA%B0%9D%EC%B2%B4/images/images7.png)
+
+### HTML 요소의 위치와 크기 구하기
+- 요소 객체의 getBoundingClientRect 메서드는 뷰 포트 좌표계로 측정한 해당 요소의 보더 박스 위치와 크기 정보를 담은 객체를 반환합니다.
+
+```javascript
+var rect = 요소 객체.getBoundingClientRect();
+```
+
+- getBoundingClientRect 메서드는 ClientRect 객체를 반환하며 다음과 같은 프로퍼티를 갖고 있습니다.
+	- <b>left</b> : 요소 박스의 왼쪽 위 꼭짓점의 X좌표
+	- <b>top</b> : 요소 박스의 왼쪽 위 꼭짓점의 Y좌표
+	- <b>right</b> : 요소 박스의 오른쪽 아래 꼭짓점의 X좌표
+	- <b>bottom</b> : 요소 박스의 오른쪽 아래 꼭짓점의 Y좌표
+	- <b>width</b> : 요소 박스의 너비
+	- <b>height</b> : 요소 박스의 높이
+
+
+#### getBoundingClientRect 메서드의 반환값이 갖는 프로퍼티
+
+![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9B%B9%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%20%EA%B0%9D%EC%B2%B4/images/images8.png)
+
+
+
+![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9B%B9%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%20%EA%B0%9D%EC%B2%B4/images/images9.png)
