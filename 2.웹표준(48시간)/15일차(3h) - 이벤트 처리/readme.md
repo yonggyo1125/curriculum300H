@@ -193,15 +193,424 @@ function changeColor(e) {
 
 #### 마우스 이벤트 객체에서 좌표를 담당하는 프로퍼티
 
-
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/15%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC/images/image1.png)
 
 
 ### 키보드 이벤트 객체
-## 이벤트 전파
 
+대표적인 이벤트로는 keydown, keypress, keyup 등이 있습니다. 
+
+#### 키보드와 관련된 이벤트가 가진 고유의 프로퍼티
+
+|프로퍼티|값의 타입|설명|
+|-----|----|---------|
+|altKey|논리값|Alt가 눌렀는지를 뜻하는 논리값|
+|ctrlKey|논리값|Ctrl이 눌렀는지를 뜻하는 논리값|
+|shiftKey|논리값|shift가 눌렸는지를 뜻하는 논릭밧|
+|metaKey|논리값|Meta 키가 눌렸는지를 뜻하는 논리값(맥은 Commmand 키, 윈도는 시작 버튼)|
+|key|문자열|눌린 키의 DOMString|
+|keyCode|정수|눌린 키의 키 코드|
+|code|문자열|눌린 키가 키보드에서 차지하는 물리적 위치를 뜻하는 문자열|
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>이벤트 객체 안의 키보드 관련 프로퍼티 표시하기</title>
+	<script>
+		window.onload = function() {
+			document.addEventListener("keydown", showKey, false);
+			var display = document.getElementById("display");
+			function showKey(e) {
+				var prop = ["altKey", "ctrlKey", "shiftKey", "metaKey", "key", "code", "keyCode"];
+				var s = "";
+				for (var i in prop) {
+					s += "<br>" + prop[i] + ": " + e[prop[i]];
+				}
+				s += " -> " + String.fromCharCode(e.keyCode);
+				display.innerHTML = s;
+			}
+		}
+	</script>
+</head>
+<body>
+	<p id="display"></p>
+</body>
+</html>
+```
+## 이벤트 전파
+- Window 객체나 XMLHttpRequest 객체처럼 단독으로 존재하는 객체에서 이벤트가 발생하면 웹 브라우저는 해당 객체에 등록된 이벤트 처리기를 호출합니다. 
+- 그러나 이벤트가 HTML 요소에 발생하면 그 요소는 물론 그 요소의 모든 조상 요소에 이벤트를 전파합니다.
+- 결과적으로 그 모든 요소에 등롣된 이벤트 처리기가 호출됩니다. 
+
+### 이벤트의 단계
+HTML 요소에서는 클릭 같은 사용자 행위와 프로그램 코드가 이벤트를 발생시킵니다.<br>
+이벤트가 발생한 요소는 <b>이벤트 타깃</b>이라고 합니다. 또한 이벤트를 발생시키는 것을 가리켜 <b>이벤트를 발사(Fire)</b>한다고 표현하기도 합니다.<br>
+HTML에서는 부모 요소의 보더 박스 안에 자식 요소를 배치하며, 자식 요소는 부모 요소 안에 겹쳐진 상태로 표시됩니다. 이런 상태에서 자식 요소를 클릭하면 컴퓨터는 자식 요소를 클릭했는지 부모 요소를 클릭했는지 알아낼 방법이 없습니다. 그래서 요소에서 이벤트가 발생하면 DOM 트리의 관련 요소(즉, 그 요소의 조상 요소) 전체에 그 이벤트에 반응하는 이벤트 처리기나 이벤트 리스너가 등록되어 있는지를 확인하는 작업을 거칩니다. 그리고 등록된 함수가 있을 때는 그 함수를 실행하도록 만들어져 있습니다.<br>
+구체적으로는 요소에서 이벤트가 발생하면 그 다음 단계에 접어들었을 때 그 이벤트를 다음 요소로 전파합니다.  그 단계에 해당 이벤트에 반응하는 이벤트 처리기나 이벤트 리스너를 발견하면 그들을 실행합니다.<br><br>
+
+- <b>캡쳐링 단계</b>
+	- 이벤트가 Window 객체에서 출발해서 DOM 트리를 타고 이벤트 타깃까지 전파됩니다.
+	- 이단계 반응하도록 등록된 이벤트 리스너는 이벤트가 발생한 요소에 등록된 이벤트 처리기나 이벤트 리스너보다 먼저 실행됩니다.
+	- 이 단계에서는 이벤트 타깃이 이벤트를 수신하기 전에 이벤트를 빼돌리는(캡쳐하는) 단계라는 뜻에서 캡쳐링 단계라는 이름이 붙었습니다.
+	
+- <b>타깃 단계</b>
+	- 이벤트가 이벤트 타깃에 전파되는 단계입니다. 이벤트 타깃에 등록된 이벤트 처리기나 이벤트 리스너는 이 시점에 실행됩니다.
+	
+- <b>버블링 단계</b>
+	- 이벤트가 이벤트 타깃에서 출발해서 DOM 트리를 타고 Window 객체까지 전파됩니다. 이 단계에 반응하도록 등록된 이벤트 리스너는 이벤트가 발생한 요소에 등록된 이벤트 처리기나 이벤트 리스너 다음에 실행됩니다. 
+	- 이 단계는 이벤트가 마치 거품(버블)이 올라오는 것처럼 DOM 트리 아래에서 부터 위로 올라온다는 뜻에서 버블링 단계라는 이름이 붙었습니다. 
+	- 단, focus와 blur 이벤트는 그 요소에만 필요한 이벤트이므로 버블링이 발생하지 않습니다.
+	- 만약 이벤트 처리기를 등록했다면 이벤트 처리기는 타깃 단계와 버블링 단계에 모두 실행됩니다.
+	- 이벤트 리스너는 실행할 단계를 선택할 수 있습니다. 이벤트 리스너의 useCapture가 true면 타깃 단계와 캡쳐링 단계일 때만 실행됩니다. useCapture가 false면 타깃 단계와 버블링 단계일 때만 실행됩니다.
+	- 같은 요소의 같은 이벤트, 같은 단계에 반응하게끔 등록된 이벤트 처리기와 이벤트 리스너가 있다면 이벤트 처리기가 먼저 실행되며 이벤트 리스너가 등록된 순서에 따라 차례대로 실행됩니다. 
+	- 또한 같은 요소의 같은 이벤트의 캡쳐링 단계와 버블링 단계 모두에 이벤트 리스너를 등록할 수 있습니다.
+	
+
+![image2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/15%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC/images/image2.png)
+
+```javascript
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	
+</head>
+<body>
+	<div id="outer">
+		outer
+		<div id="inner1">inner1</div>
+		<div id="inner2">inner2</div>
+	</div>
+</body>
+</html>
+```
+
+- 이때 div#inner2를 클릭하면 콘솔에 다음과 같은 결과가 표시됩니다.
+
+![image4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/15%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC/images/image4.png)
+
+- 이처럼 이벤트 리스너는 이벤트가 전파되는 순서에 따라 차례대로 실행됩니다.
+
+### 이벤트 전파
+- 자식 요소에서 발생한 이벤트는 부모 요소에도 전파됩니다. 이 때문에 의도하지 않은 동작을 할 때가 있습니다. 
+- 이럴 때는 이벤트 전파를 취소해서 부모 요소가 이벤트 처리를 하지 않도록 만들 수 있습니다. 
+- 또한 이벤트가 발생했을 때 실행되는 웹 브라우저의 기본 동작도 취소할 수 있습니다.
+
+#### 이벤트 전파 취소하기 : stopPropagation 메서드
+
+- 이벤트 리스너 안에서 이벤트 객체의 stopPropagation 메서드를 호출하면 이벤트가 그 다음 요소로 전파되는 것을 막습니다.
+- 그러나 그 요소 객체의 그 이벤트에 등록한 다른 이벤트 리스너는 변함없이 실행됩니다. 
+- stopPropagation 메서드의 사용법은 다음과 같습니다.
+
+```javascript
+event.stopPropagation();
+```
+
+#### 이벤트 전파의 일시 정지 : stopImmediatePropagation 메서드
+- 이벤트 리스너 안에서 요소 객체의 stopImmediatePropagation 메서드를 호출하면 그 다음 요소로의 이벤트 전파가 일시적으로 멈춥니다.
+- 또한 그 요소 객체의 그 이벤트를 등록한 다른 이벤트 리스너도 일시적으로 멈춥니다.
+- stopImmediatePropagation 메서드의 사용법은 다음과 같습니다.
+
+```javascript
+event.stopImmediatePropagation();
+```
+
+#### 기본 동작 취소하기 : preventDefault 메서드
+
+- 예를 들어 a 요소를 클릭하면 링크된 페이지로 이동합니다. 이처럼 웹 브라우저에 구현된 기본 동작을 취소하려면 preventDefault 메서드를 사용합니다.
+- preventDefault 메서드의 사용법은 다음과 같습니다.
+
+```javascript
+event.preventDefault();
+``` 
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+		<script>
+			window.onload = function() {
+				var anchor = document.getElementById("school");
+				anchor.addEventListener("click", function(e) {
+					if (!confirm("페이지를 이동하시겠습니까?")) e.preventDefault();
+				}, false);
+			};
+		</script>
+	</head>
+	<body>
+		<a id="school" href="http://school.yonggyo.com">강의실</a>
+	</body>
+</html>
+```
+
+- "페이지를 이동하시겠습니까?"라는 질문에 <b>확인</b> 버튼을 누르면 페이지가 이동하지만 <b>취소</b> 버튼을 누르면 페이지 이동이 취소됩니다. 
+- 단, preventDefault 메서드로 취소할 수 없는 기본 동작도 있습니다. 해당 이벤트 객체의 cancelable 프로퍼티가 true면 취소할 수 있지만 false면 취소할 수 없습니다.
 
 ## 이벤트 리스너 안의 this 
 
+### 이벤트 리스너 안의 this는 이벤트가 발생한 요소 객체
+
+이벤트 리스너 안의 this 값은 '함수를 호출 할때 그 함수가 속해 있던 객체의 참조' 입니다. 
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<script>
+		window.onload = function() {
+			function Person(name) {
+				this.name = name;
+			}
+			
+			Person.prototype.sayHello = function() {
+				console.log("Hello! " + this.name);
+			}
+			
+			var person = new Person("Tom");
+			var button = document.getElementById("button");
+			button.addEventListener("click", person.sayHello, false);
+		};	
+	</script>
+</head>
+<body>
+	<p>
+		<button id="button">버튼</button>
+	</p>
+</body>
+</html>
+```
+
+- <b>버튼</b>을 클릭하면 person.sayHello가 실행됩니다. person.sayHello의 this가 person을 가리킬 거라 기대하지만 실제로는 button 요소 객체를 가리킵니다.
+- button 객체의 name 프로퍼티 값은 빈 문자열이므로 콘솔에 다음과 같은 결과가 표시됩니다.
+
+```
+Hello!
+```
+
+- 이처럼 이벤트 리스너 안의 this는 이벤트가 발생한 요소 객체를 가리킵니다.
+
+
+### this가 원하는 객체를 가리키도록 설정하는 방법
+
+#### bind 메서드를 사용하는 방법
+
+- 함수 객체의 bind 메서드를 사용하면 그 함수가 실행될 때 this를 지정할 수 있습니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<script>
+		window.onload = function() {
+			function Person(name) {
+				this.name = name;
+			}
+			
+			Person.prototype.sayHello = function() {
+				console.log("Hello! " + this.name);
+			}
+			
+			var person = new Person("Tom");
+			var button = document.getElementById("button");
+			button.addEventListener("click", person.sayHello.bind(person), false);
+		};	
+	</script>
+</head>
+<body>
+	<p>
+		<button id="button">버튼</button>
+	</p>
+</body>
+</html>
+```
+
+- 그러면 this가 person을 가리키므로 콘솔에 표시되는 결과는 다음과 같이 바뀝니다.
+
+```
+Hello! Tom
+```
+
+#### 익명 함수 안에서 실행하는 방법
+- 이벤트 처리기 또는 이벤트 리스너로 익명 함수를 넘기고 익명 함수 안에서 메서드를 호출하면 그 메서드의 this가 메서드를 참조하는 객체를 가리킵니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<script>
+		window.onload = function() {
+			function Person(name) {
+				this.name = name;
+			}
+			
+			Person.prototype.sayHello = function() {
+				console.log("Hello! " + this.name);
+			}
+			
+			var person = new Person("Tom");
+			var button = document.getElementById("button");
+			button.addEventListener("click", person.sayHello, false);
+		};	
+	</script>
+</head>
+<body>
+	<p>
+		<button id="button">버튼</button>
+	</p>
+</body>
+</html>
+```
+- 마찬기지로 this가 person을 가리키므로 콘솔에 표시되는 결과가 다음과 같이 바뀝니다.
+
+```
+Hello! Tom
+```
+
+#### 화살표 함수를 사용하는 방법
+
+- ECMAScript 6부터 추가된 화살표 함수의 this는 함수를 초기화하는 시점에 결정됩니다.
+- 이를 활용하면 객체 안의 메서드를 화살표 함수로 표기하면 그 안의 this가 생성된 객체를 가리킵니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<script>
+		window.onload = function() {
+			function Person(name) {
+				this.name = name;
+				this.sayHello = () => {
+					console.log("Hello! " + this.name);
+				};
+			}
+			
+			var person = new Person("Tom");
+			var button = document.getElementById("button");
+			button.addEventListener("click", function(e) {
+				person.sayHello();
+			}, false);
+		};	
+	</script>
+</head>
+<body>
+	<p>
+		<button id="button">버튼</button>
+	</p>
+</body>
+</html>
+```
+
+```
+Hello! Tom
+```
+
+- 단 화살표 함수 표현식으로 정의한 함수를 객체의 prototype의 메서드로 추가하면 의도한 대로 동작하지 않습니다.
+
+```javascript
+// 객체의 프로토타입에 화살표 함수 표현식으로 추가한 함수의 this는 Window를 가리킨다. 
+Person.prototype.sayHello = () => {
+	console.log("Hello! " + this.name);
+}
+```
+- 이 경우에는 화살표 함수 표현식으로 정의한 함수 안의 this가 Window 객체를 가리킵니다.
+
+#### addEventListener의 두 번째 인수로 객체를 넘기는 방법
+- addEventListener 메서드의 두 번째 인수는 함수지만 함수 대신 객체를 넘길 수 있습니다.
+- 그리고 그 객체에 handleEvent 메서드가 있으면 그 메서드를 이벤트 리스너로 등록하도록 만들어져 있습니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<script>
+		window.onload = function() {
+			function Person(name) {
+				this.name = name;
+			}
+			
+			Person.prototype.handleEvent = function() {
+				console.log("Hello! " + this.name);
+			}
+			
+			var person = new Person("Tom");
+			var button = document.getElementById("button");
+			button.addEventListener("click", person, false);
+		};	
+	</script>
+</head>
+<body>
+	<p>
+		<button id="button">버튼</button>
+	</p>
+</body>
+</html>
+```
+
+- <b>버튼</b 버튼을 누르면 person.handleEvent 메서드가 실행됩니다. handleEvent 메서드의 this는 생성된 객체에 고정되므로 콘솔에 다음과 같은 결과를 표시합니다.
+
+```
+Hello! Tom
+```
+
 ## 이벤트 리스너에 추가적인 정보를 넘기는 방법
 
-## 커스텀 이벤트
+### 익명 함수 안에서 실행하기
+- 익명 함수를 이벤트 리스너로 지정하고 이벤트 리스너안에 함수를 실행하면 그 함수에 추가적인 정보를 값으로 넘길 수 있습니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<script>
+		window.onload = function() {
+			var box = document.getElementById("box");
+			box.addEventListener("click", function(e) {
+				changeBgColor(e, "red");
+			}, false);
+			
+			function changeBgColor(e,color) {
+				e.currentTarget.style.backgroundColor = color;
+			}
+		};
+	</script>
+</head>
+<body>
+	<div id="box">click me</div>
+</body>
+</html>
+```
+
+### 함수를 반환하는 함수를 이벤트 리스너로 등록하기
+
+- 이벤트 객체를 인수로 받은 함수를 반환하는 함수를 정의해서 그 함수가 반환한 함수를 이벤트 처리기로 등록하는 방법이 있습니다.
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<script>
+		window.onload = function() {
+			var box = document.getElementById("box");
+			box.addEventListener("click", changeBgColor("red"), false);
+			function changeBgColor(color) {
+				return function(e) {
+					e.currentTarget.style.backgroundColor = color;
+				};
+			}
+		};
+	</script>
+</head>
+<body>
+	<div id="box">click me</div>
+</body>
+</html>
+```
