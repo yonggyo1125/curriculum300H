@@ -191,7 +191,9 @@ http://www.example.com:80/test/index.html?q=value#anchor
 location.href="https://naver.com");
 location.assign("https://naver.com")
 ```
+
 	- 두 코드는 모두 읽어 들이기 이전의 URL을 이력을 남기므로, '뒤로 가기' 버튼을 사용해서 되돌아갈 수 있습니다.
+	
 - URL이 가리키는 문서를 읽어 들일 때 이력을 남기지 않으므로 replace 메서드를 사용합니다.
 
 ```javascript
