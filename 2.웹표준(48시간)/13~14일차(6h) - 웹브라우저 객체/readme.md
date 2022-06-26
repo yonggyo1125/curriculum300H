@@ -512,6 +512,10 @@ opener.document.body.style.backgroundColor = "red"; //  부모 창의 배경색�
 	- <b>THML 요소 노드</b> : HTML 요소를 가리키는 객체(이 절에서는 요소 객체로 줄여서 부름)
 	- <b>텍스트 노그</b> : 텍스트를 가리키는 객체(이 절에서는 텍스트 객체로 줄여서 부름)
 	
+
+![image3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9B%B9%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%20%EA%B0%9D%EC%B2%B4/images/images3.png)
+
+	
 - HTML은 요소 뒤에 공백 문자(공백 문자, 탭 문자, 줄 바꿈 문자 등)가 여러 개 있어도 무시합니다. 
 - 그러나 DOM 트리는 요소 앞뒤에서 연속적인 공백 문자를 발견하면 텍스트로 취급하여 텍스트 노드로 생성합니다. 이렇게 공백 문자만으로 구성된 텍스트 노드를 공백 노드라고 합니다. 
 - 단, html 요소 안에 있는 첫 공백 문자와 마지막 공백 문자에 대해서는 공백노드를 생성하지 않습니다.
@@ -597,6 +601,10 @@ console.log(element.nodeName, element.nodeValue, element.nodeType);
 ### 자바스크립트로 웹 페이지 제어하기
 
 - 자바스크립트를 사용하면 DOM 트리의 노드 객체를 가져와서 제어할 수 있습니다. 또한 자바스크립트로 스타일 규칙을 가져와서 제어할 수도 있습니다. <b>렌더링 엔진은 DOM 트리와 스타일 규칙이 바뀔 때마다 렌더 트리를 다시 구성해서 웹페리지를 다시 그립니다.</b>
+
+![image4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9B%B9%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%20%EA%B0%9D%EC%B2%B4/images/images4.png)
+
+
 - 웹페이지를 사용자가 조작하거나 자바스크립트 코드로 DOM 트리나 스타일을 수정하면 렌더링 엔진은 그때마다 화면을 다시 렌더링합니다.
 - 렌더 트리를 다시 구성하고 다시 렌더링하는 처리는 일반적으로 시간이 많이 걸리는 작업입니다. 따라서 이러한 처리가 자주 발생하면 렌더링이 원활하지 않을 가능성이 있습니다. 
 - 웹 브라우저는 이러한 상황을 피하기 위해 렌더링 처리 횟수를 가능한 줄이는 최적화 처리를 합니다. 예를 들어 스타일의 수정 요청이 여러 번 반복되면 요청을 대기열에 모아 두고 마지막에 한꺼번에 처리합니다.
@@ -640,4 +648,27 @@ document.querySelector("선택자");
 ```
 
 ### Document 객체의 프로퍼티
+
+- W3C에서 DOM을 표준화하기 이전의 DOM을 가리켜 DOM Level 0라고 합니다. DOM Level0에서는 설명한 노드를 가져오는 메서드가 없었습니다. 그 대신 특정 요소를 읽고 쓰는 수단이 Document객체의 프로퍼티로 마련되어 있었습니다. 이들 프로퍼티는 DOM의 최신 버전(DOM Level 3)에도 남아 있으며 주요 브라우저에서도 사용할 수 있습니다.
+- 다음의 표에서 embeds, plugins, scripts는 HTML5의 구성 요소로 새롭게 추가된 것입니다. 
+- document.forms[]부터 그 밑에 나오는 프로퍼티들은 HTMLCollection 객체입니다. HTMLCollection 객체는 유사 배열 객체이며 읽기 전용입니다. HTMLCollection 객체의 요소는 배열 요소의 인덱스뿐만 아니라 id 속성 값, name 속성 값으로 참조할 수 있습니다.
+
+
+#### 요소를 읽고 쓰기 위해 마련된 Document 객체의 프로퍼티
+
+|프로퍼티|설명|
+|-----|-------|
+|document.documentElement|문서의 루트 요소(html 요소) 객체의 참조|
+|document.head|문서의 head 요소 객체의 참조|
+|docoument.body|문서의 body요소 객체의 참조|
+|document.forms[]|문서 안의 form 요소 객체의 참조를 저장한 유사 배열 객체|
+|document.images[]|문서 안의 images 요소 객체의 참조를 저장한 유사  배열 객체|
+|document.anchors[]|문서 안의 anchors 요소 객체의 참조를 저장한 유사 배열 객체|
+|document.apples[]|문서 안의 applets 요소 객체의 참조를 저장한 유사 배열 객체|
+|document.links[]|문서 안의 links 요소 객체의 참조를 참조를 저장한 유사 배열 객체|
+|document.embeds[]|문서 안의 embeds 요소 객체의 참조를 저장한 유사 배열 객체|
+|document.plugins[]|문서 안의 plugins 요소 객체의 참조를 저장한 유사 배열 객체|
+|document.scripts[]|문서 안의 scripts 요소 객체의 참조를 저장한 유사 배열 객체|
+
+> document.embeds와 document.plugins는 같은 객체를 참조합니다.
 
