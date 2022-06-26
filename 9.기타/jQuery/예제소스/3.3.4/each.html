@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<script src="../js/jquery-3.6.0.min.js"></script>
+	<script>
+	$(function() {
+		/* 방법 1 */
+		$(".menu1 li").each(function(index, element) {
+			if (index > 3) {
+				$(element).css("border", "1px solid red");
+			}
+		});
+		
+		/* 방법2 */
+		$.each($(".menu1 li"), function(index, element) {
+			if (index == 2) {
+				$(this).css("border", "1px solid blue");
+			}
+		});
+		
+		// $(this)와 $(element)는 동일
+		
+	
+		/* 데이터 순회 */
+		var data = [
+			{sido : '서울',  sigungu : '양천구' }, 
+			{sido : '서울',  sigungu : '강서구' }, 
+			{sido : '서울',  sigungu : '강남구' }, 
+			{sido : '서울',  sigungu : '마포구' }, 
+		];
+		
+		$(data).each(function(index, element) {
+			console.log(index, element);
+			console.log("sido = " + element.sido, "sigungu  = " + element.sigungu);
+		});
+		
+		
+		/* 데이터 순회는 jQuery 메서드 외에 forEach를 사용할 것 */
+		data.forEach(function(element, index) {
+			console.log(index, element);
+		});
+	});
+	</script>
+</head>
+<body>
+	<ul class='menu1'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li>메뉴3</li>
+		<li>메뉴4</li>
+		<li>메뉴5</li>
+	</ul>
+</body>
+</html>

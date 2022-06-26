@@ -1,0 +1,69 @@
+* { 
+	box-sizing: border-box; 
+}
+
+body {
+	padding: 0;
+	margin: 0;
+}
+
+header {
+	height: 250px; 
+	background-color: gray;
+}
+nav {
+	width: 100%;
+	height: 60px; 
+	background-color: orange;
+}
+section {
+	height: 5000px;
+}
+
+nav.fixed {
+	position: fixed;
+	left: 0; 
+	top: 0;
+}
+
+nav .inner {
+	width: 1000px; 
+	margin: 0 auto;
+	position: relative;
+}
+
+nav .all_category {
+	position: absolute; 
+	height: 250px;
+	background-color: gray;
+	border: 1px solid #000000;
+	border-top: 0;
+	width: 1000px;
+	top: 60px;
+	display: none;
+}
+
+nav .all_category.on {
+	display: block;
+	opacity: 0;
+	transition: all 1s;
+}
+
+nav .all_category.fadeIn {
+	opacity: 1;
+	transition: all 1s;
+}
+
+/* 상하이동 버튼 */
+.go_btns {
+	position: fixed;
+	bottom: 10px; 
+	right: 10px;
+}
+.go_btns .btn {
+	border: 1px solid #000000;
+	padding: 10px;
+	cursor: pointer; 
+	text-align: center;
+	margin-top: 3px; 
+}

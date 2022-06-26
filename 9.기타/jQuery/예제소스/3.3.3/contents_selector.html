@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<script src="../js/jquery-3.6.0.min.js"></script>
+	<script>
+	$(function() {
+		/** contains */
+		$(".main_menu1 li:contains('메뉴1')").css("backgroundColor", "red");
+		
+		/** contents() */
+		$(".main_menu2 .menu1").contents().css("backgroundColor", "blue");
+		
+		/** has */
+		$(".main_menu3 li").has("span").css("backgroundColor", "yellow");
+		
+		/** not */
+		$(".main_menu4 li").not(".except").css("backgroundColor", "#d5d5d5");
+		
+		/** filter */
+		$(".main_menu5 li").filter(".selected").css("backgroundColor", "red");
+		
+		/** find */
+		$(".main_menu6").find("strong").css("backgroundColor", "orange");
+		
+		/** closest */
+		$(".main_menu7 .sub").closest(".menu").css("backgroundColor", "red");
+		
+		/** end */
+		$(".main_menu8 li").children('a').end().css("border", "1px solid #000000");
+
+	});
+	</script>
+</head>
+<body>
+	<h1>컨텐츠 탐색 선택자</h1>
+	<h2>contains</h2>
+	<ul class='main_menu1'>
+		<li>메뉴1(선택됨)</li>
+		<li>메뉴2</li>
+		<li>메뉴3</li>
+		<li>메뉴4</li>
+	</ul>
+	
+	
+	<h2>contents()</h2>
+	<ul class='main_menu2'>
+		<li class='menu1'>
+			메뉴1
+			<ul class='sub_menu'> <!-- 선택됨 -->
+				<li>서브메뉴1</li>
+				<li>서브메뉴2</li>
+				<li>서브메뉴3</li>
+			</ul>			
+		</li>
+		<li>메뉴2</li>
+		<li>메뉴3</li>
+		<li>메뉴4</li>
+	</ul>
+	
+	<h2>has</h2>
+	<ul class='main_menu3'>
+		<li>메뉴1</li>
+		<li><span>메뉴2(선택됨)</span></li>
+		<li>메뉴3</li>
+	</ul>
+	
+	<h2>not</h2>
+	<ul class='main_menu4'>
+		<li>메뉴1(선택됨)</li>
+		<li>메뉴2(선택됨)</li>
+		<li class='except'>메뉴3</li>
+		<li>메뉴4(선택됨)</li>
+	</ul>
+	
+	<h2>filter</h2>
+	<ul class='main_menu5'>
+		<li>메뉴1</li>
+		<li class='selected'>메뉴2(선택됨)</li>
+		<li class='selected'>메뉴3(선택됨)</li>
+		<li>메뉴4</li>
+	</ul>
+	
+	<h2>find</h2>
+	<ul class='main_menu6'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li><strong>메뉴3(선택됨)</strong></li>
+		<li>메뉴4</li>
+	</ul>
+	
+	<h2>closest</h2>
+	<ul class='main_menu7'>
+		<li class='menu'>메뉴1</li>
+		<li class='menu'>메뉴2</li>
+		<li class='menu'>메뉴3 <!-- 선택됨 -->
+				<ul class='sub_menu'>
+					<li>서브메뉴1</li>
+					<li class='sub'>서브메뉴2</li>
+					<li>서브메뉴3</li>
+					<li>서브메뉴4</li>
+				</ul>
+		</li>
+		<li>메뉴4</li>
+	</ul>
+	
+	<h2>end()</h2>
+	<ul class='main_menu8'>
+		<li class='menu'>
+			<a href='#'>1</a>
+			<a href='#'>2</a>
+			<a href='#'>3</a>
+			<a href='#'>4</a>
+		</li>
+		<li class='menu'>메뉴2</li>
+		<li class='menu'>메뉴3</li>
+		<li class='meun'>메뉴4</li>
+	</ul>
+</body>
+</html>

@@ -1,0 +1,15 @@
+* { box-sizing: border-box; }
+html { font-size: 13px; }
+body { padding: 10px; margin: 0; }
+a { color: #000000; text-decoration: underline; }
+h1 { font-size: 1.2rem; text-align: center; }
+ul { padding: 0; margin: 0; list-style: none; }
+
+.file_box  .drop_box { border: 2px dashed #888888; width: 200px; height: 100px; text-align: center; padding: 10px; margin: 0 auto; }
+.file_box  .drop_box .text { font-size: 0.92rem; margin-top: 5px; }
+
+#file_list { display: table; margin : 10px auto; }
+#file_list > li { border: 1px solid #d5d5d5; padding: 3px 10px; border-radius: 3px; }
+#file_list > li > div { display: table-cell; padding: 0 10px; }
+#file_list .progress { color: orange; font-weight: bold; }
+#file_list .status { font-size: 1.2rem; cursor: pointer; }

@@ -95,7 +95,7 @@
 * 16일차(3h)	
 	- Javascript
 		- Promise
-		- XMLHHttpRequest
+		- XMLHttpRequest
 		- FileReader
 		- 드래그 앤 드롭 API
 		

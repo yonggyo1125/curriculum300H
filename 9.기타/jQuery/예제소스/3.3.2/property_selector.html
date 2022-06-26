@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<script src="../js/jquery-3.6.0.min.js"></script>
+	<script>
+	$(function() {
+		/** $(“요소선택[속성]”) */
+		$(".main_menu1 li[title]").css("backgroundColor", "#d5d5d5");
+		
+		/** $(“요소선택[속성=값]”) */
+		$(".main_menu2 li[title='리스트']").css("backgroundColor", "blue");
+		
+		/** $(“요소선택[속성^=‘텍스트’]”) */
+		$(".main_menu3 a[href^='http://']").css("backgroundColor", "yellow");
+		
+		/** $(“요소선택[속성$=‘텍스트’]”) */
+		$(".main_menu4 a[href$='.co.kr']").css({
+			backgroundColor : "#000000",
+			color: "#ffffff",
+		});
+		
+		/** $(“요소선택[속성*=‘텍스트’]”) */
+		$(".main_menu5 a[href*='naver']").css("backgroundColor", "yellow");
+		
+		/** $(“요소선택:hidden”) */
+		$(".main_menu6 li:hidden").css({
+			display : "block",
+			border : "1px solid red",
+		});
+		
+		/** $(“요소선택:visible”) */
+		$(".main_menu7 li:visible").css("display", "none");
+		
+		/** $(“:text”)  - input 요소 중 type 속성값이 "text"인 요소만 선택 */
+		$(".main_menu8 :text").css({
+			backgroundColor: "yellow",
+			color: "red",
+		});
+		
+		/** $(“:selected”) */
+		var selected = $(".selection option:selected");
+		console.log(selected);
+		
+		/** $(“:checked”) */
+		var checked = $("input[name='gender']:checked");
+		console.log(checked);
+	});
+	</script>
+</head>
+<body>
+	<h1>속성 탐색 선택자</h1>
+	
+	<h2>$(“요소선택[속성]”)</h2>
+	<ul class='main_menu1'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li title='리스트'>메뉴3(선택됨)</li>
+		<li>메뉴4</li>
+	</ul>
+	
+	<h2>$(“요소선택[속성=값]”)</h2>
+	<ul class='main_menu2'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li title='리스트'>메뉴3(선택됨)</li>
+		<li>메뉴4</li>
+	</ul>
+	  
+	 <h2>$(“요소선택[속성^=‘텍스트’]”)</h2>
+	<div class='main_menu3'>
+		<a href='http://naver.com'>네이버</a>
+		<a href='ftp://192.168.1.200'>FTP</a>
+	</div>
+	
+	<h2>$(“요소선택[속성$=‘텍스트’]”)</h2>
+	<div class='main_menu4'>
+		<a href='http://naver.com'>com</a>
+		<a href='http://naver.co.kr'>co.kr</a>
+		<a href='http://naver.net'>net</a>
+	</div>
+	
+	
+	<h2>$(“요소선택[속성*=‘텍스트’]”)</h2>
+	<div class='main_menu5'>
+		<a href='http://naver.com'>naver.com</a>
+		<a href='http://naver.co.kr'>naver.co.kr</a>
+		<a href='http://daum.net'>naver.net</a>
+	</div>
+	
+	<h2>$(“요소선택:hidden”)</h2>
+	<div class='main_menu6'>
+		<li>메뉴1</li>
+		<li style='display: none;'>메뉴2(감춤 -> 보임)</li>
+		<li>메뉴3</li>
+	</div>
+
+	<h2>$(“요소선택:visible”)</h2>
+	<div class='main_menu7'>
+		<li>메뉴1(감춰짐)</li>
+		<li style='display: none;'>메뉴2</li>
+		<li>메뉴3(감춰짐)</li>
+	</div>
+	
+	<h2>$(“:text”)</h2>
+	<ul class='main_menu8'>
+		<li><input type="text">type='text'</li>
+		<li><input type="text">type='text'</li>
+		<li><input type="number">type='number'</li>
+		<li><input type="email">type='email'</li>
+	</ul>
+	
+	<h2>$(“:selected”)</h2>
+	<select class='selection'>
+		<option value='값1'>값1</option>
+		<option value='값2'>값2</option>
+		<option value='값3' selected>값3</option>
+		<option value='값4'>값4</option>
+	</select>
+	
+	<h2>$(“:checked”)</h2>
+	<input type='radio' name='gender' value='f'>여성&nbsp;&nbsp;
+	<input type='radio' name='gender' value='m' checked>남성
+</body>
+</html>

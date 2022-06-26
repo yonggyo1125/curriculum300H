@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<script src="../js/jquery-3.6.0.min.js"></script>
+	<script>
+	$(function() {
+		/** :checked */
+		var result = $("input[type='checkbox']").eq(0).is(":checked"); 
+		console.log(result); // true
+		
+		var result = $("input[type='checkbox']").eq(1).is(":checked");
+		console.log(result); // false
+		
+		/** :selected */
+		var result = $("select option").is(":selected"); 
+		console.log(result); // true
+		
+		
+		/** :visible */
+		var result = $(".visible").is(":visible");
+		console.log(result); // true
+		
+		/** :hidden */
+		var result = $(".hidden").is(":hidden");
+		console.log(result); // true
+	});
+	</script>
+</head>
+<body>
+	<h2>:checked</h2>
+	<input type='checkbox' name='interest[]' value='자전거' checked>자전거&nbsp;
+	<input type='checkbox' name='interest[]' value='수영'>수영&nbsp;
+	<input type='checkbox' name='interest[]' value='달리기' checked>달리기&nbsp;
+	<input type='checkbox' name='interest[]' value='볼링'>볼링
+	
+	<h2>:selected</h2>
+	<select name='car'>
+		<option value='모닝'>모닝</option>
+		<option value='스파크' selected>스파크</option>
+		<option value='레이'>레이</option>
+	</select>
+	
+	<h2>:visible</h2>
+	<div class='visible' style='border: 1px solid red; height: 100px; height: 100px;'>보이는 영역</div>
+	
+	<h2>:hidden</h2>
+	<div class='hidden' style='border: 1px solid red; height: 100px; height: 100px; display: none;'>보이는 영역</div>
+</body>
+</html>

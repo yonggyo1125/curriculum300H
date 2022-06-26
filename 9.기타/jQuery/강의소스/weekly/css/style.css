@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap');
+* {
+	box-sizing: border-box;
+	font-family: 'Nanum Gothic', sans-serif;
+	color: #212121;
+}
+
+body {
+	padding: 20px 0;
+	margin: 0;
+}
+
+a {
+	text-decoration: none;
+}
+
+ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.layout_width {
+	width: 1200px;
+	margin: 0 auto !important;
+}
+
+.dn {
+	display: none !important;
+}
+
+/* 위클리세트 선택 탭 S */
+.set_select {
+	margin-bottom: 50px;
+}
+
+.set_select li {
+	float: left;
+	width: calc(100% / 3 - 8px);
+	margin-left: 12px;
+}
+
+.set_select li:first-child {
+	margin-left: 0;
+}
+.set_select:after {
+	clear: left;
+	content: '';
+	display: block;
+}
+
+.set_select input[type='radio'] {
+	display: none;
+}
+
+.set_select input[type='radio']+label {
+	height: 100px;
+	display: block;
+	text-align: center;
+	border: 1px solid #959595;
+	line-height: 98px;
+	color: #aaaaaa;
+	font-size: 26px;
+	cursor: pointer;
+}
+
+.set_select input[type='radio']:checked+label {
+	color: #ffffff;
+	background-color: #c3a18a;
+	border-color: #c3a18a;
+}
+/* 위클리세트 선택 탭 E */
+
+/* 메뉴 선택 영역 S */
+.selection_box .menus {
+	float: left;
+	width: calc(100% - 540px);
+	border: 1px solid #000000;
+	min-height: 500px;
+}
+
+.selection_box .summary {
+	float: right;
+	width: 460px;
+	border: 1px solid #000000;
+	min-height: 500px;
+}
+
+.selection_box:after {
+	clear: both;
+	content: '';
+	display: block;
+}
+
+.selection_box .menus .menu {
+	float: left;
+	width: calc(100% / 3 - 8px);
+	margin-left: 12px;
+}
+
+.selection_box .menus .menu:nth-child(3n+1) {
+	margin-left: 0;
+}
+
+.selection_box .menus ul:after {
+	clear: left;
+	content: '';
+	display: block;
+}
+
+.selection_box .menus .menu {
+	margin-bottom: 12px;
+}
+
+.selection_box .menus .menu img {
+	width: 100%;
+	display: block;
+}
+
+.selection_box .menus input[type='checkbox'] {
+	display: none;
+}
+
+.selection_box .menus input[type='checkbox']+label {
+	display: block;
+	position: relative;
+	cursor: pointer;
+}
+
+.selection_box .menus input[type='checkbox']:checked+label:after {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	border: 7px solid #c3a18a;
+	content: '';
+	display: block;
+	box-sizing: border-box;
+}
+
+.selection_box .menus .menu_nm {
+	text-align: center;
+	padding: 10px 5px;
+	font-weight: bold;
+}
+
+.selection_box .menus .view_more {
+	text-align: center;
+	padding: 10px 5px;
+	color: #ffffff;
+	background-color: #212121;
+	cursor: pointer;
+}
+
+.selection_box .summary {
+	position: relative;
+}
+
+.selection_box .bottom {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	padding: 10px; 
+	text-align: center;
+	background-color: #212121;
+	color: #ffffff;
+}
+
+.selection_box .bottom * {
+	color: #ffffff;
+}
+
+.selection_box .summary li {
+	border-bottom: 1px dashed #d5d5d5; 
+	padding: 15px 20px;
+	position: relative;
+}
+
+.selection_box .summary .remove {
+	position: absolute; 
+	right: 20px;
+	cursor: pointer;
+}
+/* 메뉴 선택 영역 E */
+
+/* 레이어 팝업 S */
+#layer_dim {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.7);
+	top: 0;
+	left: 0;
+	z-index: 100;
+	cursor: pointer; 
+}
+
+#layer {
+	position: fixed;
+	width: 900px;
+	height: 600px;
+	top : calc(50% - 300px);
+	left: calc(50% - 450px);
+	background-color: #ffffff;
+	z-index: 101;
+}
+/* 레이어 팝업 E */

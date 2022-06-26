@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<script src="../js/jquery-3.6.0.min.js"></script>
+	<script>
+	$(function() {
+		/** first - 첫번째 요소 선택 */
+		$(".main_menu1 li").first().css("border", "1px solid red");
+		
+		/** last - 마지막 요소 선택 */
+		$(".main_menu2 li").last().css("border", "1px solid blue");
+		
+		/** odd - 홀수 인덱스(짝수 번째) */
+		$(".main_menu3 li:odd").css("backgroundColor", "#d5d5d5");
+		
+		/** even - 짝수 인덱스(홀수 번째) */
+		$(".main_menu4 li:even").css("backgroundColor", "#d5d5d5");
+		
+		/** first-of-type */
+		$(".main_menu5 li:first-of-type").css("backgroundColor"," #d5d5d5");
+		
+		/** last-of-type */
+		$(".main_menu6 li:last-of-type").css("backgroundColor", "#d5d5d5");
+		
+		/** nth-child(숫자) */
+		$(".main_menu7 li:nth-child(3)").css("backgroundColor", "#d5d5d5");
+		
+		/** nth-child(3n) */
+		$(".main_menu8 li:nth-child(3n)").css("backgroundColor", "#d5d5d5");
+		
+		/** nth-last-of-type(숫자) */
+		$(".main_menu9 li:nth-last-of-type(2)").css("backgroundColor", "red");
+		
+		
+		/** only-child */
+		$(".main_menu10 li:only-child").css("backgroundColor", "blue");
+		
+		/** eq */
+		$(".main_menu11 li").eq(1).css("backgroundColor", "#d5d5d5");
+		
+		/** gt */
+		$(".main_menu12 li:gt(2)").css("backgroundColor", "#d5d5d5");
+		
+		/** lt */
+		$(".main_menu13 li:lt(2)").css("backgroundColor", "#d5d5d5");
+		
+		/** slice */
+		$(".main_menu14 li").slice(2).css("backgroundColor", "#d5d5d5");
+	});
+	</script>
+</head>
+<body>
+	<h1>위치 탐색 선택자</h1>
+	<h2>first</h2>
+	<ul class='main_menu1'>
+		<li>메뉴1(선택됨)</li>
+		<li>메뉴2</li>
+		<li>메뉴3</li>
+		<li>메뉴4</li>
+		<li>메뉴5</li>
+	</ul>
+	
+	<h2>last</h2>
+	<ul class='main_menu2'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li>메뉴3</li>
+		<li>메뉴4</li>
+		<li>메뉴5(선택됨)</li>
+	</ul>
+	
+	
+	<h2>odd</h2>
+	<ul class='main_menu3'>
+		<li>메뉴1</li>
+		<li>메뉴2(선택됨)</li>
+		<li>메뉴3</li>
+		<li>메뉴4(선택됨)</li>
+		<li>메뉴5</li>
+	</ul>
+	
+	<h2>even</h2>
+	<ul class='main_menu4'>
+		<li>메뉴1(선택됨)</li>
+		<li>메뉴2</li>
+		<li>메뉴3(선택됨)</li>
+		<li>메뉴4</li>
+		<li>메뉴5(선택됨)</li>
+	</ul>
+	
+	
+	<h2>first-of-type</h2>
+	<ul class='main_menu5'>
+		<li>메뉴1(선택됨)</li>
+		<li>메뉴2</li>
+		<li>메뉴3</li>
+		<li>메뉴4</li>
+		<li>메뉴5</li>
+	</ul>
+	
+	<h2>last-of-type</h2>
+	<ul class='main_menu6'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li>메뉴3</li>
+		<li>메뉴4</li>
+		<li>메뉴5(선택됨)</li>
+	</ul>
+	
+	<h2>nth-child</h2>
+	<ul class='main_menu7'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li>메뉴3(선택됨)</li>
+		<li>메뉴4</li>
+		<li>메뉴5</li>
+	</ul>
+	
+	<ul class='main_menu8'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li>메뉴3(선택됨)</li>
+		<li>메뉴4</li>
+		<li>메뉴5</li>
+		<li>메뉴6(선택됨)</li>
+	</ul>
+	
+	<h2>nth-last-of-type</h2>
+	<ul class='main_menu9'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li>메뉴3</li>
+		<li>메뉴4</li>
+		<li>메뉴5(선택됨)</li>
+		<li>메뉴6</li>
+	</ul>
+	
+	<h2>only-child</h2>
+	<ul class='main_menu10'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+	</ul>
+	
+	<ul class='main_menu10'>
+		<li>메뉴1(선택됨)</li>
+	</ul>
+	
+	<h2>eq</h2>
+	<ul class='main_menu11'>
+		<li>메뉴1</li>
+		<li>메뉴2(선택됨)</li>
+		<li>메뉴3</li>
+		<li>메뉴4</li>
+		<li>메뉴5</li>
+		<li>메뉴6</li>
+	</ul>
+	
+	<h2>gt</h2>
+	<ul class='main_menu12'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li>메뉴3</li>
+		<li>메뉴4(선택됨)</li>
+		<li>메뉴5(선택됨)</li>
+		<li>메뉴6(선택됨)</li>
+	</ul>
+	
+	<h2>lt</h2>
+	<ul class='main_menu13'>
+		<li>메뉴1(선택됨)</li>
+		<li>메뉴2(선택됨)</li>
+		<li>메뉴3</li>
+		<li>메뉴4</li>
+		<li>메뉴5</li>
+		<li>메뉴6</li>
+	</ul>
+	
+	<h2>slice</h2>
+	<ul class='main_menu14'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li>메뉴3(선택됨)</li>
+		<li>메뉴4(선택됨)</li>
+		<li>메뉴5(선택됨)</li>
+		<li>메뉴6(선택됨)</li>
+	</ul>
+</body>
+</html>

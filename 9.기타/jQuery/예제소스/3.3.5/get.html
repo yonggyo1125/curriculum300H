@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<script src="../js/jquery-3.6.0.min.js"></script>
+	<script>
+	$(function() {
+		var obj1 = $(".menu2");
+		console.dir(obj1); // jQuery 객체 
+		
+		var obj2 = $(".menu2").get(0); // DOM 객체
+		console.dir(obj2); // li.menu2
+		
+		obj2.style.backgroundColor = "red";
+	});
+	</script>
+</head>
+<body>
+	<ul>
+		<li>메뉴1</li>
+		<li class='menu2'>메뉴2</li>
+		<li>메뉴3</li>
+		<li>메뉴4</li>
+		<li>메뉴5</li>
+	</ul>
+</body>
+</html>

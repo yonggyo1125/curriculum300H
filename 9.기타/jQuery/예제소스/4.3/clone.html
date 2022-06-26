@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<script src='../js/jquery-3.6.0.min.js'></script>
+	<script>
+	$(function() {
+		$html1 = $(".menu3").clone();
+		$(".main_menu").append($html1);
+	});
+	</script>
+</head>
+<body>
+	<ul class='main_menu'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li class='menu3'>
+			메뉴3
+			<ul class='sub_menu'>
+				<li>서브메뉴1</li>
+				<li>서브메뉴2</li>
+				<li>서브메뉴3</li>
+			</ul>
+		</li>
+		<li>메뉴4</li>
+	</ul>
+</body>
+</html>

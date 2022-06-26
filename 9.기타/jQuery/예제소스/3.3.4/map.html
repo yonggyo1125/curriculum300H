@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<script src="../js/jquery-3.6.0.min.js"></script>
+	<script>
+	$(function() {
+		var data = [1,2,3,4,5];
+		var data2 = $.map(data, function(a, index) {
+			return a * 2;
+		});
+		
+		console.log(data2); // [2, 4, 6, 8, 10] 
+		
+		/* 데이터 처리의 경우 jQuery map 보다는 Array.prototype.map 함수를 사용할 것 */
+		data.map(function(a, index, data) {
+			
+			data[index] = a * 4;
+		});
+		console.log(data); // [4, 8, 12, 16, 20] 
+	});
+	</script>
+</head>
+<body></body>
+</html>

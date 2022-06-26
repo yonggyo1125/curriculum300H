@@ -1,0 +1,58 @@
+* {
+	box-sizing: border-box; 
+}
+dl { 
+	padding: 0; 
+	margin: 0 0 5px;
+	display: table;
+	width: 100%;
+}
+
+dt { 
+	display: table-cell;
+	width: 120px;
+	vertical-align: top;
+}
+
+dd { 
+	display: table-cell;
+	vertical-align: top;
+}
+
+input[type='text'], input[type='number'] {
+	width: 100%; 
+	height: 30px;
+	border: 1px solid #d5d5d5;
+	border-radius: 3px;
+}
+
+textarea {
+	border: 1px solid #d5d5d5;
+	resize: none; 
+	width: 100%; 
+}
+
+.goods { 
+	border: 2px solid #d5d5d5;
+	border-radius: 5px; 
+	margin-bottom: 10px; 
+	padding: 15px;
+}
+
+.btns { 
+	text-align: right;
+}
+
+#register {
+	width: 250px;
+	height: 55px; 
+	color: #ffffff; 
+	background-color: #000000;
+	text-align: center; 
+	border: 0;
+	cursor: pointer;
+	display: block; 
+	line-height: 55px;
+	margin: 15px auto;
+	border-radius: 5px; 
+}

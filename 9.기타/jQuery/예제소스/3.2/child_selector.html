@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<script src="../js/jquery-3.6.0.min.js"></script>
+	<script>
+	$(function() {
+		/** 가장 가까운 상위 요소 선택자 */
+		$(".menu1 .sub_menu li").closest(".selected").css("border", "1px solid blue");
+		
+		/** 하위 요소 선택자 */
+		$(".menu2 .sub_menu li").css("border", "1px solid red");
+		
+		/** 자식요소 선택자 */
+		$(".menu3 > li").css("border", "1px solid orange");
+		
+		/** 자식요소들 선택자 */
+		$(".menu4").children().css("backgroundColor", "gray");
+	});
+	</script>
+</head>
+<body>
+	<h1>인접관계 선택자</h1>
+	<h2>가장 가까운 상위 요소 선택자</h2>
+	<ul class='menu1'>
+		<li>메뉴1</li>
+		<li class='selected'>
+			메뉴2 (선택됨)
+			<ul class='sub_menu'>
+				<li>서브1</li>
+				<li>서브2</li>
+				<li>서브3</li>
+			</ul>
+		</li>
+		<li>메뉴3</li>
+	</ul>
+	
+	<h2>하위요소 선택자</h2>
+	<ul class='menu2'>
+		<li>메뉴1</li>
+		<li class='selected'>
+			메뉴2
+			<ul class='sub_menu'>
+				<li>서브1</li>
+				<li>서브2</li>
+				<li>서브3</li>
+			</ul>
+		</li>
+		<li>메뉴3</li>
+	</ul>
+	
+	
+	<h2>자식요소 선택자</h2>
+	<ul class='menu3'>
+		<li>메뉴1(선택됨)</li>
+		<li class='selected'>
+			메뉴2
+			<ul class='sub_menu'>
+				<li>서브1</li>
+				<li>서브2</li>
+				<li>서브3</li>
+			</ul>
+		</li>
+		<li>메뉴3</li>
+	</ul>
+	
+	<h2>자식요소들 선택자</h2>
+	<ul class='menu4' style="border: 1px solid red; padding: 20px;">
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li>메뉴3</li>
+		<li>메뉴4</li>
+	</ul>
+</body>
+</html>

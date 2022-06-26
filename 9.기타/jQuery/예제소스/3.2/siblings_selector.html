@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<script src="../js/jquery-3.6.0.min.js"></script>
+	<script>
+	$(function() {
+		/** 형(이전) 요소 선택자 */
+		$(".main_menu1 .menu3").prev().css("backgroundColor", "blue");
+		
+		/** 형(이전) 요소들 선택자 */
+		$(".main_menu2 .menu3").prevAll().css({
+			backgroundColor: "yellow",
+			fontSize: "20px",
+		});
+		
+		/** 지정 형(이전) 요소들 선택자 */
+		$(".main_menu3 .menu5").prevUntil(".menu2").css({
+			backgroundColor: "red",
+			fontWeight: "bold",
+		});
+		
+		/** 동생(다음)요소 선택자 */
+		$(".main_menu4 .menu3").next().css("border", "1px solid #000000");
+		
+		/** 동생(다음)요소들 선택자 */
+		$(".main_menu5 .menu3").nextAll().css("backgroundColor", "orange");
+		
+		/** 지정동생(다음) 요소들 선택자 */
+		$(".main_menu6 .menu2").nextUntil(".menu5").css("backgroundColor", "yellow");
+		
+		/** 전체 형제 요소 선택자 */
+		$(".main_menu7 .menu3").siblings().css("backgroundColor", "gray");
+		
+	});
+	</script>
+</head>
+<body>
+	<h1>인접관계 선택자</h1>
+	<h2>형(이전) 요소 선택자</h2>
+	<ul class='main_menu1'>
+		<li>메뉴1</li>
+		<li>메뉴2(선택됨)</li>
+		<li class='menu3'>메뉴3</li>
+		<li>메뉴4</li>
+		<li>메뉴5</li>
+		<li>메뉴6</li>
+	</ul>
+	
+	<h2>형(이전) 요소들 선택자</h2>
+	<ul class='main_menu2'>
+		<li>메뉴1(선택됨)</li>
+		<li>메뉴2(선택됨)</li>
+		<li class='menu3'>메뉴3</li>
+		<li>메뉴4</li>
+		<li>메뉴5</li>
+		<li>메뉴6</li>
+	</ul>
+	
+	<h2>지정 형(이전) 요소들 선택자</h2>
+	<ul class='main_menu3'>
+		<li>메뉴1</li>
+		<li class='menu2'>메뉴2</li>
+		<li>메뉴3(선택됨)</li> 
+		<li>메뉴4(선택됨)</li>
+		<li class='menu5'>메뉴5</li>
+		<li>메뉴6</li>
+	</ul>
+	
+	<h2>동생(다음)요소 선택자</h2>
+	<ul class='main_menu4'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li class='menu3'>메뉴3</li>
+		<li>메뉴4(선택됨)</li>
+		<li>메뉴5</li>
+		<li>메뉴6</li>
+	</ul>
+	
+	<h2>동생(다음)요소들 선택자</h2>
+	<ul class='main_menu5'>
+		<li>메뉴1</li>
+		<li>메뉴2</li>
+		<li class='menu3'>메뉴3</li>
+		<li>메뉴4(선택됨)</li>
+		<li>메뉴5(선택됨)</li>
+		<li>메뉴6(선택됨)</li>
+	</ul>
+	
+	<h2>지정동생(다음) 요소들 선택자</h2>
+	<ul class='main_menu6'>
+		<li>메뉴1</li>
+		<li class='menu2'>메뉴2</li>
+		<li>메뉴3(선택됨)</li>
+		<li>메뉴4(선택됨)</li>
+		<li class='menu5'>메뉴5</li>
+		<li>메뉴6</li>
+	</ul>
+	
+	<h2>전체 형제 요소 선택자</h2>
+	<ul class='main_menu7'>
+		<li>메뉴1(선택됨)</li>
+		<li>메뉴2(선택됨)</li>
+		<li class='menu3'>메뉴3</li>
+		<li>메뉴4(선택됨)</li>
+		<li>메뉴5(선택됨)</li>
+		<li>메뉴6(선택됨)</li>
+	</ul>
+</body>

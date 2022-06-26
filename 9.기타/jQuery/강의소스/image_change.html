@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script>
+		$(() => {
+			$(".tab li").click(function() {
+				$(".tab li").removeClass("on");
+				$(this).addClass("on");
+				
+				imageChange();
+			});
+		});
+		
+		/* 이미지 변경 함수 */
+		function imageChange() {
+			$tab = $(".tab li.on");
+			if ($tab.length > 0) {
+				const num = $tab.data("num");
+				
+				$.ajax({
+					url : "http://yonggyo.com/~webclass/ajax.php",
+					type : "get", 
+					dataType : "html",
+					data : { num : num },
+					success : function (data) {
+						$("#image").html(data);
+					},
+					error : function (err) {
+						console.error(err);
+					}
+				});
+				
+			}
+		}
+		
+		</script>
+	</head>
+	<body>
+		<style>
+		.tab { list-style: none; padding: 0; margin: 0; }
+		.tab li { display: inline-block; border: 1px solid #000000; margin: 0 10px; padding: 10px 20px; cursor: pointer; }
+		.tab li.on { background-color: #000000; color: #ffffff; }
+		</style>
+		<ul class='tab'>
+			<li data-num='1'>이미지1</li>
+			<li data-num='2'>이미지2</li>
+			<li data-num='3'>이미지3</li>
+		</ul>
+		
+		<div id='image'></div>
+		
+	</body>
+</html>

@@ -1,0 +1,26 @@
+* { box-sizing: border-box; }
+body { padding: 0; margin: 0; }
+
+header { height: 150px; background-color: gray; }
+section { height: 800px; }
+footer { height: 200px; background-color: blue; }
+
+.slide_open { position: fixed; top: 20px; right: 20px; }
+
+.slide { width: 300px; background-color: #f8f8f8; border-right: 1px solid #000000; position: fixed; height: 100%; top: 0; left: -300px; transition: all 2s; z-index: 1; }
+
+.slide.on { left: 0; }
+
+#layer_dim { 
+	background:rgba(0, 0, 0, 0.7); 
+	position: fixed;
+	top: 0; 
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 0;
+}
+
+.dn { 
+	display: none !important; 
+}

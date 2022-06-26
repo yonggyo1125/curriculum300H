@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<script src='../js/jquery-3.6.0.min.js'></script>
+		<script>
+		$.fn.extend({
+			customAction : function(msg1, msg2) {
+				var button1 = document.createElement("button");
+				var button2 = document.createElement("button");
+				var button1Nm = document.createTextNode("문구1");
+				var button2Nm = document.createTextNode("문구2");
+				
+				button1.className = "button1";
+				button2.className = "button2";
+				
+				$(this).append(button1);
+				$(this).append(button2);
+				
+				button1.appendChild(button1Nm);
+				button2.appendChild(button2Nm);
+				
+				var className = $(this)[0].className;
+				
+				$(this).on("click", ".button1", function() {
+					alert(`${className}  : ${msg1}`);
+				});
+				
+				$(this).on("click", ".button2", function() {
+					alert(`${className}  : ${msg2}`);
+				});
+			},
+		});
+		
+		$(function() {
+			$(".customAction1").customAction("커스텀1 플러그인 메세지1", "커스텀1 플러그인 메세지2");
+			$(".customAction2").customAction("커스텀2 플러그인 메세지1", "커스텀2 플러그인 메세지2");
+		});
+		</script>
+	</head>
+	<body>
+		<div class='customAction1'></div>
+		<div class='customAction2'></div>
+	</body>
+</html>

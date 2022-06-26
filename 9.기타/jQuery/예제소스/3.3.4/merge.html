@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<script src="../js/jquery-3.6.0.min.js"></script>
+	<script>
+	$(function() {
+		var a = [1,2,3,4,5,6];
+		var b = [7,8,9,10,11,12];
+		var c = $.merge(a, b);
+		console.log(a); // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] 
+		console.log(c); // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] 
+		/** jQuery $.merge를 사용하기 보다는 Array.prototype.concat을 사용할 것 */
+		
+		var a = [1,2,3,4,5,6];
+		var b = [7,8,9,10,11,12];
+		var c = a.concat(b);
+		console.log(a); // [1, 2, 3, 4, 5, 6]
+		console.log(c); // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] 
+	});
+	</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<link rel="stylesheet" type="text/css" href="css/form2.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script src='js/form2.js'></script>
+	</head>
+	<body>
+		<form id='form' method='post'>
+			<div class='goods'>
+				<dl>
+					<dt>상품명</dt>
+					<dd>
+						<input type='text' name='goodsNm[]' placeholder='상품명 입력...'>
+					</dd>
+				</dl>
+				<dl>
+					<dt>정가</dt>
+					<dd>
+						<input type='number' name='consumerPrice[]' placeholder='소비자 입력...'>
+					</dd>
+				</dl>
+				<dl>
+					<dt>판매가</dt>
+					<dd>
+						<input type='number' name='goodsPrice[]' placeholder='실제 판매가격...'>
+					</dd>
+				</dl>
+				<dl>
+					<dt>상품설명</dt>
+					<dd>
+						<textarea name='description[]' rows='5' placeholder='5줄 이내의 상품 설명..'></textarea>
+					</dd>
+				</dl>
+				
+				<div class='btns'>
+					<button class='add'>추가</button>
+				</div>
+			</div> <!--// goods -->
+		</form>
+	</body>
+</html>
