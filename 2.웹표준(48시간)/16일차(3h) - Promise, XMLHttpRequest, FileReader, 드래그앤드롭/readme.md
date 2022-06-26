@@ -114,13 +114,6 @@ function buyAsync(mymoney) {
 #### 4.js
 
 ```javascript
-/**
-* promise all 
-*
-* 이 프로그램을 실행하면 Promise.all에 지정한 모든 Promise 객체가 실행됩니다.
-* 모든작업이 성공으로 끝나면 성공 콜백이 실행됩니다. 
-* 실패로 끝난 Promise 객체가 하나라도 있으면 가장 먼저 실패로 끝난 Promise 객체에서 실행한 reject 함수의 인수가 실패 콜백 함수의 인수로 들어갑니다.
-*/
 function buyAsync(name, mymoney) {
 	return new Promise((resolve, reject) => {
 		setTimeout(() => {
