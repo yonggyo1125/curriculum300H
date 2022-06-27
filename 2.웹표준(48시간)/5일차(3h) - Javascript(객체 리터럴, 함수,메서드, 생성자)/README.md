@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1aajT5lF0zge77wBgrc_qf96yMf6amLUe?usp=sharing)
+
 # 객체 리터럴
 - 객체는 이름과 값을 한쌍을 묶은 데이터를 여러개 모은 것
 - 즉, 객체는 데이터 여러개를 하나로 모은 복합 데이터로 연관배열 또는 사전(Diction) 이라고 부릅니다. 
