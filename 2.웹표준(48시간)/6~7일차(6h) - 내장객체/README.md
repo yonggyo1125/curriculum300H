@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1rrUPS1V0jcIFK2sVFGA0E9oIbqsWj5U2?usp=sharing)
+
 # 내장 객체
 자바스크립트에는 처음부터 사용할 수 있는 내장 객체(빌트인 오브젝트)가 마련되어 있습니다. 내장 객체는 자바스크립트라는 프로그래밍 언어의 뼈대를 구성합니다.
 
