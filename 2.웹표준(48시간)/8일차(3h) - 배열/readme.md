@@ -336,31 +336,39 @@ Array.prototype.concat.call(a, ["D", "E"]);
 
 #### 배열의 비구조화 할당
 **기본적인 사용법**<br>
+
 ```javascript
 var [a, b] = [1, 2];  // var a = 1, b = 2와 같음
 ```
 - 이 문장을 실행하면 변수 a와 b를 선언한 후 우변의 배열에서 요소를 하나씩 꺼내어 인덱스 순서대로 a, b에 대입합니다. 우변의 배열을 분할하여 좌변의 변수에 할당하므로 분할 할당이라고도 합니다.
 - 우변이 배열일 때 좌변의 변수 쌍을 표현하는 문법은 배열 리터럴과 비슷합니다. 즉, 변수를 쉼표로 구분하고 대괄호로 묶습니다.<br><br>
-- **이미 선언된 변수를 비구조화 할당하는 예**
+
+- <b>이미 선언된 변수를 비구조화 할당하는 예</b>
+
 ```javascript
 [a, b] = [2*a, 3*b];  // a = 2*a, b = 3*b와 같음
 [a, b] = [b, a] = // a 값과 b 값을 교환함
 ```
+
 - 이때 우변의 값의 개수와 좌변 변수의 개수가 같을 필요는 없습니다.
 - 좌변의 변수 개수가 우변의 값 개수보다 많으면 좌변의 남는 변수에는 undefined가 값으로 할당됩니다.
 - 우변의 값 개수가 좌변의 변수 개수보다 많으면 남은 값은 무시됩니다. 
 - 또한 변수가 없는 인덱스 값도 무시됩니다.
+
 ```javascript
 [a, b, c] = [1, 2]; // a = 1, b = 2, c = undefined와 같음
 [a, b] = [1, 2, 3]; // a = 1, b = 2와 같음, 3은 무시됨
 [,a,,b] = [1, 2, 3, 4]; // a = 2, b = 4와 같음
 ```
+
 - 배열 비구조화 할당 표현식의 값은 우변 값이 됩니다.
+
 ```javascript
 var array, first, second;
 array = [first, second] = [1,2,3,4];
 // first = 1, second = 2, array = [1, 2, 3, 4]와 같음 
 ```
+
 <br>
 <b>나머지 요소</b><br>
 배열의 비구조화 할당을 할 때는 함수의 나머지 매개변수와 마찬가지로 전개 연산자인 ...을 사용하여 나머지 요소(rest elements)를 이용할 수 있습니다.
@@ -386,46 +394,62 @@ var {a: x, b: y} = {a: 1, b: 2};  // x = 1, y = 2와 같음
 ```
 <br>
 이미 선언된 변수를 비구조화 할당하는 예
+
 ```javascript
 {a: x, b: y} = {a: y, b: x};  // x 값과 y 값을 교환한다.
 ```
+
 <br>
 좌변의 변수에 호응하는 프로퍼티 이름이 오른쪽에 없으면 그 변수에는 undefined가 할당됩니다.
+
 ```javascript
 {a: x, b: y} = {a: 1, c: 2};  // x = 1, y = undefined와 같음
 ```
+
 <br>
 우변에 값이 있지만 그에 대응하는 이름의 변수가 좌변에 없으면 무시됩니다.
+
 ```javascript 
 {a: x, b: y} = {a: 1, b: 2, c: 3}; // x = 1, y = 2와 같음. 3은 무시됨
 ```
+
 <br>
 다음 코드는 Math 객체의 프로퍼티를 변수에 대입합니다.
+
 ```javascript
 var {sin: sin, cos: cos, tan: tan, PI: PI} = Math;
 // var = sin = Math.sign, cos = Math.cos, tan = Math.tan, PI = Math.PI와 같음
 ```
+
 이렇게 만들어 두면 Math.sin(Math.PI / 3)이라는 코드를 sin(Math.PI / 3)으로 간결하게 표현할 수 있습니다.<br><br>
-**프로터피의 기본값**<br>
+
+<b>프로터피의 기본값</b><br>
 배열의 비구조화 할당을 할 때는 함수의 인수와 마찬가지로 기본값을 설정할 수 있습니다. 비구조화 할당하는 좌변의 변수에 undefined가 할당되면 그 대신에 기본값을 할당합니다.
+
 ```javascript
 {a: x = 1, b: y=2, c: z=3} = {a: 2, b: 4}; // x = 2, y = 4, z = 3과 같음
 ```
+
 <br><br>
-**프로퍼티 이름 생략하기**<br>
+<b>프로퍼티 이름 생략하기</b><br>
 좌변에는 변수 이름만 쉼표로 구분해서 작성할 수 있습니다. 이때는 프로퍼티 이름이 변수의 이름이 됩니다.
+
 ```javascript
 {a, b} = {a: 1, b: 2}; // {a: a, b: b} = {a: 1, b: 2}와 같음
 var {sin, cos, tan, PI} = Math;
 //var sin = Math.sin, cos = Math.cos, tan = Math.tan, PI = Math.PI와 같음
 ```
+
 프로퍼티 이름을 생략한 상태에서도 기본값을 지정할 수 있습니다.
+
 ```javascript
 {a=1, b=2, c=3} = {a: 2, b: 4}; // a = 2, b = 4, c = 3과 같음
 ```
+
 <br><br>
-**반복 가능한 객체의 비구조화 할당**<br>
+<b>반복 가능한 객체의 비구조화 할당</b><br>
 우변에 반복 가능한(이터러블한)객체가 있을 때도 비구조화 할당을 할 수 있습니다. 이때 좌변에는 리터럴과 비슷한 문법을 사용합니다.
+
 ```javascript
 var [a, b, c] = "ABC"; // var a = "A", B = "B", c = "C"와 같음
 function* createNumbers(from, to) {
@@ -434,9 +458,11 @@ function* createNumbers(from, to) {
 var [a,b,c,d,e] = createNumbers(10, 15);
 // a = 10, b = 11, c = 12, d = 13, e = 14와 같음 
 ```
+
 <br><br>
-**중첩된 자료 구조의 비구조화 할당**<br>
+<b>중첩된 자료 구조의 비구조화 할당</b><br>
 중첩된 객체나 배열에도 비구조화 할당을 적용할 수 있습니다.<br>
+
 ```javascript
 var [a, [b, c]] = [1, [2, 3]]; // var a = 1, b = 2, c = 3과 같음
 var {a: x, b : {c: y, d: z}} = {a: 1, b: {c: 2, d: 3}};
@@ -447,14 +473,18 @@ var {name, age, hobby:[hobby1]} = person;
 ```
 
 ### 전개 연산사
+
 ...은 전개 연산자(spread operator)라고 합니다. 전개 연산자는 반복 가능한(이터러블한) 객체를 반환하는 표현식 앞에 표기하며. 이를 통해 반복 가능한 객체를 배열 리터럴 또는 함수의 인수 목록으로 펼칠 수 있습니다.
+
 ```javascript
 [..."ABC"]  // -> ["A", "B", "C"]
 f(..."ABC")  // f("A", "B", "C")와 같음
 [1, ...[2, 3, 4], 5]  // -> [1, 2, 3, 4, 5]
 f(...[1, 2, 3])  // f(1, 2, 3)과 같음
 ```
+
 다음 코드는 제너레이터가 만든 이터레이터를 배열 리터럴 안에 펼치는 예입니다.
+
 ```javascript
 function* createNumbers(from, to) {
 	while(from <= to) yield from++;
@@ -462,12 +492,16 @@ function* createNumbers(from, to) {
 var iter = createNumbers(10, 15);
 [...iter]  // -> [10, 11, 12, 13, 14, 15]
 ```
+
 배열 두 개를 연결할 때는 보통 Array.prototype.concat 메서드를 사용하지만 전개 연산자를 활용하면 Array.prototype.push 메서드로도 배열을 연결할 수 있습니다.
+
 ```javascript
 var a = ["A", "B", "C"];
 a.push(...["D", "E"]);  // -> ["A", "B", "C", "D", "E"]
 ```
+
 다음 코드는 배열 안의 최대값은 Math.max로 구합니다.
+
 ```javascript
 var a = [5,2,3,7,1];
 Math.max(...a);
@@ -485,17 +519,22 @@ Object 객체도 키와 값이 쌍을 이룬 프로퍼티가 모여서 만들어
 
 #### Map 객체의 생성
 Map 객체는 Map 생성자 함수로 생성합니다. 인수를 지정하지 않으면 데이터가 없는 빈 Map 객체가 생성됩니다.
+
 ```javascript
 var map = new Map();
 console.log(map); // -> Map {}
 ```
+
 <br><br>
 초기 데이터를 인수로 지정해서 생성할 수도 있습니다. 이때 초기 데이터는 요소를 두 개 이상 포함한 배열 [키, 값]을 그 값으로 가지는 반복 가능한(이터러블한) 객체입니다.
+
 ```javascript
 var zip = new Map([["Tom", "131-8634"], ["Huck", "556-0002"]]);
 console.log(zip); // -> Map {"Tom" => "131-8634", "Huck" => "556-0002"}
 ```
+
 다음 코드는 제너레이터로 이터레이터를 생성하는 방식으로 앞의 코드와 똑같은 작업을 처리합니다.
+
 ```javascript
 function makeZip() {
 	yield ["Tom", "131-8634"];
@@ -505,7 +544,9 @@ var zips = makeZip();
 zip = new Map(zips);
 console.log(zip);  // -> Map {"Tom" => "131-8634", "Huck" => "556-0002"}
 ```
+
 Map 객체 안에 저장된 데이터(키와 값의 쌍)의 개수는 size 프로퍼티로 구할 수 있습니다.
+
 ```javascript
 console.log(zip.size); // -> 2
 ```
@@ -527,6 +568,7 @@ Map 객체는 Map.prototype 프로퍼티와 메서드를 상속받습니다.
 
 #### 데이터 추가하기
 Map 객체에 데이터를 추가할 때 set(key, value) 메서드를 사용합니다. key는 데이터의 키 값이 되며 value는 데이터의 값이 됩니다. 이미 그 키 값이 가리키는 데이터가 있다면 덮어씁니다.
+
 ```javascript
 var zip = new Map();
 zip.set("Tom", "131-8634");
@@ -536,13 +578,16 @@ console.log(zip);  // -> Map {"Tom" => "131-8634", "Huck" => "556-0002"}
 
 #### 값 읽기
 특정 키 값이 가리키는 데이터 값을 읽을 때는 get(key) 메서드를 사용합니다. key는 데이터의 키값 입니다.
+
 ```javascript
 console.log(zip.get("Tom")); // -> 131-8634
 ```
+
 지정한 키가 Map 객체 안에 없으면 undefined를 반환합니다.
 
 #### 데이터가 있는지 확인
 Map 객체 안에 특정 키를 가진 데이터가 있는지 확인하려면 has(key) 메서드를 사용합니다. key는 데이터의 키 값입니다.
+
 ```javascript
 console.log(zip.has("Tom")); // true
 console.log(zip.has("Becky")); // false
@@ -550,15 +595,20 @@ console.log(zip.has("Becky")); // false
 
 #### 데이터의 삭제
 특정 키 값이 가리키는 데이터 값을 삭제하려면 delete(key) 메서드를 사용합니다. key는 데이터의 키 값입니다.
+
 ```javascript
 zip.delete("Huck");
 ```
+
 Map 객체 안에 있는 모든 데이터를 삭제하려면 clear 메서드를 사용합니다.
+
 ```javascript
 zip.clear();
 ```
+
 #### 모든 키 값의 열거
 keys 메서드는 Map 객체가 가진 데이터의 키 값을 가진 이터레이터를 반환합니다.
+
 ```javascript
 var zip = new Map([["Tom", "131-8634"], ["Huck", "556-0002"]]);
 var iter = zip.values();
@@ -567,24 +617,30 @@ for(var v of iter) console.log(v);  // 131-8634, 556-0002의 순서대로 출력
 
 #### 모든 데이터의 열거
 entries 메서드는 Map 객체가 가진 데이터(키, 값)을 가진 이터레이터를 반환합니다.
+
 ```javascript
 var zip = new Map([["Tom", "131-8634"], ["Huck", "556-0002"]]);
 var iter = zip.entries();
 for(var v of iter) console.log(v);
 // ["Tom", "131-8634"], ["Huck", "556-0002"]의 순서대로 출력
 ```
+
 Map 객체는 그 자체가 반복 가능한(이터러블한) 객체입니다. 이를 활용하여 Map 객체의 데이터를 열거할 수도 있습니다.
+
 ```javascript
 var zip = new Map([["Tom", "131-8634"], ["Huck", "556-0002"]]);
 for(var v of zip) console.log(v);
 // ["Tom", "131-8634"], ["Huck", "556-0002"]의 순서대로 출력
 ```
+
 비구조화 할당을 활용하면 키 값과 값을 꺼내는 코드를 더욱 간결하게 작성할 수 있습니다.
+
 ```javascript
 var zip = new Map([["Tom", "131-8634"], ["Huck", "556-0002"]]);
 for(var [key, value] of zip) console.log(key, value);
 // Tom  131-8634, Huck 556-0002의 순서대로 출력
 ```
+
 #### 모든 데이터를 함수로 처리하기
 forEach 메서드를 활용하면 인수로 받은 함수를 Map 객체의 모든 데이터에 적용할 수 있습니다.<br>
 forEach 메서드에 인수로 넘긴 함수는 다음과 같은 인수를 받습니다.
@@ -593,6 +649,7 @@ forEach 메서드에 인수로 넘긴 함수는 다음과 같은 인수를 받�
 - map : 처리 중인 Map 객체
 <br>
 다음 예는 Map 객체의 데이터 목록을 표시합니다.
+
 ```javascript
 var zip = new Map([["Tom", "131-86634"], ["Huck", "556-0002"]])
 zip.forEach(function(value, key, map) {
@@ -607,16 +664,20 @@ Set 객체는 중복되지 않는 유일한 데이터를 수집하여 활용하�
 
 #### Set 객체의 생성
 Set 객체는 Set 생성자 함수로 생성합니다. 인수를 넘기지 않으면 데이터가 없는 빈 Set 객체가 생성되빈다.
+
 ```javascript
 var set = new Set();
 console.log(set); // Set {}
 ```
 
 초기 데이터를 인수로 지정해서 생성할 수도 있습니다. 이때의 초기 데이터는 값을 가지는 반복 가능한(이터러블한) 객체입니다.
+
 ```javascript
 var zip = new Set(["131-8634", "556-0002"]);
 ```
+
 다음 코드는 제너레이터로 이터레이터를 생성해서 앞의 코드와 같은 작업을 합니다.
+
 ```javascript
 function makeZip() {
 	yield "131-8634";
@@ -627,10 +688,13 @@ var zips = makeZip();
 zip = new Set(zips);
 console.log(zip);	// Set {"131-8634", "556-0002"}
 ```
+
 Set 객체 안에 저장된 데이터(키와 값의 쌍) 개수는 size 프로퍼티로 구할 수 있습니다.
+
 ```javascript
 console.log(zip.size);  // 2
 ```
+
 #### 동일성의 정의
 Set 객체에서 값 동일성은 일치(===) 연산자가 정의하는 동일성과는 약간 차이가 납니다. Set 객체에서는 NaN과 NaN이 같으며 +0과 -0이 같습니다.
 
@@ -651,6 +715,7 @@ Set 객체는 Set.prototype에서 프로퍼티와 메서드를 상속받습니�
 
 #### 데이터 추가
 Set 객체에 데이터를 추가할 때는 add(value) 메서드를 사용합니다. value는 데이터 값으로 반환값은  Set 객체 입니다.
+
 ```javascript
 var zip = new Set();
 zip.add("131-8634");
@@ -660,6 +725,7 @@ console.log(zip);  // -> Set {"131-8634", "556-0002"}
 
 #### 데이터가 있는지 확인
 Set 객체 안에 특정 값을 갖는 데이터가 있는지 확인하려면 has(value) 메서드를 사용합니다. value는 데이터 값입니다.
+
 ```javascript
 console.log(zip.has("131-8634"));	// true
 console.log(zip.has("154-0000"));	// false
@@ -667,16 +733,20 @@ console.log(zip.has("154-0000"));	// false
 
 #### 데이터의 삭제
 Set 객체 안에서 특정한 값에 대응하는 데이터를 삭제하려면 delete(value) 메서드를 사용합니다. value는 데이터 값입니다.
+
 ```javascript
 zip.delete("131-8634");
 ```
+
 Set 객체 안에 있는 모든 데이터를 삭제하려면 clear 메서드를 사용합니다.
+
 ```javascript
 zip.clear();
 ```
 
 #### 전체 데이터 값의 열거
 keys와 values 메서드는 Set 객체가 가진 데이터 값을 저장한 이터레이터를 반환합니다.
+
 ```javascript
 var zip = new Set(["131-8634", "556-0002"]);
 var iter = zip.keys();
@@ -684,6 +754,7 @@ for(var v of iter) console.log(v); // 131-8634, 556-0002의 순서대로 출력
 ```
 <br>
 entries 메서드는 Set 객체가 가진 데이터인 [값, 값]을 저장한 이터레이터를 반환합니다. 똑같은 데이터 값을 두 개나 갖고 있는 이유는 Map의 entries 메서드와 출력 형식을 통일하기 위해서 입니다.
+
 ```javascript
 var zip = new Set(["131-8634", "556-0002"]);
 var iter = zip.entries();
@@ -692,6 +763,7 @@ for(var v of iter) console.log(v);
 ```
 <br>
 Set 객체는 그 자체가 반복 가능한(이터러블한) 객체이므로 이를 활용하여 Set 객체의 데이터를 열거할 수도 있습니다.
+
 ```javascript
 var zip = new Set(["131-8634", "556-0002"]);
 for(var v of zip) console.log(v);
@@ -705,6 +777,7 @@ forEach 메서드를 활용하면 인수로 받은 함수를 Set 객체의 모�
 - 세 번째 인수 set : 처리 중인 Set 객체
 첫 번째 인수와 두 번째 인수는 모두 현재 처리하는 데이터 값입니다. 같은 내용의 인수를 중복해서 받는 이유는 Map.prototype.forEach와 Array.prototype.forEach 메서드의 인터페이스를 통일하기 위해서입니다.<br>
 다음 코드는 Set 객체의 데이터 목록을 표시하는 예입니다.
+
 ```javascript
 var zip = new Set(["131-8634", "556-0002"]);
 
@@ -714,6 +787,7 @@ zip.forEach(function(value1, value2, map) {
 // -> 131->8634 => 131-8634
 // 556-0002 => 556-0002
 ```
+
 #### WeakMap과 WeakSet
 Map이나 Set과 유사한 객체로 WeekMap과 WeekSet을 들 수 있습니다. 이들 객체는 데이터의 키 값을 약한 참조로 관리합니다. 키 값이 약한 참조라는 말은 다른 객체가 참조하고 있는 객체라도 가비지 컬렉션의 대상이 될 수 있다는 뜻입니다. 즉, WeakMap과 WeakSet에 저장된 데이터라 하더라도 키 값으로 사용한 원본 객체를 참조하는 객체가 없어지면 가비지 컬렉션의 대상이 됩니다. WeakMap과 WeakSet에서는 키 값을 약한 참조로 관리하기 때문에 다음과 같은 제약 사항이 있습니다.
 - 키 값으로 객체만 사용할 수 있다.
