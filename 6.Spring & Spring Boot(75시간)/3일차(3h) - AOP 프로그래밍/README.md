@@ -484,11 +484,400 @@ public class ExeTimeAspect {
 	- String toShortString() : 호출되는 메서드를 축약해서 표현한 문장을 구한다(기본 구현은 메서드의 이름만 구한다).
 
 ## 프록시 생성방식
+- MainAspect 클래스 코드를 다음과 같이 변경해 보자.
+
+```java
+// 수정 전
+Calculator cal = ctx.getBean("calculator", Calculator.class);
+
+// 수정 후 (import에도 RecCalculator 추가)
+RecCalculator cal = ctx.getBean("calculator", RecCalculator.class);
+```
+
+- getBean() 메서드에 Calculator 타입 대신에 RecCalculator 타입을 사용하도록 수정했다. 
+- 자바 설정 파일을 보면 다음과 같이 "calculator" 빈을 생성할 때 사용한 타입이 RecCalculator 클래스이므로 문제가 없어 보인다.
+
+```java
+// AppCtx 파일
+@Bean
+public Calculator calculator() {
+	return new RecCalculator();
+}
+```
+
+- 코드 수정 이후에 MainAspect 클래스를 실행해 보자. 정상 실행될 것이라는 예상과는 달리 다음과 같은 익셉션이 발생한다.
+
+```
+Exception in thread "main" org.springframework.beans.factory.BeanNotOfRequiredTypeException: Bean named 'calculator' is expected to be of type 'aopex.RecCalculator' but was actually of type 'jdk.proxy2.$Proxy17'
+```
+- 익셉션 메시지를 보면 getBean() 메서드에 사용한 타입이 RecCalculator인데 반해 실제 타입은 $Proxy17이라는 메시지가 나온다. $Proxy17은 스프링이 런타입에 생성한 프록시 객체의 클래스 이름이다.
+- 이 $Proxy17 클래스는 RecCalculator 클래스가 상속받은 Calculator 인터페이스를 상속받게 된다. 즉 다음과 같은 계층 구조를 갖는다.
+
+#### 빈 객체가 인터페이스를 상속하면 인터페이스를 이용해서 프록시를 생성
+
+![image4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20AOP%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D/images/image4.png)
+
+- 스프링 AOP를 위한 프록시 객체를 생성할 때 실제 생성한 빈 객체가 인터페이스를 상속하면 인터페이스를 이용해서 프록시를 생성한다.
+- 앞서 예에서도 RecCalculator 클래스가 Calculator 인터페이스를 상속하므로 Calculator 인터페이스를 상속받은 프록시 객체를 생성했다.
+- 따라서 아래 코드 처럼 빈의 실제 타입이 RecCalculator라고 하더라도 "calculator" 이름에 해당하는 빈 객체의 타입은 Calculator 인터페이스를 상속받은 프록시 타입이 된다.
+
+```java
+// 설정 클래스
+// AOP 적용시 RecCalculator가 상속받은 Calculator 인터페이스를 이용해서 프록시 생성
+@Bean
+public Calculator calculator() {
+	return new RecCalculator();
+}
+
+// 자바 코드
+// "calculator" 빈의 실제 타입은 Calculator를 상속한 프록시 타입이므로
+// RecCalculator로 타입 변환을 할 수 없기 때문에 익셉션 발생
+RecCalculator cal = ctx.getBean("calculator", RecCalculator.class);
+```
+
+- 빈 객체가 인터페이스를 상속할 때 인터페이스가 아닌 클래스를 이용해서 프록시를 생성하고 싶다면 다음과 같이 설정하면 된다.
+
+```java
+@Configuration
+@EnableAspectAutoProxy(proxyTargetClass = true)
+public class AppCtx {
+	... 생략 
+}
+```
+
+- @EnableAspectJAutoProxy 애노테이션의 proxyTargetClass 속성을 true로 지정하면 인터페이스가 아닌 자바 클래스를 상속받아 프록시를 생성한다. 
+- 스프링 프록시를 이용해 생성한 빈 객체를 구할 떄 다음과 같이 getBean() 메서드에 실제 클래스를 이용해서 빈 객체를 구할 수 있게 된다.
+
+```java
+@Configuration
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+public class AppCtx {
+	... 생략 
+}
+
+// 자바 코드. "calculator" 프록시의 실제 타입은 RecCalculator를 상속받았으므로 
+// RecCalculator로 타입 변환 가능
+RecCalculator cal = ctx.getBean("calculator", RecCalculator.class);
+```
 
 ### execution 명시자 표현식
 
+- Aspect를 적용한 위치를 지정할 때 사용한 Pointcut 설정을 보면 execution 명시자를 사용했다.
+
+```java
+@Pointcut("execution(public * aopex..*(..))")
+private void publicTarget() {
+}
+```
+
+- execution 명시자는 Advice를 적용할 메서드를 지정할 때 사용한다. 기본 형식은 다음과 같다.
+
+```
+execution(수식어패턴? 리턴타입패컨 클래스이름패턴?메서드이름패턴(매개변수패턴))
+```
+
+- '수식어패턴'은 생략 가능하며 public, protected 등이 온다. <b>스프링 AOP는 public 메서드에만 적용할 수 있기 떄문에 사실상 public만 의미있다.</b>
+
+- '리턴타입패턴'은 리턴 타입을 명시한다. '클래스이름패턴'과 '메서드이름패턴'은 클래스이름 및 메서드 이름을 패턴으로 명시한다. '매개변수패턴'은 매칭될 매개변수에 대해서 명시한다.
+
+- 각 패턴은 '\*'를 이용하여 모든 값을 표현할 수 있다. 또한 '..'(점 두 개)을 이용하여 0개 이상이라는 의미를 표현할 수 있다.
+
+#### execution 명시자 예시
+
+|예|설명|
+|-----|-----|
+|execution(public void set\*(..))|리턴 타입이 void이고, 메서드 이름이 set으로 시작하고, 매개변수가 0개 이상인 메서드 호출. 매개변수 부분에 '..'을 사용하여 매개변수가 0개 이상인 것을 표현했다.|
+|execution(\* aopex.\*.\*())|aopex 패키지의 타입에 속한 매개변수가 없는 모든 메서드 호출|
+|execution(\* aopex..\*.\*(..))|aopex 패키지 및 하위 패키지에 있는, 매개변수가 0개 이상인 메서드 호출. 패키지 부분에 '..'을 사용하여 해당 패키지 또는 하위 패키지를 표현했다.|
+|execution(Long aopex.Calculator.factorial(..))|리턴 타입이 Long인 Calculator 타입의 factorial() 메서드 호출|
+|execution(\* get\*(\*))|이름이 get으로 시작하고 매개변수가 한 개인 메서드 호출|
+|execution(\* get\*(\*,\*))|이름이 get으로 시작하고 매개변수가 두 개인 메서드 호출|
+|execution(\* read\*(Integer, ..))|메서드 이름이 read로 시작하고, 첫 번째 매개변수 타입이 Integer이며, 한 개 이상의 매개변수를 갖는 메서드 호출|
+
 ### Advice 적용 순서
+
+- 한 Pointcut에 여러 Advice를 적용할 수도 있다.
+
+#### src/main/java/aspect/CacheAspect.java
+
+```java
+package aspect;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+
+@Aspect
+public class CacheAspect {
+	private Map<Long, Object> cache = new HashMap<>();
+	
+	@Pointcut("execution(public * aopex..*(long))")
+	public void cacheTarget() {
+		
+	}
+	
+	@Around("cacheTarget()")
+	public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
+		Long num = (Long) joinPoint.getArgs()[0];
+		if (cache.containsKey(num)) {
+			System.out.printf("CacheAspect: Cache에서 구함[%d]%n", num);
+			return cache.get(num);
+		}
+		
+		Object result = joinPoint.proceed();
+		cache.put(num,  result);
+		System.out.printf("CacheAspect: Cache에 추가[%d]%n", num);
+		return result;
+	}
+}
+```
+
+- CacheAspect 클래스는 간단하게 캐시를 구현한 공통 기능이다. 동작 순서는 아래와 같다.
+	- 첫 번째 인자를 Long 타입으로 구한다.
+	- 22행에서 구한 키 값이 cache에 존재하면 키에 해당하는 값을 구해서 리턴한다.
+	- 22행에서 구한 키 값이 cache에 존재하지 않으면 프록시 대상 객체를 실행한다.
+	- 프록시 대상 객체를 실행한 결과를 cache에 추가한다.
+	- 프록시 대상 객체의 실행 결과를 리턴한다.
+
+
+- @Around 값으로  cacheTarget() 메서드를 지정했다. @Pointcut 설정은 첫 번째 인자가 long인 메서드를 대상으로 한다. 따라서 execute() 메서드는 앞서 작성한 Calculator의 factorial(long) 메서드에 적용된다.
+
+- 새로운 Aspect를 구현했으므로 스프링 설정 클래스에 다음과 같이 두 개의 Aspect를 추가할 수 있다. ExeTimeAspect는 앞서 구현한 시간 측정 Aspect이다. 두 Aspect에서 설정한 Pointcut은 모두 Calculator 타입의 factorial() 메서드에 적용된다.
+
+
+#### src/main/java/config/AppCtxWithCache.java
+
+```java
+package config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+import aspect.CacheAspect;
+import aspect.ExeTimeAspect;
+import aopex.Calculator;
+import aopex.RecCalculator;
+
+@Configuration
+@EnableAspectJAutoProxy
+public class AppCtxWithCache {
+	
+	@Bean
+	public CacheAspect cacheAspect() {
+		return new CacheAspect();
+	}
+	
+	@Bean
+	public ExeTimeAspect exeTimeAspect() {
+		return new ExeTimeAspect();
+	}
+	
+	@Bean
+	public Calculator calculator() {
+		return new RecCalculator();
+	}
+}
+```
+
+- 이 설정 클래스를 이용하는 예제코드를 다음과 같이 작성하자.
+
+#### src/main/java/main/MainAspectWithCache.java
+
+```java
+package main;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import aopex.Calculator;
+import config.AppCtxWithCache;
+
+public class MainAspectWithCache {
+	
+	public static void main(String[] args) {
+		
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(AppCtxWithCache.class);
+		
+		Calculator cal = ctx.getBean("calculator", Calculator.class);
+		cal.factorial(7);
+		cal.factorial(7);
+		cal.factorial(5);
+		cal.factorial(5);
+		ctx.close();
+	}
+}
+```
+
+- 실행 결과
+
+```
+RecCalculator.factorial([7]) 실행 시간 : 49900 ns
+CacheAspect: Cache에 추가[7]
+CacheAspect: Cache에서 구함[7]
+RecCalculator.factorial([5]) 실행 시간 : 15600 ns
+CacheAspect: Cache에 추가[5]
+CacheAspect: Cache에서 구함[5]
+```
+
+- "RecCalculator.factorial(숫자) 실행 시간" 메시지는 ExeTimeAspect가 출력한다. "CacheAspect: Cache에 추가"나 "CacheAspect: Cache에서 구함" 메시지는 CacheAspect가 출력한다. 
+
+- 결과를 보면 첫 번째 factorial(7)을 실행할 때와 두 번째 factorial(7)을 실행할 떄 콘솔에 출력되는 내용이 다르다. 첫 번째 실행결과는 ExeTimeAspect와 CacheAspect가 모두 적용되었고 두 번째 실행 결과는 CacheAspect만 적용되었다. 이렇게 첫 번째와 두 번째 실행 결과가 다른 이유는 Advice를 다음 순서로 적용했기 때문이다.
+
+#### Advice 적용 순서
+
+![image5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20AOP%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D/images/image5.png)
+
+- calculator 빈은 실제로는 CacheAspect 프록시 객체이다. 그런데 CacheAspect 프록시 객체의 대상 객체는 ExeTimeAspect의 프록시 객체이다. 그리고 ExeTimeAspect 프록시의 대상 객체가 실제 대상 객체이다.
+
+```java
+Calculator cal = ctx.getBean("calculator", Calculator.class);
+cal.factorial(7);  // CacheAspect 실행 -> ExeTimeAspect 실행 -> 대상 객체 실행
+```
+
+- 그래서 cal.factorial(7)을 실행하면 CacheAspect의 코드가 먼저 실행된다. 실제 실행 순서는 다음과 같다.
+
+![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20AOP%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D/images/image6.png)
+
+- CacheAspect는 cache 맵에 데이터가 존재하지 않으면 joinPoint.proceed()를 실행해서 대상을 실행한다. 그 대상이 ExeTimeAspect이므로 ExeTimeAspect의 measure() 메서드가 실행된다(1).
+- ExeTimeAspect는 실제 대상 객체를 실행하고(2) 콘솔에 실행 시간을 출력한다(3).
+- ExeTimeAspect 실행이 끝나면 CacheAspect는 cache 맵에 데이터를 넣고 콘솔에 "CacheAspect: Cache에 추가" 메시지를 출력한다(4). 
+- 그래서 factorial(7)을 처음 실행할 때에는 ExeTimeAspect가 출력하는 메세지가 먼저 출력되고 CacheAspect가 출력하는 메세지가 뒤에 출력되는 것이다.
+
+- factorial(7)을 두 번째 실행할 때는 실행 흐름이 다음과 같이 달라진다.
+
+![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20AOP%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D/images/image7.png)
+
+- 처음 factorial(7)을 호출하면 CacheAspect의 cache 맵에 데이터를 추가한다. 따라서 factorial(7)을 두 번째 호출하면 cache.containsKey(num)이 true를 리턴하므로 콘솔에 "CacheAspect: Cache에서 구함" 메시지를 출력하고 cache 맵에 담긴 값을 리턴하고 끝난다. 이 경우 joinPoint.proceed()를 실행하지 않으므로 ExeTimeAspect나 실제 객체가 실행되지 않는다. 
+- 콘솔에도 다음과 같이 CacheAspect가 생성한 메시지만 출력한다.
+
+```
+CacheAspect: Cache에서 구함 [7]
+```
+
+- 어떤 Aspect가 먼저 적용될지는 스프링 프레임워크나 자바 버전에 따라 달라질 수 있기 때문에 적용 순서가 중요하다면 직접 순서를 지정해야 한다.
+- 이럴때 사용하는 것이 <b>@Order 애노테이션</b>이다. <b>@Aspect 애노테이션과 함께 @Order 애노테이션을 클래스에 붙이면 @Order 애노테이션에 지정한 값에 따라 적용 순서를 결정</b>한다.
+
+- @Order 애노테이션의 값이 작으면 먼저 적용하고 크면 나중에 적용한다. 예를 들어 다음과 같이 두 Aspect 클래스에 @Order 애노테이션을 적용했다고 하자.
+
+```java
+import org.springframework.core.annotation.Order;
+
+@Aspect
+@Order(1)
+public class ExeTimeAspect {
+	...
+}
+
+@Aspect
+@Order(2)
+public class CacheAspect {
+	...
+}
+```
+
+- ExeTimeAspect에 적용한 @Order 애노테이션 값이 1이고 CacheAspect에 적용한 @Order 애노테이션의 값이 2이므로 다음과 같이 ExeTimeAspect가 먼저 적용되고 그 다음에 CacheAspect가 적용된다.
+
+
+#### @Order 애노테이션을 이용해서 적용 순서 변경 가능
+
+![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20AOP%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D/images/image8.png)
+
+
+- 실행 결과
+
+```
+CacheAspect: Cache에 추가[7]
+RecCalculator.factorial([7]) 실행 시간 : 65560100 ns
+CacheAspect: Cache에서 구함[7]
+RecCalculator.factorial([7]) 실행 시간 : 231600 ns
+CacheAspect: Cache에 추가[5]
+RecCalculator.factorial([5]) 실행 시간 : 221200 ns
+CacheAspect: Cache에서 구함[5]
+RecCalculator.factorial([5]) 실행 시간 : 200500 ns
+```
+
+- factorial(7)을 처음 실행할 때와 두 번째 실행할 때 모두 두 Aspect가 적용되는 것을 확인할 수 있다.
+
 
 ### @Around의 Pointcut 설정과 @Pointcut 재사용
 
+- @Pointcut 애노테이션이 아닌 @Around 애노테이션에 execution 명시자를 직접 지정할 수도 있다. 
 
+```java
+@Aspect
+public class CacheAspect {
+	@Around("execution(public * aopex..*(..))")
+	public Object execution(ProceedingJoinPoint joinPoint) throws Throwable {
+		... 생략
+	}
+}
+```
+
+- 만약 같은 Pointcut을 여러 Advice가 함께 사용한다면 공통 Pointcut을 재사용할 수도 있다. 
+
+```java 
+@Aspect
+public class ExeTimeAspect {
+	
+	@Pointcut("execution(public * aopex..*(..))")
+	private void publicTarget() {
+	
+	}
+	
+	@Around("publicTarget()")
+	public Object measure(ProceedingJoinPoint joinPoint) throws Throwable {
+		... 생략
+	}
+}
+```
+
+- 이 코드에서 @Around는 publicTarget() 메서드에 설정한 Pointcut을 사용한다.
+- publicTarget() 메서드는 private인데 이 경우 같은 클래스에 있는 @Around 애노테이션에서만 해당 설정을 사용할 수 있다. 
+- 다른 클래스에 위치한 @Around 애노테이션에서 publicTarget() 메서드의 Pointcut을 사용하고 싶다면 publicTarget() 메서드를 public으로 바꾸면 된다.
+
+```java
+@Aspect
+public class ExeTimeAspect {
+	
+	@Pointcut("execution(public * aopex..*(..))")
+	public void publicTarget() {
+	}
+}
+```
+- 그리고 해당 Pointcut의 완전한 클래스 이름을 포함한 메서드 이름을 @Around 애노테이션에서 사용하면 된다. 
+- 예를 들어서 다음 설정은 CacheAspect 클래스의 @Around 메서드에서 ExeTimeAspect 클래스의 publicTarget()에 정의된 Pointcut을 사용한다. 
+
+```java
+@Aspect
+public class CacheAspect {
+	
+	@Around("aspect.ExeTimeAspect.publicTarget()")
+	public Object execute(ProceedingJoinPoint joinPoint) throws Throwable) {
+		... 생략
+	}
+}
+```
+
+- CacheAspect와 ExeTimeAspect 클래스는 같은 패키지에 위치하므로 패키지 이름이 없는 간단한 클래스 이름으로 설정할 수 있다.
+
+```java
+@Aspect
+public class CacheAspect {
+	
+	@Around("ExeTimeAspect.publicTarget()")
+	public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
+		... 생략 
+	}
+}
+```
+
+- 여러 Aspect에서 공통적으로 사용하는 Pointcut이 있다면 다음과 같이 별도 클래스에 Pointcut을 정의하고 각 Aspect 클래스에서 해당 Pointcut을 사용하도록 구성하면 Pointcut 관리가 편해진다.
+
+![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20AOP%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D/images/image9.png)
+
+- @Pointcut을 설정한 CommonPointcut은 빈으로 등록할 필요가 없다.
+- @Around 애노테이션에서 해당 클래스에 접근 가능하면 해당 Pointcut을 사용할 수 있다.
