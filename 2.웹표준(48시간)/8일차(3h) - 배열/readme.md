@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1anlosgavXJsAuJKygKsHQNKo816JqjEH?usp=sharing)
+
 # 배열
 
 ## 배열의 기초
@@ -536,7 +539,7 @@ console.log(zip); // -> Map {"Tom" => "131-8634", "Huck" => "556-0002"}
 다음 코드는 제너레이터로 이터레이터를 생성하는 방식으로 앞의 코드와 똑같은 작업을 처리합니다.
 
 ```javascript
-function makeZip() {
+function* makeZip() {
 	yield ["Tom", "131-8634"];
 	yield ["Huck", "556-0002"];
 }
@@ -679,7 +682,7 @@ var zip = new Set(["131-8634", "556-0002"]);
 다음 코드는 제너레이터로 이터레이터를 생성해서 앞의 코드와 같은 작업을 합니다.
 
 ```javascript
-function makeZip() {
+function* makeZip() {
 	yield "131-8634";
 	yield "556-0002";
 }
