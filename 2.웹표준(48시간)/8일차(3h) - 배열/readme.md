@@ -719,7 +719,7 @@ Set 객체에 데이터를 추가할 때는 add(value) 메서드를 사용합니
 ```javascript
 var zip = new Set();
 zip.add("131-8634");
-zip.add"556-0002");
+zip.add("556-0002");
 console.log(zip);  // -> Set {"131-8634", "556-0002"}
 ```
 
