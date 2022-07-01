@@ -270,10 +270,118 @@ public class AppCtx {
 - Tomcat JDBC 모듈의 org.apache.tomcat.jdbc.pool.DataSource 클래스는 커넥션 풀 기능을 제공하는 DataSource 구현 클래스이다.
 - DataSource 클래스는 커넥션을 몇 개 만들지 지정할 수 있는 메서드를 제공한다.
 
+|설정 메서드|설명|
+|----|----|
+|setInitialSize(int)|커넥션 풀을 초기화할 때 생성할 초기 커넥션 개수를 지정한다. 기본값은 10이다.|
+|setMaxActive(int)|커넥션 풀에서 가져올 수 있는 최대 커넥션 개수를 지정한다. 기본값은 100이다.|
+|setMaxIdle(int)|커넥션 풀에 유지할 수 있는 최대 커넥션 개수를 지정한다. 기본값은 maxActive와 같다.|
+|setMinIdle(int)|커넥션 풀에 유지할 최소 커넥션 개수를 지정한다. 기본값은 initialSize에서 가져온다.|
+|setMaxWait(int)|커넥션 풀에서 커넥션을 가져올 때 대기할 최대 시간을 밀리초 단위로 지정한다. 기본값은 30000밀리초(30초)이다.|
+|setMaxAge(long)|최초 커넥션 연결 후 커넥션의 최대 유효 시간을 밀리초 단위로 지정한다. 기본값은 0이다. 0은 유효시간이 없음을 의미한다.|
+|setValidationQuery(String)|커넥션이 유효한지 검사할 때 사용할 쿼리를 지정한다. 언제 검사할지는 별도 설정으로 지정한다. 기본값은 null이다. null이면 검사를 하지 않는다. "select 1"이나 "select 1 from dual"과 같은 쿼리를 주로 사용한다.|
+|setValidationQueryTimeout(int)|검사 쿼리의 최대 실행 시간을 초 단위로 지정한다. 이 시간을 초과하면 검사에 실패한 것으로 간주한다. 0 이하로 지정하면 비활성화한다. 기본값은 -1이다.|
+|setTimeOnBorrow(boolean)|풀에서 커넥션을 가져올 때 검사 여부를 지정한다. 기본값은 false이다.|
+|setTestOnReturn(boolean)|풀에 커넥션을 반환할 때 검사 여부를 지정한다. 기본값은 false이다.|
+|setTestWhileIdle(boolean)|커넥션이 풀에 유휴 상태로 있는 동안 검사할지 여부를 지정한다. 기본값은 false이다.|
+|setMinEvictableIdleTimeMillis(int)|커넥션 풀에 유효 상태를 유지할 최초 시간을 밀리초 단위로 지정한다. testWhileIdle이 true이면 유휴 시간이 이 값을 초과한 커넥션을 풀에서 제거한다. 기본값은 60000밀리초(60초)이다.|
+|setTimeBetweenEvictionRunsMillis(int)|커넥션 풀의 유효 커넥션을 검사할 주기를 밀리초 단위로 지정한다. 기본값은 5000밀리초(5초)이다. 이 값을 1초 이하로 설정하면 안된다.|
 
+- 위 설정을 이해하려면 커넥션의 상태를 알아야 한다. 커넥션 풀은 커넥션을 생성하고 유지한다. 
+- 커넥션 풀에 커넥션을 요청하면 해당 커넥션은 활성(active) 상태가 되고, 커넥션을 다시 커넥션 풀에 반환하면 유휴(idle) 상태가 된다. 
+- DataSource#getConnection()을 실행하면 커넥션 풀에서 커넥션을 가져와 커넥션이 활성 상태가 된다. 
+- 반대로 커넥션을 종료(close)하면 풀로 돌아가 유휴 상태가 된다. 
+
+#### src/main/java/dbquery/DbQuery.java
+
+```java
+package dbquery;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.sql.DataSource;
+
+public class DbQuery {
+	private DataSource dataSource;
+	
+	public DbQuery(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+	
+	public int count() {
+		Connection conn = null;
+		try {
+			conn = dataSource.getConnection(); // 풀에서 구함
+			try (Statement stmt = conn.createStatement();
+					ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM member")) {
+				rs.next();
+				return rs.getInt(1);
+			} 
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close(); // 풀에 반환
+				} catch (SQLException e) {}
+			}
+		}
+	}
+}
+```
+
+- 아래 코드를 실행하면 DataSource에서 커넥션을 구하는데 이때 풀에서 커넥션을 가져온다.
+- 이 시점에서 커넥션 conn은 활성 상태이다. 
+
+```java
+conn = dataSource.getConnection();
+```
+
+- 커넥션 사용이 끝나고 커넥션을 종료하면 실제 커넥션을 끊지 않고 풀에 반환한다. 풀에 반환된 커넥션은 다시 유휴 상태가 된다.
+
+```java
+conn.close();
+```
+
+- <b>maxActive</b>는 <b>활성 상태가 가능한 최대 커넥션 개수를 지정</b>한다. maxActive를 40으로 지정하면 이는 동시에 커넥션 풀에서 가져올 수 있는 커넥션 개수가 40개라는 뜻이다. 활성 상태 커넥션이 40개인데 커넥션 풀에 다시 커넥션을 요청하면 다른 커넥션이 반환될 때까지 대기한다. 이 대기 시간이 maxWait이다. 대기 시간 내에 풀이 반환된 커넥션이 있으면 해당 커넥션을 구하게 되고, 대기 시간 내에 반환된 커넥션이 없으면 익셉션이 발생한다.
+
+- <b>커넥션 풀을 사용하는 이유는 성능 때문이다.</b> 매번 새로운 커넥션을 생성하면 그때마다 연결 시간이 소모된다. 커넥션 풀을 사용하면 미리 커넥션을 생성했다가 필요할 때에 커넥션을 꺼내 쓰므로 커넥션을 구하는 시간이 줄어 전체 응답 시간도 짧아진다. 그래서 커넥션 풀을 초기화할 때 최소 수준의 커넥션을 미리 생성하는 것이 좋다. 이때 생성할 커넥션 개수를 initialSize로 지정한다.
+
+- 커넥션 풀에 생성된 커넥션은 지속적으로 재사용된다. 그런데 한 커넥션이 영원히 유지되는 것은 아니다. DBMS 설정에 따라 일정 시간 내에 쿼리를 실행하지 않으면 연결을 끊기도 한다. 예를 들어 DBMS에 5분 동안 쿼리를 실행하지 않으면 DB 연결을 끊도록 설정했는데, 커넥션 풀에 특정 커넥션을 5분 넘게 유휴 상태로 존재했다고 하자. 이 경우 DBMS에 해당 커넥션의 연결을 끊지만 커넥션은 여전히 풀 속에 남아 있다. 이 상태에서 해당 커넥션을 풀에서 가져와 사용하면 연결이 끊어진 커넥션이므로 익셉션이 발생하게 된다.
+
+- 이런 문제를 방지하려면 커넥션 풀의 커넥션이 유효한지 주기적으로 검사해야 한다. 이와 관련된 속성이 <b>minEvictableIdleTimeMillis, timeBetweenEvictionRunsMillis, testWhileIdle</b>이다.
+- 예를 들어 10초 주기로 유휴 커넥션이 유효한지 여부를 검사하고 최소 유휴시간을 3분으로 지정하고 싶다면 다음과 같이 설정한다.
+
+```java
+@Bean(destroyMethod = "close")
+public DataSource dataSource() {
+	DataSource ds = new DataSource();
+	ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+	ds.setUsername("spring5");
+	ds.setPassword("spring5");
+	ds.setInitialSize(2);
+	ds.setMaxActive(10);
+	ds.setTestWhileIdle(true); // 유휴 커넥션 감시
+	ds.setMinEvictableIdleTimeMillis(1000 * 60 * 3);  // 최소 유휴 시간 3분
+	ds.setTimeBetweenEvictionRunsMillis(1000 * 10); // 10초 주기
+}
+```
+
+* * * 
+## JdbcTemplate을 이용한 쿼리 실행
+스프링을 사용하면 DataSource나 Connection, Statement, ResultSet을 직접 사용하지 않고 JdbcTemplate을 이용해서 편리하게 쿼리를 실행할 수 있다.
+
+
+```java
+
+```
+
+* * * 
 ## 마이바티스(mybatis) 프레임워크 설정하기
 
-
+* * * 
 ## 마이바티스(mybatis) 프레임워크 적용하기
 
 
