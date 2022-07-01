@@ -1,5 +1,10 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1-sdfVxRGLpwqupCJCHEnE3q6NefvMGNC?usp=sharing)
+
 # 함수
+
 ## 함수 정의하기
+
 함수를 정의하는 방법은 네 가지입니다.
 - 함수 선언문으로 정의하는 방법
 ```javascript
