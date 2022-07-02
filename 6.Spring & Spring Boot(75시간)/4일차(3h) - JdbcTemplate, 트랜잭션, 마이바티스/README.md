@@ -371,14 +371,501 @@ public DataSource dataSource() {
 
 * * * 
 ## JdbcTemplate을 이용한 쿼리 실행
-스프링을 사용하면 DataSource나 Connection, Statement, ResultSet을 직접 사용하지 않고 JdbcTemplate을 이용해서 편리하게 쿼리를 실행할 수 있다.
+- 스프링을 사용하면 DataSource나 Connection, Statement, ResultSet을 직접 사용하지 않고 JdbcTemplate을 이용해서 편리하게 쿼리를 실행할 수 있다.
 
+### JdbcTemplate 생성하기
+
+- 가장 먼저 해야 할 작업은 JdbcTemplate 객체를 생성하는 것이다.
+
+#### src/main/java/spring/MemberDao.java
+
+```java
+... 생략
+
+import javax.sql.DataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+public class MemberDao {
+
+	private JdbcTemplate jdbcTemplate;
+	
+	public MemberDao(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+	
+	... 생략
+}
+```
+
+- MemberDao 클래스에 JdbcTemplate 객체를 생성하는 코드를 추가한 것이다. JdbcTemplate 객체를 생성하려면 DataSource를 생성자에 전달하면 된다. 
+- 이를 위해 DataSource를 주입받도록 MemberDao 클래스의 생성자를 구현했다.
+- 물론 다음과 같이 설정 메서드 방식을 이용하여 DataSource를 주입받고 JdbcTemplate을 생성해도 된다.
+
+```java
+public class MemberDao {
+	private jdbcTemplate jdbcTemplate;
+	
+	public setDataSource(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+}
+```
+
+- JdbcTemplate을 생성하는 코드를 MemberDao  클래스에 추가했으니 스프링 설정에 MemberDao 빈 설정을 추가한다.
+
+#### src/main/java/config/AppCtx.java
+
+```java
+... 생략 
+
+import spring.MemberDao;
+
+@Configuration
+public class AppCtx {
+	
+	... 생략
+	
+	@Bean
+	public MemberDao memberDao() {
+		return new MemberDao(dataSource());
+	}
+}
+```
+
+### JdbcTemplate을 이용한 조회 쿼리 실행
+
+- JdbcTemplate 클래스는 SELECT  쿼리 실행을 위한 query() 메서드를 제공한다.
+	- List<T> query(String sql, RowMapper<T> rowMapper)
+	- List<T> query(String sql, Object[] args,  RowMapper<T> rowMapper)
+	- List<T> query(String sql, RowMapper<T> rowMapper, Object... args)
+	
+- query 메서드는 sql 파라미터로 전달받은 쿼리를 실행하고 rowMapper를 이용해서 ResultSet의 결과를 자바 객체로 변환한다.
+- sql 파라미터가 아래와 같이 인덱스 기반 파라미터를 가진 쿼리이면 args 파라미터를 이용해서 각 인덱스 파라미터의 값을 지정한다.
+
+```
+SELECT * FROM member WHERE email = ?
+```
+
+- 쿼리 실행 결과를 자바 객체로 변환할 떄 사용하는 RowMapper 인터페이스는 다음과 같다.
+
+```java
+package org.springframework.jdbc.core;
+
+public interface RowMapper<T> {
+	T mapRow(ResultSet rs, int rowNum) throws SQLException;
+}
+```
+
+- RowMapper의 mapRow() 메서드는 SQL 실행 결과로 구한 ResultSet에서 한 행의 데이터를 읽어와 자바 객체로 만드는 매퍼 기능을 구현한다. 
+- RowMapper 인터페이스를 구현한 클래스를 작성할 수도 있지만 클래스나 람다식으로 RowMapper의 객체를 생성해서 query() 메서드에 전달할 때도 많다.
+
+#### src/main/java/spring/MemberDao.java
+```java
+... 생략
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+
+public class MemberDao {
+	
+	private JdbcTemplate jdbcTemplate;
+	
+	public MemberDao(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+		
+	public Member selectByEmail(String email) {
+		List<Member> results = jdbcTemplate.query(
+				"SELECT * FROM member WHERE email = ?",
+				new RowMapper<Member>() {
+					@Override
+					public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+						Member member = new Member(
+								rs.getString("email"),
+								rs.getString("password"),
+								rs.getString("name"),
+								rs.getTimestamp("regDate").toLocalDateTime());
+						member.setId(rs.getLong("id"));
+						return member;
+					}
+				}, 
+				email);
+					
+		return results.isEmpty() ? null : results.get(0);
+	}
+	... 생략 
+}
+```
+- JdbcTemplate의 query() 메서드를 이용해서 쿼리를 실행한다. 이 쿼리는 인덱스 파라미터(물음표)를 포함하고 있다. 인덱스 파라미터에 들어갈 값은 email로 지정한다.
+- 이 query() 메서드의 세 번째 파라미터는 가변 인자로 인덱스 파라미터가 두 개 이상이면 다음과 같이 인덱스 파라미터 설정에 사용할 각 값을 콤마로 구분한다.
+
+```java
+List<Member> results = jdbcTemplate.query(
+	"SELECT * FROM member WHERE email = ? and name = ?",
+	new RowMapper<Member>() { ... 생략 }, 
+	email, name); // 물음표 개수만큼 해당되는 값 전달
+```
+
+- 임의 클래스를 이용해서 RowMapper의 객체를 전달하고 있다. 이 RowMapper는 ResultSet에서 데이터를 읽어와 Member 객체로 변환해주는 기능을 제공하므로 RowMapper의 타입 파라미터로 Member를 사용했다(RowMapper<Member>타입)
+- mapRow() 메서드는 파라미터로 전달받은 ResultSet에서 데이터를 읽어와 Member 객체를 생성해서 리턴하도록 구현하였다.
+
+- 람다식을 사용하면 임의 클래스를 사용하는 것보다 간결하다.
+
+```java
+List<Member> results = jdbcTemplate.query(
+	"SELECT * FROM member WHJERE email = ?",
+	(ResultSet rs, int rowNum) -> {
+		Member member = new Member(
+			rs.getString("email"),
+			rs.getString("password"),
+			rs.getString("name"),
+			rs.getTimestamp("regDate").toLocalDateTime());
+		member.setId(rs.getLong("id"));
+		return member;
+	},
+	email);
+```
+- 동일한 RowMapper 구현을 여러 곳에서 사용한다면 아래 코드처럼 RowMapper 인터페이스를 구현한 클래를 만들어서 코드 중복을 막을 수 있다.
+
+```java
+// RowMapper를 구현한 클래스를 작성
+public class MemberRowMapper implements RowMapper<Member> {
+	@Override
+	public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+		Member member = new Member(
+			rs.getString("email"),
+			rs.getString("password"),
+			rs.getString("name"),
+			rs.getTimestamp("regDate").toLocalDateTime());
+		member.setId(rs.getLong("id"));
+		return member;
+	}
+}
+
+// MemberRowMapper 객체 생성
+List<Member> results = jdbcTemplate(
+	"SELECT * FROM member WHERE email = ? AND name = ?", 
+	new MemberRowMapper(),	
+	email, name);
+```
+
+- selectByEmail() 메서드는 지정한 이메일에 해당하는 member 데이터가 존재하면 해당 Member 객체를 리턴하고 그렇지 않다면 null을 리턴하도록 구현했다. 
+
+```java
+List<Member> results = jdbcTemplate.query(
+	"SELECT * FROM member WHERE email = ?",
+	new RowMapper<Member>() { ... 생략 },
+	email);
+	
+return results.isEmpty() ? null : results.get(0); 
+```
+
+- query() 메서드는 쿼리를 실행한 결과가 존재하지 않으면 길이가 0인 List를 리턴하므로 List가 비어 있는지 여부로 결과가 존재하지 않는지 확인할 수 있다.
+- MemberDao에서 JdbcTemplate의 query()를 사용하는 또 다른 메서드는 selectAll()로 다음 처럼 구현할 수 있다. 참고로 selectAll() 메서드의 리턴 타입을 Collection<Member>에서 List<Member>로 변경했다.
+
+#### src/main/java/spring/MemberDao.java
+
+```java
+package spring;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+
+public class MemberDao {
+	
+	private JdbcTemplate jdbcTemplate;
+	
+	... 생략
+		
+	public List<Member> selectAll() {
+		List<Member> results = jdbcTemplate.query("SELECT * FROM member",
+				new RowMapper<Member>() {
+					@Override
+					public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+							Member member = new Member(
+								rs.getString("email"),
+								rs.getString("password"),
+								rs.getString("name"),
+								rs.getTimestamp("regDate").toLocalDateTime());
+							member.setId(rs.getLong("id"));
+							return member;
+						}
+				});
+		return results;
+	}
+}
+```
+
+- 위 코드는 selectByEmail() 메서드와 동일한 RowMapper 임의 클래스를 사용했다. 
+- 다음과 같이 Member를 위한 RowMapper 구현 클래스를 이용하도록 두 메서드를 수정하면 RowMapper 임의 클래스나 람다식 중복을 제거할 수 있다.
+
+```java
+public Member selectByEmail(String email) {
+	List<Member> results = jdbcTemplate.query(
+		"SELECT * FROM member WHERE email = ?",
+		new MemberRowMapper(),
+		email);
+	
+	return results.isEmpty() ? null : results.get(0);
+}
+
+public Collection<Member> selectAll() {
+	List<Member> results = jdbcTemplate.query("SELECT * FROM member", new MemberRowMapper());
+	
+	return results;
+}
+```
+
+#### 결과가 1행인 경우 사용할 수 있는 queryForObject() 메서드
+- 다음은 member 테이블의 전체 행 개수를 구하는 코드이다. 이 코드는 query() 메서드를 사용했다.
+
+```java
+public int count() {
+	List<Integer> results = jdbcTemplate.query(
+		"SELECT COUNT(*) FROM member",
+		new RowMapper<Integer>() {
+			@Override
+			public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getInt(1);
+			}
+		});
+	return results.get(0);
+}
+```
+
+- COUNT(\*) 쿼리는 결과가 한 행 뿐이니 쿼리 결과를 List로 받기보다는 Integer와 같은 정수 타입으로 받으면 편리할 것이다. 
+- 이를 위한 메서드가 바로 queryForObject()이다. 
+- queryForObject()를 이용하면 COUNT(\*) 쿼리 실행 코드를 다음처럼 구현할 수 있다(MemberDao.java에 count() 메서드를 추가한다).
+
+#### src/main/java/spring/MemberDao.java
 
 ```java
 
+... 생략
+
+public class MemberDao {
+	
+	private JdbcTemplate jdbcTemplate;
+	
+	... 생략
+	
+	public int count() {
+		Integer count = jdbcTemplate.queryForObject(
+				"SELECT COUNT(*) FROM member", Integer.class);
+		return count;
+	}
+}
+```
+
+- queryForObject()  메서드는 쿼리 실행 결과 행이 한 개인 경우에 사용할 수 있는 메서드다.
+- queryForObject() 메서드의 두 번째 파라미터는 칼럼을 읽어올 때 사용할 타입을 지정한다.
+- 예를 들어 평균을 구한다면 다음처럼 Double 타입을 사용할 수 있다.
+
+```java
+double avg = jdbcTemplate.queryForObject(
+	"SELECT AVG(height) FROM funiture WHERE type = ? AND status = ?", Double.class, 100, "S");
+```
+
+- 위 코드에서 볼 수 있듯이 queryForObject() 메서드도 쿼리에 인덱스 파라미터(물음표)를 사용할 수 있다. 인덱스 파라미터가 존재하면 파라미터 값을 가변 인자로 전달한다.
+
+- 실행 결과 컬럼이 두 개 이상이면 RowMapper를 파라미터로 전달해서 결과를 생성할 수 있다.
+- 예를 들어 특정 ID를 갖는 회원 데이터를 queryForObject()로 읽어오고 싶다면 다음 코드를 사용할 수 있다.
+
+```java
+Member member = jdbcTemplate.queryForObject(
+	"SELECT * FROM member WHERE ID = ?",
+	new RowMapper<Member>() {
+		@Override
+		public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Member member = new Member(rs.getString("email"),
+				rs.getString("password"),
+				rs.getString("name"),
+				rs.getTimestamp("regDate").toLocalDateTime());
+			member.setId(rs.getLong("id"));
+			return member;
+		}
+	},
+	100);
+```
+- queryForObject() 메서드를 사용한 위 코드와 기존의 query() 메서드를 사용한 코드의 차이점은 리턴 타입이 List가 아니라 RowMapper로 변환해주는 타입(위 코드에서는 Member)이라는 점이다.
+- 주요 queryForObject() 메서드는 다음과 같다.
+	- T queryForObject(String sql, Class<T> requiredType)
+	- T queryForObject(String sql, Class<T> requiredType, Object... args)
+	- T queryForObject(String sql, RowMapper<T> rowMapper)
+	- T queryForObject(String sql, RowMapper<T> rowMapper, Object... args)
+- queryForObject() 메서드를 사용하려면 쿼리 실행 결과는 반드시 한 행이러야 한다. 
+- 만약 쿼리 실행 결과 행이 없거나 두 개 이상이면 IncorrectResultSizeDataAccessException이 발생한다. 행의 개수가 0이면 하위 클래스인 EmptyResultDataAccessException이 발생한다.
+- 따라서 결과 행이 정확하게 한 개 아니면 queryForObject() 메서드 대신 query() 메서드를 사용해야 한다.
+
+### JdbcTemplate을 이용한 변경 쿼리 실행
+- INSERT, UPDATE, DELETE 쿼리는 update() 메서드를 사용한다.
+	- int update(String sql)
+	- int update(String sql, Object... args)
+
+- update() 메서드는 쿼리 실행 결과로 변경된 행의 개수를 리턴한다. update() 메서드의 사용 예는 다음과 같다.
+
+#### src/main/java/spring/MemberDao.java
+
+```java
+... 생략
+
+public class MemberDao {
+	
+	private JdbcTemplate jdbcTemplate;
+	
+	public MemberDao(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+	
+	... 생략
+	
+	public void update(Member member) {
+		jdbcTemplate.update(
+			"UPDATE member SET name = ?, password = ? WHERE email = ?",
+			member.getName(), member.getPassword(), member.getEmail());
+	}
+	
+	... 생략
+}
+```
+
+### PreparedStatementCreator를 이용한 쿼리 실행
+- 지금까지 작성한 코드는 다음과 같이 쿼리에서 사용할 값을 인자로 전달했다.
+```java
+jdbcTemplate.update(
+	"UPDATE member SET name = ?, password = ? WHERE email = ?",
+	member.getName(), member.getPassword(), member.getEmail());
+```
+
+- 위 코드는 첫 번째 인덱스 파라미터 두 번째 파라미터, 세 번째 파라미터 값으로 각각 member.getName(), member.getPassword(), member.getEmail()을 사용했다. 대 부분 이와 같은 방법으로 쿼리의 인덱스 파라미터의 값을 전달할 수 있다.
+
+- PreparedStatement의 set 메서드를 사용해서 직접 인덱스 파라미터 값을 설정해야 할 때도 있다. 
+- 이 경우 PreparedStatement를 생성하고 설정해야 한다.
+- PreparedStatementCreator 인터페이스는 다음과 같다.
+```java 
+package org.springframework.jdbc.corel
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public interface PreparedStatementCreator {
+	PreparedStatement createPreparedStatement(Connection conn) throws SQLException;
+}
+```
+- PreparedStatementCreator 인터페이스의 createdPreparedStatement() 메서드는 Connection 타입의 파라미터를 갖는다. 
+- PreparedStatementCreator를 구현한 클래스는 createPreparedStatement() 메서드의 파라미터로 전달받는 Connection을 이용해서 PreparedStatement  객체를 생성하고 인덱스 파라미터를 알맞게 설정한 뒤에 리턴하면 된다.
+
+```java
+jdbcTemplate.update(new PreparedStatementCreator() {
+	@Override
+	public PreparedStatement createPreparedStatement(Connection conn) {
+		// 파라미터로 전달받은 Connection을 이용해서 PreparedStatement 생성
+		PreparedStatement pstmt = conn.prepareStatement(
+			"INSERT INTO (email, password, name, regDate) values (?, ?, ?, ?)");
+		// 인덱스 파라미터 값 설정
+		pstmt.setString(1, member.getEmail());
+		pstmt.setString(2, member.getPassword());
+		pstmt.setString(3, member.getName());
+		pstmt.setTimestamp(4, Timestamp.valueOf(member.getRegisterDateTime()));
+		// 생성한 PreparedStatement 객체 리턴
+		return pstmt;
+	}
+});
+```
+- JdbcTemplate 클래스가 제공하는 메서드 중에서 PreparedStatementCreator 인터페이스를 파라미터로 갖는 메서드는 다음과 같다.
+
+	- List<T> query(PreparedStatementCreator psc, RowMapper<T> rowMapper)
+	- int update(PreparedStatementCreator psc)
+	- int update(PreparedStatementCreator psc, KeyHolder generatedKeyHolder)
+
+- 위 목록에서 세 번째 메서드는 자동 생성되는 키 값을 구할 떄 사용한다.
+
+### INSERT  쿼리 실행 시 KeyHolder를 이용해서 자동 생성 키값 구하기
+- MySQL의 AUTO_INCREMENT 칼럼은 행이 추가되면 자동으로 값이 할당되는 칼럼으로서 주요키 컬럼에 사용된다.
+- 앞서 member 테이블을 생성할 때 사용한 쿼리도 다음 코드처럼 주요키 컬럼을 AUTO_INCREMENT 칼럼으로 지정했다.
+- AUTO_INCREMENT와 같은 자동 증가 컬럼을 가진 테이블에 값을 삽입하면 해당 컬럼의 값이 자동으로 생성된다. 따라서 아래 코드 처럼 INSERT 쿼리에 자동 증가 컬럼에 해당하는 값은 지정하지 않는다.
+
+```java
+// 자동 증가 컬럼인 ID 컬럼의 값을 지정하지 않음
+jdbcTemplate.update("INSERT INTO member (email, password, name, regDate") VALUES (?, ?, ?, ?)",
+	member.getEmail(), member.getPassword(), member.getName(),
+	new Timestamp(member.getRegisterDate().getTime()));
+```
+- update() 메서드는 변경된 행의 개수를 리턴할 뿐 생성된 키 값을 리턴하지는 않는다.
+
+- JdbcTemplate은 자동으로 생성된 키 값을 구할 수 있는 방법을 제공하고 있다. 그것은 바로 KeyHolder를 사용하는 것이다.
+- keyHolder를 사용하면 다음과 같이 MemberDao의 insert() 메서드에 삽입하는 Member 객체의 id 값을 구할 수 있다.
+
+#### src/main/java/spring/MemberDao.java
+
+```java
+
+... 생략
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.Connection;
+import java.sql.Timestamp;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+
+public class MemberDao {
+	
+	private JdbcTemplate jdbcTemplate;
+	
+	... 생략
+		
+	public void insert(Member member) {
+			KeyHolder keyHolder = new GeneratedKeyHolder();
+			jdbcTemplate.update(new PreparedStatementCreator() {
+				@Override
+				public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
+					PreparedStatement pstmt = conn.prepareStatement(
+							"INSERT INTO member (email, password, name, regDate) VALUES (?, ?, ?, ?)",
+							new String[] { "id" });
+					pstmt.setString(1,  member.getEmail());
+					pstmt.setString(2,  member.getPassword());
+					pstmt.setString(3, member.getName());
+					pstmt.setTimestamp(4,  
+							Timestamp.valueOf(member.getRegisterDateTime()));
+					
+					return pstmt;
+				}
+			}, keyHolder);
+			
+			Number keyValue = keyHolder.getKey();
+			member.setId(keyValue.longValue());
+	}
+	... 생략 
+}
 ```
 
 * * * 
+
 ## 마이바티스(mybatis) 프레임워크 설정하기
 
 * * * 
