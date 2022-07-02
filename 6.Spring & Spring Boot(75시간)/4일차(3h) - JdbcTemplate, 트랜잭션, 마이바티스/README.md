@@ -1422,6 +1422,263 @@ public PlatformTransactionManager transactionManager() {
 	- 메서드를 수행하는데 트랜잭션이 필요하다는 것을 의미한다. 현재 진행 중인 트랜잭션이 존재하면 해당 트랜잭션을 사용한다. 존재하지 않으면 새로운 트랜잭션을 생성한다.
 
 
+![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image6.png)
+
+- SomeService 클래스와 AnyService 클래스는 둘 다 @Transactional 애노테이션을 적용하고 있다.  위의 설정에 따르면 두 클래스에 대해 프록시가 생성된다. 
+- 즉 SomeService의 some() 메서드를 호출하면 트랜잭션이 시작되고 AnyService의 any() 메서드를 호출해도 트랜잭션이 시작된다. 그런데 some() 메서드는 내부에서 다시 any() 메서드를 호출하고 있다. 이 경우 트랜잭션 처리는 어떻게 될까?
+
+- @Transactional의 propagation 속성은 기본값이 Propagation.REQUIRED이다. 
+- REQUIRED는 현재 진행 중인 트랜잭션이 존재하면 해당 트랜잭션을 사용하고 존재하지 않으면 새로운 트랜잭션을 생성한다고 했다. 처음 some() 메서드를 호출하면 트랜잭션을 새로 시작한다. 하지만 some() 메서드 내부에서 any() 메서드를 호출하면 이미 some() 메서드에 의해 시작된 트랜잭션이 존재하므로 any() 메서드를 호출하는 시점에는 트랜잭션을 새로 생성하지 않는다.
+- 대신 존재하는 트랜잭션을 그대로 사용한다. 즉, some() 메서드와 any() 메서드를 한 트랜잭션으로 묶어서 실행하는 것이다.
+- 만약 any() 메서드에 적용한 @Transactional의 propagation 속성값이 REQUIRED_NEW라면 기존 트랜잭션이 존재하는지 여부에 항상 새로운 트랜잭션을 시작한다. 따라서 이 경우에는 some() 메서드에 의해서 트랜잭션이 생성되고 다시 any() 메서드에 의해 트랜잭션이 생성된다.
+
+```java
+public class ChangePasswordService {
+	... 생략
+	
+	@Transactional
+	public void changePassword(String email, String oldPwd, String newPwd) {
+		Member member = memberDao.selectByEmail(email);
+		if (member == null) 
+			throw new MemberNotFoundException();
+			
+		member.changePassword(oldPwd, newPwd);
+		
+		memberDao.update(member);
+	}
+}
+
+public class MemberDao {
+	private JdbcTemplate jdbcTemplate;
+	
+	... 생략
+	
+	// @Transactional 없음
+	public void update(Member member) {
+		jdbcTemplate.update(
+			"UPDATE member SET name = ?, password = ? WHERE email = ?",
+			member.getName(), member.getPassword(), member.getEmail());
+	}
+}
+```
+
+- 비록 update() 메서드에 @Transactional이 붙어 있지 않지만 JdbcTemplate 클래스 덕에 트랜잭션 범위에서 쿼리를 실행할 수 있게 된다.
+- JdbcTemplate은 진행 중인 트랜잭션이 존재하면 해당 트랜잭션 범위에서 쿼리를 실행한다. 위 코드의 실행 흐름을 다이어그램으로 표시하면 다음과 같다.
+
+![image5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image5.png)
+
+- 그림을 보면 과정 1에서 트랜잭션을 시작한다. ChangePasswordService의 @Transactional이 붙은 메서드를 실행하므로 프록시가 트랜잭션을 시작한다. 과정 2.1.1과 과정 2.2.1은 JdbcTemplate을 실행한다. 과정 2.1.1과 과정 2.2.1을 실행하는 시점에서 트랜잭션이 진행 중이다(트랜잭션은 커밋 시점인 과정 3에서 끝난다). 
+- 이 경우 JdbcTemplate은 이미 진행 중인 트랜잭션 범위에서 실행한다. 따라서 changePassword() 메서드에 실행하는 모든 쿼리는 하나의 트랜잭션 범위에서 실행된다.
+- 한 트랜잭션 범위에서 실행되므로 과정 2와 과정 2.3 사이에 익셉션이 발생해서 트랜잭션이 콜백되면 과정 2.2.1의 수정 쿼리도 콜백된다.
+
+### 전체 기능 연동한 코드 실행
+
+#### src/main/java/config/AppCtx.java
+
+```java
+package config;
+
+import org.apache.tomcat.jdbc.pool.DataSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import spring.MemberDao;
+import spring.ChangePasswordService;
+import spring.MemberInfoPrinter;
+import spring.MemberListPrinter;
+import spring.MemberPrinter;
+import spring.MemberRegisterService;
+
+@Configuration
+@EnableTransactionManagement
+public class AppCtx {
+	
+	@Bean(destroyMethod="close")
+	public DataSource dataSource() {
+		DataSource ds = new DataSource();
+		ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		ds.setUrl("jdbc:mysql://localhost/spring5fs?characterEncoding=utf8");
+		ds.setUsername("spring5");
+		ds.setPassword("spring5");
+		ds.setInitialSize(2);
+		ds.setMaxActive(10);
+		ds.setMaxIdle(10);
+		ds.setTestWhileIdle(true);
+		ds.setMinEvictableIdleTimeMillis(60000 * 3);
+		ds.setTimeBetweenEvictionRunsMillis(10 * 1000);
+		return ds;
+	}
+	
+	@Bean
+	public PlatformTransactionManager transactionManager() {
+		DataSourceTransactionManager tm = new DataSourceTransactionManager();
+		tm.setDataSource(dataSource());
+		return tm;
+	}
+	
+	@Bean
+	public MemberDao memberDao() {
+		return new MemberDao(dataSource());
+	}
+	
+	@Bean
+	public MemberRegisterService memberRegSvc() {
+		return new MemberRegisterService(memberDao());
+	}
+	
+	@Bean
+	public ChangePasswordService changePwdSvc() {
+		ChangePasswordService pwdSvc = new ChangePasswordService();
+		pwdSvc.setMemberDao(memberDao());
+		return pwdSvc;
+	}
+	
+	@Bean
+	public MemberPrinter memberPrinter() {
+		return new MemberPrinter();
+	}
+	
+	@Bean
+	public MemberListPrinter listPrinter() {
+		return new MemberListPrinter(memberDao(), memberPrinter());
+	}
+	
+	@Bean
+	public MemberInfoPrinter infoPrinter() {
+		MemberInfoPrinter infoPrinter = new MemberInfoPrinter();
+		infoPrinter.setMemberDao(memberDao());
+		infoPrinter.setPrinter(memberPrinter());
+		return infoPrinter;
+	}
+}
+```
+
+#### src/main/java/main/Main.java
+
+```java
+package main;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import config.AppCtx;
+import spring.ChangePasswordService;
+import spring.DuplicateMemberException;
+import spring.MemberInfoPrinter;
+import spring.MemberListPrinter;
+import spring.MemberNotFoundException;
+import spring.MemberRegisterService;
+import spring.RegisterRequest;
+import spring.WrongIdPasswordException;
+
+public class Main {
+
+	private static AnnotationConfigApplicationContext ctx = null;
+
+	public static void main(String[] args) throws IOException {
+		ctx = new AnnotationConfigApplicationContext(AppCtx.class);
+
+		BufferedReader reader =
+				new BufferedReader(new InputStreamReader(System.in));
+		while (true) {
+			System.out.println("명렁어를 입력하세요:");
+			String command = reader.readLine();
+			if (command.equalsIgnoreCase("exit")) {
+				System.out.println("종료합니다.");
+				break;
+			}
+			if (command.startsWith("new ")) {
+				processNewCommand(command.split(" "));
+			} else if (command.startsWith("change ")) {
+				processChangeCommand(command.split(" "));
+			} else if (command.equals("list")) {
+				processListCommand();
+			} else if (command.startsWith("info ")) {
+				processInfoCommand(command.split(" "));
+			} else {
+				printHelp();
+			}
+		}
+		ctx.close();
+	}
+
+	private static void processNewCommand(String[] arg) {
+		if (arg.length != 5) {
+			printHelp();
+			return;
+		}
+		MemberRegisterService regSvc =
+				ctx.getBean("memberRegSvc", MemberRegisterService.class);
+		RegisterRequest req = new RegisterRequest();
+		req.setEmail(arg[1]);
+		req.setName(arg[2]);
+		req.setPassword(arg[3]);
+		req.setConfirmPassword(arg[4]);
+
+		if (!req.isPasswordEqualToConfirmPassword()) {
+			System.out.println("암호와 확인이 일치하지 않습니다.\n");
+			return;
+		}
+		try {
+			regSvc.regist(req);
+			System.out.println("등록했습니다.\n");
+		} catch (DuplicateMemberException e) {
+			System.out.println("이미 존재하는 이메일입니다.\n");
+		}
+	}
+
+	private static void processChangeCommand(String[] arg) {
+		if (arg.length != 4) {
+			printHelp();
+			return;
+		}
+		ChangePasswordService changePwdSvc =
+				ctx.getBean("changePwdSvc", ChangePasswordService.class);
+		try {
+			changePwdSvc.changePassword(arg[1], arg[2], arg[3]);
+			System.out.println("암호를 변경했습니다.\n");
+		} catch (MemberNotFoundException e) {
+			System.out.println("존재하지 않는 이메일입니다.\n");
+		} catch (WrongIdPasswordException e) {
+			System.out.println("이메일과 암호가 일치하지 않습니다.\n");
+		}
+	}
+
+	private static void processListCommand() {
+		MemberListPrinter listPrinter =
+				ctx.getBean("listPrinter", MemberListPrinter.class);
+		listPrinter.printAll();
+	}
+
+	private static void processInfoCommand(String[] arg) {
+		if (arg.length != 2) {
+			printHelp();
+			return;
+		}
+		MemberInfoPrinter infoPrinter =
+				ctx.getBean("infoPrinter", MemberInfoPrinter.class);
+		infoPrinter.printMemberInfo(arg[1]);
+	}
+
+	private static void printHelp() {
+		System.out.println();
+		System.out.println("잘못된 명령입니다. 아래 명령어 사용법을 확인하세요.");
+		System.out.println("명령어 사용법:");
+		System.out.println("new 이메일 이름 암호 암호확인");
+		System.out.println("change 이메일 현재비번 변경비번");
+		System.out.println("info 이메일");
+
+		System.out.println();
+	}
+}
+```
+
 * * * 
 ## 마이바티스(mybatis) 프레임워크 설정하기
 
