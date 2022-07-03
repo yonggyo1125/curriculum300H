@@ -651,3 +651,77 @@ public class MvcConfig implements WebMvcConfigurer {
 - 위 설정에서 DefaultServletHandlerConfigurer#enable() 메서드는 다음의 두 빈 객체를 추가한다.
 	- DefaultServletHttpRequestHandler
 	- SimpleUrlHandlerMapping
+
+- DefaultServletHttpRequestrHandler는 클라이언트의 모든 요청을 WAS(웹 어플리케이션 서버, 톰캣이나 웹로직 등)가 제공하는 디폴트 서블릿에 전달한다. 예를 들어 "/index.html"에 대한 처리나 DefaultServletHttpRequestHandler에 요청하면 이 요청을 다시 디폴트 서블릿에 전달해서 처리하도록 한다. 그리고 SimpleUrlHandlerMapping을 이용해서 모든 경로("/\*\*")를 DefaultServletHttpRequestHandler를 이용해서 처리하도록 설정한다.
+
+- @EnableWebMvc 애노테이션이 등록하는 RequestMappingHandlerMapping의 적용 우선순위가 DefaultServletHandlerConfigurer@enable() 메서드가 등록하는 SimpleUrlHandlerMapping의 우선순위보다 높다. 때문에 웹 브라우저의 요청이 들어오면 DispatcherServlet은 다음과 같은 방식으로 요청을 처리한다.
+	- (1) RequestMappingHandlerMapping을 사용해서 요청을 처리할 핸들러를 검색한다.
+		- 존재하면 해당 컨트롤러를 이용해서 요청을 처리한다.
+	- (2) 존재하지 않으면 SimpleUrlHandlerMapping을 사용해서 요청을 처리할 핸들러를 검색한다.
+		- DefaultServletHandlerConfigurer#enable() 메서드가 등록한 SimpleUrlHandlerMapping은 "/\*\*" 경로(즉 모든 경로)에 대해 DefaultServletHttpRequestHandler를 리턴한다.
+		- DispatcherServlet은 DefaultServletHttpRequestHandler에 처리를 요청한다.
+		- DefaultServletHttpRequestHandler는 디폴트 서블릿에 처리를 위임한다.
+	
+- 예를 들어 "/index.html" 경로로 요청이 들어오면 (1)번 과정에서 해당하는 컨트롤러를 찾지 못하므로 (2)번 과정을 통해 디폴트 서블릿이 /index.html 요청을 처리하게 된다.
+
+- DefaultServletHandlerConfigurer#enable() 외에 몇몇 설정도 SimpleUrlHandlerMapping을 등록하는데 DefaultServletHandlerConfigurer#enable()이 등록하는 SimpleUrlHandlerMapping의 우선순위가 가장 낮다.
+- 따라서 DefaultServletHandlerConfigurer#enable()을 설정하면 별도 설정이 없는 모든 요청 경로를 디폴트 서블릿이 처리하게 된다.
+
+
+## 직접 설정 예
+- @EnableWebMvc 애노테이션을 사용하지 않아도 스프링 MVC를 사용할 수 있다. 
+- 차이는 @EnableWebMvc 애노테이션과 WebMvcConfigurer 인터페이스를 사용할 때보다 설정해야 할 빈이 많은 것뿐이다.
+
+```java
+@Configuration
+public class MvcConfig {
+	@Bean 
+	public HandlerMapping handlerMapping() {
+		RequestMappingHandlerMapping hm = new RequestMappingHandlerMapping();
+		hm.setOrder(0);
+		return hm;
+	}
+	
+	@Bean
+	public HandlerAdapter handlerAdapter() {
+		RequestMappingAdapter ha = new RequestMappingAdapter();
+		return ha;
+	}
+	
+	@Bean
+	public HandleMapping simpleHandlerMapping() {
+		SimpleUrlHandlerMapping hm = new SimpleUrlHandlerMapping();
+		Map<String, Object> pathMap = new HashMap<>();
+		pathMap.put("/**", defaultServletHandler());
+		hm.setUrlMap(pathMap);
+		return hm;
+	}
+	
+	@Bean
+	public HttpRequestHandler defaultServletHandler() {
+		DefaultServletHttpRequestHandler handler = new DefaultServletHttpRequestHandler();
+		return handler;
+	}
+	
+	@Bean
+	public HandlerAdapter requestHandlerAdapter() {
+		HttpRequestHandlerAdapter ha = new HttpRequestHandlerAdapter();
+		return ha;
+	}
+	
+	@Bean
+	public ViewResolver viewResolver() {
+		InternalResourceViewResolver vr = new InternalResourceViewResolver();
+		vr.setPrefix("/WEB-INF/view/");
+		vr.setSuffix(".jsp");
+		return vr;
+	}
+}
+```
+
+
+## 정리
+- <b>DispatcherServlet</b> : 웹 브라우저의 요청을 받기 위한 창구 역할을 하고, 다른 주요 구성 요소들을 이용해서 요청 흐름을 제어하는 역할을 한다.
+- <b>HandlerMapping</b> : 클라이언트의 요청을 처리할 핸들러 객체를 찾아준다. 핸들러(커맨드) 객체는 클라이언트의 요청을 실제로 처리한 뒤 뷰 정보와 모델을 설정한다.
+- <b>HandlerAdapter</b> : DispatcherServlet과 핸들러 객체 사이의 변환을 알맞게 처리해 준다.
+- <b>ViewResolver</b> : 요청 처리 결과를 생성할 View를 찾아주고 View는 최종적으로 클라이언트에 응답을 생성해서 전달한다. 
