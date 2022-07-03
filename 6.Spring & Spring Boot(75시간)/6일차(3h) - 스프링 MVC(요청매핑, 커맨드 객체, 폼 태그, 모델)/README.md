@@ -65,6 +65,16 @@ mvn archetype:generate
 		<artifactId>mysql-connector-java</artifactId>
 		<version>8.0.29</version>
 	</dependency>
+	<dependency>
+       <groupId>org.slf4j</groupId>
+       <artifactId>slf4j-api</artifactId>
+       <version>1.7.36</version>
+    </dependency>
+    <dependency>
+       <groupId>ch.qos.logback</groupId>
+       <artifactId>logback-classic</artifactId>
+       <version>1.2.11</version>
+    </dependency>
 ... 생략
 </dependencies>
 ```
@@ -90,6 +100,26 @@ mvn archetype:generate
 > 톰캣에서 Maven Dependency를 인식하지 못하여 실행이 안되는 경우<br>프로젝트 폴더 -> 마우스 오른쪽 버튼 -> Properties -> Deplolyment Assembly -> Add 버튼 -> Maven Dependency 선택 -> Apply 또는 Apply and Close 버튼을 클릭하여 적용한다.
 
 - 두 개의 스프링 설정 파일과 web.xml파일을 작성할 것이다. 먼저 서비스 클래스와 DAO 클래스를 위한 스프링 설정 클래스를 다음과 같이 작성한다. DataSource와 트랜잭션 관련 설정도 포함되어 있다.
+
+- 로그 출력 설정
+#### src/main/resources/logback.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d %5p %c{2} - %m%n</pattern>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="stdout" />
+    </root>
+    
+    <logger name="org.springframework.jdbc" level="DEBUG" />
+</configuration>
+```
 
 #### src/main/java/config/MemberConfig.java
 
@@ -268,3 +298,107 @@ public class HelloController {
 	- 회원 정보 입력 화면 : /register/step2
 	- 가입 처리 결과 화면 : /register/step3
 	
+```java
+@Controller
+public class RegisterController {
+	@RequestMapper("/register/step1")
+	public String handleStep1() {
+		return "register/step1";
+	}
+	
+	@RequestMapping("/register/step2")
+	public String handleStep2() {
+		...
+	}
+	
+	@RequestMapping("/register/step3")
+	public String handleStep3() {
+		...
+	}
+}
+```
+
+- 이 코드를 보면 각 요청 애노테이션의 경로가 "/register"로 시작한다. 이 경우 다음 코드 처럼 공통되는 부분의 경로를 담은 @RequestMapping 애노테이션을 클래스에 적용하고 각 메서드는 나머지 경로를 값으로 갖는 요청 맻핑 애노테이션을 적용할 수 있다.
+
+```java
+@Controller
+@RequestMapping("/register")  // 각 메서드에 공통되는 경로
+public class RegistController {
+	
+	@RequestMapping("/step1") // 공통 경로를 제외한 나머지 경로
+	public String handleStep1() {
+		return "register/step1";
+	}
+	
+	@RequestMapping("/step2")
+	public String handleStep2() {
+		...
+	}
+}
+```
+- 스프링 MVC는 클래스에 적용한 요청 매핑 애노테이션의 경로와 메서드에 적용한 요청 매핑 애노테이션의 경로를 합쳐서 경로를 찾기 때문에 위 코드에서 handleStep1() 메서드가 처리하는 경로는 "/step1"이 아닌 "/register/step1"이 된다.
+
+
+#### src/main/java/controller/RegisterController.java
+
+```java
+package controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class RegisterController {
+	
+	@RequestMapping("/register/step1")
+	public String handleStep1() {
+		return "register/step1";
+	}
+}
+```
+
+### src/main/webapp/WEB-INF/view/register/step1.jsp
+
+```html
+<%@ page contentType="text/html; charset=utf-8" %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>회원가입</title>
+    </head>
+    <body>
+        <h2>약관</h2>
+        <p>약관 내용</p>
+        <form action="step2" method="post">
+            <label>
+                <input type="checkbox" name="agree" value="true">약관 동의
+            </label>
+            <input type="submit" value="다음 단계" />
+        </form>
+    </body>
+</html>
+```
+
+- 남은 작업은 Controller.java 파일을 작성하고 이 파일에 RegisterController 클래스를 빈으로 등록하는 것이다. 설정 파일을 같이 작성한다.
+
+#### src/main/java/config/ControllerConfig.java
+
+```java
+package config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import controller.RegisterController;
+
+@Configuration
+public class ControllerConfig {
+	
+	@Bean
+	public RegisterController registerController() {
+		return new RegisterController();
+	}
+}
+```
+
+- 실행 결과
