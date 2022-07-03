@@ -424,5 +424,191 @@ public class MvcConfig implements WebMvcConfigurer {
 - 처리 과정을 보면 DispatcherServlet을 중심으로 HandlerMapping, HandlerAdapter, 컨트롤러, ViewResolver, View, JSP가 각자 역할을 수행해서 클라이언트의 요청을 처리하는 것을 알 수 있다. 이 중 하나라도 어긋나면 클라이언트의 요청을 처리할 수 없게 되므로 각 구성 요소를 올바르게 설정하는 것이 중요하다.
 
 ### 컨트롤러와 핸들러
+- 클라이언트의 요청을 실제로 처리하는 것은 컨트롤러이고 DispatcherServlet,은 클라이언트의 요청을 전달받는 창구 역할을 한다. DispatcherServlet은 클라이언트의 요청을 처리할 컨트롤러를 찾기 위해 HandlerMapping을 사용한다. 컨트롤러를 찾아주는 객체는 ControllerMapping 타입이어야 할 것 같지만 실제로는 HandlerMapping이다.  
+- 스프링 MVC는 웹 요청을 처리할 수 있는 범용 프레임워크이다. @Controller 애노테이션을 붙인 클래스를 이용해서 클라이언트의 요청을 처리하지만 원한다면 직접 만든 클래스를 이용해서 클라이언트의 요청을 처리할 수도 있다. 즉, DispatcherServlet 입장에서는 클라이언트 요청을 처리하는 객체 타입이 반드시 @Controller를 적용한 클래스일 필요는 없다. 실제로 스프링이 클라이언트의 요청을 처리하기 위해 제공하는 타입 중에는 HttpRequestHandler로 존재한다. 
+
+- 이런 이유로 스프링 MVC에서는 웹 요청을 실제로 처리하는 객체를 핸들러(Handler)라고 표현하고 있으며 @Controller 적용 객체나 Controller 인터페이스를 구현한 객체는 모두 스프링 MVC 입장에서는 핸들러가 된다. 따라서 특정 요청 경로를 처리해주는 핸들러를 찾아주는 객체를 HandlerMapping이라고 부른다.
+
+- DispatcherServlet은 핸들러 객체의 실제 타입에 상관없이 실행 결과를 ModelAndView라는 타입으로만 받을 수 있으면 된다. 그런데 핸들러의 실제 구현 타입에 따라 ModelAndView를 리턴하는 객체도(Controller 인터페이스를 구현한 클래스의 객체) 있고, 그렇지 않은 객체도(앞서 구현한 HelloController)있다. 따라서 핸들러의 처리 결과를 ModelAndView로 변환해주는 객체가 필요하며 HandlerAdapter가 이 변환을 처리해준다.
+
+- 핸들러 객체의 실제 타입마다 그에 알맞은 HandlerMapping과 HandlerAdapter가 존재하기 때문에, 사용할 핸들러의 종류에 따라 해당 HandlerMapping과 HandlerAdapter를 스프링 빈으로 등록해야 한다.  물론 <b>스프링이 제공하는 설정 기능을 사용하면 이 두 종류의 빈을 직접 등록하지 않아도 된다.</b>
+
+## DispatcherServlet과 스프링 컨테이너
+- web.xml 파일을 보면 다음과 같이 DispatcherServlet의 contextConfigLocation 초기화 파라미터를 이용해서 스프링 설정 클래스 목록을 전달했다.
+
+```xml
+<servlet>
+	<servlet-name>dispatcher</servlet-name>
+	<servlet-class>
+		org.springframework.web.servlet.DispatcherServlet
+	</servlet-class>
+	<init-param>
+		<param-name>contextClass</param-name>
+		<param-value>
+			org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+		</param-value>
+	</init-param>
+	<init-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			config.MvcConfig
+			config.ControllerConfig
+		</param-value>
+	</init-param>
+	<load-on-startup>1</load-on-startup>
+</servlet>
+```
+- DispatcherServlet은 전달받은 설정파일을 이용해서 스프링 컨테이너를 생성하는데 앞에서 언급한 HandlerMapping, HandlerAdapter 컨트롤러, ViewResolver 등의 빈은 다음처럼 DispatcherServlet이 생성한 스프링 컨테이너에서 구한다. 
+- 따라서 DispatcherServlet이 사용하는 설정 파일에 이들 빈에 대한 정의가 포함되어 있어야 한다.
+
+#### DispatcherServlet은 스프링 컨테이너를 생성하고 그 컨테이너로 부터 필요한 빈 객체를 구한다.
+
+![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%84%A4%EC%A0%95%2C%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC%20%EB%8F%99%EC%9E%91%EB%B0%A9%EC%8B%9D)/images/image8.png)
+
+## @Controller를 위한 HandlerMapping과 HandlerAdapter
+- @Controller 적용 객체는 DispatcherServlet 입장에서 보면 한 종류의 핸들러 객체이다. 
+- DispatcherServlet은 웹 브라우저의 요청을 처리할 핸들러 객체를 찾기 위해 HandlerMapping을 사용하고 핸들러를 실행하기 위해 HandlerAdapter를 사용한다. 
+- DispatcherServlet은 스프링 컨테이너에서 HandlerMapping과 HandlerAdapter 타입의 빈을 사용하므로 핸들러에 알맞은 HandlerMapping 빈과 HandlerAdapter 빈이 스프링 설정에 등록되어 있어야 한다. 그런데 앞서 작성한 예제를 보면 HandlerMapping이나 HandlerAdapter 클래스를 빈으로 등록하는 예제는 보이지 않는다. 단지 <b>@EnableWebMvc 애노테이션</b>만 추가 했다.
+
+```java
+@Configuration
+@EnableWebMvc
+public class MvcConfig {
+	...
+}
+```
+
+- 위 설정은 매우 다양한 스프링 빈 설정을 추가해준다. 이 설정을 사용하지 않고 설정 코드를 직접 작성하려면 백 여줄에 가까운 코드를 입력해야 한다. 
+- 이 태그가 빈으로 추가해주는 클래스 중에는 @Controller 타입의 핸들러 객체를 처리하기 위한 다음의 두 클래스가 포함되어 있다(패키지 이름이 너무 길어서 org.springframework.web 부분을 o.s.w로 표현했다).
+	- o.s.w.servlet.mvc.method.annotation.RequestMappingHandlerMapping
+	- o.s.w.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
+	
+- RequestMappingHandlerMapping 애노테이션은 @Controller 애노테이션이 적용된 객체의 요청 매핑 애노테이션(@GetMapping)값을 이용해서 웹 브라우저의 요청을 처리할 컨트롤러 빈을 찾는다. 
+- RequestMappingHandlerAdapter 애노테이션은 컨트롤러의 메서드를 알맞게 실행하고 그 결과를 ModelAndView 객체로 변환해서 DispatcherServlet에 리턴한다.
+
+```java
+@Controller
+public class HelloController {
+	
+	@RequestMapping("/hello")
+	public String hello(Model model, @RequestParam(value = "name", required = false) String name) {
+		model.addAttribute("greeting", "안녕하세요, " + name);
+		return "hello";
+	}
+}
+```
+- RequestMappingHandlerAdapter 클래스는 "/hello" 요청 경로에 대해 hello() 메서드를 호출한다. 이때 Model 객체를 생성해서 첫 번째 파라미터로 전달한다. 비슷하게 이름이 "name"인 HTTP 요청 파라미터의 값을 두 번째 파라미터로 전달한다.
+- RequestMappingHandlerAdapter는 컨트롤러 메서드 결과 값이 String 타입이면 해당 값을 뷰 이름으로 갖는 ModelAndView 객체를 생성해서 DispatcherServlet에 리턴한다. 이 때 첫 번째 파라미터로 전달한 Model 객체에 보관된 값도 ModelAndView에 함께 전달한다. 예제 코드는 "hello"를 리턴하므로 뷰 이름으로 "hello"를 사용한다.
+
+## WebMvcConfigurer 인터페이스와 설정
+
+- @EnableWebMvc 애노테이션을 사용하면 @Controller 애노테이션을 붙인 컨트롤러를 위한 설정을 생성한다. 
+- 또한 @EnableWebMvc, 애노테이션을 사용하면 WebMvcConfigurer 타입의 빈을 이용해서 MVC 설정을 추가로 생성한다. 
+
+```java
+@Configuration
+@EnableWebMvc
+public class MvcConfig implements WebMvcConfigurer {
+
+	@Override
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+		configurer.enable();
+	}
+
+	@Override
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+		registry.jsp("/WEB-INF/view/", ".jsp");
+	}
+}
+```
+- 여기에서 설정 클래스는 WebMvcConfigurer 인터페이스를 상속하고 있다.
+- @Configuration 애노테이션을 붙인 클래스 역시 컨테이너에 빈으로 등록되므로 MvcConfig 클래스는 WebMvcConfigurer 타입의 빈이 된다.
+- @EnableWebMvc 애노테이션을 사용하면 WebMvcConfigurer 타입인 빈 객체의 메서드를 호출해서 MVC 설정을 추가한다.
+- 예를 들어 ViewResolver 설정을 추가하기 위해 WebMvcConfigurer 타입인 빈 객체의 ConfigurerViewResolvers() 메서드를 호출한다. 따라서 WebMvcConfigurer 인터페이스를 구현한 설정 클래스는 configureViewResolvers() 메서드를 재정의해서 알맞은 뷰 관련 설정을 추가하면 된다. 
+
+- 스프링5 버전은 자바 1.8부터 지원하는 디폴트 메서드를 사용해서 WebMvcConfigurer 인터페이스의 메서드에 기본 구현을 제공하고 있다. 
+- 다음은 스프링5 버전이 제공하는 WebMvcConfigurer 인터페이스의 일부 구현 코드이다.
+
+```java
+public interface WebMvcConfigurer {
+	default void configurePathMatch(PathMatchConfigurer configurer) {
+	}
+	
+	default void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+	}
+	
+	default void addFormatters(FormatterRegistry registry) {
+	}
+	
+	default void addInterceptors(InterceptorRegistry registry) {
+	}
+	
+	default void configureViewResolvers(ViewResolverRegistry registry) {
+	}
+	
+	... 생략
+}
+```
+
+- 기본 구현은 모두 빈 구현이다. 이 인터페이스를 상속한 설정 클래스는 재정의가 필요한 메서드만 구현하면 된다. 
+- 앞서 예제도 모든 메서드가 아닌 구 개의 메서드만 재정의했다.
 
 
+> 스프링 4.x 버전은 자바 6을 기준으로 한다. 자바 1.7 버전 까지는 인터페이스에 디폴트 메서드가 없기 때문에 설정 클래스에서 WebMvcConfigurer 인터페이스를 상속하면 인터페이스에 정의되어 있는 모든 메서드를 추가해야 했다. 이런 이유로 WebMvcConfigurer 인터페이스 대신 이 인터페이스의 기본 구현을 제공하는 WebMvcConfigurerAdapter 클래스를 상속해서 필요한 메서드만 재정의하는 방식으로 설정했다.
+
+## JSP를 위한 ViewResolver
+- 컨트롤러 처리 결과를 JSP를 이용해서 생성하기 위해 다음 설정을 사용한다.
+
+```java
+@Configuration
+@EnableWebMvc
+public class MvcConfig implements WebMvcConfigurer {
+	
+	@Override
+	public void configureViewResolvers(ViewResolverRegistry registry) {{
+			registry.jsp("/WEB-INF/view/", ".jsp");
+	}
+}
+```
+
+- WebMvcConfigurer 인터페이스에 정의된 configureViewResolvers() 메서드는 ViewResolverRegistry 타입의 registry 파라미터를 갖는다. 
+- ViewResolverRegistry#jsp() 메서드를 사용하면 JSP를 위한 ViewResolver를 설정할 수 있다.
+- 위 설정은 o.s.w.servlet.view.InternalResourceViewResolver 클래스를 이용해서 다음 설정과 같은 빈을 등록한다.
+
+```java
+@Bean
+public ViewResolver viewResolver() {
+	InternalResouceViewResolver vr = new InternalResourceViewResolver();
+	vr.setPrefix("/WEB-INF/view/")l
+	vr.setSuffix(".jsp");
+	return vr;
+}
+```
+
+- 컨트롤러의 실행 결과를 받은 DispatcherServlet은 ViewResolver에게 뷰 이름에 해당하는 View 객체를 요청한다.
+- 이때 InternalResourceViewResolver는 "prefix + 뷰 이름 + surffix"에 해당하는 경로를 뷰 코드를 사용하는 InternalResourceView 타입의 View 객체를 리턴한다. 예를 들어 뷰 이름이 "hello"라면 "/WEB-INF/view/hello.jsp" 경로를 뷰 코드로 사용하는 InternalResourceView 객체를 리턴한다. DispatcherServlet이 InternalResourceView 객체에 응답 생성을 요청하면 InternalResourceView 객체는 경로에 지정한 JSP 코드를 실행해서 응답 결과를 생성한다.
+
+- DispatcherServlet은 컨트롤러의 실행 결과를 HandlerAdapter를 통해서 ModelAndView 형태로 받는다고 했다. Model에 담긴 값은 View 객체에 Map 형식으로 전달된다. 예를 들어 HelloController 클래스는 다음과 같이 Model에 "greeting" 속성을 설정했다.
+
+```java
+@Controller
+public class HelloController {
+	@RequestMapping("/hello")
+	public String hello(Model model, @RequestParam(value = "name", required = false) String name) {
+		model.addAttribute("greeting", "안녕하세요, " + name);
+		return "hello";
+	}
+}
+```
+
+- 이 경우 DispatcherServlet은 View 객체에 응답 생성을 요청할 때 greeting 키를 갖는 Map 객체를 View 객체에 전달한다. 
+- View 객체는 전달받은 Map 객체에 담긴 값을 이용해서 알맞은 응답 결과를 출력한다. 
+- InternalResourceView는 Map 객체에 담겨 있는 키 값을 request.setAttribute()를 이용해서 request 속성에 저장한다. 그런 뒤 해당 경로의 JSP를 실행한다.
+- 결과적으로 컨트롤러에 지정한 Model 속성은 request 객체 속성으로 JSP에 전달되기 때문에 JSP는 다음과 같이 모델에 지정한 속성 이름을 사용해서 값을 사용할 수 있게 된다.
+
+```java
+<%-- JSP 코드에서 모델의 속성 이름을 사용해서 값 접근 --%>
+인사말 : ${greeting}
+```
+
+## 디폴트 핸들어와 HandlerMapping의 우선순위
