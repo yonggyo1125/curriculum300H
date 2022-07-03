@@ -372,11 +372,57 @@ public void configureViewResolvers(ViewResolverRegistry registry) {
 ![image5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%84%A4%EC%A0%95%2C%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC%20%EB%8F%99%EC%9E%91%EB%B0%A9%EC%8B%9D)/images/image5.png)
 
 
-> 톰캣에서 Maven Dependency를 인식하지 못하 실행이 안되는 경우<br>프로젝트 폴더 -> 마우스 오른쪽 버튼 -> Properties -> Deplolyment Assembly ->  Add 버튼 -> Maven Dependency 선택 -> Apply 또는 Apply and Close 버튼을 클릭하여 적용한다.
+> 톰캣에서 Maven Dependency를 인식하지 못하여 실행이 안되는 경우<br>프로젝트 폴더 -> 마우스 오른쪽 버튼 -> Properties -> Deplolyment Assembly ->  Add 버튼 -> Maven Dependency 선택 -> Apply 또는 Apply and Close 버튼을 클릭하여 적용한다.
 
 ![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%84%A4%EC%A0%95%2C%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC%20%EB%8F%99%EC%9E%91%EB%B0%A9%EC%8B%9D)/images/image6.png)
 
 
 * * * 
 # 스프링 MVC 프레임워크 동작 방식
+
+```java
+@Configuration
+@EnableWebMvc
+public class MvcConfig implements WebMvcConfigurer {
+	
+	@Override
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+		configure.enable();
+	}
+	
+	@Override
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+		registry.jsp("/WEB-INF/view/", ".jsp");
+	}
+}
+```
+
+- 위 설정을 하면 남은 작업은 컨트롤러와 뷰 생성을 위한 JSP 코드를 작성하는 것이다.
+- 개발자는 스프링 MVC가 어떻게 컨트롤러를 실행하고 뷰를 찾는지 자세히 알지 못해도 어느 정도 스프링 MVC를 이용해서 웹 어플리케이션을 개발해 나갈수 있다.
+
+- 단순해 보이는 이 설정은 실제로 백여 줄에 가까운 설정을 대신 만들어주는데 이것 모두를 알 필요는 없다. 하지만 스프링 MVC를 구성하는 주요 요소가 무엇이고 각 구성 요소들이 서로 연결되는지 이해하면 다양한 환경에서 스프링 MVC를 빠르게 적용하는데 많은 도움이 된다.
+
+## 스프링 MVC의 핵심 구성 요소
+
+![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/5%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%84%A4%EC%A0%95%2C%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC%20%EB%8F%99%EC%9E%91%EB%B0%A9%EC%8B%9D)/images/image7.png)
+
+- 그림에서<<spring bean>>이라고 표시한 것은 스프링 빈으로 등록해야 한다는 것을 의미한다. 회색 배경을 가진 구성 요소는 개발자가 구현해야 하는 요소이다. 예를 들어 컨트롤러 구성 요소는 개발자가 직접 구현해야 하고 스프링 빈으로 등록해야 한다. 앞서 구현한 HelloController가 컨트롤러에 해당한다.
+
+- 중앙에 위치한 DispatcherServlet은 모든 연결을 담당한다. 웹 브라우저로부터 요청이 들어오면 DispatcherServlet은 그 요청을 처리하기 위한 컨트롤러 객체를 검색한다. 이때 DispatcherServlet은 직접 컨트롤러를 검색하지 않고 <b>HandlerMapping이라는 빈 객체에게 컨트롤러 검색을 요청</b>한다(2번 과정에 해당).
+
+- HandlerMapping은 클라이언트의 요청 경로를 이용해서 이를 처리할 <b>컨트롤러 빈 객체를 DispatcherServlet에 전달</b>한다. 예를 들어 웹 요청 경로가 '/hello'라면 등록된 컨트롤러 빈 중에서 '/hello' 요청 경로를 처리할 컨트롤러를 리턴한다.
+
+- 컨트롤러 객체를 DispatcherServlet이 전달받았다고 해서 바로 컨트롤러 객체의 메서드를 실행할 수 있는 것은 나미다. DispatcherServlet은 @Controller 애노테이션을 이용해서 구현한 컨트롤러뿐만 아니라 스프링 2.5까지 주로 사용됐던 Controller 인터페이스를 구현한 컨트롤러, 그리고 특수목적으로 사용되는 HttpRequestHandler 인터페이스를 구현한 클래스를 동일한 방식으로 실행할 수 있도록 만들어졌다.
+- <b>@Controller, Controller 인터페이스, HttpRequestHandler 인터페이스를 동일한 방식으로 처리</b>하기 위해 중간에 사용되는 것이 바로 <b>HandlerAdapter 빈</b>이다.
+
+- DispatcherServlet은 HandlerMapping이 찾아준 컨트롤러 객체를 처리할 수 있는 HandlerAdapter 빈에게 요청 처리를 위임한다(3번 과정) HandlerAdapter는 컨트롤러에 알맞은 메서드를 호출해서 요청을 처리하고(4~5번 과정) 그 결과를 DispatcherServlet에 리턴한다(6번 과정). 이때 HandlerAdapter는 컨트롤러의 처리 결과를 ModelAndView라는 객체로 변환해서 DispatcherServlet에 리턴한다.
+
+- HandlerAdapter로부터 컨트롤러의 요청 처리 결과를 ModelAndView로 받으면 DispatcherServlet은 결과를 보여줄 뷰를 찾기 위해 ViewResolver 빈 객체를 사용한다(7번 과정). ModelAndView는 컨트롤러가 리턴한 뷰 이름을 담고 있는데 ViewResolver는 이 뷰 이름에 해당하는 View 객체를 찾거나 생성해서 리턴한다. 응답을 생성하기 위해 JSP를 사용하는 ViewResolver는 매번 새로운 View 객체를 생성해서 DispatcherServlet에 리턴한다.
+
+- DispatcherServlet은 ViewResolver가 리턴한 View 객체에게 응답 결과 생성을 요청한다(8번 과정). JSP를 사용하는 경우 View 객체는 JSP를 실행함으로써 웹 브라우저에 전송할 응답 결과를 생성하고 이로써 모든 과정이 끝난다.
+
+- 처리 과정을 보면 DispatcherServlet을 중심으로 HandlerMapping, HandlerAdapter, 컨트롤러, ViewResolver, View, JSP가 각자 역할을 수행해서 클라이언트의 요청을 처리하는 것을 알 수 있다. 이 중 하나라도 어긋나면 클라이언트의 요청을 처리할 수 없게 되므로 각 구성 요소를 올바르게 설정하는 것이 중요하다.
+
+### 컨트롤러와 핸들러
+
 
