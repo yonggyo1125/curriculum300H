@@ -611,4 +611,43 @@ public class HelloController {
 인사말 : ${greeting}
 ```
 
-## 디폴트 핸들어와 HandlerMapping의 우선순위
+## 디폴트 핸들러와 HandlerMapping의 우선순위
+
+- web.xml 설정을 보면 DispatcherServlet에 대한 매핑 경로를 다음과 같이 '/'로 주었다.
+
+```xml
+<servlet>
+	<servlet-name>dispatcher</servlet-name>
+	<servlet-class>
+		org.springframework.web.servlet.DispatcherServlet
+	</servlet-class>
+	...  생략
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>dispatcher</servlet-name>
+	<url-pattern>/</url-pattern>
+</servlet-mapping>
+```
+
+- 매핑 경로가 '/'인 경우 .jsp로 끝나는 요청을 제외한 모든 요청을 DispatcherServlet이 처리한다. 즉 /index.html이나 /css/bootstreap.css와 같이 확장자가 .jsp가 아닌 모든 요청을 DispatcherServlet이 처리하게 된다.
+- 그런데 @EnableWebMvc 애노테이션이 등록하는 HandlerMapping은 @Controller 애노테이션을 적용한 빈 객체가 처리할 수 있는 요청 경로만 대응할 수 있다.
+- 예를 들어 등록된 컨트롤러가 한 개 이고 그 컨트롤러가 @GetMapping("/hello") 설정을 사용한다면, /hello 경로만 처리할 수 있게 된다. 따라서 "/index.html" 이나 "/css/bootstrap.css"와 같은 요청을 처리할 수 있는 컨트롤러 객체를 찾지 못해 DispatcherServlet은 404 응답을 전송한다.
+
+- "/index.html"이나 "/css/bootstrap.css"와 같은 경로를 처리하기 위한 컨트롤러 객체를 직접 구현할 수도 있지만, 그보다는 WebMvcConfigurer의 configureDefaultServletHandling() 메서드를 사용하는 것이 편리하다.
+
+```java
+@Configuraion
+@EnableWebMvc
+public class MvcConfig implements WebMvcConfigurer {
+	
+	@Override
+	public void configurerServletHandling(DefaultServletHandlerConfigurer configurer) {
+		configurer.enable();
+	}
+}
+```
+
+- 위 설정에서 DefaultServletHandlerConfigurer#enable() 메서드는 다음의 두 빈 객체를 추가한다.
+	- DefaultServletHttpRequestHandler
+	- SimpleUrlHandlerMapping
