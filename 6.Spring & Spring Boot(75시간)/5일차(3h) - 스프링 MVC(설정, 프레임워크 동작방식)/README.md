@@ -20,8 +20,8 @@ mvn archetype:generate
 
 > 서블릿 스펙에 따르면 WEB-INF 폴더의 하위 폴더로 lib 폴더와 classes 폴더를 생성하고 각각의 폴더에 필요한 jar 파일과 컴파일 된 클래스 파일이 위치해야 한다. 하지만 메이븐이나 그레이들 프로젝트의 경우 필요한 jar 파일은 pom.xml/build.gradle 파일의 의존을 통해 지정하고 컴파일된 결과는 target 폴더나 build 폴더에 위치한다. 때문에 WEB-INF 폴더 밑에 lib 폴더나 classes 폴더를 생성할 필요가 없다.
 
-- 자바 실습 버전을 최신버전(17)로 변경합니다 
-- javax.servlet-api, javax.servlet.jsp-api, jstl, spring-webmvc 의존성을 [mvnrepository](https://mvnrepository.com/) 에서 검색하여 다음과 같이 추가합니다.
+- pom.xml : 자바 실습 버전을 최신버전(17)로 변경합니다 
+- pom.xml : javax.servlet-api, javax.servlet.jsp-api, jstl, spring-webmvc 의존성을 [mvnrepository](https://mvnrepository.com/) 에서 검색하여 다음과 같이 추가합니다.
 
 ```xml
 ... 생략
