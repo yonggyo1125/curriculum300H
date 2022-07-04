@@ -495,7 +495,7 @@ function f() {
 		var c = "C";
 		console.log(a+b+c);
 	}
-	a();
+	g();
 }
 f(); // -> ABC
 ```
