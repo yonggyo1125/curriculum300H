@@ -798,7 +798,7 @@ public class ControllerConfig {
 </html>
 ```
 
-- <b>${registerRequest.name}</ㅠb> : registerRequest가 커맨드 객체에 접근할 때 사용한 속성 이름이다. 
+- <b>${registerRequest.name}</b> : registerRequest가 커맨드 객체에 접근할 때 사용한 속성 이름이다. 
 - 스프링 MVC는 커맨드 객체의 (첫 글자를 소문자로 바꾼) 클래스의 이름과 동일한 속성 이름을 사용해서 커맨드 객체를 뷰에 전달한다.
 - 커맨드 객체의 클래스 이름이 RegisterRequest인 경우 JSP 코드는 다음처럼 registerRequest라는 이름을 사용해서 커맨드 객체에 접근할 수 있다.
 
