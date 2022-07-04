@@ -261,7 +261,7 @@ public class MvcConfig implements WebMvcConfigurer {
     </filter>
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
-        <url-pattern>/**</url-pattern>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
     
 </web-app>
@@ -774,3 +774,477 @@ public class ControllerConfig {
 </body>
 </html>
 ```
+
+## 뷰 JSP 코드에서 커맨드 객체 사용하기
+- 가입할 때 사용한 이메일 주소와 이름을 회원 가입 완료 화면에서 보여주면 사용자에게 조금 더 친절하게 보일 것이다.
+- HTTP 요청 파라미터를 이용해서 회원 정보를 전달했으므로 JSP의 표현식 등을 이용해서 정보를 표시해도 되지만, <b>커맨드 객체를 사용해서 정보를 표시할 수도 있다.</b>
+
+#### src/main/webapp/WEB-INF/view/register/step3.jsp
+```java
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>회원가입</title>
+</head>
+<body>
+    <p>
+        <strong>${registerRequest.name}님</strong>
+        회원가입을 완료 했습니다.
+    </p>
+    <p><a href="<c:url value='/main' />">[첫 화면 이동]</a></p>
+</body>
+</html>
+```
+
+- <b>${registerRequest.name}</ㅠb> : registerRequest가 커맨드 객체에 접근할 때 사용한 속성 이름이다. 
+- 스프링 MVC는 커맨드 객체의 (첫 글자를 소문자로 바꾼) 클래스의 이름과 동일한 속성 이름을 사용해서 커맨드 객체를 뷰에 전달한다.
+- 커맨드 객체의 클래스 이름이 RegisterRequest인 경우 JSP 코드는 다음처럼 registerRequest라는 이름을 사용해서 커맨드 객체에 접근할 수 있다.
+
+#### 커맨드 객체와 뷰 모델 속성의 관계
+
+![image3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%9A%94%EC%B2%AD%EB%A7%A4%ED%95%91%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%2C%20%ED%8F%BC%20%ED%83%9C%EA%B7%B8%2C%20%EB%AA%A8%EB%8D%B8)/images/image3.png)
+
+
+
+## @ModelAttribute 애노테이션으로 커맨드 객체 속성 이름 변경
+- 커맨드 객체에 접근할 때 사용할 속성 이름을 변경하고 싶다면 커맨드 객체로 사용할 파라미터에 @ModelAttribute 애노테이션을 적용하면 된다. 
+
+```java
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+@PostMaping("/register/step3")
+public String handleStep3(@ModelAttribute("formData") RegisterRequest regReq) {
+	...
+}
+```
+- @ModelAttribute 애노테이션은 모델에서 사용할 속성 이름을 값으로 설정한다. 위 설정을 사용하면 뷰 코드에서 "formData"라는 이름으로 커맨드 객체에 접근할 수 있다.
+
+## 커맨드 객체와 스프링 폼 연동
+- 회원 정보 입력 폼에서 중복된 이메일 주소를 입력하면 텅 빈 폼을 보여준다. 폼이 비어 있으므로 입력한 값을 다시 입력해야 하는 불편함이 따른다.
+- 다시 폼을 보여줄 떄 커맨드 객체의 값을 폼에 채워주면 이런 불편함을 해소할 수 있다.
+
+```html
+<input type="text" name="email" id="email" value="${registerRequest.email}">
+<input type="text" name="name" id="name" value="${registerRequest.name}">
+```
+- 실제로 step2.jsp의 두 입력 요소에 굵게 표시한 코드를 추가하고 회원 가입 과정을 진행해보자. 이미 존재하는 이메일 주소를 입력한 뒤에 [가입완료] 버튼을 클릭하면 기존에 입력한 값이 폼에 표시될 것이다.
+
+- 스프링 MVC가 제공하는 커스텀 태그를 사용하면 좀 더 간단하게 커맨드 객체의 값을 출력할 수 있다.
+- 스프링은 \<form:form\> 태그와 \<form:input\>태그를 제공하고 있다. 이 두 태그를 사용하면 다음과 같이 커맨드 객체의 값을 폼으로 출력할 수 있다.
+
+#### src/main/webapp/WEB-INF/view/register/step3.jsp
+
+```java
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>회원가입</title>
+    </head>
+    <body>
+        <h2>회원 정보 입력</h2>
+        <form:form action="step3" modelAttribute="registerRequest">
+            <p>
+                <label>
+                    이메일:<br>
+                    <form:input path="email" />
+                </label>
+            </p>
+            <p>
+                <label>
+                    이름:<br>
+                    <form:input path="name" />
+                </label>
+            </p>
+            <p>
+                <label>
+                    비밀번호:<br>
+                    <form:password path="password" />
+                </label>
+            </p>
+            <p>
+                <label>
+                    비밀번호 확인:<br>
+                    <form:password path="confirmPassword" />   
+                </label>
+            </p>
+            <input type="submit" value="가입 완료">
+        </form:form>
+	</body>
+</html>
+```
+
+> modelAttribute 속성을 사용했다. 스프링 4.3 버전까지는 commandName 속성을 사용했는데, 스프링 5 버전부터 속성 이름이 modelAttribute로 바뀌었다. 스프링 4버전을 사용하는 환경이라면 modelAttribute 속성 대신 commandName 속성을 사용하면 된다.
+
+- 스프링이 제공하는 폼 태그를 사용하기 위해 taglib 디렉티브를 설정했다. 
+- \<form:form\>태그는 HTML의 \<form\> 태그를 생성한다. \<form:form\>태그의 속성은 다음과 같다.
+	- action: \<form\> 태그의 action 속성과 동일한 값을 사용한다. 
+	- modelAttribute : 커맨드 객체의 속성 이름을 지정한다. 설정하지 않는 경우 "\<b\>command\</b\>"를 기본값으로 사용한다. 예제에서 커맨드 객체의 속성 이름은 "\<b\>registerRequest\</b\>" 이므로 이 이름을 modelAttribute 속성값으로 설정했다.
+	
+- \<form:input\> 태그는 \<input\> 태그를 생성한다. path로 지정한 커맨드 객체의 프로퍼티를 \<input\> 태그의 value 속성값으로 사용한다. 
+- 예를 들어 \<form:input path="name" /\>는 커맨드 객체의 name 프로퍼티 값을 value 속성으로 사용한다. 
+- 만약 커맨드 객체의 name 프로퍼티 값이 "스프링"이었다면 다음과 같은 input 태그를 생성한다.
+
+```html
+<input id="name" name="name" type="text" value="스프링" />
+```
+
+- \<form:password\> 태그도 \<form:input\> 태그와 유사하다. password 타입의 \<input\>태그를 생성하므로 value 속성의 값을 빈 문자열로 설정한다.
+- \<form:form\> 태그를 사용하려면 커맨드 객체가 존재해야 한다. step2.jsp에서 \<form:form\> 태그를 사용하기 때문에 step1에서 step2로 넘어오는 단계에서 이름이 "<b>registerRequest</b>"의 객체를 모델에 넣어야 \<form:form\> 태그가 정상 동작한다. 이를 위해 RegisterController 클래스의 handleStep2() 메서드에 다음과 같이 코드를 추가했다.
+
+#### src/main/java/controller/RegisterController.java
+
+```java
+package controller;
+
+import org.springframework.ui.Model;
+... 생략
+
+@Controller
+public class RegisterController {
+	... 생략 
+	
+	@PostMapping("/register/step2")
+	public String handleStep2(@RequestParam(value = "agree", defaultValue = "false") Boolean agree, Model model) {
+			if (!agree) {
+				return "register/step1";
+			}
+			
+			model.addAttribute("registerRequest", new RegisterRequest());
+			return "register/step2";
+	}
+	
+	... 생략
+}
+```
+
+## 컨트롤러 구현 없는 경로 매핑
+- step3.jsp 코드를 보면 다음 코드를  볼 수 있다.
+
+```html
+<p><a href="<c:url value='/main' />">[첫 화면 이동]</a></p>
+```
+- step3.jsp는 회원 가입 완료 후 첫 화면으로 이동할 수 있는 링크를 보여준다. 이 첫 화면은 단ㅎ순히 환영 문구와 회원 가입으로 이동할 후 있는 링크만 제공한다고 하자 이를 위한 컨트롤러 클래스는 틀별히 처리할 것이 없기 떄문에 다음처럼 단순히 뷰 이름만 리턴하도록 구현한 것이다.
+
+```java 
+@Override
+public void MainController {
+	@RequestMapping("/main")
+	public String main() {
+		return "main";
+	}
+}
+```
+
+- 이 컨트롤러 코드는 요청 경로와 뷰 이름을 연결해주는 것에 불과하다. 단순 연결을 위해 특별한 로직이 없는 컨트롤러 클래스를 만드는 것은 성가신 일이다. 
+- WebMvcConfigurer 인터페이스의 addViewControllers() 메서드를 사용하면 이런 성가심을 없앨 수 있다. 이 메서드를 재정의하면 컨트롤러 구현없이 다음의 간단한 코드로 요청 경로와 뷰 이름을 연결할 수 있다.
+
+```java 
+@Override
+public void addViewControllers(ViewControllerRegistry registry) {
+	registry.addViewController("/main").setViewName("main");
+}
+```
+
+#### src/main/java/config/MvcConfig.java
+
+```java
+package config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+... 생략
+@Configuration
+@EnableWebMvc
+public class MvcConfig implements WebMvcConfigurer {
+
+... 생략
+
+	@Override
+	public void addViewControllers(ViewControllerRegistry registry) {
+		registry.addViewController("/main").setViewName("main");
+	}
+}
+```
+- 뷰 이름으로 main 을 사용하므로 이에 해당하는 main.jsp 파일을 다음과같이 작성해보자.
+
+#### src/main/webapp/WEB-INF/view/main.jsp
+
+```html
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>메인</title>
+    </head>
+    <body>
+        <p>환영합니다.</p>
+        <p><a href="<c:url value="/register/step1" />">[회원 가입하기]</a></p>
+    </body>
+</html>
+```
+
+##  주요 에러 발생 상황
+
+- 처음 스프링 MVC를 이용해서 웹 개발을 하다보면 사소한 설정 오류나 오타로 고생한다.이 절에서는 입문 과정에서 겪게 되는 에러 사례를 정리해 보았다.
+
+### 요청 매핑 애노테이션과 관련된 주요 익셉션
+
+- 흔한 에러는 404 에러이다. 
+- 요청 경로를 처리할 컨트롤러가 존재하지 않거나 WebMvcConfigurer를 이용한 설정이 없다면 다음과 같이 404 에러가 발생한다.
+
+![image4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%9A%94%EC%B2%AD%EB%A7%A4%ED%95%91%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%2C%20%ED%8F%BC%20%ED%83%9C%EA%B7%B8%2C%20%EB%AA%A8%EB%8D%B8)/images/image4.png)
+
+- 404 에러가 발생하면 다음 사항을 확인해야 한다.
+	- 요청 경로가 올바른지
+	- 컨트롤러에 설정한 경로가 올바른지
+	- 컨트롤러 클래스를 빈으로 등록했는지
+	- 컨트롤러 클래스에 @Controller 애노테이션을 적용했는지
+
+- 뷰 이름에 해당하는 JSP 파일이 존재하지 않아도 404 에러가 발생한다. 
+- 차이점이 있다면 다음처럼 존재하지 않는 JSP 파일의 경로가 출력된다는 점이다.
+
+![image5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%9A%94%EC%B2%AD%EB%A7%A4%ED%95%91%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%2C%20%ED%8F%BC%20%ED%83%9C%EA%B7%B8%2C%20%EB%AA%A8%EB%8D%B8)/images/image5.png)
+
+- 다음과 같은 에러가 발생한다면 컨트롤러에서 리턴하는 뷰 이름에 해당하는JSP 파일이 존재하는지 확인해야 한다.
+- 지원하지 않는 전송 방식(method)을 사용한 경우 405 에러가 발생한다. 예를 들어 POST 방식만 처리하는 요청 경로를 GET 방식으로 연결하면 다음과와 같이 405에러가 발생한다.
+
+![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%9A%94%EC%B2%AD%EB%A7%A4%ED%95%91%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%2C%20%ED%8F%BC%20%ED%83%9C%EA%B7%B8%2C%20%EB%AA%A8%EB%8D%B8)/images/image6.png)
+
+
+### @RequestParam이나 커맨드 객체와 관련된 주요 익셉션
+
+- RegisterController 클래스의 handleStep2() 메서드에서 다음과 같이 @RequestParam애노테이션을 필수로 설정하고 기본값을 지정하지 않았다고 하자.
+
+```java
+@PostMapping("/register/step2")
+public String handleStep2(
+	// 필수로 존재해야 하고 기본값이 없음
+	@RequestParam("agree") Boolean agree, Model model) {
+	...
+}
+```
+
+- 이렇게 수정한 뒤 약관 동의 화면에서 '약관 동의'를 선택하지 않고 [다음 단계] 버튼을클릭해보자. 
+- checkbox 타입의 \<input\> 요소는 선택되지 않으면 파라미터로 아무 값도전송하지 않는다. 
+- 즉 agree 파라미터를 전송하지 않기 때문에 @RequestParam 애노테이션을 처리하는 과정에서 필수인 "agree" 파라미터가 존재하지 않는다는 익셉션이 발생하게 된다. 
+- 스프링 MVC는 이 익셉션이 발생하면 다음과 같이 400 에러를 응답으로 전송한다. 
+- 에러 메시지는 필수인 'agree' 파라미터가 없다는 내용이다.
+
+![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%9A%94%EC%B2%AD%EB%A7%A4%ED%95%91%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%2C%20%ED%8F%BC%20%ED%83%9C%EA%B7%B8%2C%20%EB%AA%A8%EB%8D%B8)/images/image7.png)
+
+- 요청 파라미터의 값을 @RequestParam이 적용된 파라미터의 타입으로 변환할 수 없는 경우에도 에러가 발생한다. 
+- 예를 들어 step1.jsp에서 \<input\> 태그의 value 속성을 다음과 같이 "true"에서 "true1"로 변경해보자
+
+```html
+<input type="checkbox" name="agree" value="true1"> 약관 동의
+```
+
+- 이렇게 변경한 약관 동의 과정을 진행하면 다음과 같이 400 에러가 발생한다. 400 에러가 발생하는 이유는 "truel" 값을 Boolean 타입으로 변환할 수 없기 때문이다.
+
+![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%9A%94%EC%B2%AD%EB%A7%A4%ED%95%91%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%2C%20%ED%8F%BC%20%ED%83%9C%EA%B7%B8%2C%20%EB%AA%A8%EB%8D%B8)/images/image8.png)
+
+
+- 400 에러는 요청 파라미터의 값을 커맨드 객체에 복사하는 과정에서도 동일하게 발생한다. 
+- 커맨드 객체의 프로퍼티가 int 타입인데 요청 파라미터의 값이 "abc"라면, "abc"를 int 타입으로 변환할 수 없기 때문에 400 에러가 발생한다.
+
+- 브라우저에 표시된 400 에러만 보면 어떤 문제로 이 에러가 발생했는지 찾기가 쉽지 않다. 
+- 이때는 콘솔에 출력된 로그 메시지를 참고하면 도움이 된다. 400 에러가 발생할 때 콘솔에 출력되는 로그를 보면 다음 메시지를 확인할 수 있다(Logback 등의 로깅 프레임워크를 설정했다면 다른 형식으로 메시지가 나올 수 있지만 기본 내용은 동일하다).
+
+
+#### Logback으로 자세한 에러 로그 출력하기
+- 로그 레벨을 낮추면 더 자세한 로그를 얻을 수 있다. Logback을 예로 들어보자. 먼저 pom.xml에 다음의 Logback 관련 의존을 추가한다. 
+
+```xml
+<dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-api</artifactId>
+	<version>1.7.36</version>
+</dependency>
+<dependency>
+	<groupId>ch.qos.logback</groupId>
+	<artifactId>logback-classic</artifactId>
+	<version>1.2.11</version>
+</dependency>
+```
+
+- src/main/resources 폴더를 생성하고 그 폴더에 다음 logback.xml 파일을 생성한다. 
+- src/main/resources 폴더를 새로 생성했다면 메이븐 프로젝트를 업데이트해야(프로젝트에서 우클릭 - Maven -> Update Project 메뉴) src/main/resources 폴더가 소스 폴더로 잡힌다.
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration>
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d %5p %c{2} - %m%n</pattern>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="stdout" />
+    </root>
+    
+    <logger name="org.springframework.jdbc" level="DEBUG" />
+</configuration>
+```
+
+- 위 설정은 org.springframework.web.servlet과 그 하위 패키지의 클래스에서 출력한 로그를 상세한 수준(DEBUG' 레벨)으로 남긴다. 
+0 이렇게 로그 설정을 한 뒤에 서버를 재구동하고 400 에러가 발생하는 상황이 되면 콘솔에서 보다 상세한 로그를 볼 수 있다. 
+- 상세한 로그를 보면 문제 원인을 찾는데 도움이 된다.
+
+## 커맨드 객체 : 중첩 · 콜렉션 프로퍼티
+- 세 개의 설문 항복과 응답자의 지역과 나이를 입력받는 설문 조사 정보를 담기 위해 다음과 같이 클래스를 작성해보자.
+
+#### src/main/survey/Respondent.java
+
+```java
+package survey;
+
+public class Respondent {
+	
+	private int age;
+	private String location;
+	
+	public int getAge() {
+		return age;
+	}
+	
+	public void setAge(int age) {
+		this.age = age;
+	}
+	
+	public String getLocation() {
+		return location;
+	}
+	
+	public void setLocation(String location) {
+		this.location = location;
+	}
+}
+```
+
+#### src/main/java/survey/AnsweredData.java
+
+```java
+package survey;
+
+import java.util.List;
+
+public class AnsweredData {
+	
+	private List<String> responses;
+	private Respondent res;
+	
+	public List<String> getResponses() {
+		return responses;
+	}
+	
+	public void setResponses(List<String> responses) {
+		this.responses = responses;
+	}
+	
+	public Respondent getRes() {
+		return res;
+	}
+	
+	public void setRes(Respondent res) {
+		this.res = res;
+	}
+}
+```
+
+- Respondent 클래스는 응답자 정보를 담는다. 
+- AnsweredData 클래스는 설문 항목에 대한 답변과 응답자 정보를 함께 담는다. 
+- AnsweredData 클래스는 답변 목록을 제장하기 위해 List 타입의 responses 프로퍼티를 사용했고, 응답자 정보를 담기 위해 Respondent 타입의 res 프로퍼티를 사용했다
+
+- AnsweredData 클래스는 앞서 커맨드 객체로 사용한 클래스와 비교하면 다음 차이가 있다.
+	- 리스트 타입의 프로퍼티가 존재한다. responses 프로퍼티는 String 타입의 값을 갖는 List 콜렉션이다.
+	- 중첩 프로퍼티를 갖는다. res 프로퍼티는 Respondent 타입이며 res 프로퍼티는 다시 age와 location 프로퍼티를 갖는다. 이를 중첩된 형식으로 표시하면 res, age 프로퍼티나 res Jocation 프로퍼티로 표현할 수 있다.
+	
+- 스프링 MVC는 커맨드 객체가 리스트 타입의 프로퍼티를 가졌거나 중첩 프로퍼티를 가진 경우에도 요청 파라미터의 값을 알맞게 커맨드 객체에 설정해주는 기능을 제공하고 있다. 규칙은 다음과 같다.
+	- HTTP 요청 파라미터 이름이 "프로퍼티이름[인덱스]' 형식이면 List 타입 프로퍼티의 값 목록으로 처리한다.
+	- HTTP 요청 파라미터 이름이 "프로퍼티이름, 프로퍼티이름'과 같은 형식이면 중첩 프로퍼티 값을 처리한다.
+
+- 예를 들어 이름이 responses이고 List 타입인 프로퍼티를 위한 요청 파라미터의 이름으로 “responses[0]", "responses[1]"을 사용하면 각각 0번 인덱스와 1번 인덱스의 값으로 사용된다. 
+- 중첩 프로퍼티의 경우 파라미터 이름을 "res.name"로 지정하면 다음과 유사한 방식으로 커맨드 객체에 파라미터의 값을 설정한다.
+
+```java
+commandObj.getRes().setName(request.getParameter("res.name"));
+```
+
+- AnsweredData 클래스를 커맨드 객체로 사용하는 예제를 작성해보자. 먼저 간단한 컨트롤러 클래스를 다음과 같이 작성한다. 
+
+### src/main/java/survey/SurveyController.java
+
+```java
+
+```
+
+- form() 메서드와 submit() 메서드의 요청 매핑 애노테이션은 전송 방식만을 설정하고클래스의 @RequestMapping에만 경로를 지정했다. 
+- 이 경우 form() 메서드와 submit()메서드가 처리하는 경로는 "/survey"가 된다. 
+- 즉 form() 메서드는 GET 방식의"/survey" 요청을 처리하고 submit() 메서드는 POST 방식의 "/survey" 요청을 처리한다. 
+- submit() 메서드는 커맨드 객체로 AnsweredData 객체를 사용한다.
+
+- 컨트롤러 클래스를 새로 작성했으니 다음과 같이 ControllerConfig 파일에 컨트롤러 클래스를 빈으로 추가하자.
+
+#### src/main/java/config/ControllerConfig.java
+
+```java
+
+```
+
+- SurveyController 클래스의 form() 메서드와 submit() 메서드는 각각 뷰 이름으로"survey/surveyForm" "survey/submitted". 사용한다. 
+- 두 뷰를 위한 JSP 파일을 만들자 먼저 surveyForm.jsp 파일을 다음과 같이 작성한다.
+
+#### src/main/webapp/WEB-INF/view/survey/surveyForm.jsp
+
+```html
+```
+
+-  각 \<input\> 태그의 name 속성은 다음과 같이 커맨드 객체의 프로퍼티에 매핑된다. 
+	- responses[0] → responses 프로퍼티(List 타입)의 첫 번째 값
+	- responses[1] → responses 프로퍼티(List 타입)의 두 번째 값 
+	- responses[2] → responses 프로퍼티(List 타입)의 세 번째 값
+	- res.location → res 프로퍼티(Respondent 타입)의 프로퍼티
+	
+
+- 폼 전송 후 결과를 보여주기 위한 submitted.jsp는 다음과 같이 작성한다. 
+- 커맨드 객체(ansData)의 List 타입 프로퍼티인 responses에 담겨 있는 각 값을 출력한다. 
+- 중첩 프로퍼티인 res. location과 res.age의 값을 출력한다.
+
+#### src/main/webapp/WEB-INF/view/survey/submitted.jsp
+
+```html
+
+```
+
+- 필요한 코드를 모두 작성했으니 서버를 재시작하고 웹 브라우저에 http://localhost:8080/... /survey 주소를 입력해보자. 
+- 다음과 같이 설문 조사 폼이 출력된다.
+
+
+- 폼에 알맞게 값을 입력한 다음 [전송] 버튼을 누르자. 
+- 응답자 나이에 해당하는 "res.age"프로퍼티의 타입은 int 타입이기 때문에 나이에는 정수를 입력해야 한다는 점에 주의하자 
+- [전송] 버튼을 누르면 다음과 같이 커맨드 객체의 값이 출력된다. 결과를 보면 폼에서 전송한 데이터가 커맨드 객체에 알맞게 저장된 것을 확인할 수 있다.
+
+
+## Model을 통해 컨트롤러에서 뷰에 데이터 전달하기
+
+- 컨트롤러는 뷰가 응답 화면을 구성하는데 필요한 데이터를 생성해서 전달해야 한다. 이때 사용하는 것이 Model이다. 
+- 앞서 HelloController 클래스를 작성할 때 다음과 같이Model을 사용했다.
+
+```java
+
+```
+
+- 뷰에 데이터를 전달해는 컨트롤러는 hello() 메서드처럼 다음 두 가지를 하면 된다.
+	- 요청 매핑 애노테이션이 적용된 메서드의 파라미터로 Model을 추가
+	- Model 파라미터의 addAttribute() 메서드로 뷰에서 사용할 데이터 전달
+
+- addAttribute() 메서드의 첫 번째 파라미터는 속성 이름이다. 
+- 뷰 코드는 이 이름을 사용해서 데이터에 접근한다. JSP는 다음과 같이 표현식을 사용해서 속성값에 접근한다
