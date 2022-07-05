@@ -1183,7 +1183,28 @@ commandObj.getRes().setName(request.getParameter("res.name"));
 ### src/main/java/survey/SurveyController.java
 
 ```java
+package survey;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/survey")
+public class SurveyController {
+	
+	@GetMapping
+	public String form() {
+		return "survey/surveyForm";
+	}
+	
+	@PostMapping
+	public String submit(@ModelAttribute("ansData") AnsweredData data) {
+		return "survey/submitted";
+	}
+}
 ```
 
 - form() 메서드와 submit() 메서드의 요청 매핑 애노테이션은 전송 방식만을 설정하고클래스의 @RequestMapping에만 경로를 지정했다. 
@@ -1196,7 +1217,22 @@ commandObj.getRes().setName(request.getParameter("res.name"));
 #### src/main/java/config/ControllerConfig.java
 
 ```java
+package config;
+... 생략
 
+@Configuration
+public class ControllerConfig {
+	
+	@Autowired
+	private MemberRegisterService memberRegSvc;
+	
+	... 생략 
+	
+	@Bean
+	public SurveyController surveyController() {
+		return new SurveyController();
+	}
+}
 ```
 
 - SurveyController 클래스의 form() 메서드와 submit() 메서드는 각각 뷰 이름으로"survey/surveyForm" "survey/submitted". 사용한다. 
@@ -1205,6 +1241,62 @@ commandObj.getRes().setName(request.getParameter("res.name"));
 #### src/main/webapp/WEB-INF/view/survey/surveyForm.jsp
 
 ```html
+<%@ page contentType="text/html; charset=utf-8" %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>설문조사</title>
+    </head>
+    <body>
+        <h2>설문조사</h2>
+        <form method="post">
+            <p>
+                1. 당신의 역할은?<br>
+                <label>
+                    <input type="radio" name="responses[0]" value="서버">
+                    서버개발자
+                </label>
+                <label>
+                    <input type="radio" name="responses[0]" value="프론트">
+                    프론트개발자
+                </label>
+                <label>
+                    <input type="radio" name="responses[0]" value="풀스택">
+                    풀스택가발자
+                </label>
+            </p>
+            <p>
+                2. 가장 많이 사용하는 개발도구는?<br>
+                <label>
+                    <input type="radio" name="responses[1]" value="Eclipse">
+                    Eclipse
+                </label>
+                <label>
+                    <input type="radio" name="responses[1]" value="Intellij">
+                    Intellij
+                </label>
+                <label>
+                    <input type="radio" name="responses[1]" value="Sublime">
+                    Sublime
+                </label>
+            </p>
+            <p>
+                3. 하고싶은 말<br />
+                <input type="text" name="responses[2]">
+            </p>
+            <p>
+		        <label>응답자 위치:<br>
+		        <input type="text" name="res.location">
+		        </label>
+		    </p>
+		    <p>
+		        <label>응답자 나이:<br>
+		        <input type="text" name="res.age">
+		        </label>
+		    </p>
+        </form>
+    </body>
+</html>
 ```
 
 -  각 \<input\> 태그의 name 속성은 다음과 같이 커맨드 객체의 프로퍼티에 매핑된다. 
@@ -1221,16 +1313,37 @@ commandObj.getRes().setName(request.getParameter("res.name"));
 #### src/main/webapp/WEB-INF/view/survey/submitted.jsp
 
 ```html
-
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>응답 내용</title>
+    </head>
+    <body>
+        <p>응답 내용:</p>
+        <ul>
+            <c:forEach var="response" items="${ansData.responses}" varStatus="status">
+                <li>${status.index + 1}번 문항 : ${response}</li>
+            </c:forEach>
+        </ul>
+        <p>응답자 위치: ${ansData.res.location}</p>
+        <p>응답자 나이: ${ansData.res.age}</p>
+    </body>
+</html>
 ```
 
 - 필요한 코드를 모두 작성했으니 서버를 재시작하고 웹 브라우저에 http://localhost:8080/... /survey 주소를 입력해보자. 
 - 다음과 같이 설문 조사 폼이 출력된다.
 
+![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%9A%94%EC%B2%AD%EB%A7%A4%ED%95%91%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%2C%20%ED%8F%BC%20%ED%83%9C%EA%B7%B8%2C%20%EB%AA%A8%EB%8D%B8)/images/image9.png)
+
 
 - 폼에 알맞게 값을 입력한 다음 [전송] 버튼을 누르자. 
 - 응답자 나이에 해당하는 "res.age"프로퍼티의 타입은 int 타입이기 때문에 나이에는 정수를 입력해야 한다는 점에 주의하자 
 - [전송] 버튼을 누르면 다음과 같이 커맨드 객체의 값이 출력된다. 결과를 보면 폼에서 전송한 데이터가 커맨드 객체에 알맞게 저장된 것을 확인할 수 있다.
+
+![image10](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%9A%94%EC%B2%AD%EB%A7%A4%ED%95%91%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%2C%20%ED%8F%BC%20%ED%83%9C%EA%B7%B8%2C%20%EB%AA%A8%EB%8D%B8)/images/image10.png)
 
 
 ## Model을 통해 컨트롤러에서 뷰에 데이터 전달하기
@@ -1239,7 +1352,16 @@ commandObj.getRes().setName(request.getParameter("res.name"));
 - 앞서 HelloController 클래스를 작성할 때 다음과 같이Model을 사용했다.
 
 ```java
+import org.springframework.ui.Model;
 
+@Controller
+public class HelloController {
+	@RequestMapping("/hello")
+	public String hello(Model model, @RequestParam(value = "name", required = false) String name) {
+		model.addAttribute("greeting", "안녕하세요, " + name);
+		return "hello";
+	}
+}
 ```
 
 - 뷰에 데이터를 전달해는 컨트롤러는 hello() 메서드처럼 다음 두 가지를 하면 된다.
@@ -1248,3 +1370,286 @@ commandObj.getRes().setName(request.getParameter("res.name"));
 
 - addAttribute() 메서드의 첫 번째 파라미터는 속성 이름이다. 
 - 뷰 코드는 이 이름을 사용해서 데이터에 접근한다. JSP는 다음과 같이 표현식을 사용해서 속성값에 접근한다
+
+```
+${greeting}
+```
+
+- 앞서 작성한 SurveyController 예제는 surveyForm.jsp에 설문 항목을 하드 코딩했다. 
+- 설문 항목을 컨트롤러에서 생성해서 뷰에 전달하는 방식으로 변경해보자. 먼저 개별 설문 항목 데이터를 담기 위한 클래스를 다음과 같이 작성한다. 
+- Question 클래스의 title options는 각각 질문 제목과 답변 옵션을 보관한다. 주관식이면 생성자를 사용해서 답변 옵션이 없는 Question 객체를 생성한다.
+
+#### src/main/java/survey/Question.java 
+
+```java
+package survey;
+
+import java.util.Collections;
+import java.util.List;
+
+public class Question {
+	
+	private String title;
+	private List<String> options;
+	
+	public Question(String title, List<String> options) {
+		this.title = title;
+		this.options = options;
+	}
+	
+	public Question(String title) {
+		this(title, Collections.<String>emptyList());
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+	
+	public List<String> getOptions() {
+		return options;
+	}
+	
+	public boolean isChoice() {
+		return options !=null && !options.isEmpty();
+	}
+} 
+```
+
+- 다음 작업은 SurveyController가 Question 객체 목록을 생성해서 뷰에 전달하도록 구현하는 것이다. 
+- 실제로는 DB와 같은 곳에서 정보를 읽어와 Question 목록을 생성하겠지만 이 예제는 컨트롤러에서 직접 생성하도록 구현했다.
+- 앞서 작성한 SurveyController 클래스의 코드를 다음과 같이 변경하자.
+
+#### src/main/java/survey/SurveyController.java 
+
+```java
+package survey;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+... 생략 
+
+@Controller
+@RequestMapping("/survey")
+public class SurveyController {
+	
+	@GetMapping
+	public String form(Model model) {
+		List<Question> questions = createQuestions();
+		model.addAttribute("questions", questions);
+		return "survey/surveyForm";
+	}
+	
+	private List<Question> createQuestions() {
+		Question q1 = new Question("당신의 역할은 무엇입니까?", Arrays.asList("서버", "프론트", "풀스택"));
+		Question q2 = new Question("많이 사용하는 개발도구는 무엇입니까?", Arrays.asList("이클립스", "인텔리J", "서브라임"));
+		Question q3 = new Question("하고 싶은 말을 적어주세요.");
+		return Arrays.asList(q1, q2, q3);
+	}
+	
+	... 생략
+}
+```
+
+-  form() 메서드에 Model 타입의 파라미터를 추가했고 생성한 Question 리스트를  "questions"라는 이름으로 모델에 추가했다. 
+- 컨트롤러에서 전달한 Question 리스트를 사용해서 폼 화면을 생성하도록 JSP 코드를 다음과 같이 수정하자.
+
+#### src/main/webapp/WEB-INF/view/survey/surveyForm.jsp
+
+```jsp
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+	<head>
+        <title>설문조사</title>
+    </head>
+    <body>
+        <h2>설문조사</h2>
+        <form method="post">
+        <c:forEach var="q" items="${questions}" varStatus="status">
+            <p>
+                ${status.index + 1}. ${q.title}<br>
+                <c:if test="${q.choice}">
+                    <c:forEach var="option" items="${q.options}">
+                        <label>
+                            <input type="radio" name="responses[${status.index}]" value="${option}">
+                            ${option}
+                        </label>
+                    </c:forEach>
+                </c:if>
+                <c:if test="${! q.choice}">
+                    <input type="text" name="responses[${status.index}]">
+                </c:if>
+            </p>
+        </c:forEach>
+        
+        <p>
+            <label>
+                응답자 위치:<br>
+                <input type="text" name="res.location">
+            </label>
+        </p>
+        <p>
+            <label>
+                응답자 나이:<br>
+                <input type="text" name="res.age">
+            </label>
+        </p>
+        <input type="submit" value="전송">
+		</form>
+	</body>
+</html>
+```
+
+
+- 코드를 수정했으니 다시 실행해보자. 다음처럼 SurveyController에서 Model을통해 전달한 Question 리스트를 이용해서 설문 폼이 생성된 것을 확인할 수 있다.
+
+![image11](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%9A%94%EC%B2%AD%EB%A7%A4%ED%95%91%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%2C%20%ED%8F%BC%20%ED%83%9C%EA%B7%B8%2C%20%EB%AA%A8%EB%8D%B8)/images/image11.png)
+
+### ModelAndView를 통한 뷰 선택과 모델 전달
+
+- 지금까지 구현한 컨트롤러는 두 가지 특징이 있다.
+	- Model을 이용해서 뷰에 전달할 데이터 설정
+	- 결과를 보여줄 뷰 이름을 리턴
+	
+- ModelAndView를 사용하면 이 두 가지를 한 번에 처리할 수 있다. 
+- 요청 매핑 애노테이션을 적용한 메서드는 String 타입 대신 ModelAndView를 리턴할 수 있다.
+- ModelAndView는 모델과 뷰 이름을 함께 제공한다. 다음과 같이 ModelAndView 클래스를 이용해서 SurveyController 클래스의 form() 메서드를 구현할 수 있다.
+
+```java
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+@RequestMapping("/survey")
+public class SurveyController {
+	@GetMapping
+	public ModelAndView form() {
+		List<Question> questions = createQuestions();
+		
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("questions", questions);
+		mav.setViewName("survey/surveyForm");
+		return mav;
+	}
+}
+```
+- 뷰에 전달할 모델 데이터는 addObject() 메서드로 추가한다. 
+- 뷰 이름은 setViewName()메서드를 이용해서 지정한다.
+
+### GET 방식과 POST 방식에 동일 이름 커맨드 객체 사용하기
+
+- \〈form:form\〉태그를 사용하려면 커맨드 객체가 반드시 존재해야 한다. 
+- 최초에 폼을 보여주는 요청에 대해 \<form form\> 태그를 사용하려면 폼 표시 요청이 왔을 때에도 커맨드 객체를 생성해서 모델에 저장해야 한다. 
+- 이를 위해 RegisterController 클래스의 handleStep2() 메서드는 다음과 같이 Model에 직접 객체를 추가했다.
+
+```java
+@PostMapping("/register/step2")
+public String handleStep2(@RequestParam(value = "agree", defaultValue = "false") Boolean agree, Model model) {
+	if (!agree) {
+		return "register/step1";
+	}
+	model.addAttribute("registerRequest", new RegisterRequest());
+	return "register/step2";
+}
+```
+- 커맨드 객체를 파라미터로 추가하면 좀 더 간단해진다.
+
+```java
+@PostMapping("/register/step2")
+public String handleStep2(@RequestParam(value = "agree", defaultValue = "false") Boolean agree, RegisterRequest registerRequest) {
+	if (!agree) {
+		return "agree/step1";
+	}
+	return "register/step2";
+}
+```
+
+- 이름을 명시적으로 지정하려면 ModelAttribute 애노테이션을 사용한다. 
+- 예를 들어"/login" 요청 경로일 때 GET 방식이면 로그인 폼을 보여주고 POST 방식이면 로그인을 처리하도록 구현한 컨트롤러를 만들어야 한다고 하자. 
+- 입력 폼과 폼 전송 처리에서 사용할 커맨드 객체의 속성 이름이 클래스 이름과 다르다면 다음과 같이 GET 요청과 POST 요청을 처리하는 메서드에 @ModelAttribute 애노테이션을 붙인 커맨드 객체를 파라미터로 추가하면 된다
+
+```java
+@Controller
+@RequestMapping("/login")
+public class LoginController {
+	@GetMapping
+	public String form(@ModelAttribute("login") LoginCommand loginCommand) {
+		return "login/loginForm";
+	}
+	
+	@PostMapping
+	public String form(@ModelAttribute("login") LoginCommand loginCommand) {
+		...
+	}
+}
+```
+
+## 주요 폼 태그 설명 
+
+- 스프링 MVC는 \〈form:form\〉, \〈form:input\〉 등 HTML 폼과 커맨드 객체를 연동하기 위한 JSP 태그 라이브러리를 제공한다. 
+- 이 두 태그 외에도 \<select\>를 위한 태그와 체크박스나 라디오 버튼을 위한 커스텀 태그도 제공한다. 
+
+### <form> 태그를 위한 커스텀 태그:〈form:form>
+
+- \〈form:form\〉커스텀 태그는 \<form\> 태그를 생성할 때 사용된다. 
+- \<form:form\> 커스텀 태그를 사용하는 가장 간단한 방법은 다음과 같다.
+
+```jsp
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+... 
+<form:form>
+...
+<input type="submit" value="가입 완료">
+</form:form>
+```
+- \〈form:form\〉태그의 method 속성과 action 속성을 지정하지 않으면 method 속성값은 "post"로 설정되고 action 속성값은 현재 요정 URL로 설정된다. 
+- 예를 들어 요청 URI가 "/mvc2/register/step2"라면 위 \<form:form\> 태그는 다음의 \<form\> 태그를 생성한다.
+
+```html
+<form id="command" action="/mvc2/register/step2" method="post">
+</form>
+```
+
+- 생성된 \<form\> 태그의 id 속성값으로 입력 폼의 값을 저장하는 커맨드 객체의 이름을 사용한다. 
+- 커맨드 객체 이름이 기본값인 "command"가 아니면 다음과 같이 modelAttribute 속성값으로 커맨드 객체의 이름을 설정해야 한다.
+
+```html
+<form:form modelAttribute="loginCommand">
+	...
+</form:form>
+```
+
+- \<form:form\> 커스텀 태그는 \<form\> 태그와 관련하여 다음 속성을 추가로 제공한다.
+	- action : 폼 데이터를 전송할 URL을 입력 (HTML \<form\> 태그 속성)
+	- enctype : 전송될 데이터의 인코딩 타입. HTML \<form\> 태그 속성과 동일
+	- method : 전송 방식. HTML \<form\> 태그 속성과 동일
+
+
+- \〈form:form\〉태그의 몸체에는 \<input\> 태그나 \<select\> 태그와 같이 입력 폼을 출력하는 데 필요한 HTML 태그를 입력할 수 있다. 
+- 이때 입력한 값이 잘못되어 다시 값을 입력해야 하는 경우 다음과 같이 커맨드 객체의 값을 사용해서 이전에 입력한 값을 출력할 수 있을 것이다.
+
+```html
+<form:form modelAttribute="loginCommand">
+	...
+	<input type="text" name="id" value="${loginCommand.id}" />
+	...
+</form:form>
+```
+
+- \<input\> 태그를 직접 사용하기보다는 뒤에서 설명할 \<form:input\> 등의 태그를 사용해서 폼에 커맨드 객체의 값을 표시하면 편리하다.
+
+### <input> 관련 커스텀 태그 : <form:input>, <form: password>, <form:hidden>
+
+- 스프링은 〈input〉 태그를 위해 다음과 같은 커스텀 태그를 제공한다
+
+#### <input>태그와 관련된 기본 커스텀 태그
+
+|커스텀 태그|설명|
+|-----|--------|
+|\<form:input\>|text 타입의 \<input\>태그|
+|\<form:password\>|password 타입의 \<input\>태그|
+|\<form:hidden\>|hidden 타입의 \<input\>태그|
+
