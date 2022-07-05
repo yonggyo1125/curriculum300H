@@ -61,7 +61,7 @@ var card = Object.create(Object.prototype, {
 #### 내부 프로퍼티 [[Prototype]]
 - 모든 객체는 내부 프로퍼티[[Prototype]]을 가지고 있습니다.
 - 이것은 함수 객체 prototype 프로퍼티와는 다른 객체입니다.
-- ECMAScript 5까지는 사용자가 이 내부 프로퍼티 [[Prototype]]을 읽거나 쓸 수 없었지만, ECMAScript 6부터는 __proto__ 프로퍼티에 [[Prototype]]의 값이 저장됩니다.
+- ECMAScript 5까지는 사용자가 이 내부 프로퍼티 [[Prototype]]을 읽거나 쓸 수 없었지만, ECMAScript 6부터는 \_\_proto\_\_ 프로퍼티에 [[Prototype]]의 값이 저장됩니다.
 - 현재의 주요 웹 브라우저는 __proto__ 프로퍼티를 지원합니다.
 
 ```javascript
