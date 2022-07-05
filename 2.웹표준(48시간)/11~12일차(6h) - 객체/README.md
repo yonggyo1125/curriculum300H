@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1lPxIUrW6dV_Geciy4M7lWA6Ot1jWyAUJ?usp=sharing)
+
 # 객체
 
 ## 객체 생성하기
