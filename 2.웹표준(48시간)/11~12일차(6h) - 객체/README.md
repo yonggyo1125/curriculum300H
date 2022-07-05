@@ -62,18 +62,18 @@ var card = Object.create(Object.prototype, {
 - 모든 객체는 내부 프로퍼티[[Prototype]]을 가지고 있습니다.
 - 이것은 함수 객체 prototype 프로퍼티와는 다른 객체입니다.
 - ECMAScript 5까지는 사용자가 이 내부 프로퍼티 [[Prototype]]을 읽거나 쓸 수 없었지만, ECMAScript 6부터는 \_\_proto\_\_ 프로퍼티에 [[Prototype]]의 값이 저장됩니다.
-- 현재의 주요 웹 브라우저는 __proto__ 프로퍼티를 지원합니다.
+- 현재의 주요 웹 브라우저는 \_\_proto\_\_ 프로퍼티를 지원합니다.
 
 ```javascript
 var obj = {};
 console.log(obj.__proto__); // -> Object {}
 ```
 
-- 단 모든 자바스크립트 실행 환경이 __proto__ 프로퍼티를 지원하는 것은 아니므로 주의하세요.
+- 단 모든 자바스크립트 실행 환경이 \_\_proto\_\_ 프로퍼티를 지원하는 것은 아니므로 주의하세요.
 
 #### 프로토타입 체인
-- 객체의 __proto__ 프로퍼티는 그 객체에 상속을 해 준 부모 객체를 가리킵니다. 
-- 객체는 __proto__ 프로퍼티가 가리키는 부모 객체의 프로퍼티를 사용할 수 있습니다.
+- 객체의 \_\_proto\_\_ 프로퍼티는 그 객체에 상속을 해 준 부모 객체를 가리킵니다. 
+- 객체는 \_\_proto\_\_ 프로퍼티가 가리키는 부모 객체의 프로퍼티를 사용할 수 있습니다.
 
 ```javascript
 var objA = {
@@ -92,27 +92,27 @@ objC.__proto__ = objB;
 obj.sayHello();  // -> "Hello! Huck"
 ```
 
-- 앞의 코드에서 등장한 객체 세 개는 __proto__ 프로퍼티를 사용한 연결 고리로 묶여 있습니다. 
+- 앞의 코드에서 등장한 객체 세 개는 \_\_proto\_\_ 프로퍼티를 사용한 연결 고리로 묶여 있습니다. 
 
 ![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/11~12%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9D%EC%B2%B4/images/image1.png)
 
 sayHello 프로퍼티는 다음과 같은 과정으로 찾아냅니다.
 
 - objC.sayHello()가 호출되면 먼저 objC 자신이 sayHello라는 프로퍼티를 소유하고 있는지 확인합니다. 하지만 objC 안에서는 찾을 수 없습니다.
-- 다음으로 objC.__proto__가 가리키는 objB가 sayHello라는 프로퍼티를 소유하고 있는지 확인합니다. 역시 objB 안에서도 찾을 수 없습니다.
-- 이제 objB.__proto___.__proto__가 가리키는 objA가 sayHello라는 프로퍼티를 소유하고 잇는지 확인합니다. sayHello라는 프로퍼티를 찾았습니다. 이제 objA.sayHello를 사용합니다.
+- 다음으로 objC.\_\_proto\_\_가 가리키는 objB가 sayHello라는 프로퍼티를 소유하고 있는지 확인합니다. 역시 objB 안에서도 찾을 수 없습니다.
+- 이제 objB.\_\_proto\_\_.\_\_proto\_\_가 가리키는 objA가 sayHello라는 프로퍼티를 소유하고 잇는지 확인합니다. sayHello라는 프로퍼티를 찾았습니다. 이제 objA.sayHello를 사용합니다.
 
 이번에는 objA.sayHello 코드 안에서 this.name을 검색해 봅니다.
 - 먼저 objC 스스로가 name이라는 프로퍼티를 소유하고 있는지 확인합니다. 하지만 objC 안에서는 찾을 수 없습니다.
-- 다음으로 objC.__proto__가 가리키는 objB가 name이라는 프로퍼티를 소유하고 있는지 확인합니다. name 프로퍼티를 찾았습니다. 이 값을 this.name 값으로 사용합니다.
+- 다음으로 objC.\_\_proto\_\_가 가리키는 objB가 name이라는 프로퍼티를 소유하고 있는지 확인합니다. name 프로퍼티를 찾았습니다. 이 값을 this.name 값으로 사용합니다.
 
-이처럼 자신이 갖고 있지 않은 프로퍼티를 __proto__ 프로퍼티가 가리키는 객체를 차례대로 거슬러 올라가며 검색합니다. 이와 같은 객체의 연결 고리를 **프로토타입 체인**이라고 합니다.<br><br>
-여기에서 객체의 __proto__ 프로퍼티가 가리키는 객체가 바로 상속을 해 준 객체이며, 이 객체를 그 객체의 **프로토타입**이라고 합니다. 객체는 자신이 가지고 잇지 않은 특성(프로퍼티와 메서드)을 프로토타입 객체에 위임(delegate)한다고 할 수 있습니다.
+이처럼 자신이 갖고 있지 않은 프로퍼티를 \_\_proto\_\_ 프로퍼티가 가리키는 객체를 차례대로 거슬러 올라가며 검색합니다. 이와 같은 객체의 연결 고리를 **프로토타입 체인**이라고 합니다.<br><br>
+여기에서 객체의 \_\_proto\_\_ 프로퍼티가 가리키는 객체가 바로 상속을 해 준 객체이며, 이 객체를 그 객체의 **프로토타입**이라고 합니다. 객체는 자신이 가지고 잇지 않은 특성(프로퍼티와 메서드)을 프로토타입 객체에 위임(delegate)한다고 할 수 있습니다.
 
 ![image2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/11~12%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9D%EC%B2%B4/images/image2.png)
 
 이처럼 자바스크립트는 프로토타입 체인을 사용하여 객체의 프로퍼티를 다른 객체로 전파합니다. 이를 프로토타입 상속이라고 합니다. **프로토타입 상속**을 하는 객체 지향 언어를 가리켜 **프로토타입 기반 객체 지향 언어**라고 합니다.<br><br>
-실제 프로그래밍을 할 때는 __proto__ 프로퍼티 값을 직접 입력해서 상속하지는 않습니다. 일반적으로는 다음과 같은 방법으로 상속합니다.
+실제 프로그래밍을 할 때는 \_\_proto\_\_ 프로퍼티 값을 직접 입력해서 상속하지는 않습니다. 일반적으로는 다음과 같은 방법으로 상속합니다.
 - 생성자로 객체를 생성할 때 생성자의 prototype 프로퍼티에 추가하는 방법
 - Object.create 메서드로 상속을 받을 프로토타입을 지정하여 객체를 생성하는 방법
 
@@ -125,7 +125,7 @@ var obj = new F();
 console.log(Object,getPrototypeOf(obj));  // -> Object {}
 ```
 
-물론 웹 브라우저에서는 obj.__proto__로도 프로토타입을 가져올 수 있지만 지원하지 않는 웹 브라우저도 있습니다. Object.getPrototypeOf 메서드는 ECMAScript 5 이상을 지원하는 자바스크립트로 실행 환경을 사용할 수 있습니다.<br><br>
+물론 웹 브라우저에서는 obj.\_\_proto\_\_로도 프로토타입을 가져올 수 있지만 지원하지 않는 웹 브라우저도 있습니다. Object.getPrototypeOf 메서드는 ECMAScript 5 이상을 지원하는 자바스크립트로 실행 환경을 사용할 수 있습니다.<br><br>
 
 ECMAScript 6부터는 객체의 프로토타입을 설정하는 메서드인 Object.setPrototypeOf 도 추가 되었습니다. 
 
