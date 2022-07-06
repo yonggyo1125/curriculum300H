@@ -1653,3 +1653,391 @@ public class LoginController {
 |\<form:password\>|password 타입의 \<input\>태그|
 |\<form:hidden\>|hidden 타입의 \<input\>태그|
 
+- \<form:input\> 커스텀 태그는 다음과 같이 path 속성을 사용해서 연결할 커맨드 객체의 프로퍼티를 지정한다.
+
+```html
+<form:form modelAttribute="registerRequest" action="step3">
+<p>
+	<label>
+		이메일:<br>
+		<form:input path="email" />
+	</label>
+</p>
+... 생략 
+</form:form>
+```
+
+- 코드가 생성하는 HTML<input〉 태그는 아래와 같다.
+
+```html
+<form id="registerRequest" action="step3" method="post">
+<p>
+	<label>
+		이메일:<br>
+		<input id="email" name="email" type="text" value="" />
+	</label>
+</p>
+</form>
+```
+
+- id 속성과 name 속성값은 프로퍼티의 이름으로 설정하고, value 속성에는 \<form:input\> 커스텀 태그의 path 속성으로 지정한 커맨드 객체의 프로퍼티 값이 출력된다.
+
+- \<form:password\> 커스텀 태그는 password 타입의 \<input\> 태그를 생성하고, \<form:hidden\> 커스텀 태그는 hidden 타입의 \<input\> 태그를 생성한다. 
+- 두 태그 모두 path 속성을 사용하여 연결할 커맨드 객체의 프로퍼티를 지정한다.
+
+```html
+<form:form modelAttribute="loginCommand">
+	<form:hidden path="defaultSecurityLevel" />
+	...
+	<form:password path="password" />
+</form:form>
+```
+### <select> 관련 커스텀 태그 : <form:select>, <form:options>, <form:option>
+
+- <select> 태그와 관련된 커스텀 태그는 다음과 같이 세 가지가 존재한다.
+
+|커스텀 태그|설명|
+|-----|-------|
+|\<form:select\>|\<select\>태르를 생성한다. \<option\> 태그를 생성할 때 필요한 콜렉션을 전달받을 수도 있다.|
+|\<form:options\>|지정한 콜렉션 객체를 이용하여 \<option\> 태그를 생성한다.|
+|\<form:option\>|\<option\> 태그 한 개를 생성한다.|
+
+- \<select\> 태그는 선택 옵션을 제공할 때 주로 사용한다. 
+- 예를 들어 <select> 태그를 이용해서 직업 선택을 위한 옵션을 제공한다고 하자. 이런 옵션 정보는 컨트롤러에서 생성해서 뷰에 전달하는 경우가 많다. 
+- \<select\> 태그에서 사용할 옵션 목록을 Model을 통해 전달한다.
+
+```java
+@GetMapping("/login")
+public String form(Model model) {
+	List<String> loginTypes = new ArrayList<>();
+	loginTypes.add("일반회원");
+	loginTypes.add("기업회원");
+	loginTypes.add("헤드헌터회원");
+	model.addAttribute("loginTypes", loginTypes);
+	return "login/form";
+}
+```
+
+- \<form:select\>커스텀 태그를 사용하면 뷰에 전달한 모델 객체를 갖고 간단하게 \<select\>와 \<option\> 태그를 생성할 수 있다. 
+- 다음은 \<form:select\> 커스텀 태그를 이용해서 \<select\> 태그를 생성하는 코드 예이다.
+
+```html
+<form:form modelAttribute="login">
+<p>
+	<label for="loginType">로그인 타입</label>
+	<form:select path="loginType" items="${loginTypes}" />
+</p>
+</form:form>
+```
+
+- path 속성은 커맨드 객체의 프로퍼티 이름을 입력하며, items 속성에는 \<option\> 태그를 생성할 때 사용할 콜렉션 객체를 지정한다.
+- 이 코드의 \<form:select\> 커스텀 태그는 다음 HTML 태그를 생성한다.
+
+```html
+<select id="loginType" name="loginType">
+	<option value="일반회원">일반회원</option>
+	<option value="기업회원">기업회원</option>
+	<option value="헤드헌터회원">헤드헌터회원</option>
+</select>
+```
+
+- 생성한 코드를 보면 콜렉션 객체의 값을 이용해서 \<option\> 태그의 value 속성과 텍스트를 설정한 것을 알 수 있다.
+- \<form:options\> 태그를 사용해도 된다. \<form:select\> 커스텀 태그에 \<form:options\>커스텀 태그를 중첩해서 사용한다. \<form:options\> 커스텀 태그의 items 속성에 값 목록으로 사용할 모델 이름을 설정한다.
+
+```html
+<form:select path="loginType">
+	<option value="">---- 선택하세요 ---</option>
+	<form:options items="${loginTypes}" />
+</form:select>
+```
+
+
+-\<form:options\>커스텀 태그는 주로 콜렉션에 없는 값을 \<option\> 태그로 추가할 때 사용한다.
+- \<form:option\>커스텀 태그는 \<option\> 태그를 직접 지정할 때 사용된다. 다음 코드는 \<form:option\> 커스텀 태그의 사용 예이다.
+
+```html
+<form:select path="loginType">
+	<form:option value="일반회원" />
+	<form:option value="기업회원">기업</form:option>
+	<form:option value="헤드헌터회원" label="헤드헌터" />
+</form>
+```
+
+- \<form:option\> 커스텀 태그의 value 속성은 \<option\> 태그의 value 속성값을 지정한다. 
+- \<form:option\> 커스텀 태그의 몸체 내용을 입력하지 않으면 value 속성에 지정한 값을 텍스트로 사용한다. 
+- 몸체 내용을 입력하면 몸체 내용을 텍스트로 사용한다. 
+- label 속성을 사용하면 그 값을 텍스트로 사용한다. 
+
+- 다음은 위 코드가 생성한 HTML 결과이다.
+
+```html
+<select id="loginType" name="loginType">
+	<option value="일반회원">일반회원</option>
+	<option value="기업회원">기업</option>
+	<option value="헤드헌터회원">헤드헌터</option>
+</select>
+```
+
+- \<option\> 태그를 생성하는데 사용할 콜렉션 객체가 String이 아닐 수도 있다. 예를 들어 다음 Code 클래스를 보자.
+
+```java
+public class Code {
+	private String code;
+	private String label;
+	
+	public Code(String code, String label) {
+		this.code = code;
+		this.label = label;
+	}
+	
+	public String getCode() {
+		return code;
+	}
+	
+	public String getLabel() {
+		return label;
+	}
+}
+```
+
+- 컨트롤러는 코드 목록 표시를 위해 Code 객체 목록을 생성해서 뷰에 전달할 수 있다. 
+- 뷰는 Code 객체의 code 프로퍼티와 label 프로퍼티를 각각 \<option\> 태그의 value 속성과 텍스트로 사용해야 한다. 
+- 이렇게 콜렉션에 저장된 객체의 특정 프로퍼티를 사용해야 하는 경우 itemValue 속성과 itemLabel 속성을 사용한다. 이 두 속성은 \<option〉태그를 생성하는 데 사용할 객체의 프로퍼티를 지정한다.
+
+```html
+<form:select path="jobCode">
+	<option value="">--- 선택하세요 ---</option>
+	<form:options items="${jobCodes}" itemLabel="label" itemValue="code" />
+</form:select>
+```
+
+- 위 코드는 jobCodes 콜렉션에 저장된 객체를 이용해서 \<option\> 태그를 생성한다. 
+- 이때 객체의 code 프로퍼티 값을 \<option\> 태그의 value 속성값으로 사용하고, 객체의 label 프로퍼티 값을 \<option\> 태그의 텍스트로 사용한다. 
+- \<form:select\> 커스텀 태그도\<form:options\>커스텀 태그와 마찬가지로 itemLabel 속성과 itemValue 속성을 사용할 수 있다.
+
+- 스프링이 제공하는 \<form:select\>, \<form:options\>, \<form:option\> 커스텀 태그의 장점은 커맨드 객체의 프로퍼티 값과 일치하는 값을 갖는 \<option\>을 자동으로 선택해 준다는 점이다. 
+- 예를 들어 커맨드 객체의 loginType 프로퍼티 값이 "기업회원"이면 다음과 같이 일치하는 \<option\> 태그에 selected 속성이 추가된다.
+
+### 체크박스 관련 커스텀 태그 : <form:checkboxes>, <form:checkbox>
+- 한 개 이상의 값을 커맨드 객체의 특정 프로퍼티에 저장하고 싶다면 배열이나 List와 같은 타입을 사용해서 값을 저장한다.
+
+```java
+public class MemberRegisterRequest {
+	private String[] favoriteOs;
+	
+	public String[] getFavoriteOs() {
+		return favoriteOs;
+	}
+	
+	public void setFavoriteOs(String[] favoriteOs) {
+		this.favoriteOs = favoriteOs;
+	}
+	
+	...
+}
+```
+
+- HTML 입력 폼에서는 checkbox 타입의 \<input\> 태그를 이용해서 한 개 이상의 값을 선택할 수 있도록 한다.
+
+```html
+<input type="checkbox" name="favoriteOs" value="윈도우8">윈도우8</input>
+<input type="checkbox" name="favoriteOs" value="윈도우10">윈도우10</input>
+```
+
+- 스프링은 checkbox 타입의 \<input\> 태그와 관련하여 다음과 같은 커스텀 태그를 제공한다.
+
+
+#### checkbox 타입의 <input> 태그와 관련된 커스텀 태그
+
+|커스텀 태그|설명|
+|-----|--------|
+|\<form:checkboxes\>|커맨드 객체의 특정 프로퍼티와 관련된 checkbox 타입의 \<input\> 태그 목록을 생성한다.|
+|\<form:checkbox\>|커맨드 객체의 특정 프로퍼티와 관련된 한 개의 checkbox 타입 \<input\> 태그를 생성한다.|
+
+- \<form:checkboxes\> 커스텀 태그는 items 속성을 이용하여 값으로 사용할 콜렉션을 지정한다.
+- path 속성으로 커맨드 객체의 프로퍼티를 지정한다. 아래 코드는 \<form:checkboxes\> 커스텀 태그의 사용 예이다.
+
+```html
+<p>
+	<label>선호 OS</label>
+	<form:checkboxes items="${favoriteOsNames}" path="favoriteOs" />
+</p>
+```
+
+- favoriteOsNames 모델의 값이 {"윈도우8", "윈도우10") 일 경우 위 코드의 \<form:checkboxes\> 커스텀 태그는 다음과 같은 HTML 코드를 생성한다. 
+
+```html 
+<span>
+	<input id="favoriteOs1" name="favoriteOs" type="checkbox" value="윈도우8"/>
+	<label for="favoriteOs1">윈도우8</label>
+</span>
+<span>
+	<input id="favoriteOs2" name="favoriteOs" type="checkbox" value="윈도우10"/>
+	<label for="favoriteOs2">윈도우10</label>
+</span>
+<input type="hidden" name="_favoriteOs" value="on" />
+```
+
+- \<input\>태그의 value 속성에 사용한 값이 체크박스를 위한 텍스트로 사용되고 있다. 
+- \<option\> 태그와 마찬가지로 콜렉션에 저장된 객체가 String이 아니면 item Value 속성과 itemLabel 속성을 이용해서 값과 텍스트로 사용할 객체의 프로퍼티를 지정한다.
+
+```html
+<p>
+	<label>선호 OS</label>
+	<form:checkboxes items="${favoriteOsCodes}" path="favoriteOs" i
+			temValue="code" itemsLabel="label" />
+</p>
+```
+
+- \<form:checkbox\> 커스텀 태그는 한 개의 checkbox 타입의 \<input\> 태그를 한 개 생성할 때 사용된다. 
+- \<form:checkbox\> 커스텀 태그는 value 속성과 label 속성을 사용해서 값과 텍스트를 설정한다.
+
+```html
+<form:checkbox path="favoriteOs" value="WIN8" label="윈도우8" />
+<form:checkbox path="favoriteOs" value="WIN10" label="윈도우10" />
+```
+
+- \<form:checkbox\> 커스텀 태그는 연결되는 값 타입에 따라 처리 방식이 달라진다. 
+- 다음 코드를 보자. 이 코드는 boolean 타입의 프로퍼티를 포함한다.
+
+```java
+public class MemberRegisterRequest {
+
+	private boolean allowNoti;
+	
+	public boolean isAllowNoti() {
+		return allowNoti;
+	}
+	
+	public void setAllowNoti(boolean allowNoti) {
+		this.allowNoti = allowNoti;
+	}
+	...
+}
+```
+
+- \<form:checkbox\>는 연결되는 프로퍼티 값이 true이면 "checked" 속성을 설정한다. false이면 "checked" 속성을 설정하지 않는다. 
+- 또한 생성되는 \<input\> 태그의 value 속성값은 "true가 된다. 아래 코드는 사용 예다.
+
+```html
+<form:checkbox path="allowNoti" label="이메일을 수신합니다." />
+```
+
+- allowNoti의 값이 false와 true인 경우 각각 생성되는 HTML 코드는 다음과 같다.
+
+```html
+<!-- allowNoti false인 경우 -->
+<input id="allowNoti1" name="allowNoti" type="checkbox" value="true"/>
+<label for="allowNoti1">이메일을 수신합니다.</label>
+<input type="hidden" name="_allowNoti" value="on"/>
+
+<!-- allowNoti true인 경우 -->
+<input id="allowNoti`" name="allowNoti" type="checkbox" value="true" checked="checked" />
+<label for="allowNoti1">이메일을 수신합니다.</label>
+<input type="hidden" name="_allowNoti" value="on"/>
+```
+
+- \<form:checkbox\>태그는 프로퍼티가 배열이나 Collection일 경우 해당 콜렉션에 값이 포함되어 있다면 "checked" 속성을 설정한다. 
+- 예를 들어 아래와 같은 배열 타입의 프로퍼티가 있다고 해보자.
+
+```java
+public class MemberRegisterRequest {
+	
+	private String[] favoriteOs;
+	
+	public String[] getFavoriteOs() {
+		return favoriteOs;
+	}
+	
+	public void setFavoriteOs(String[] favoriteOs) {
+		this.favoriteOs = favoriteOs;
+	}
+	...
+}
+```
+
+- \<form:checkbox\> 커스텀 태그를 사용하면 다음과 같이 favoriteOs 프로퍼티에 대한 폼을 처리할 수 있다.
+
+```html
+<form:checkbox path="favoriteOs" value="윈도우8" label="윈도우8" />
+<form:checkbox path="favoriteOs" value="윈도우10" label="윈도우10" />
+```
+
+### 라디오버튼 관련 커스텀 태그: <form:radiobuttons>, <form:radiobutton>
+
+- 여러 가지 옵션 중에서 한 가지를 선택해야 하는 경우 radio 타입의 \<input\> 태그를 사용한다. 
+- 스프링은 radio 타입의 \<input\> 태그와 관련하여 다음과 같은 커스텀 태그를 제공하고 있다.
+
+|커스텀 태그|설명|
+|-----|--------|
+|\<form:radiobuttons\>|커맨드 객체의 특정 프로퍼티와 관련된 radio 타입의 \<input\> 태그 목록을 생성한다.|
+|\<form:radiobutton\>|커맨드 객체의 특정 프로퍼티와 관련한 한 개의 radio 타입 \<input\> 태그를 생성한다.|
+
+- \<form:radiobuttons\> 커스텀 태그는 다음과 같이 items 속성에 값으로 사용할 콜렉션을 전달받고 path 속성에 커맨드 객체의 프로퍼티를 지정한다.
+
+```html
+<p>
+	<label>주로 사용하는 개발툴</label>
+	<form:radiobuttons items="${tools}" path="tool" />
+</p>
+```
+
+- \<form.radiobuttons\> 커스텀 태그는 다음과 같은 HTML 태그를 생성한다.
+
+```html
+<span>
+	<input id="tool1" name="tool" type="radio" value="Eclipse" />
+	<label for="tool1">Eclipse</label>
+</span>
+<span>
+	<input id="tool2" name="tool" type="radio" value="IntelliJ" />
+	<label for="tool2">IntelliJ</label>
+</span>
+<span>
+	<input id="tool3" name="tool" type="radio" value="NetBeans" />
+	<label for="tool3">NetBeans</label>
+</span>
+```
+
+- \<form:radiobutton\> 커스텀 태그는 1개의 radio 타입 \<input\> 태그를 생성할 때 사용되며 value 속성과 label 속성을 이용하여 값과 텍스트를 설정한다. 
+- 사용 방법은 \<form:checkbox\> 태그와 동일하다.
+
+### <textarea〉 태그를 위한 커스텀 태그 : <form:textarea>
+
+- 게시글 내용과 같이 여러 줄을 입력받아야 하는 경우 \<textarea\> 태그를 사용한다. 
+- 스프링은 \<form:textarea\> 커스텀 태그를 제공하고 있다. 
+- 이 태그를 이용하면 커맨드 객체와 관련된 \<textarea\> 태그를 생성할 수 있다. 다음 코드는 사용 예이다.
+
+```html
+<p>
+	<label for="etc">기타</label>
+	<form:textarea path="etc" cols="20" rows="3" />
+</p>
+```
+- \<form:textarea\> 커스텀 태그가 생성하는 HTML 태그는 다음과 같다.
+
+```html
+<p>
+	<label for="etc">기타</label>
+	<textarea id="etc" name="etc" rows="3" cols="20"></textarea>
+</p>
+```
+
+### CSS 및 HTML 태그와 관련된 공통 속성
+
+- \<form:input\>, \<form:select\> 등 입력 폼과 관련해서 제공하는 스프링 커스텀 태그는 HTML의 CSS 및 이벤트 관련 속성을 제공하고 있다.  CSS와 관련된 속성은 다음과 같다.
+	- cssClass: HTML의 class 속성값
+	- cssErrorClass : 폼 검증 에러가 발생했을 때 사용할 HTML의 class 속성값
+	- cssStyle: HTML의 style 속성값
+
+- 스프링은 폼 검증 기능을 제공하는데 cssErrorClass 속성은 이와 관련된 것이다.
+
+- HTML 태그가 사용하는 다음 속성도 사용 가능하다.
+	- id, title, dir
+	- disabled, tabindex
+	- fonfocus, onblur, onchange onclick, ondblclick
+	- onkeydown, onkeypress, onkeyup
+	- onmousedown, onmousemove, onmouseup
+	- onmouseout, onmouseover
+
+- 또한 각 커스텀 태그는 htmlEscape 속성을 사용해서 커맨드 객체의 값에 포함된 HTML 특수 문자를 엔티티 레퍼런스로 변환할지를 결정할 수 있다.
