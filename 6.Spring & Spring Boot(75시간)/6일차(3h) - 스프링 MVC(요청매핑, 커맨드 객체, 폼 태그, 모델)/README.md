@@ -1692,6 +1692,7 @@ public class LoginController {
 	<form:password path="password" />
 </form:form>
 ```
+
 ### <select> 관련 커스텀 태그 : <form:select>, <form:options>, <form:option>
 
 - <select> 태그와 관련된 커스텀 태그는 다음과 같이 세 가지가 존재한다.
@@ -1703,7 +1704,7 @@ public class LoginController {
 |\<form:option\>|\<option\> 태그 한 개를 생성한다.|
 
 - \<select\> 태그는 선택 옵션을 제공할 때 주로 사용한다. 
-- 예를 들어 <select> 태그를 이용해서 직업 선택을 위한 옵션을 제공한다고 하자. 이런 옵션 정보는 컨트롤러에서 생성해서 뷰에 전달하는 경우가 많다. 
+- 예를 들어 \<selec\> 태그를 이용해서 직업 선택을 위한 옵션을 제공한다고 하자. 이런 옵션 정보는 컨트롤러에서 생성해서 뷰에 전달하는 경우가 많다. 
 - \<select\> 태그에서 사용할 옵션 목록을 Model을 통해 전달한다.
 
 ```java
