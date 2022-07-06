@@ -1589,10 +1589,10 @@ public class LoginController {
 
 ## 주요 폼 태그 설명 
 
-- 스프링 MVC는 \〈form:form\〉, \〈form:input\〉 등 HTML 폼과 커맨드 객체를 연동하기 위한 JSP 태그 라이브러리를 제공한다. 
+- 스프링 MVC는 \<form:form\>, \<form:input\> 등 HTML 폼과 커맨드 객체를 연동하기 위한 JSP 태그 라이브러리를 제공한다. 
 - 이 두 태그 외에도 \<select\>를 위한 태그와 체크박스나 라디오 버튼을 위한 커스텀 태그도 제공한다. 
 
-### <form> 태그를 위한 커스텀 태그:〈form:form>
+### \<form\> 태그를 위한 커스텀 태그: \<form:form\>
 
 - \〈form:form\〉커스텀 태그는 \<form\> 태그를 생성할 때 사용된다. 
 - \<form:form\> 커스텀 태그를 사용하는 가장 간단한 방법은 다음과 같다.
@@ -1641,11 +1641,11 @@ public class LoginController {
 
 - \<input\> 태그를 직접 사용하기보다는 뒤에서 설명할 \<form:input\> 등의 태그를 사용해서 폼에 커맨드 객체의 값을 표시하면 편리하다.
 
-### <input> 관련 커스텀 태그 : <form:input>, <form: password>, <form:hidden>
+### \<input\> 관련 커스텀 태그 : \<form:input\>, \<form:password\>, \<form:hidden\>
 
-- 스프링은 〈input〉 태그를 위해 다음과 같은 커스텀 태그를 제공한다
+- 스프링은 \<input\> 태그를 위해 다음과 같은 커스텀 태그를 제공한다
 
-#### <input>태그와 관련된 기본 커스텀 태그
+#### \<input\>태그와 관련된 기본 커스텀 태그
 
 |커스텀 태그|설명|
 |-----|--------|
@@ -1693,13 +1693,13 @@ public class LoginController {
 </form:form>
 ```
 
-### \<select\> 관련 커스텀 태그
+### \<select\> 관련 커스텀 태그 : \<form:select\>, \<form:options\>, \<form:option\>
 
 - \<select\> 태그와 관련된 커스텀 태그는 다음과 같이 세 가지가 존재한다.
 
 |커스텀 태그|설명|
 |-----|-------|
-|\<form:select\>|\<select\>태르를 생성한다. \<option\> 태그를 생성할 때 필요한 콜렉션을 전달받을 수도 있다.|
+|\<form:select\>|\<select\>태그를 생성한다. \<option\> 태그를 생성할 때 필요한 콜렉션을 전달받을 수도 있다.|
 |\<form:options\>|지정한 콜렉션 객체를 이용하여 \<option\> 태그를 생성한다.|
 |\<form:option\>|\<option\> 태그 한 개를 생성한다.|
 
@@ -1819,7 +1819,7 @@ public class Code {
 - 스프링이 제공하는 \<form:select\>, \<form:options\>, \<form:option\> 커스텀 태그의 장점은 커맨드 객체의 프로퍼티 값과 일치하는 값을 갖는 \<option\>을 자동으로 선택해 준다는 점이다. 
 - 예를 들어 커맨드 객체의 loginType 프로퍼티 값이 "기업회원"이면 다음과 같이 일치하는 \<option\> 태그에 selected 속성이 추가된다.
 
-### 체크박스 관련 커스텀 태그 : <form:checkboxes>, <form:checkbox>
+### 체크박스 관련 커스텀 태그 : \<form:checkboxes\>, \<form:checkbox\>
 - 한 개 이상의 값을 커맨드 객체의 특정 프로퍼티에 저장하고 싶다면 배열이나 List와 같은 타입을 사용해서 값을 저장한다.
 
 ```java
@@ -1848,7 +1848,7 @@ public class MemberRegisterRequest {
 - 스프링은 checkbox 타입의 \<input\> 태그와 관련하여 다음과 같은 커스텀 태그를 제공한다.
 
 
-#### checkbox 타입의 <input> 태그와 관련된 커스텀 태그
+#### checkbox 타입의 \<input\> 태그와 관련된 커스텀 태그
 
 |커스텀 태그|설명|
 |-----|--------|
@@ -1964,7 +1964,7 @@ public class MemberRegisterRequest {
 <form:checkbox path="favoriteOs" value="윈도우10" label="윈도우10" />
 ```
 
-### 라디오버튼 관련 커스텀 태그: <form:radiobuttons>, <form:radiobutton>
+### 라디오버튼 관련 커스텀 태그: \<form:radiobuttons\>, \<form:radiobutton\>
 
 - 여러 가지 옵션 중에서 한 가지를 선택해야 하는 경우 radio 타입의 \<input\> 태그를 사용한다. 
 - 스프링은 radio 타입의 \<input\> 태그와 관련하여 다음과 같은 커스텀 태그를 제공하고 있다.
@@ -2003,7 +2003,7 @@ public class MemberRegisterRequest {
 - \<form:radiobutton\> 커스텀 태그는 1개의 radio 타입 \<input\> 태그를 생성할 때 사용되며 value 속성과 label 속성을 이용하여 값과 텍스트를 설정한다. 
 - 사용 방법은 \<form:checkbox\> 태그와 동일하다.
 
-### <textarea〉 태그를 위한 커스텀 태그 : <form:textarea>
+### <textarea〉 태그를 위한 커스텀 태그 : \<form:textarea\>
 
 - 게시글 내용과 같이 여러 줄을 입력받아야 하는 경우 \<textarea\> 태그를 사용한다. 
 - 스프링은 \<form:textarea\> 커스텀 태그를 제공하고 있다. 
