@@ -1692,7 +1692,7 @@ public class LoginController {
 	<form:password path="password" />
 </form:form>
 ```
-### <select> 관련 커스텀 태그 : <form:select>, <form:options>, <form:option>
+
 
 - \<select\> 태그와 관련된 커스텀 태그는 다음과 같이 세 가지가 존재한다.
 
