@@ -30,6 +30,9 @@
 - UTF-8 인코딩을 사용해서 label.properties 파일을 작성한다. 이를 위해 label.properties 파일을 열 때 Text Editor를 사용해서 연다. Properties File Editor를 이용하면 '이메일'과 같은 한글 문자가 '\uC774\uBA54\uC77C'와 같은 유니코드값으로 표현되어 알아보기 힘들다.
 	- label.properties 파일에서 마우스 오른쪽 버튼을 클릭해서 [Properties] 메뉴를 실행한 뒤 Resource에서 Text File Encoding 값을 other의 'UTF-8'로 변경하면 된다
 
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/7%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EB%A9%94%EC%84%B8%EC%A7%80%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%20%EA%B2%80%EC%A6%9D)/images/image1.png)
+
+
 #### src/main/resources/message/label.properties
 
 ```
