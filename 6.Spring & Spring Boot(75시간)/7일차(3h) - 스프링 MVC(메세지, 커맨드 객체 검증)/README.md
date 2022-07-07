@@ -372,7 +372,7 @@ import spring.RegisterRequest;
 
 public class RegisterRequestValidator implements Validator {
 	private static final String emailRegExp = "^[_A-Za-Z0-9-\\+]+(\\.[_A-Za-Z0-9-]+)*@" + 
-					"[A-Za-Z0-9-]+(\\. [A-Za-z0-9]+)*(\\. [A-Za-z] {2,})$";
+					"[A-Za-Z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z] {2,})$";
 	private Pattern pattern;
 	
 	public RegisterRequestValidator() {
@@ -584,6 +584,528 @@ public String handleStep3(RegisterRequest regReq, BindingResult errors) {
 ### Errors와 Validation Utils 클래스의 주요 메서드
 
 - Errors 인터페이스가 제공하는 에러 코드 추가 메서드는 다음과 같다.
+	- reject(String errorCode)
+	- reject(String errorCode, String defaultMessage)
+	- reject(String errorCode, Object[] errorArgs, String defaultMessage)
+	- rejectValue(String field, String errorCode)
+	- rejectValue(String field, String errorCode, String defaultMessage)
+	- rejectValue(String field, String errorCode, Object[] errorArgs, String defaultMessage)
+
+- 에러 코드에 해당하는 메시지가 {0}이나 {1}과 같이 인덱스 기반 변수를 포함하고 있는 경우 Object 배열 타입의 errorArgs 파라미터를 이용해서 변수에 삽입될 값을 전달한다. 
+- defaultMessage 파라미터를 가진 메서드를 사용하면 에러 코드에 해당하는 메시지가 존재하지 않을 때 익셉션을 발생시키는 대신 defaultMessage를 출력한다.
+
+- ValidationUtils 클래스는 다음의 rejectIfEmpty() 메서드와 rejectIfEmpty OrWhitespace() 메서드를 제공한다.
+	- rejectIfEmpty(Errors errors, String field, String errorCode)
+	- rejectIfEmpty(Errors errors, String field, String errorCode, Object[] errorArgs)
+	- rejectIfEmptyOrWhitespace(Errors errors, String field, String errorCode)
+	- rejectIfEmptyOrWhitespace(Errors errors, String field, String errorCode, Object[] errorArgs)
+	
+- rejectIfEmpty() 메서드는 field에 해당하는 프로퍼티 값이 null이거나 빈 문자열(“”)인 경우 에러 코드로 errorCode를 추가한다.
+- rejectIfEmptyOrWhitespace() 메서드는 null이거나 빈 문자열인 경우 그리고 공백 문자(스페이스, 탭 등)로만 값이 구성된 경우 에러코드를 추가한다.
+- 에러 코드에 해당하는 메시지가 {0}이나 {1}과 같이 인덱스 기반 플레이스홀더를 포함하고 있으면 errorArgs를 이용해서 메시지의 플레이스홀더에 삽입할 값을 전달한다.
+
+### 커맨드 객체의 에러 메시지 출력하기
+
+- 에러 코드를 지정한 이유는 알맞은 에러 메시지를 출력하기 위함이다. 
+- Errors에 에러 코드를 추가하면 JSP는 스프링이 제공하는 \<form:errors\> 태그를 사용해서 에러에 해당하는 메시지를 출력할 수 있다. 다음과 같이 step2.jsp가 \<form:errors\>를 사용하도록 수정해보자.
+
+#### src/main/webapp/WEB-INF/view/step2.jsp
+
+```jsp
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"  %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><spring:message code="member.register" /></title>
+    </head>
+    <body>
+        <h2><spring:message code="member.info" /></h2>
+        <form:form action="step3" modelAttribute="registerRequest">
+            <p>
+                <label>
+                    <spring:message code="email" />:<br>
+                    <form:input path="email" />
+                    <form:errors path="email" />
+                </label>
+            </p>
+            <p>
+                <label>
+                    <spring:message code="name" />:<br>
+                    <form:input path="name" />
+                    <form:errors path="name" />
+                </label>
+            </p>
+            <p>
+                <label>
+                    <spring:message code="password" />:<br>
+                    <form:password path="password" />
+                    <form:errors path="password" />
+                </label>
+            </p>
+            <p>
+                <label>
+                    <spring:message code="password.confirm" />:<br>
+                    <form:password path="confirmPassword" />
+                    <form:errors path="confirmPassword" />   
+                </label>
+            </p>
+            <input type="submit" value="<spring:message code="register.btn" />">
+        </form:form>
+    </body>
+</html>
+```
+- \<form:errors\> 태그의 path 속성은 에러 메시지를 출력할 프로퍼티 이름을 지정한다. 
+- 예를 들어 "email" 프로퍼티에 에러 코드가 존재하면 \<form:errors\> 태그는 에러 코드에 해당하는 메시지를 출력한다. 
+- 에러 코드가 두 개 이상 존재하면 각 에러 코드에 해당하는 메시지가 출력된다.
+
+- 에러 코드에 해당하는 메시지 코드를 찾을 때에는 다음 규칙을 따른다
+	- 에러코드 + "." + 커맨드객체이름 + "." + 필드명
+	- 에러코드 + "." + 필드명
+	- 에러코드 + "." + 필드타입
+	- 에러코드
+
+- 프로퍼티 타입이 List나 목록인 경우 다음 순서를 사용해서 메시지 코드를 생성한다.
+	- 에러코드 + "." + 커맨드객체이름 + "." + 필드명[인덱스].중첩필드명
+	- 에러코드 + "." + 커맨드객체이름 + "." + 필드명.중첩필드명
+	- 에러코드 + "." + 필드명[인덱스].중펍필드명
+	- 에러코드 + "." + 필드명.중첩필드명
+	- 에러코드 + "." + 중첩필드명
+	- 에러코드 + "." + 필드타입
+	- 에러코드
+	
+- 예를 들어 errors.rejectValue("email", "required") 코드로 “email" 프로퍼티에 “required” 에러 코드를 추가했고 커맨드 객체의 이름이 "registerRequest”라면 다음 순서대로 메시지 코드를 검색한다.
+	- required.registerRequest.email
+	- required.email
+	- required.String
+	- required
+
+- 이 중에서 먼저 검색되는 메시지 코드를 사용한다. 즉 메시지 중에 required.email 메시지 코드와 required 메시지 코드 두 개가 존재하면 이 중 우선 순위가 높은 required.email 메시지 코드를 사용해서 메시지를 출력한다.
+
+- 특정 프로피티가 아닌 커맨드 객체에 추가한 글로벌 에러 코드는 다음 순서대로 메시지코드를 검색한다.
+	- 에러코드 + "." + 커맨드객체이름
+	- 에러코드
+
+- 메시지를 찾을 때에는 앞서 설명한 Messagesource를 사용하므로 에러 코드에 해당하는 메시지를 메시지 프로퍼티 파인에 추가해주어야 한다.
+- RegisterRequestValidator 클래스와 RegisterController 클래스에서 사용한 에러 코드에맞는 메시지를 다음과 같이 추가해주자.
+
+#### src/main/resources/message/label.properties
+
+```
+member.register=회원가입
+
+term=약관
+term.agree=약관동의
+next.btn=다음단계
+
+member.info=회원정보
+email=이메일
+name=이름
+password=비밀번호
+password.confirm=비밀번호 확인
+register.btn=가입 완료
+
+register.done=<strong>{0}님</strong>, 회원 가입을 완료했습니다.
+
+go.main=메인으로 이동
+
+required=필수항목입니다.
+bad.email=이메일이 올바르지 않습니다.
+duplicate.email=중복된 이메일입니다.
+nomatch.confirmPassword=비밀번호와 확인이 일치하지 않습니다.
+```
+
+- 에러 메지지가 올바르게 출력되는지 확인해보자. 회원 정보 입력 단계에서 아무것도 입력하지 않고 [가입 완료] 버튼을 누르면 다음처럼 에러 코드에 해당하는 에러 메시지가 출력될 것이다.
+
+![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/7%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EB%A9%94%EC%84%B8%EC%A7%80%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%20%EA%B2%80%EC%A6%9D)/images/image6.png)
+
+### \<form:errors\> 태그의 주요 속성
+- \<form:errors\> 커스텀 태그는 프로퍼티에 추가한 에러 코드 개수만큼 에러 메시지를 출력한다. 다음의 두 속성 사용해서 각 에러 메시지를 구분해서 표시한다.
+	- element : 각 에러 메시지를 출력할 때 사용할 HTML 태그, 기본 값은 span 이다.
+	- delimiter : 각 에러 메시지를 구분할 때 사용할 HTML 태그. 기본 값은 \<br/\>이다.
+	
+- 다음 코드는 두 속성의 사용 예이다.
+
+```html
+<form:errors path="userId" element="div" delimeter="" />
+```
+
+- path 속성을 지정하지 않으면 글로벌 에러에 대한 메시지를 출력한다.
+
+## 글로벌 범위 Validator와 컨트롤러 범위 Validator
+
+- 스프링 MVC는 모든 컨트롤러에 적용할 수 있는 글로벌 Validator와 단일 컨트롤러에 적용할 수 있는 Validator를 설정하는 방법을 제공한다. 
+- 이를 사용하면 @Valid 애노테이션을 사용해서 커맨드 객체에 검증 기능을 적용할 수 있다.
+
+> 글로벌 범위 Validator와 컨트롤러 범위 Validator 예제 코드는 학습 예제\global에서 확인할 수 있습니다.
+
+### 글로벌 범위 Validator 설정과 @Valid 애노테이션
+
+- 글로벌 범위 Validator는 모든 컨트롤러에 적용할 수 있는 Validator이다. 글로벌 범위 Validator를 적용하려면 다음 두 가지를 설정하면 된다.
+	- 설정 클래스에서 WebMvcConfigurer의 getValidalor() 메서드가 Valldator 구현 객체를 리턴하도록 구현
+	- 글로벌 범위 Validator가 검증할 커맨드 객체에 @Valid 애노테이션 적용
+
+- 먼저 글로벌 범위 Validator를 설정하자. 이를 위해 해야 한 작업은 WebMvcConfigurer 인터페이스에 정의된 getValidator() 메서드를 구현하는 것이다. 구현 예는 다음과 같다.
+
+#### src/main/java/config/MvcConfig.java
+```java
+
+... 생략
+
+import org.springframework.validation.Validator;
+
+import controller.RegisterRequestValidator;
+
+@Configuration
+@EnableWebMvc
+public class MvcConfig implements WebMvcConfigurer {
+
+	@Override
+	public Validator getValidator() {
+		return new RegisterRequestValidator();
+	}
+	
+	... 생략 
+}
+```
+
+- 스프링 MVC는 WebMvcConfigurer 인터페이스의 getValidator() 메서드가 리턴한 객체를 글로벌 범위 Validator로 사용한다. 
+- 글로벌 범위 Validator를 지정하면 @Valid 애노테이션을 사용해서 Validator를 적용할 수 있다. 위에서 설정한 글로벌 범위 Validator인 RegisterRequestValidator는 RegisterRequest 타입에 대한 검증을 지원한다(RegisterRequest 클래스의 supports() 메서드를 보자). 
+- RegisterController클래스의 handleStep3() 메서드가 RegisterRequest 타입 커맨드 객체를 사용하므로 다음과 같이 이 파라미터에 @Valid 애노테이션을 붙여서 글로벌 범위 Validator를 적용할 수 있다.
+
+- @Valid 애노테이션은 Bean Validation API에 포함되어 있다. 이 API를 사용하려면 의존 설정에  Validation-api 모듈을 추가해야 한다. 메이븐을 사용한다면 다음 설정을 추가한다.
+
+```xml
+<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+    <version>2.0.1.Final</version>
+</dependency>
+```
+-  @Valid 애노테이션을 이용한 예
+
+#### src/main/java/controller/RegisterController.java
+
+```java
+package controller;
+
+import javax.validation.Valid;
+
+... 생략
+
+@Controller
+public class RegisterController {
+	
+	... 생략
+	
+	@PostMapping("/register/step3")
+	public String handleStep3(@Valid RegisterRequest regReq, Errors errors) {
+		if (errors.hasErrors()) 
+			return "register/step2";
+			
+		try {
+			memberRegisterService.regist(regReq);
+			return "register/step3";
+		} catch (DuplicateMemberException ex) {
+			errors.rejectValue("email", "duplicate");
+			return "register/step2";
+		}
+	}
+}
+```
+
+- 커맨드 객체에 해당하는 파라미터에 @Valid 애노테이션을 붙이면 글로벌 범위 Validator가 해당 타입을 검증할 수 있는지 확인한다. 검증 가능하면 실제 검증을 수행'하고 그 결과를 Errors에 저장한다. 이는 요청 처리 메서드 실행 전에 적용된다.
+
+- 위 예의 경우 handleStep3() 메서드를 실행하기 전에 @Valid 애노테이션이 붙은 regReq 파라미터를 글로벌 범위 Validator로 검증한다. 
+- 글로벌 범위 Validator가 RegisterRequest 타입을 지원하므로 regReq 파라미터로 전달되는 커맨드 객체에 대한 검증을 수행한다. 
+- 검증 수행 결과는 Errors 타입 파라미터로 받는다. 이 과정은 handleStep3() 메서드가 실행되기 전에 이뤄지므로 handleStep3() 메서드는 RegisterRequest 객체를 검증하는 코드를 작성할 필요가 없다. 파라미터로 전달받은 Errors를 이용해서 검증 에러가 존재하는지 확인하면 된다.
 
 
+- @Valid 애노테이션을 사용할 때 주의할 점은 Errors 타입 파라미터가 없으면 검증 실패시 400 에러를 응답한다는 점이다. 예를 들어 다음과 같이 handleStep3() 메서드에서Errors 타입 파라미터를 없애자.
 
+```java
+@PostMapping("/register/step3")
+public String handleStep3(@Valid RegisterRequest regReq) {		
+	try {
+		memberRegisterService.regist(regReq);
+		return "register/step3";
+	} catch (DuplicateMemberException ex) {
+		return "register/step2";
+	}
+}
+```
+
+- 이렇게 변경하고 검증에 실패하는 값을 전송하면 다음과 같은 에러 응답을 보게된다.
+
+![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/7%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EB%A9%94%EC%84%B8%EC%A7%80%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%20%EA%B2%80%EC%A6%9D)/images/image7.png)
+
+
+>  글로벌 Validator의 범용성<br>RegisterRequestValidator 클래스는 RegisterRequest 타입의 객체만 검증할 수 있으므로 모든 컨트롤러에 적용할 수 있는 글로벌 범위 Validator로 적합하지 않다. 스프링 MVC는 자체적으로 제공하는 글로벌 Validator가 존재하는데 이 Validator를 사용하면 BeanValidation이 제공하는 애노테이션을 이용해서 값을 검증할 수 있다.
+
+### @InitBinder 애노테이션을 이용한 컨트롤러 범위 Validator
+- @InitBinder 애노테이션을 이용하면 컨트롤러 범위 Validator를 설정할 수 있다. 다음은 @InitBinder 애노테이션을 사용해서 컨트롤러 범위 Validator를 설정한 예이다.
+
+```java
+package controller;
+
+import javax.validation.Valid;
+
+... 생략 
+
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+... 생략 
+
+@Controller
+public class RegisterController {
+	
+	... 생략
+	
+	@PostMapping("/register/step3")
+	public String handleStep3(@Valid RegisterRequest regReq, Errors errors) {
+		if (errors.hasErrors()) 
+			return "register/step2";
+			
+		try {
+			memberRegisterService.regist(regReq);
+			return "register/step3";
+		} catch (DuplicateMemberException ex) {
+			errors.rejectValue("email", "duplicate");
+			return "register/step2";
+		}
+	}
+	
+	@InitBinder
+	protected void InitBinder(WebDataBinder binder) {
+		binder.setValidator(new RegisterRequestValidator());
+	}
+}
+```
+
+- 커맨드 객체 파라미터에 @Valid 애노테이션을 적용하고 있다. 글로벌 범위 Validator를 사용할 때와 마찬가지로 handleStep3() 메서드에는 Validator 객체의 validate() 메서드를 호출하는 코드가 없다.
+
+- 어떤 Validator가 커맨드 객체를 검증할지는 정의한 initBinder() 메서드가 결정한다. 
+- @InitBinder 애노테이션을 적용한 메서드는 WebDataBinder 타입 파라미터를 갖는데 WebDataBinder#setValidator() 메서드를 이용해서 컨트롤러 범위에 적용할 Validator를 설정할 수 있다.
+
+
+- 위 코드는 RegisterRequest 타입을 지원하는 RegisterRequestValidator를 컨트롤러 범위 Validator로 설정했으므로 @Valid 애노테이션을 붙인 RegisterRequest를 검증할 때 이 Validator를 사용한다.
+
+- 참고로 @InitBinder가 붙은 메서드는 컨트롤러의 요청 처리 메서드를 실행하기 전에 매번 실행된다. 예를 들어 RegisterController 컨트롤러의 요청 처리 메서드인 handleStep1(), handleStep2(), handleStep3()을 실행하기 전에 initBinder()메서드를 매번 호출해서 WebDataBinder를 초기화한다.
+
+#### 글로벌 범위 Validator와 컨트롤러 범위 Validator의 우선 순위
+
+- @InitBinder 애노테이션을 붙인 메서드에 전달되는 WebDataBinder는 내부적으로 Validator 목록을 갖는다. 이 목록에는 글로벌 범위 Validator가 기본으로 포함된다. 위 코드의 32행에서 WebDataBinder#setValidator(Validator validator) 메서드를 실행하는데 이 메서드는 WebDataBinder가 갖고 있는 Validator를 목록에서 삭제하고 파라미터로 전달받은 Validator를 목록에 추가한다. 즉 setValidator() 메서드를 사용하면 글로벌 범위 Validator 대신에 컨트롤러 범위 Validator를 사용하게 된다.
+
+- WebDataBinder#addValidator(Validator ... validators) 메서드는 기존 Validator 목록에 새로운 Validator를 추가한다. 글로벌 범위 Validator가 존재하는 상태에서 add validator 메서드를 실행하면 순서상 글로벌 범위 Validator 뒤에 새로 추가한 컨트롤러 범위 Validator가 추가된다. 이 경우 글로벌 범위 Validator를 먼저 적용한 뒤에 컨트롤러 범위 Validator를 적용한다.
+
+## Bean Validation을 이용한 값 검증 처리
+
+- @Valid 애노테이션은 Bean Validation 스펙에 정의되어 있다. 이 스펙은 @Valid 애노테이션뿐만 아니라 @NotNull, @Digits, @Size 등의 애노테이션을 정의하고 있다. 이애노테이션을 사용하면 Validator 작성 없이 애노테이션만으로 커맨드 객체의 값 검증을 처리할 수 있다.
+
+> Bean Validation 2.0 버전을 JSR 380이라고도 부른다. 여기서 JSR은 Java Specification Request의 약자로 자바 스펙을 기술한 문서를 의미한다. 각 스펙마다 고유한 JSR 번호를 갖는다. 예를 들어 Bean Validation 1.0 버전은 JSR 303, 1.1 버전은 JSR349이다.
+
+> Bean Validation 이용한 값 검증 처리 예제 코드는 학습 예제\BeanValidator에서 확인할 수 있습니다.
+
+- Bean Validation이 제공하는 애노테이션을 이용해서 커맨드 객체의 값을 검증하는 방법은 다음과 같다.
+	- Bean Validation과 관련된 의존을 설정에 추가한다.
+	- 커맨드 객체에 @NotNull, @Digits 등의 애노테이션을 이용해서 검증 규칙을 설정한다
+
+- 가장 먼저 할 작업은 Bean Validation 관련 의존을 추가하는 것이다. Bean Validation을 적용하려면 API를 정의한 모듈과 이 API를 구현한 프로바이더를 의존으로 추가해야 한다. 프로바이더로는 Hibernate Validator를 사용할 것이다. 다음은 pom.xml에 의존설정을 추가한 예이다.
+
+```xml
+<dependency>
+	<groupId>javax.validation</groupId>
+	<artifactId>validation-api</artifactId>
+	<version>2.0.1.Final</version>
+</dependency>
+<dependency>
+	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate-validator</artifactId>
+	<version>5.4.3.Final</version>
+</dependency>
+```
+
+- 커맨드 클래스는 다음과 같이 Bean Validation과 프로바이더가 제공하는 애노테이션을 이용해서 값 검증 규칙을 설정할 수 있다.
+
+#### src/main/java/spring/RegisterRequest.java
+
+```java
+package spring;
+
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+
+public class RegisterRequest {
+	@NotBlank
+	@Email
+	private String email;
+	@Size(min = 6)
+	private String password;
+	@NotEmpty
+	private String confirmPassword;
+	@NotEmpty
+	private String name;
+
+	... 생략
+}
+```
+
+- @Size, @NotBlank, @Email, @NotEmpty 애노테이션은 각각 검사하는 조건이 다르지만 애노테이션 이름만 보면 어떤 검사를 하는지 어렵지 않게 유추할 수 있다. 
+- 예를 들어 @Size 애노테이션을 붙이면 지정한 크기를 갖는지 검사하고 @NotEmpty 애노테이션을 붙이면 값이 빈 값이 아닌지 검사한다.
+- Bean Validation 애노테이션을 사용했다면 그 다음으로 할 작업은 Bean Validation 애노테이션을 적용한 커맨드 객체를 검증할 수 있는 OptionalValidatorFactoryBean 클래스를 빈으로 등록하는 것이다.
+- @EnableWebMvc 애노테이션을 사용하면 OptionalValidatorFactoryBean을 글로벌 범위 Validator로 등록하므로 다음과 같이 @EnableWebMvc 애노테이션을 설정했다면 추가로 설정한 것은 없다.
+
+```java
+@Configuration
+@EnableWebMvc // OptionalValidatorFactoryBean을 글로벌 범위 Validator로 등록
+public class MvcConfig implements WebMvcConfigurer {
+	... 생략 
+}
+```
+
+- 남은 작업은 @Valid 애노테이션을 붙여서 글로벌 범위 Validator로 검증하는 것이다.
+
+```java
+@PostMapping("/register/step3")
+public String handleStep3(@Valid RegisterRequest regReq, Errors errors) {
+	if (errors.hasErrors()) 
+		return "register/step2";
+		
+	try {
+		memberRegisterService.regist(regReq);
+		return "register/step3";
+	} catch (DuplicateMemberException ex) {
+		errors.rejectValue("email", "duplicate");
+		return "register/step2";
+	}
+}
+```
+
+- 만약 글로벌 범위 Validator를 따로 설정했다면 해당 설정을 삭제하자. 아래와 같이 글로벌 범위 Validator를 설정하면 OptionalValidatorFactoryBean을 글로벌 범위 Validator로 사용하지 않는다. 
+- 스프링 MVC는 별도로 설정한 글로벌 범위 Validator가 없을 때에 OptionalValidatorFactory Bean를 글로벌 범위 Validator로 사용한다.
+
+```java
+@Configuration
+@EnableWebMvc
+public class MvcConfig implements WebMvcConfigurer {
+	// 글로벌 범위 Validation를 설정하면
+	// OptionalValidatorFactoryBean을 사용하지 않는다.
+	@Override
+	public Validator getValidator() {
+		return new RegisterRequestValidator();
+	}
+}
+```
+
+- 실제 검증이 잘 되는지 확인하자. 폼에 아무 값도 입력하지 않고 [가입 완료] 버튼을 눌러보자. 다음은 결과 화면이다. 
+
+![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/7%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EB%A9%94%EC%84%B8%EC%A7%80%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%20%EA%B2%80%EC%A6%9D)/images/image8.png)
+
+
+- 위 그림의 오류 메시지는 앞서 메시지 프로퍼티 파일에 등록한 내용이 아니다. 이 메시지는 Bean Validation 프로바이더(hibernate-validator)가 제공하는 기본 에러 메시지다. 
+- 스프링 MVC는 에러 코드에 해당하는 메시지가 존재하지 않을 때 Bean'Validation 프로바이더가 제공하는 기본 에러 메시지를 출력한다.
+
+- 기본 에러 메시지 대신 원하는 에러 메시지를 사용하려면 다음 규칙을 따르는 메시지 코드를 메시지 프로퍼티 파일에 추가하면 된다.
+	- 애노테이션이름.커맨드객체모델명.프로퍼티명
+	- 애노테이션이름.프로퍼티명
+	- 애노테이션이름
+	
+- 다음 코드를 보자.
+
+```java
+public class RegisterRequest {
+	@NotBlank
+	@Email
+	private String email;
+	
+	... 생략
+}
+```
+
+- 값을 검사하는 과정에서 @NotBlank 애노테이션으로 지정한 검사를 통과하지 못할 때 사용하는 메시지 코드는 다음과 같다(커맨드 객체의 모델 이름을 registerRequest라고 가정).
+	- NotBlank.registerRequest.name
+	- NotBlank.name
+	- NotBlank
+	
+- 따라서 다음과 같이 메시지 프로퍼티 파일에 위 규칙에 맞게 에러 메시지를 등록하면 기본 에러 메시지 대신 원하는 에러 메시지를 출력할 수 있다.
+
+#### src/main/resources/message/label.properties
+
+```
+... 생략
+
+NotBlank=필수 항목입니다. 공백 문자는 허용하지 않습니다.
+NotEmpty=필수 항목입니다.
+Size.password=암호 길이는 6자 이상이어야 합니다.
+Email=올바른 이메일 주소를 입력해야 합니다. 
+```
+
+- 실제 메시지 프로퍼티 파일에 위 내용을 추가하고 다시 폼 검증 결과를 확인해보면 다음과 같이 메시지가 적용된 것을 확인할 수 있다.
+
+![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/7%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EB%A9%94%EC%84%B8%EC%A7%80%2C%20%EC%BB%A4%EB%A7%A8%EB%93%9C%20%EA%B0%9D%EC%B2%B4%20%EA%B2%80%EC%A6%9D)/images/image9.png)
+
+### Bean Validation의 주요 애노테이션
+
+Bean Validation 1.1에서 제공하는 주요 애노테이션은 다음과과 같다. 모든 애노테이션은 Javax.validation.constraints 패키지에 정의되어 있다.
+
+#### Bean Validation 1.1의 주요 애노테이션
+
+|애노테이션|주요 속성|설명| 지원 타입|
+|----|----|-----|----|
+|@AssertTrue<br>@AssertFalse||값이 true인지 또는 false인지 검사한다. null은 유효하다고 판단한다.|boolean<br>Boolean|
+|@DecimalMax<br>@DecimalMin|String value<br>- 최대값 또는 최소값<br>boolean inclusive<br>- 지정값 포함 여부<br>- 기본값 : true|지정한 값보다 작거나 같은지 또는 크기가 같은지 검사한다. inclusive가 false이면 value로 지정한 값은 포함하지 않는다. null은 유효하다고 판단한다.|BigDecimal<br>BigInteger<br>CharSequence<br>정수타입|
+|@Max<br>@Min|long value|지정한 값보다 작거나 같은지 또는 크거나 같은지 검사한다. null은 유효하다고 판단한다.|BigDecimal<br>BigInteger<br>정수타입|
+|@Digits|int integer<br>- 최대 정수 자릿수<br>int fraction<br>- 최대 소수점 자릿수|자릿수가 지정한 크기를 넘지않는지 검사한다.<br>null은 유효하다고 판단한다.|BigDecimal<br>BigInteger<br>CharSequence<br>정수타입|
+|@Size|int min<br>- 최소 크기<br>- 기본값 : 0<br>int max<br>- 최대 크기<br>- 기본값 : 정수 최대값|길이나 크기가 지정한 값 범위에 있는지 검사한다.<br>null은 유효하다고 판단한다.|CharSequence<br>Collection<br>Map<br>배열|
+|@Null<br>@NonNull||값이 null인지 또는 null이 아닌지 검사한다.||
+|@Pattern|String regexp<br>- 정규표현식|값이 정규표현식에 일치하는지 검사한다.<br>null은 유효하다고 판단한다.|CharSequence|
+
+> 정수타입 : bute, short, int, long 및 관련 래퍼 타입
+> CharSequence 인터페이스의 주요 구현 클래스로 String이 있다.
+
+
+- 표를 보면 @NotNull을 제외한 나머지 애노테이션은 검사 대상 값이 null 경우 유효한 것으로 판단하는 것을 알 수 있다. 
+- 따라서 필수 입력 값을 검사할 때에는 다음과 같이 @NotNull과 @Size를 함께 사용해야 한다.
+
+```java
+@NotNull
+@Size(min=1)
+private String title;
+
+@NotNull만 사용하면 title의 값이 빈 문자열("")일 경우 값 검사를 통과한다.
+```
+
+- Hibernate Validator는 @Email이나 @NotBlank와 같은 추가 애노테이션을 지원하는데 이중 일부는 Bean Validation 2.0에 추가됐다. 
+- 스프링 5 버전은 Bean Validation 2.0을 지원하므로 Bean Validation 2.0을 사용하면 다음의 애노테이션을 추가로 사용할 수 있다.
+
+#### Bean Validator 2.0이 추가로 제공하는 애노테이션
+
+|애노테이션|설명|지원타입|
+|----|-------|----|
+|@NotEmpty|문자열이나 배열의 경우 null이 아니고 길이가 0이 아닌지 검사한다. 콜렉션의 경우 null이 아니고 크기가 0이 아닌지 검사한다.|CharSequence<br>Collection<br>Map<br>배열|
+|@NotBlank|null이 아니고 최소한 한 개 이상의 공백아닌 문자를 포함하는지 검사한다.|CharSequence|
+|@Positive<br>@PositiveOrZero|양수인지 검사한다.<br>OrZero가 붙은 것은 0 또는 양수인지 검사한다.<br>null은 유효하다고 판단한다.|BigDecimal<br>BigInteger<br>정수타입|
+|@Email|이메일 주소가 유효한지 검사한다.<br>null은 유효하다고 판단한다.|CharSequence|
+|@Future<br>@FutureOrPresent|해당 시간이 미래 시간인지 검사한다.<br>OrPresent가 붙은 것은 현재 또는 미래 시간인지 검사한다.<br>null은 유효하다고 판단한다.|시간 관련 타입|
+|@Past<br>@PastOrPresent|해당 시간이 과거 시간인지 검사한다.<br>OrPresent가 붙은 것은 현재 또는 과거 시간인지 검사한다.<br>null은 유효하다고 판단한다.|시간 관련 타입|
+
+> 시간 관련 타입: Date, Calendar, Instant, LocalDate, LocalDateTime, MonthDay, OffsetDateTime, OffsetTime, Year, YearMonth, ZonedDateTime 등
+
+- Bean Validation 2.0을 사용하고 싶다면 다음 의존을 설정하면 된다.
+
+```xml
+<dependency>
+	<groupId>javax.validation</groupId>
+	<artifactId>validation-api</artifactId>
+	<version>2.0.1.Final</version>
+</dependency>
+<dependency>
+	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate-validator</artifactId>
+	<version>5.4.3.Final</version>
+</dependency>
+```
