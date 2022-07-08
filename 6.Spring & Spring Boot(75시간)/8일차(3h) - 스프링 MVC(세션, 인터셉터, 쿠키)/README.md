@@ -1055,3 +1055,5 @@ public class LoginController {
 - 모든 준비가 끝났으니 이메일 기억하기 기능을 테스트할 시간이다. 로그인할 때 '이메일 기억하기' 체크박스를 선택해보자. 로그인에 성공했다면 로그아웃을 한 뒤 다시 로그인 폼으로 이동해보자. 그러면 그림처럼 이전에 입력한 이메일 주소가 폼에 출력되는 것을 확인할 수 있을 것이다.
 
 ![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/8%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EC%84%B8%EC%85%98%2C%20%EC%9D%B8%ED%84%B0%EC%85%89%ED%84%B0%2C%20%EC%BF%A0%ED%82%A4)/images/image8.png)
+
+
