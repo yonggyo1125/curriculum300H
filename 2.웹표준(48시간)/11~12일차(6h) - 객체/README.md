@@ -967,7 +967,7 @@ var Card = class {
 
 ```javascript
 function Person(name) {
-	Object.definePropery(this, "name", {
+	Object.defineProperty(this, "name", {
 		get: function() {
 			return name;
 		},
