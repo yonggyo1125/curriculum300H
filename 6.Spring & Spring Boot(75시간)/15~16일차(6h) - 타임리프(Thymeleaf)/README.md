@@ -227,8 +227,6 @@ public class MvcConfig implements WebMvcConfigurer {
 ```
 
 
-스프링 MVC와 관련된 설정은 39~46행이다. 이 메서드에서 타임리프를 뷰로 사용하는 ViewResolver를 설정한다. 마지막으로 48~51행에서 Thymeleaf ViewResolver를 등록한다.
-
 
 ## 타임리프 기본문법
 
