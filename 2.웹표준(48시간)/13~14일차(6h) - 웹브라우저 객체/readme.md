@@ -602,7 +602,7 @@ console.log(element.nodeName, element.nodeValue, element.nodeType);
 
 ### 자바스크립트로 웹 페이지 제어하기
 
-- 자바스크립트를 사용하면 DOM 트리의 노드 객체를 가져와서 제어할 수 있습니다. 또한 자바스크립트로 스타일 규칙을 가져와서 제어할 수도 있습니다. <b>렌더링 엔진은 DOM 트리와 스타일 규칙이 바뀔 때마다 렌더 트리를 다시 구성해서 웹페리지를 다시 그립니다.</b>
+- 자바스크립트를 사용하면 DOM 트리의 노드 객체를 가져와서 제어할 수 있습니다. 또한 자바스크립트로 스타일 규칙을 가져와서 제어할 수도 있습니다. <b>렌더링 엔진은 DOM 트리와 스타일 규칙이 바뀔 때마다 렌더 트리를 다시 구성해서 웹페이지를 다시 그립니다.</b>
 
 ![image4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/2.%EC%9B%B9%ED%91%9C%EC%A4%80(48%EC%8B%9C%EA%B0%84)/13~14%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%9B%B9%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%20%EA%B0%9D%EC%B2%B4/images/images4.png)
 
