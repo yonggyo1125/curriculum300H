@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/1fAseZVsvQIrcNB_3FcxICN4Dmt--bsAt?usp=sharing)
+
 # 웹 브라우저 객체
 
 ## 클라이언트 측 자바스크립트
