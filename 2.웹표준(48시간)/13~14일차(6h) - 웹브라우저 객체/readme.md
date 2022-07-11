@@ -1365,7 +1365,7 @@ scrollBy(0, window.innerHeight);
 - 요소 객체의 scrollIntroView 메서드는 그 요소가 웹 브라우저의 표시 영역에 들어올 때까지 스크롤 합니다.
 
 ```javascript
-요소 객체.scrollInterView(alignWithTop);
+요소 객체.scrollIntoView(alignWithTop);
 ```
 
 - 인수 alignWidthTop은 선택 사항으로 생략하면 true로 간주합니다. alignWidthTop이 true면 요소가 표시 영역의 위쪽 끝에 오도록 스크롤합니다. false면 요소가 표시 영역의 아래쪽 끝에 오도록 스크롤합니다.
