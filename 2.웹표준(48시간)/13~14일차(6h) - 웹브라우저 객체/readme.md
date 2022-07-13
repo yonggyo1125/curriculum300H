@@ -1310,7 +1310,7 @@ var rect = 요소 객체.getBoundingClientRect();
 	
 ### 스크롤하기
 
-#### 특정 위치로 ㅅ그크롤하기
+#### 특정 위치로 스크롤하기
 window 객체의 scrollTo 메서드는 문서 좌표 (X,Y)를 인수로 받으며, 뷰 포트 좌표의 원점(표시 영역의 왼쪽 위 모서리)까지 스크롤합니다.
 
 ```javascript
