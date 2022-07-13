@@ -553,7 +553,7 @@ Person.prototype.sayHello = () => {
 </html>
 ```
 
-- <b>버튼</b 버튼을 누르면 person.handleEvent 메서드가 실행됩니다. handleEvent 메서드의 this는 생성된 객체에 고정되므로 콘솔에 다음과 같은 결과를 표시합니다.
+- <b>버튼을 누르면 person.handleEvent 메서드가 실행</b>됩니다. handleEvent 메서드의 this는 생성된 객체에 고정되므로 콘솔에 다음과 같은 결과를 표시합니다.
 
 ```
 Hello! Tom
