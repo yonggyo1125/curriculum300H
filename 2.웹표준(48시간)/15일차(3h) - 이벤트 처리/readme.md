@@ -1,3 +1,6 @@
+# 강의 동영상 링크
+[동영상 링크](https://drive.google.com/drive/folders/112vMoOeJTD505HJVx45no94cvTXw_F_r?usp=sharing)
+
 # 이벤트 처리
 
 ## 이벤트 처리기를 등록하는 방법
