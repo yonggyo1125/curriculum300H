@@ -15,7 +15,7 @@
 	
 	```javascript
 	var btn = document.getElementById("button");
-	btn.onclick = changeColor();
+	btn.onclick = changeColor;
 	```
 	
 	- (3) addEventListener 메서드를 사용하는 방법
@@ -65,7 +65,7 @@ target.addEventListener(type, listener, useCapture);
 	<script>
 		window.onload = function() {
 			var element = document.getElementById("box");
-			element.addEventListener("click", function() {
+			element.addEventListener("click", function(e) {
 				e.currentTarget.style.backgroundColor = "red";
 			}, false);
 		};	
@@ -454,7 +454,7 @@ Hello! Tom
 			
 			var person = new Person("Tom");
 			var button = document.getElementById("button");
-			button.addEventListener("click", person.sayHello, false);
+			button.addEventListener("click", function() { person.sayHello() }, false);
 		};	
 	</script>
 </head>
