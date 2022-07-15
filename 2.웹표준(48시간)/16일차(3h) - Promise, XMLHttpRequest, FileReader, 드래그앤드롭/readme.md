@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1MomeIVEhJ627OQBh3IZFRsTrJQ2Nfv7e?usp=sharing)
+
 # Promise
 - [학습 URL](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 
