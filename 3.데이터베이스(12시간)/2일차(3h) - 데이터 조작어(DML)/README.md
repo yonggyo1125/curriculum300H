@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1tVqDYixHNRwQiN6S_QZPRQl9m8HUqNSx?usp=sharing)
+
 ## 데이터 조작어(DML) - 검색
 
 ### WHERE 조건

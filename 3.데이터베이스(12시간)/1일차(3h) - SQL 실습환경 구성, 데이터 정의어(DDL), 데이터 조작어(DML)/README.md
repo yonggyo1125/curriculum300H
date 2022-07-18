@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1tVqDYixHNRwQiN6S_QZPRQl9m8HUqNSx?usp=sharing)
+
 ## SQL 실습 환경 구성
 - DBMS에게 원하는 내용을 알려주고 결과를 얻는 데 사용하는 데이터베이스 전용 언어가 SQL이다.
 - SQL은 기능에 따라 데이터 정의어(DDL, Data Definition Language)와 데이터 조작어(DML, Data Manipulation Language), 데이터 제어어(DCL, Data Control Language)로 나눈다.

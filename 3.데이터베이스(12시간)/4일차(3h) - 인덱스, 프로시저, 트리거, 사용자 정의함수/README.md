@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1tVqDYixHNRwQiN6S_QZPRQl9m8HUqNSx?usp=sharing)
+
 ## 인덱스
 - 인덱스(index - 색인)란 자료를 쉽고 빠르게 찾을 수 있도록 만든 데이터 구조이다.
 - 도서관에서 책을 찾을 때 서지목록을 보고 책의 위치를 찾는 것처럼 인덱스도 같은 역할을 한다.

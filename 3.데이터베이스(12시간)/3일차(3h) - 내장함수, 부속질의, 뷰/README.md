@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1tVqDYixHNRwQiN6S_QZPRQl9m8HUqNSx?usp=sharing)
+
 ## 내장함수
 - SQL에서도 함수라는 개념을 사용한다.
 - SQL의 함수는 크게 두가지로 나눈다. 
