@@ -412,8 +412,8 @@ WHERE custid IN (SELECT custid
 SELECT b1.bookname 
 FROM Book b1
 WHERE b1.price > (SELECT avg(b2.price)
-							FROM Book b2
-							WHERE b2.publisher = b1.publisher);
+				FROM Book b2
+				WHERE b2.publisher = b1.publisher);
 ```
 > 투플 변수<br>테이블 이름이 길거나 한 개의 테이블이 SQL 문에 두 번 사용될 때 혼란을 피하기 위해 테이블의 별칭을 붙여 사용하는데, 이를 <b>투플 변수(tuple variable)</b>라 한다. 투플 변수는 FROM 절의 테이블 이름 뒤에 표기한다.
 
@@ -461,8 +461,8 @@ WHERE custid IN (SELECT custid FROM Orders);
 SELECT name, address
 FROM Customer cs
 WHERE EXISTS (SELECT * 
-				FROM Orders od 
-				WHERE cs.custid = od.custid);
+		FROM Orders od 
+		WHERE cs.custid = od.custid);
 ```
 
 * * * 
