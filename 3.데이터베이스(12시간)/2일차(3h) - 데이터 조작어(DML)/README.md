@@ -400,8 +400,8 @@ FROM Customer
 WHERE custid IN (SELECT custid 
 		FROM Orders
 		WHERE bookid IN (SELECT bookid 
-							FROM Book 
-							WHERE publisher='대한미디어'));
+				FROM Book 
+				WHERE publisher='대한미디어'));
 ```
 
 - 부속질의 간에는 상하 관계가 있으며, 실행 순서는 **하위 부속질의를 먼저 실행하고 그 결과를 이용하여 상위 부속질의를 실행**한다. 
