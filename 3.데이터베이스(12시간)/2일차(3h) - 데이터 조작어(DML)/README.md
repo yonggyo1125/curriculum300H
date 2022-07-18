@@ -355,7 +355,7 @@ FROM Customer LEFT OUTER JOIN Orders
 	</tr>
 	<tr>
 		<td>외부조인</td>
-		<td>SELECT <속성들><br>FROM 테이블 1 {LEFT | RIGHT | FULL \[OUTER\]} JOIN 테이블 2 ON <조인조건><br>WHERE <검색조건></td>
+		<td>SELECT <속성들><br>FROM 테이블 1 {LEFT | RIGHT | FULL [OUTER]} JOIN 테이블 2 ON <조인조건><br>WHERE <검색조건></td>
 		<td>외부조인은 FROM 절에 조인 종류를 적고 ON을 이용하여 조인조건을 명시한다.</td>
 	</tr>
 </tbody>
