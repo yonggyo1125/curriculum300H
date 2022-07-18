@@ -192,11 +192,11 @@ FROM Orders;
 
 |집계 함수|문법|사용 예|
 |----|--------|----|
-|SUM|SUM(\[ALL | DISTINCT\] 속성이름)|SUM(price)|
-|AVG|AVG(\[ALL | DISTINCT\] 속성이름)|AVG(price)|
-|COUNT|SUM(\[ALL | DISTINCT | \*\] 속성이름)|COUNT(\*)|
-|MAX|MAX(\[ALL | DISTINCT\] 속성이름)|MAX(price)|
-|MIN|MIN(\[ALL | DISTINCT\] 속성이름)|MIN(price)|
+|SUM|SUM(\[ALL \| DISTINCT\] 속성이름)|SUM(price)|
+|AVG|AVG(\[ALL \| DISTINCT\] 속성이름)|AVG(price)|
+|COUNT|SUM(\[ALL \| DISTINCT \| \*\] 속성이름)|COUNT(\*)|
+|MAX|MAX(\[ALL \| DISTINCT\] 속성이름)|MAX(price)|
+|MIN|MIN(\[ALL \| DISTINCT\] 속성이름)|MIN(price)|
 
 
 ### GROUP BY
