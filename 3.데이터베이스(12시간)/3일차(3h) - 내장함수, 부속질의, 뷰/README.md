@@ -89,21 +89,21 @@ GROUP BY custid;
 		<td>LAPD(s,n,c)</td>
 		<td>
 			대상 문자열의 왼쪽부터 지정한 자리수까지 지정한 문자로 채움<br>
-			예) LPAD('page 1', 10, '*') -> '\*\*\*\*Page 1"
+			예) LPAD('page 1', 10, '*') -> '****Page 1"
 		</td>
 	</tr>
 	<tr>
 		<td>REPLACE(s1, s2, s3)</td>
 		<td>
 			대상 문자열의 지정한 문자를 원하는 문자로 변경<br>
-			예) REPLACE('AbC', '5, '\*') -> 'AbC\*\*'
+			예) REPLACE('AbC', '5, '*') -> 'AbC**'
 		</td>
 	</tr>
 	<tr>
 		<td>RPAD(s,n,c)</td>
 		<td>
 			대상 문자열의 오른쪽부터 지정한 자리수까지 지정한 문자로 채움<br>
-			예) RPAD('AbC', 5, '\*') -> 'AbC\*\*'
+			예) RPAD('AbC', 5, '*') -> 'AbC**'
 		</td>
 	</tr>
 	<tr>
