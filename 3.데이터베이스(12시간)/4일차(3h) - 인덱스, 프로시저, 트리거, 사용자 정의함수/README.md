@@ -106,7 +106,7 @@ DROP INDEX ix_Book ON Book;
 delimiter //
 CREATE PROCEDURE dorepeat(p1 INT)
 BEGIN 
-SETG @x = 0;
+SET @x = 0;
 REPEAT SET @x = @x + 1; UNTIL @x > p1 END REPEAT;
 END
 //
