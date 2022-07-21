@@ -125,7 +125,7 @@ delimiter //
 CREATE PROCEDURE InsertBook(
 	IN myBookID INTEGER,
 	IN myBookName VARCHAR(40),
-	IN myPublisher VARCHAR(40)m
+	IN myPublisher VARCHAR(40),
 	IN myPrice INTEGER)
 BEGIN 
 	INSERT INTO Book(bookid, bookname, publisher, price)
@@ -151,7 +151,7 @@ delimiter ;
 |IF-ELSE|조건의 검사 결과에 따라 문장을 선택적으로 수행|IF \<조건\> THEN \[SQL 문\]<br>\[ELSE \[SQL 문\]\]<br>END IF;|
 |LOOP|LEAVE 문을 만나기 전까지 LOOP을 반복|\[label:\] LOOP<br>\[SQL 문\]\[LEAVE \[label\]\]<br>END LOOP|
 |WHILE|조건이 참일 경우 WHILE 문의 블록을 실행|WHILE \<조건\> DO<br>\[SQL 문 | BREAK | CONTINUE \]<br>END WHILE|
-|REPEAT|조건이 참일 경우 REPEAT 문의 블록을 실행|\[label:\] REPEA<br>\[SQL 문 | BREAK | CONTINUE \]<br>UNTIL \<조건\><br>END REPEAT \[label:\]|
+|REPEAT|조건이 참일 경우 REPEAT 문의 블록을 실행|\[label:\] REPEAT<br>\[SQL 문 | BREAK | CONTINUE \]<br>UNTIL \<조건\><br>END REPEAT \[label:\]|
 |RETURN|프로시저를 종료<br>상태값 반환 가능|RETURN \[\<식\>\]|
 
 - 동일한 도서가 있는지 점검한 후 삽입하는 프로시저
@@ -243,7 +243,7 @@ BEGIN
 		FETCH InterestCursor INTO Price;
 		IF endOfRow THEN LEAVE cursor_loop;
 		END IF;
-		IF price >= 30000 THEN
+		IF Price >= 30000 THEN
 			SET myInterest = myInterest + Price * 0.1;
 		ELSE 
 			SET myInterest = myInterest + Price * 0.05;
@@ -284,7 +284,6 @@ delimiter //
 CREATE TRIGGER AfterInsertBook 
 	AFTER INSERT ON Book FOR EACH ROW
 BEGIN
-	DECLARE average INTEGER;
 	INSERT INTO Book_log 
 	  VALUES(new.bookid, new.bookname, new.publisher, new.price);
 END;
