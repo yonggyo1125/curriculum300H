@@ -1,3 +1,8 @@
+
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1mjfCjZ6rWKSz2_R-acb1OAB7M1xIi9a8?usp=sharing)
+
 # 개발환경 구축
 
 ### Eclipse EE IDE 설치
