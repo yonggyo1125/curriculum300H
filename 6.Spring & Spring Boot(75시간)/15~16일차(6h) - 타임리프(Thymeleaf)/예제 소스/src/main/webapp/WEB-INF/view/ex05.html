@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>회원 목록 출력 예제</h1>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>순번</th>
+                <th>회원번호</th>
+                <th>아이디</th>
+                <th>회원명</th>
+                <th>가입일</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="memberDto, status : ${memberDtoList}">
+                <td th:switch="${status.even}">
+                    <span th:case=true>짝수</span>
+                    <span th:case=false>홀수</span>
+                </td>
+                <td th:text="${memberDto.memNo}"></td>
+                <td th:text="${memberDto.memId}"></td>
+                <td th:text="${memberDto.memNm}"></td>
+                <td th:text="${#temporals.format(memberDto.regDt, 'yyyy.MM.dd')}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -360,6 +360,7 @@ public class BasicController {
 - 각 식 객체는 기능이나 속성을 제공한다. dates 식 객체의 경우 format을 비롯해 날짜 형식 포맷팅을 위한 다양한 기능을 제공한다. 
 
 #### 타임리프가 제공하는 주요 식 객체
+
 - #strings : 문자열 비교, 문자열 추출 등 String 타입을 위한 기능 제공
 - #numbers : 포맷팅 등 숫자 타입을 위한 기능 제공
 - #dates, #calendars, #temporals : Date타입과 Calendar 타입, LocalDateTIme 타입을 위한 기능 제공

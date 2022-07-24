@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>로그인</title>
+    </head>
+    <body>
+        <form method="post" action="#" th:action="@{/member/login}" th:object="${loginDto}">
+            <dl>
+                <dt>아이디</dt>
+                <dd>
+                    <input type="text" name="memId" th:field="*{memId}">
+                    <span th:each="err : ${#fields.errors('memId')}" th:text="${err}"></span>
+                </dd>
+            </dl>
+            <dl>
+                <dt>비밀번호</dt>
+                <dd>
+                    <input type="text" name="memPw" th:field="*{memPw}">
+                    <span th:each="err : ${#fields.errors('memPw')}" th:text="${err}"></span>
+                </dd>
+            </dl>
+            <button type="submit">로그인</button>
+        </form>
+    </body>
+</html>
