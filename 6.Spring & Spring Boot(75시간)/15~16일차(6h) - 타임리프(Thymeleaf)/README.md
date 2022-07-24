@@ -226,6 +226,79 @@ public class MvcConfig implements WebMvcConfigurer {
 	}
 ```
 
+## 타임리프 소개
+ 
+- 화면을 동적으로 만들려면 템플릿 엔진을 사용해야 합니다. 미리 정의된 템플릿(Template)을 만들고동적으로 HTML 페이지를 만들어서 클라이언트에 전달하는 방식입니다. 요청이 올 때마다서버에서 새로운 HTML 페이지를 만들어 주기 때문에 서버 사이드 렌더링 방식이라고 합니다.
+
+- 서버 사이드 템플릿 엔진으로는 Thymeleaf, JSP, Freemarker, Groovy, Mustache 등이 있습니다. 어떤 것을 사용해도 만들 수 있지만 스프링에서는 Thymeleaf를 권장합니다.
+-  Thymeleaf의 가장 큰 장점은 'natural templates' 입니다. JSP를 사용해 보신 분들은 알겠지만 JSP 파일의 확장자명은 JSP 입니다. 웹 브라우저에 파일을 띄우면 JSP 문법이 화면에 나타나는 것을 볼 수 있습니다.
+- 즉, 서버 사이드 렌더링을 하지 않으면 정상적인 화면 출력 결과를 볼 수 없습니다. Thymeleaf를 사용할 때 Thymeleaf 문법을 포함하고 있는 html 파일을 서버 사이드 렌더링을 하지 않고 브라우저에띄워도 정상적인 화면을 볼 수 있습니다. Thymeleaf의 확장자명은 .html이며, Thymeleaf의 문법은html 태그 안쪽에 속성으로 사용됩니다. 예제 코드로 한번 살펴보겠습니다.
+
+#### src/main/java/config/ControllerConfig.java
+
+```java
+package config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import controller.*;
+
+@Configuration
+public class ControllerConfig {
+		
+	@Bean
+	public BasicController basicController() {
+		return new BasicController();
+	}
+}
+```
+
+#### src/webapps/WEB-INF/view/ex01.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Title</title>
+</head>
+<body>
+    <p th:text="${data}">Hello Thymeleaf!!</p>
+</body>
+</html>
+```
+
+#### src/main/java/controller/BasicController.java
+
+```java
+package controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+@RequestMapping("/tpl")
+public class BasicController {
+	
+	@GetMapping("/ex01")
+	public String ex01(Model model) {
+		model.addAttribute("data", "타임리프 예제입니다.");
+		return "ex01";
+	}
+}
+```
+
+- 웹 브라우저를 이용해서 ex01.html 파일을 열면 다음과 같은 화면이 나타납니다. \<p\>태그 안에 th:text="${data}" 라는 Thymeleaf 문법이 들어갔지만 html 파일이 깨지지 않고 정상적으로 출력되는 것을 확인할 수 있습니다.
+
+
+- 애플리케이션 실행 후 해당 /tpl/ex01 URL을 열면 "Hello Thymeleaf!" 대신 "타임리프 예제입니다!" 라는 문구가 나타나는 것을 볼수 있습니다.
+
+- 이것이 바로 Thymeleaf가 지향하는 "natural templates" 입니다. 디자이너 또는 퍼블리션는 자신이 작업한 내용을 html파일로 바로 열어서 확인할 수 있으며, 개발자는 디자이너 또는 퍼블리셔로부터 html 파일을 받아서 html 태그 안에 Thymeleaf 문법을 추가하는 것만으로 동적으로 html 파일을 생성할 수 있습니다. 
+- html파일을 JSP 파일로 변경하는 작업은 실수할 확률도 높고 많은 시간이 걸립니다.
+
 
 
 ## 타임리프 기본문법
