@@ -4,7 +4,7 @@
 
 - JDBC  프로그래밍을 경험한 경우 다음과 같은 코드에 익숙할 것이다. 
 
-![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image1.png)
+![image1](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image1.png)
 
 - JDBC API를 이용하면 상기 코드 처럼 DB 연동에 필요한 Connection을 구한 다음 쿼리를 실행하기 위한 PreparedStatement를 생성한다. 그리고 쿼리를 실행한 뒤에는 finally 블록에서 ResultSet, PreparedStatement, Connection을 닫는다. 
 
@@ -995,7 +995,7 @@ try {
 - 스프링은 JDBC뿐만 아니라 JPA, 하이버네이트 등에 대한 연동을 지원하고 MyBatis는 자체적으로 스프링 연동기능을 제공한다. 그런데 각각의 구현기술마다 익셉션을 다르게 처리해야 한다면 개발자는 기불마다 익셉션 처리 코드를 작성해야 할 것이다. 
 - 각 연동 기술에 따라 발생하는 익셉션을 스프링이 제공하는 익셉션으로 변환함으로써 다음과 같이 구현 기술에 상관없이 동일한 코드로 익셉션을 처리할 수 있게 된다.
 
-![image2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image2.png)
+![image2](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image2.png)
 
 - 앞에서 BadSqlGrammerException은 DataAccessException을 상속받은 하위 타입이라고 했다. BadSqlGrammerException은 실행할 쿼리가 올바르지 않은 경우에 사용된다.
 - 스프링은 이외에도 DuplicateKeyException, QueryTimeoutException 등 DataAccessException을 상속한 다양한 익셉션 클래스를 제공한다.
@@ -1316,7 +1316,7 @@ public class MainForCPS {
 - 실제로 @Transactional 애노테이션을 적용하기 위해 @EnableTransactionManagement 애노테이션을 사용하면 스프링은 @Transaction 애노테이션이 적용된 빈 객체를 찾아서 알맞은 프록시 객체를 생성한다.
 - 예를 들어 앞서 MainForCPS 예제의 경우 다음과 같은 구조로 프록시를 사용하게 된다.
 
-![image3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image3.png)
+![image3](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image3.png)
 
 - ChangePasswordService 클래스의 메서드에 @Transactional 애노테이션이 적용되어 있으므로 스프링은 트랜잭션 기능을 적용한 프록시 객체를 생성한다. 
 - MainForCPS 클래스에서 getBean("changePwdSvc", ChangePasswordService.class) 코드를 실행하면 ChangePasswordService 객체 대신에 트랜잭션 처리를 위해 생성한 프록시 객체를 리턴한다.
@@ -1340,7 +1340,7 @@ try {
 - 이 코드의 실행 결과를 보면 WrongIdPasswordException이 발생했을 때 트랜잭션이 롤백된 것을 알 수 있다.
 - 실제로 @Transactional을 처리하기 위한 프록시 객체는 원본 객체의 메서드를 실행하는 과정에서 RuntimeException이 발생하면 다음과 같이 트랜잭션을 롤백한다.
 
-![image4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image4.png)
+![image4](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image4.png)
 
 - 별도 설정을 추가하지 않으면 발생한 익셉션이 RuntimeException일 때 트랜잭션을 롤백한다. 
 - WrongIdPasswordException 클래스를 구현할 때 RuntimeException을 상속한 이유는 바로 트랜잭션 롤백을 염두해 두었기 때문이다.
@@ -1422,7 +1422,7 @@ public PlatformTransactionManager transactionManager() {
 	- 메서드를 수행하는데 트랜잭션이 필요하다는 것을 의미한다. 현재 진행 중인 트랜잭션이 존재하면 해당 트랜잭션을 사용한다. 존재하지 않으면 새로운 트랜잭션을 생성한다.
 
 
-![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image6.png)
+![image6](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image6.png)
 
 - SomeService 클래스와 AnyService 클래스는 둘 다 @Transactional 애노테이션을 적용하고 있다.  위의 설정에 따르면 두 클래스에 대해 프록시가 생성된다. 
 - 즉 SomeService의 some() 메서드를 호출하면 트랜잭션이 시작되고 AnyService의 any() 메서드를 호출해도 트랜잭션이 시작된다. 그런데 some() 메서드는 내부에서 다시 any() 메서드를 호출하고 있다. 이 경우 트랜잭션 처리는 어떻게 될까?
@@ -1465,7 +1465,7 @@ public class MemberDao {
 - 비록 update() 메서드에 @Transactional이 붙어 있지 않지만 JdbcTemplate 클래스 덕에 트랜잭션 범위에서 쿼리를 실행할 수 있게 된다.
 - JdbcTemplate은 진행 중인 트랜잭션이 존재하면 해당 트랜잭션 범위에서 쿼리를 실행한다. 위 코드의 실행 흐름을 다이어그램으로 표시하면 다음과 같다.
 
-![image5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image5.png)
+![image5](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image5.png)
 
 - 그림을 보면 과정 1에서 트랜잭션을 시작한다. ChangePasswordService의 @Transactional이 붙은 메서드를 실행하므로 프록시가 트랜잭션을 시작한다. 과정 2.1.1과 과정 2.2.1은 JdbcTemplate을 실행한다. 과정 2.1.1과 과정 2.2.1을 실행하는 시점에서 트랜잭션이 진행 중이다(트랜잭션은 커밋 시점인 과정 3에서 끝난다). 
 - 이 경우 JdbcTemplate은 이미 진행 중인 트랜잭션 범위에서 실행한다. 따라서 changePassword() 메서드에 실행하는 모든 쿼리는 하나의 트랜잭션 범위에서 실행된다.
@@ -1694,7 +1694,7 @@ public class Main {
 - 객체를 데이터베이스에 넣기 위해서는 SQL문을 통해 변환해서 저장해야 하고, 데이터베이스에서 객체를 다시 꺼내오기 위해서는 복잡한 SQL문을 작성해야 합니다. 
 - 결국 객체를 단순히 데이터 전달 목적으로 사용할 뿐 객체지향적으로 프로그래밍을 할 수 없습니다. <b>이는 객체지향과 관계형 데이터베이스 간의 패러다임이 불일치하기 때문입니다. 이를 해결하기 위해서 나온 기술이 ORM입니다.</b>
 
-![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image8.png)
+![image8](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image8.png)
 
 - 객체는 객체지향적으로, 데이터베이스는 데이터베이스 대로 설계를 합니다. 그리고 ORM은 중간에서 2개를 매핑하는 역할을 합니다. 이를 통해 개발자는 소스를 조금 더 객체지향적으로 설계하고 비즈니스 로직에 집중할 수 있습니다.
 
@@ -1726,7 +1726,7 @@ public class Main {
 
 ### JPA 동작 방식
 
-![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image9.png)
+![image9](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image9.png)
 
 #### 엔티티
 - 엔티티(Entity)란 데이터베이스의 테이블에 대응하는 클래스라고 생각하시면 됩니다. 
@@ -1753,7 +1753,7 @@ public class Main {
 
 #### 엔티티 생명주기
 
-![image10](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image10.png)
+![image10](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image10.png)
 
 |생명주기|내용|
 |비영속(new)|new 키워드를 통해 생성된 상태로 영속성 컨텍스트와 관련이 없는 상태|
@@ -1767,7 +1767,7 @@ public class Main {
 
 #### 영속성 컨텍스트 1차 캐시 구조
 
-![image11](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image11.png)
+![image11](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image11.png)
 
 #### 1차 캐시
 
@@ -1782,7 +1782,7 @@ public class Main {
 
 #### 영속성 컨텍스트 쓰기 지연 SQL 저장소
 
-![image11](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image11.png)
+![image11](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image11.png)
 
 #### 트랜잭션을 지원하는 쓰기 지연
 
@@ -1844,7 +1844,7 @@ mvn archetype:generate
 
 - JPA 설정 파일 persistence.xml을 src/main/resources/META-INF/persistence.xml에 다음과 같이 추가합니다.
 
-![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image7.png)
+![image7](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image7.png)
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
