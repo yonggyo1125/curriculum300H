@@ -1680,9 +1680,448 @@ public class Main {
 ```
 
 * * * 
-## 마이바티스(mybatis) 프레임워크 설정하기
+## JPA
+- JPA(Jave Persistence API')는 자바 ORM 기술에 대한 API 표준입니다. 
+- ORM이란 'Objea Relational Mapping'의 약자로 객체와 관계형 데이터베이스를 매핑해주는 것을 말합니다. 
 
-* * * 
-## 마이바티스(mybatis) 프레임워크 적용하기
+### JPA란?
+
+- 상품 데이터를 관리하는 Item 클래스가 있고, 상품 데이터를 관계형 데이터베이스에서 관리하기 위해서 우리는 SQL문을 사용합니다. 
+- SQL 중심 개발의 문제점은 개발자가 CRUD라고 불리는 INSERT, UPDATE, SELECT, DELETE 문을 작성해서 객체를 관계형 데이터베이스에 넣어주고 가져오는 작업을 하는 것입니다. 
+- 즉, 자바 객체를 SQL을 통해 데이터베이스에 관리하게 하고 데이터베이스에 저장된 데이터를 자바 애플리케이션에서 사용하려면 SQL을 통해 다시 자바 객체로 변환하는 반복적인 작업을 해야 합니다. 개발자가 SQL을 매핑하는 역할을 반복해야 한다는 의미입니다.
+
+- 또한 객체와 관계형 데이터베이스의 패러다임의 불일치가 가장 큰 문제입니다. 자바는 객체 지향 패러다임으로 만들어졌고, 관계형 데이터베이스는 데이터를 정규화해서 잘 보관하는 것을 목표로 합니다. 
+- 객체를 데이터베이스에 넣기 위해서는 SQL문을 통해 변환해서 저장해야 하고, 데이터베이스에서 객체를 다시 꺼내오기 위해서는 복잡한 SQL문을 작성해야 합니다. 
+- 결국 객체를 단순히 데이터 전달 목적으로 사용할 뿐 객체지향적으로 프로그래밍을 할 수 없습니다. <b>이는 객체지향과 관계형 데이터베이스 간의 패러다임이 불일치하기 때문입니다. 이를 해결하기 위해서 나온 기술이 ORM입니다.</b>
+
+![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image8.png)
+
+- 객체는 객체지향적으로, 데이터베이스는 데이터베이스 대로 설계를 합니다. 그리고 ORM은 중간에서 2개를 매핑하는 역할을 합니다. 이를 통해 개발자는 소스를 조금 더 객체지향적으로 설계하고 비즈니스 로직에 집중할 수 있습니다.
+
+- JPA는 위에서 설명한 ORM 기술의 표준 명세로 자바에서 제공하는 API입니다. 즉, JPA는 인터페이스고 이를 구현한 대표적인 구현체로 Hibernate, EclipseLink, DataNucleus, OpenJpa, TopLink 등이 있습니다. JPA 인터페이스를 구현한 가장 대표적인 오픈소스가 Hibernate(하이버네이트) 입니다. 실질적인 기능은 하이버네이트에 구현돼 있는 것입니다.
+
+### JPA 사용 시 장점
+
+- 특정 데이터베이스에 종속되지 않음
+	- 애플리케이션 개발을 위해 데이터베이스로 오라클oracle을 사용하여 개발을 진행했다고 가정해보겠습니다. 만약 오라클을 오픈소스인 MariaDB로 변경한다면 데이터베이스마다 쿼리문이 다르기 때문에 전체를 수정해야 합니다. 따라서 처음 선택한 데이터베이스를 변경하기 어렵습니다. 하지만 JPA는 추상화한 데이터 접근 계층을 제공합니다. 설정 파일에 어떤 데이터베이스를 사용하는지 알려주면 얼마든지 데이터베이스를 변경할 수 있습니다.
+
+- 객체지향적 프로그래밍
+	- JPA를 사용하면 데이터베이스 설계 중심의 패러다임에서 객체지향적으로 설계가 가능합니다. 이를 통해 좀 더 직관적이고 비즈니스 로직에 집중할 수 있도록 도와줍니다.
+
+- 생산성 향상
+	- 데이터베이스 테이블에 새로운 컬럼이 추가되었을 경우, 해당 테이블의 컬럼을 사용하는 DTO 클래스의 필드도 모두 변경해야 합니다. JPA에서는 테이블과 매핑된 클래스에 필드만 추가한다면 쉽게 관리가 가능합니다. 또한 SQL문을 직접 작성하지 않고 객체를 사용하여 동작하기 때문에 유지보수 측 .면에서 좋고 재사용성도 증가합니다.
+
+### JPA 사용 시 단점
+
+#### 복잡한 쿼리 처리
+- 통계 처리 같은 복잡한 쿼리를 사용할 경우는 SQL문을 사용하는 게 나을 수도 있습니다. JPA에서는 Native SQL을 통해 기존의 SQL문을 사용할 수 있지만 그러면 특정 데이터베이스에 종속된다는 단점이 생깁니다. 이를 보완하기 위해서 SQL과 유사한 기술인 JPQL을 지원합니다.
+
+#### 성능 저하 위험
+- 객체 간의 매핑 설계를 잘못했을 때 성능 저하가 발생할 수 있으며, 자동으로 생성되는 쿼리가 들때문에 개발자가 의도하지 않는 쿼리로 인해 성능이 저하되기도 합니다.
+
+#### 학습 시간
+- JPA를 제대로 사용하려면 알아야 할 것이 많아서 학습하는 데 시간이 오래 걸립니다.
+- 관계형 데이터베이스를 충분히 알아야 JPA를 잘 사용할 수 있기 때문에 관계형 데이 베이스를 학습한 후 JPA를 사용하기를 권합니다.
+	
+
+### JPA 동작 방식
+
+![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image9.png)
+
+#### 엔티티
+- 엔티티(Entity)란 데이터베이스의 테이블에 대응하는 클래스라고 생각하시면 됩니다. 
+- @Entity가 붙은 클래스는 JPA에서 관리하며 엔티티라고 합니다. 데이터베이스에 item 테이블을 만들고, 이에 대응되는 Item.java 클래스를 만들어서 @Entity 어노테이션을 붙이면 이 클래스가 엔티티가 되는 것입니다. 
+- 클래스 자체나 생성한 인스턴스도 엔티티라고 부릅니다. 
 
 
+#### 엔티티 매니저 팩토리
+
+- 엔티티 매니저 팩토리(Entity Manager Factory)는 엔티티 매니저 인스턴스를 관리하는 주체입니다. <b>애플리케이션 실행 시 한 개만 만들어지며 사용자로부터 요청이 오면 엔티티 매니저 팩토리로부터 엔티티 매니저를 생성합니다.</b>
+
+#### 엔티티 매니저
+
+- 엔티티 매니저(Entity Manager) 란 <b>영속성 컨텍스트에 접근하여 엔티티에 대한 데이터베이스 작업을 제공</b>합니다. <b>내부적으로 데이터베이스 커넥션을 사용해서 데이터베이스에 접근합니다.</b> 엔티티 매니저의 몇 가지 메소드를 살펴보겠습니다.
+
+	- <b>find()</b> 메소드: 영속성 컨텍스트에서 엔티티를 검색하고 영속성 컨텍스트에 없을 경우 데이터베이스에서 데이터를 찾아 영속성 컨텍스트에 저장합니다.
+	- <b>persist()</b> 메소드: 엔티티를 영속성 컨텍스트에 저장합니다.
+	- <b>remove()</b> 메소드 : 엔티티 클래스를 영속성 컨텍스트에서 삭제합니다.
+	- <b>flush()</b> 메소드: 영속성 컨텍스트에 저장된 내용을 데이터베이스에 반영합니다
+
+#### 영속성 컨텍스트
+
+- JPA를 이해하기 위해서는 영속성 컨텍스트(Persistence Context)를 이해하는 것이 가장 중요합니다. <b>엔티티를 영구 저장하는 환경으로 엔티티 매니저를 통해 영속성 컨텍스트에 접근합니다.</b>
+
+#### 엔티티 생명주기
+
+![image10](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image10.png)
+
+|생명주기|내용|
+|비영속(new)|new 키워드를 통해 생성된 상태로 영속성 컨텍스트와 관련이 없는 상태|
+|영속(managed)| - 엔티티가 영속성 컨텍스트에 저장된 상태로 영속성 컨텍스트에 의해 관리되는 상태<br>- 영속 상태에서 데이터베이스에 저장되지 않으며, 트랜잭션 커밋 시점에 데이터베이스에 반영|
+|준영속 상태(detached)|영속성 컨텍스트에 엔티티가 저장되었다가 분리된 상태|
+|삭제 상태(removed)|영속성 컨텍스트와 데이터베이스에 삭제된 상태|
+
+### 영속성 컨텍스트 사용 시 이점
+
+- JPA는 왜 이렇게 영속성 컨텍스트를 사용하는 것일까요? <b>바로 애플리케이션과 데이터베이스 사이에영속성 컨텍스트라는 중간 계층을 만들었기 때문</b>입니다. 이렇게 <b>중간 계층을 만들면 버퍼링, 캐싱 등을 할 수 있는 장점</b>이 있습니다.
+
+#### 영속성 컨텍스트 1차 캐시 구조
+
+![image11](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image11.png)
+
+#### 1차 캐시
+
+- 영속성 컨텍스트에는 1차 캐시가 존재하며 Map\<KEY, VALUE\>로 저장됩니다. 
+- entityManager.find() 메소드 호출 시 영속성 컨텍스트의 1차 캐시를 조회합니다. 
+- 엔티티가 존재할 경우 해당 엔티티를 반환하고, 엔티티가 없으면 데이터베이스에서 조회 후 1차 캐시에 저장 및 반환합니다.
+
+#### 동일성 보장
+
+- 하나의 트랜잭션에서 같은 키값으로 영속성 컨텍스트에 저장된 엔티티 조회 시 같은 엔티티 조회를보장합니다. 
+- 바로 1차 캐시에 저장된 엔티티를 조회하기 때문에 가능합니다.
+
+#### 영속성 컨텍스트 쓰기 지연 SQL 저장소
+
+![image11](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image11.png)
+
+#### 트랜잭션을 지원하는 쓰기 지연
+
+- 영속성 컨텍스트에는 쓰기 지연 SQL 저장소가 존재합니다. 
+- entityManager.persist()를 호출하면 1차 캐시에 저장되는 것과 동시에 쓰기 지연 SQL 저장소에 SQL문이 저장됩니다. 
+- 이렇게 SQL을 쌓아두고 트랜잭션을 커밋하는 시점에 저장된 SQL문들이 flush되면서 데이터베이스에 반영됩니다. 이렇게 모아서 보내기 때문에 성능에서 이점을 볼 수 있습니다.
+
+##### 변경 감지
+
+- JPA는 1차 캐시에 데이터베이스에서 처음 불러온 엔티티의 스냅샷 값을 갖고 있습니다. 
+- 그리고 1차 캐시에 저장된 엔티티와 스냅샷을 비교 후 변경 내용이 있다면 UPDATE SQL문을 쓰기 지연 SQL 저장소에 담아둡니다. 
+- 그리고 데이터베이스에 커밋 시점에 변경 내용을 자동으로 반영합니다. 즉, 따로 update문을 호출할 필요가 없습니다.
+
+
+## JPA 연동하기
+
+### 프로젝트 준비
+
+- 프로젝트 생성
+
+```
+mvn archetype:generate
+```
+
+- groupId, artifactId는 적절하게 입력해 줍니다.
+- 자바 실습 버전을 최신버전(17)로 변경합니다
+- spring-context, hibernate-entitymanager, mysql-connector-java 의존성을 [mvnrepository](https://mvnrepository.com/) 에서 검색하여 다음과 같이 추가합니다.
+
+```xml
+... 생략
+<properties>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<maven.compiler.source>17</maven.compiler.source>
+	<maven.compiler.target>17</maven.compiler.target>
+</properties>
+... 생략
+<dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring-context</artifactId>
+	<version>5.3.22</version>
+</dependency>
+<dependency>
+	<groupId>org.springframework.data</groupId>
+  	<artifactId>spring-data-jpa</artifactId>
+  	<version>2.7.2</version>
+</dependency>
+<dependency>
+	<groupId>org.hibernate</groupId>
+  	<artifactId>hibernate-entitymanager</artifactId>
+  	<version>5.6.10.Final</version>
+</dependency>
+<dependency>
+	<groupId>mysql</groupId>
+	<artifactId>mysql-connector-java</artifactId>
+	<version>8.0.29</version>
+</dependency>
+... 생략
+```
+
+- JPA 설정 파일 persistence.xml을 src/main/resources/META-INF/persistence.xml에 다음과 같이 추가합니다.
+
+![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20%EB%A7%88%EC%9D%B4%EB%B0%94%ED%8B%B0%EC%8A%A4/images/image7.png)
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.2">
+    <persistence-unit name="jpa_exam">
+        <properties>
+            <!--  필수 속성 -->
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
+            <property name="javax.persistence.jdbc.user" value="springjpa" />
+            <property name="javax.persistence.jdbc.password" value="springjpa" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/springjpa" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect" />
+        </properties>
+        
+         <!-- 옵션 -->
+         <!-- 콘솔에 하이버네이트가 실행하는 SQL문 출력 -->
+         <property name="hibernate.show_sql" value="true"/>
+            
+         <!-- SQL 출력 시 보기 쉽게 정렬 -->
+         <property name="hibernate.format_sql" value="true"/>
+         <!-- 쿼리 출력 시 주석(comments)도 함께 출력 -->
+         <property name="hibernate.use_sql_comments" value="true"/>
+          <!-- JPA 표준에 맞춘 새로운 키 생성 전략 사용 -->
+         <property name="hibernate.id.new_generator_mappings" value="true"/>
+          <!-- 애플리케이션 실행 시점에 데이터베이스 테이블 자동 생성 -->
+          <property name="hibernate.hbm2ddl.auto" value="create"/>
+          <!-- 이름 매핑 전략 설정 - 자바의 카멜 표기법을 테이블의 언더스코어 표기법으로 매핑
+             ex) lastModifiedDate -> last_modified_date -->
+          <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy" />
+    </persistence-unit>
+</persistence>
+```
+
+- 필수 속성
+	- name이 javax.persistence로 시작하는 속성은 JPA 표준 속성이다.
+	- hibernate로 시작하는 속성은 하이버네이트 전용 속성이다.
+	- javax.persistence.jdbc.driver, user, password, url에 데이터베이스 연결 정보를 설정하고 hibernate.dialect에 데이터베이스 dialect를 설정한다.
+	- 위에서 설정한 값인 org.hibernate.dialect.MySQL8Dialect는 데이터베이스 dialect를 MySQL8로 설정한 것이다.
+	- 하이버네이트는 다양한 데이터베이스의 dialect 클래스를 제공하므로 사용하는 DB의 dialect 클래스를 설정한다. 예를 들어 Oracle 12g를 사용한다면 org.hibernate.dialect.Oracle12gDialect로 설정하면 된다.
+	
+- 옵션
+
+#### hibernate.hbm2ddl.auto 속성 
+
+|옵션|설명|
+|----|----------|
+|create|DROP + CREATE<br>기존 테이블을 삭제하고 새로 생성한다.|
+|create-drop|DROP + CREATE + DROP<br>create 속성에 추가로 애플리케이션을 종료할 때 생성한 DDL을 제거한다.|
+|update|데이터베이스 테이블과 엔테티 매핑정보를 비교해서 변경사항만 수정한다.|
+|validate|데이터베이스 테이블과 엔티티 매핑정보를 비교해서 차이가 있으면 경고를 남기고 애플리케이션을 실행하지 않는다. 이 옵션은 DDL을 수정하지 않는다.|
+|none|스키마 자동 생성기능을 사용하지 않는다.<br>hibernate.hbm2ddl.auto 속성을 삭제한 것과 동일하다.|
+
+> 추천 전략<br><br>개발 초기 단계 : create 또는 update<br>테스트 서버 : update 또는 validate<br>운영 서버 : validate 또는 none
+
+
+- <b>hibernate.show_sql</b> : 하이버네이트가 실행한 SQL을 출력한다.
+- <b>hibernate.format_sql</b> : 하이버네이트가 실행한 SQL을 출력할 때 보기 쉽게 정렬한다.
+- <b>hibernate.use_sql_comments</b> :  쿼리를 출력할 때 주석도 함께 출력한다.
+- <b>hibernate.id.new_generator_mappings</b> : JPA 표준에 맞춘 새로운 키 생성 전략을 사용한다.
+
+
+- JPA 구현체들은 보통 엔티티 클래스를 자동으로 인식하지만 환경에 따라 인식하지 못할 때도 있다. 그때는 persistence.xml에 다음과 같이 \<class\>를 사용해서 JPA에서 사용할 엔티티 클래스를 지정하면 된다.
+- 참고로 스프링 프레임워크나 J2EE 환경에서는 엔티티를 탐색하는 기능을 제공하므로 이런 문제가 발생하지 않는다. 
+
+```xml
+<persistence-unit name="jpa_exam">
+	<class>entity.Member</class>
+	<properties>
+	... 생략
+```
+
+## 적용하기
+
+#### src/main/java/entity/Member.java
+
+```java
+package entity;
+
+import java.time.LocalDateTime;
+
+import javax.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+@Entity
+@Table(name="MEMBER")
+public class Member {
+	@Id 
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private Long memNo;
+	
+	private String memId;
+	
+	private String memNm;
+	
+	@CreationTimestamp
+	private LocalDateTime regDt;
+	
+	@UpdateTimestamp
+	private LocalDateTime modDt;
+	
+	public Long getMemNo() {
+		return memNo;
+	}
+	
+	public void setMemNo(Long memNo) {
+		this.memNo = memNo;
+	}
+	
+	public String getMemId() {
+		return memId;
+	}
+	
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+	
+	public String getMemNm() {
+		return memNm;
+	}
+	
+	public void setMemNm(String memNm) {
+		this.memNm = memNm;
+	}
+	
+	public LocalDateTime getRegDt() {
+		return regDt;
+	}
+	
+	public void setRegDt(LocalDateTime regDt) {
+		this.regDt = regDt;
+	}
+	
+	public LocalDateTime getModDt() {
+		return modDt;
+	}
+	
+	public void setModDt(LocalDateTime modDt) {
+		this.modDt = modDt;
+	}
+}
+```
+
+#### 엔티티 매핑 관련 어노테이션
+
+|어노테이션|설명|
+|@Entity|클래스를 엔티티로 선언|
+|@Table|엔티티와 매핑할 테이블을 지정|
+|@Id|테이블의 기본키에 사용할 속성을 지정|
+|@GeneratedValue|키 값을 생성하는 전략 명시|
+|@Column|필드와 컬럼 매핑|
+|@Lob|BLOB, CLOB 타입 매핑|
+|@CreationTimestamp|insert시 시간 자동 저장|
+|@UpdateTimestamp|update시 시간 자종 저장|
+|@Enumerated|enum 타입 매핑|
+|@Transient|해당 필드 데이터베이스 매핑 무시|
+|@Temporal|날짜 타입 매핑|
+|@CreateDate|엔티티가 생성되어 저장될 때 시간 자동 저장|
+|@LastModifiedDate|조회한 엔티티의 값을 변경할 때 시간 자동 저장|
+
+
+>CLOB과 BLOB의 의미<br><br>CLOB이란 사이즈가 큰 데이터를 외부 파일로 저장하기 위한 데이터 타입입니다. 문자형 대용량 파일을 저장하는데 사용하는 데이터 타입이라고 생각하면 됩니다.<br>BLOB은 바이너리 데이터를 DB 외부에 저장하기 위한 타입입니다. 이미지, 사운드, 비디오 같은 멀티미디어 데이터를 다룰 때 사용할 수 있습니다.
+
+#### @Column 속성
+
+- 테이블을 생성할 때 컬럼에는 다양한 조건들이 들어갑니다. 예를 들면 문자열을 저장하는 VARCHAR 타입은 길이를 설정할 수 있고, 테이블에 데이터를 넣을 때 데이터가 항상 존재해야 하는 Not Null 조건 등이 있습니다. 
+- @Column 어노테이션의 속성을 이용하면 테이블에 매핑되는 컬럼의 이름, 문자열의 최대 저장 길이 등 다양한 제약 조건들을 추가할 수 있습니다.
+
+|속성|설명|기본값|
+|-----|---------|-------|
+|name|필드와 매핑할 컬럼의 이름 설명|객체의 필드 이름|
+
+
+
+#### src/main/java/repository/MemberDao.java
+
+```java
+package repository;
+
+import java.util.List;
+import java.time.LocalDateTime;
+
+import javax.persistence.*;
+
+import entity.Member;
+
+public class MemberDao {
+	
+	public void execute() {
+		// [엔티티 매니저 팩토리] - 생성
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("jpa_exam");
+		
+		// [엔티티 매니저] - 생성
+		EntityManager em = emf.createEntityManager();
+		
+		// [트랜잭션] 획득
+		EntityTransaction tx = em.getTransaction();
+		
+		try {
+			tx.begin();
+			logic(em);
+			tx.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			tx.rollback();
+		} finally {
+			em.close();
+		}
+		
+		emf.close();
+	}
+	
+	public void logic(EntityManager em) {
+		Member member = new Member();
+		member.setMemId("user1");
+		member.setMemNm("이름");
+		
+		// 등록
+		em.persist(member);
+		
+		// 수정
+		member.setMemNm("이름( 수정)");
+		
+		// 한 건 조회
+		Member findMember = em.find(Member.class, member.getMemNo());
+		System.out.println(findMember.getMemId() + ", " + findMember.getMemNm());
+		
+		// 목록 조회
+		List<Member> members = em.createQuery("select m from Member m", Member.class).getResultList();
+		System.out.println("members.size=" + members.size());
+		
+		// 삭제
+		em.remove(member);
+	}
+}
+```
+
+#### src/main/java/config/AppCtx.java
+
+```java
+package config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
+
+import repository.*;
+
+@Configuration
+public class AppCtx {
+	
+	@Bean
+	public MemberDao memberDao() {
+		return new MemberDao();
+	}
+}
+```
+
+#### src/main/java/main/JpaMain.java
+
+```java
+package main;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import config.AppCtx;
+import repository.MemberDao;
+
+public class JpaMain {
+	public static void main(String[] args) {
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(AppCtx.class);
+		
+		MemberDao member = ctx.getBean(MemberDao.class);
+		
+		member.execute();
+		
+		ctx.close();
+	}
+}
+```
