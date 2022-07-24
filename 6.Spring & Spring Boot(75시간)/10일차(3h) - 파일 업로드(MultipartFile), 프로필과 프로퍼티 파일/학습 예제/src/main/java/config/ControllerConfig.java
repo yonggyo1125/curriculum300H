@@ -15,6 +15,7 @@ import spring.ChangePasswordService;
 import controller.MemberDetailController;
 import controller.MemberListController;
 import spring.MemberDao;
+import controller.FileController;
 
 @Configuration
 public class ControllerConfig {
@@ -74,5 +75,10 @@ public class ControllerConfig {
 		MemberDetailController controller = new MemberDetailController();
 		controller.setMemberDao(memberDao);
 		return controller;
+	}
+	
+	@Bean
+	public FileController fileController() {
+		return new FileController();
 	}
 }

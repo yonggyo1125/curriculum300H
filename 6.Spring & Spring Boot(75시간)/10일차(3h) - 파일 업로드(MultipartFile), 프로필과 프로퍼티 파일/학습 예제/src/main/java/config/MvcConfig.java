@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 
 import interceptor.AuthCheckInterceptor;
+import spring.FileService;
 
 @Configuration
 @EnableWebMvc
@@ -56,5 +57,10 @@ public class MvcConfig implements WebMvcConfigurer {
 	@Bean
 	public AuthCheckInterceptor authCheckInterceptor() {
 		return new AuthCheckInterceptor();
+	}
+	
+	@Bean
+	public FileService fileService() {
+		return new FileService();
 	}
 }
