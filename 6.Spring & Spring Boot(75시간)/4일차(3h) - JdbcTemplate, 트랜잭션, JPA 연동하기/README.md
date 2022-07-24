@@ -1756,6 +1756,7 @@ public class Main {
 ![image10](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/4%EC%9D%BC%EC%B0%A8(3h)%20-%20JdbcTemplate%2C%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%2C%20JPA%20%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0/images/image10.png)
 
 |생명주기|내용|
+|----|--------|
 |비영속(new)|new 키워드를 통해 생성된 상태로 영속성 컨텍스트와 관련이 없는 상태|
 |영속(managed)| - 엔티티가 영속성 컨텍스트에 저장된 상태로 영속성 컨텍스트에 의해 관리되는 상태<br>- 영속 상태에서 데이터베이스에 저장되지 않으며, 트랜잭션 커밋 시점에 데이터베이스에 반영|
 |준영속 상태(detached)|영속성 컨텍스트에 엔티티가 저장되었다가 분리된 상태|
