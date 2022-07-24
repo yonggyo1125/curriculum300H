@@ -109,24 +109,9 @@
 		
 * 21~25일차(15h) 
 	- 스프링 포트폴리오(JSP로 만든 게시판을 스프링으로 만들어보기)
-	
-* 기타
-	- 자주 사용하는 스프링 패키지 및 클래스 정리
-	- 자주 사용하는 스프링 설정 정리 
-	
-	- Spring Data JPA
-		- JPA 동작방식
-		- Entity 설계하기
-		- Repository 설계하기
-		- 쿼리 메서드
-		- @Query 애노테이션
-		- Querydsl
-		- 연관관계 매핑
-		- 영속성 전이
-		- 지연로딩
-		- Auditing을 이용한 엔티티 공통 속성화
-		
+			
 ## 참고도서
 - [가메출판사 / 초보 웹 개발자를 위한 스프링5 프로그래밍 입문 / 최범균](http://www.yes24.com/Product/Goods/62268795)
 - [로드북 / 스프링 부트 쇼핑몰 프로젝트 with JPA / 변구훈](http://www.yes24.com/Product/Goods/103453774)
+- [에이콘 / 자바 ORM 표준 JPA 프로그래밍 / 김영한](http://www.yes24.com/Product/Goods/19040233)
 - [비제이퍼블릭 / Vue.js 프로젝트 투입 일주일 전 / 고승원](http://www.yes24.com/Product/Goods/101926719)
