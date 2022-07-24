@@ -3,6 +3,158 @@
  
 # 스프링 파일 업로드(MultipartFile)
 
+#### src/main/webapp/WEB-INF/web.xml
+
+```xml
+	... 생략 
+	
+	<servlet>
+		... 생략
+		
+		<multipart-config>
+            <max-file-size>20971520</max-file-size> <!--  1MB * 20 -->
+            <max-request-size>41943040</max-request-size> <!-- 40MB -->
+            <file-size-threshold>20971520</file-size-threshold> <!--  20MB -->
+        </multipart-config>
+    </servlet>
+	
+	... 생략
+```
+
+#### src/main/java/controller/FileController.java 
+
+```java
+package controller;
+
+import java.io.IOException;
+import java.io.File;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import spring.FileService;
+
+@Controller
+@RequestMapping("/file")
+public class FileController {
+	
+	@Autowired
+	private FileService fileService;
+	
+	@GetMapping("/upload")
+	public String form() {
+		return "file/upload";
+	}
+	
+	@ResponseBody
+	@PostMapping("/upload")
+	public void  process(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
+		if (file != null) {
+			String uploadDir = request.getServletContext().getRealPath("/") + "/../resources/static/upload";
+			File _uploadDir = new File(uploadDir);
+			if (!_uploadDir.isDirectory()) {
+				_uploadDir.mkdir();
+			}
+			
+			fileService.upload(uploadDir, file);
+		}
+	}
+}
+```
+
+
+#### src/main/java/config/ControllerConfig.java 
+
+```java
+
+... 생략
+
+import controller.FileController;
+
+@Configuration
+public class ControllerConfig {
+	... 생략 
+	
+	@Bean
+	public FileController fileController() {
+		return new FileController();
+	}
+}
+```
+
+
+#### src/main/java/spring/FileService.java
+
+```java
+package spring;
+
+import java.io.*;
+import java.util.UUID;
+
+import org.springframework.web.multipart.MultipartFile;
+
+public class FileService {
+		
+	/**
+	 * 파일 업로드 처리
+	 * 
+	 */
+	public boolean upload(String uploadDir, MultipartFile file)  {
+		if (uploadDir.isBlank() || file == null) {
+			return false;
+		}
+		
+		/** 업로드 처리 S */
+		UUID uuid = UUID.randomUUID();
+		String originalFilename = file.getOriginalFilename();
+		String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+		String savedFileName = uuid.toString() + extension;
+		String uploadPath = uploadDir + File.separator + savedFileName;
+		try (FileOutputStream fos = new FileOutputStream(uploadPath);
+			BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+			bos.write(file.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		/** 업로드 처리 E */
+		
+		return true;
+	}
+}
+```
+
+#### src/main/webapp/WEB-INF/view/file/upload.jsp
+
+```jsp
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<c:url var='url' value="/file/upload" />
+<form:form action="${url}"  method="post" enctype="multipart/form-data">   
+    <dl>
+        <dt>파일 선택 :</dt> 
+        <dd>
+            <input type="file" name="file">
+        </dd>
+    </dl>
+    <input type="submit" value="업로드" />
+</form:form>
+```
+
+- 실행 결과
+
+![image3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/10%EC%9D%BC%EC%B0%A8(3h)%20-%20%ED%8C%8C%EC%9D%BC%20%EC%97%85%EB%A1%9C%EB%93%9C(MultipartFile)%2C%20%ED%94%84%EB%A1%9C%ED%95%84%EA%B3%BC%20%ED%94%84%EB%A1%9C%ED%8D%BC%ED%8B%B0%20%ED%8C%8C%EC%9D%BC/images/image3.png)
+
+![image2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/10%EC%9D%BC%EC%B0%A8(3h)%20-%20%ED%8C%8C%EC%9D%BC%20%EC%97%85%EB%A1%9C%EB%93%9C(MultipartFile)%2C%20%ED%94%84%EB%A1%9C%ED%95%84%EA%B3%BC%20%ED%94%84%EB%A1%9C%ED%8D%BC%ED%8B%B0%20%ED%8C%8C%EC%9D%BC/images/image2.png)
 
 
 * * * 
