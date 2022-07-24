@@ -90,6 +90,7 @@
 	
 * 15~20일차(15h) 
 	- JSP 프로젝트(게시판 만들기)
+	- [JSP로 만든 게시판 샘플소스](https://github.com/yonggyo1125/Board_JSP)
 	
 	
 ## 참고도서
