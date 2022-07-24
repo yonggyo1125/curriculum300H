@@ -132,6 +132,26 @@ public class FileService {
 }
 ```
 
+#### src/main/java/config/MvcConfig.java
+
+```java
+... 생략
+
+import interceptor.AuthCheckInterceptor;
+import spring.FileService;
+
+@Configuration
+@EnableWebMvc
+public class MvcConfig implements WebMvcConfigurer {
+	
+	... 생략
+	
+	@Bean
+	public FileService fileService() {
+		return new FileService();
+	}
+}
+```
 #### src/main/webapp/WEB-INF/view/file/upload.jsp
 
 ```jsp
