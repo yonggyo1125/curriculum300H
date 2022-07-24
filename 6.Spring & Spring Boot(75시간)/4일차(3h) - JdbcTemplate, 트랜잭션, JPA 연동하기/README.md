@@ -1992,6 +1992,7 @@ public class Member {
 #### 엔티티 매핑 관련 어노테이션
 
 |어노테이션|설명|
+|----|----------|
 |@Entity|클래스를 엔티티로 선언|
 |@Table|엔티티와 매핑할 테이블을 지정|
 |@Id|테이블의 기본키에 사용할 속성을 지정|
@@ -2017,7 +2018,35 @@ public class Member {
 |속성|설명|기본값|
 |-----|---------|-------|
 |name|필드와 매핑할 컬럼의 이름 설명|객체의 필드 이름|
+|unique(DDL)|유니크 제약조건 설정||
+|insertable|insert, 가능 여부|true|
+|updatable|update 가능 여부|true|
+|length|String 타입의 문자 길이 제약조건 설정|256|
+|nullable(DDL)|null 값의 허용 여부 설정, false 설정 시 생성 시에 not null 제약조건 추가)||
+|columnDefinition|데이터베이스 컬럼 정보 직접 기술<br>@Column(columnDefinition = "varchar(5) default '10' not null")||
+|precision, scale(DDL)|BigDecimal 타입에서 사용(BigInteger 가능) precision은 소수점을 포함한 전체 자리수이고, scale은 소수점 자시수 Double과 float 타입에는 적용되지 않음.|
 
+- @Entity 어노테이션은 클래스의 상단에 입력하면 JPA에 엔티티 클래스라는 것을 알려줍니다. 
+- Entity 클래스는 반드시 기본키를 가져야 합니다. 
+- @ld 어노테이션을 이용하여 id 멤버 변수를 상품 테이블의 기본키로 설정합니다. 
+- @GeneratedValue 어노테이션을 통한 기본키를 생성하는 전략은 총 4가지가 있습니다.
+
+|생성 전략|설명|
+|-----|---------|
+|GenerateType.AUTO(default)|JPA 구현체가 자동으로 생성 전략 결정|
+|GenerateType.IDENTITY|기본키 생성을 데이터베이스에 위임<br>MySql 데이터베이스의 경우 AUTO_INCREMENT를 사용하여 기본키 생성|
+|GenerateType.SEQUENCE|데이터베이스 시퀀스 오브젝트를 이용한 기본키 생성<br>@SequenceGenerator를 사용하여 시퀀스 등록 필요|
+|GenerateType.TABLE|키 생성용 테이블 사용. @TableGenerator 필요|
+
+- 전략은 기본키를 생성하는 방법이라고 이해하면 됩니다. 
+- MySQL에서 AUTO_INCREMENT를 이용해 데이터베이스에 INSERT 쿼리문을 보내면 자동으로 기본키 값을 증가시킬 수 있습니다. 오라클의 기본키를 생성해주는 Sequence의 경우 기본키의 초기값, 증가값, 최댓값, 최솟값을 지정할 수 있습니다. 
+- 이렇게 기본키를 생성하는 다양한 방법을 JPA에서 지정해 줄 수 있습니다.
+
+- 4가지의 생성 전략 중에서 @GenerationType.AUTO를 사용해서 기본키를 생성하겠습니다.
+-  데이터베이스에 의존하지 않고 기본키를 할당하는 방법으로, JPA 구현체가 IDENTITY, SEQUENCE, TABLE 생성 전략 중 하나를 자동으로 선택합니다. 
+- 따라서 데이터베이스가 변경되더라도 코드를 수정할 필요가 없습니다.
+
+> 기본키와 데이터베이스 시퀀스 오브젝트의 의미<br><br>기본키(primary key)는 데이터베이스에서 조건을 만족하는 튜플을 찾을 때 다른 튜플들과 유일하게 구별할 수 있도록 기준을 세워주는 속성입니다. 예를 들어서 상품 데이터를 찾을 때 상품의 id를 통해서 다른 상품들과 구별을 할 수 있습니다. 여기서 기본키는 id입니다.<br>데이터베이스 시퀀스 오브젝트에서 시퀀스란 순차적으로 증가하는 값을 반환해주는 데이터베이스 객체입니다. 보통 기본키의 중복값을 방지하기 위해서 사용합니다.
 
 
 #### src/main/java/repository/MemberDao.java
