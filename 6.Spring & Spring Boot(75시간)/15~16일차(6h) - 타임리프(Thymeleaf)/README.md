@@ -900,4 +900,286 @@ public class BasicController {
 </html>
 ```
 
+### 스프링 MVC 폼과 에러 메시지 연동
+- JSP가 \<form:form\> 태그를 이용해서 커맨드 객체와 폼을 연동하는 것처럼 타임리프도 몇 가지 속성과 식 객체를 이용해서 폼을 연동할 수 있다. 
+
+#### pom.xml
+
+```xml
+<dependency>
+	<groupId>javax.validation</groupId>
+	<artifactId>validation-api</artifactId>
+	<version>2.0.1.Final</version>
+</dependency>
+<dependency>
+	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate-validator</artifactId>
+	<version>6.2.3.Final</version>
+</dependency>
+```
+
+#### src/main/java/dto/LoginDto.java
+
+```java
+package dto;
+
+import javax.validation.constraints.NotBlank;
+
+public class LoginDto {
+	
+	@NotBlank(message="아아디를 입력하세요.")
+	private String memId;
+	
+	@NotBlank(message="비밀번호를 입력하세요.")
+	private String memPw;
+	
+	public String getMemId() {
+		return memId;
+	}
+	
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+	
+	public String getMemPw() {
+		return memPw;
+	}
+	
+	public void setMemPw(String memPw) {
+		this.memPw = memPw;
+	}
+}
+```
+
+#### src/main/java/controller/LoginController.java
+
+```java
+package controller;
+
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import dto.LoginDto;
+
+@Controller
+@RequestMapping("/member")
+public class LoginController {
+	
+	@GetMapping("/login") 
+	public String form(Model model) {
+		LoginDto loginDto = new LoginDto();
+		model.addAttribute("loginDto", loginDto);
+		
+		return "member/login";
+	}
+	
+	@PostMapping("/login")
+	public String process(@Valid LoginDto loginDto, Errors errors, Model model) {
+		if (errors.hasErrors()) {
+			return "member/login";
+		}
+		
+		// 로그인 처리 
+		
+		return "redirect:/";
+	}
+}
+```
+
+#### src/main/java/config/ControllerConfig.java
+
+```java
+... 생략
+
+@Configuration
+public class ControllerConfig {
+	
+	... 생략 
+	
+	@Bean
+	public LoginController loginController() {
+		return new LoginController();
+	}
+}
+```
+
+#### src/main/webapp/WEB-INF/view/member/login.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>로그인</title>
+    </head>
+    <body>
+        <form method="post" action="#" th:action="@{/member/login}" th:object="${loginDto}">
+            <dl>
+                <dt>아이디</dt>
+                <dd>
+                    <input type="text" name="memId" th:field="*{memId}">
+                    <span th:each="err : ${#fields.errors('memId')}" th:text="${err}"></span>
+                </dd>
+            </dl>
+            <dl>
+                <dt>비밀번호</dt>
+                <dd>
+                    <input type="text" name="memPw" th:field="*{memPw}">
+                    <span th:each="err : ${#fields.errors('memPw')}" th:text="${err}"></span>
+                </dd>
+            </dl>
+            <button type="submit">로그인</button>
+        </form>
+    </body>
+</html>
+```
+
+![image9](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/15~16%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84(Thymeleaf)/images/image9.png)
+
+
 ## 타임리프 페이지 레이아웃 
+
+- 보통 웹사이트를 만들려면 header, footer, menu 등 공통적인 페이지 구성 요소들이 있습니다. 이런 영역들을 각각의 페이지마다 같은 소스코드를 넣는다면 변경이 일어날 때마다 이를 포함하고 있는 모든 페이지를 수정해야 할 것입니다. 
+- Thyeleaf의 페이지 레이아웃 기능을 사용한다면 공통 요소 관리를 쉽게 할 수 있습니다.
+
+
+### Thymeleaf Layout Dialect dependency 추가하기
+
+#### pom.xml
+
+- Thymeleaf Layout Dialect를 이용하면 하나의 레이아웃을 여러 페이지에 똑같이 적용할 수 있습니다. 공통적으로 적용되는 레이아웃을 미리 만들어놓고 현재 작성 중인 페이지만 레이아웃에 끼워넣으면 됩니다. 
+- [mvnrepository](https://mvnrepository.com/) 에서 thymeleaf-layout-dialect을 검색하여 다음과 같이 추가합니다.
+
+```xml
+<dependency>
+	<groupId>nz.net.ultraq.thymeleaf</groupId>
+	<artifactId>thymeleaf-layout-dialect</artifactId>
+	<version>3.1.0</version>
+</dependency>
+```
+
+#### src/main/java/config/MvcConfig.java
+
+- 템플릿 엔진 설정에 다음과 같이 설정을 추가합니다.\
+
+```java
+templateEngine.addDialect(new LayoutDialect());
+```
+
+```java
+package config;
+... 생략
+
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
+
+@Configuration
+@EnableWebMvc
+public class MvcConfig implements WebMvcConfigurer {
+	... 생략
+	
+	@Bean
+	public SpringTemplateEngine templateEngine() {
+		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+		templateEngine.setTemplateResolver(templateResolver());
+		templateEngine.setEnableSpringELCompiler(true);
+		templateEngine.addDialect(new Java8TimeDialect());
+		templateEngine.addDialect(new LayoutDialect());
+		return templateEngine;
+	}
+	
+	... 생략
+}
+```
+
+- thymeleaf-layout-dialect 라이브러리 설치가 완료됐다면 views 아래에 outlines 폴더 생성후 footer.html, header.html 파일을 생성합니다. 마찬가지로 views 폴더 아래에 layouts 폴더를만들고 main.html 파일을 생성합니다.
+
+![image10](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/15~16%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84(Thymeleaf)/images/image10.png)
+
+#### src/main/webapp/WEB-INF/view/outlines/footer.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <footer th:fragment="footer">
+        footer 영역 입니다.
+    </footer>
+</html>
+```
+
+#### src/main/webapp/WEB-INF/view/outlines/header.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <header th:fragment="header">
+        header 영역 입니다.
+    </header>
+</html>
+```
+
+#### src/main/webapp/WEB-INF/view/layouts/main.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+          xmlns:layout="http:'//www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    
+    <th:block layout:fragment="script"></th:block>
+    <th:block layout:fragment="css"></th:block>
+</head>
+<body>
+    <header th:replace="outlines/header::header"></header>
+    
+    <main layout:fragment="content"></main>
+    
+    <footer th:replace="outlines/footer::footer"></footer>
+</body>
+</html>
+```
+
+#### src/main/java/controller/BasicController.java
+
+```java
+
+... 생략
+
+@Controller
+@RequestMapping("/tpl")
+public class BasicController {
+	
+	... 생략
+	
+	@GetMapping("/ex09")
+	public String ex09() {
+		return "ex09";
+	}
+}
+```
+
+#### src/main/webapp/WEB-INF/view/ex09.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+          xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+          layout:decorate="~{layouts/main}">
+          
+          <main layout:fragment="content">
+                본문영역 입니다.
+          </main>
+</html>
+```
+
+![image11](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/15~16%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84(Thymeleaf)/images/image11.png)
+
+![image12](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/15~16%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84(Thymeleaf)/images/image12.png)
+
