@@ -336,7 +336,7 @@ public class BasicController {
 <a href="#" th:href="@{/members/{memId}(memId=${mem.id})}">상세</a>
 ```
 
-- 위 코드에서 링크 식의 {memId}는 경로 변수이다. 경로 변수 memId에 넣을 값을 뒤에 붙인 괄호 안에 지정한다. 위 코드에서 뒤에 붙인 (memId=\${memId})는 경로 변수 memId의 값으로 \${mem.id}를 사용한다는 것을 뜻한다. 
+- 위 코드에서 링크 식의 {memId}는 경로 변수이다. 경로 변수 memId에 넣을 값을 뒤에 붙인 괄호 안에 지정한다. 위 코드에서 뒤에 붙인 (memId\=${memId})는 경로 변수 memId의 값으로 ${mem.id}를 사용한다는 것을 뜻한다. 
 
 
 - 선택 변수식 th:object 속성과 관련되어 있다. th:object 속성은 특정 객체를 선택하는데 선택 변수식은 th:object로 선택한 객체를 기준으로 나머지 경로를 값으로 사용한다. 
