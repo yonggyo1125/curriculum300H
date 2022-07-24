@@ -293,14 +293,611 @@ public class BasicController {
 
 - 웹 브라우저를 이용해서 ex01.html 파일을 열면 다음과 같은 화면이 나타납니다. \<p\>태그 안에 th:text="${data}" 라는 Thymeleaf 문법이 들어갔지만 html 파일이 깨지지 않고 정상적으로 출력되는 것을 확인할 수 있습니다.
 
+![image1](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/15~16%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84(Thymeleaf)/images/image1.png)
 
 - 애플리케이션 실행 후 해당 /tpl/ex01 URL을 열면 "Hello Thymeleaf!" 대신 "타임리프 예제입니다!" 라는 문구가 나타나는 것을 볼수 있습니다.
+
+![image2](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/15~16%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84(Thymeleaf)/images/image2.png)
 
 - 이것이 바로 Thymeleaf가 지향하는 "natural templates" 입니다. 디자이너 또는 퍼블리션는 자신이 작업한 내용을 html파일로 바로 열어서 확인할 수 있으며, 개발자는 디자이너 또는 퍼블리셔로부터 html 파일을 받아서 html 태그 안에 Thymeleaf 문법을 추가하는 것만으로 동적으로 html 파일을 생성할 수 있습니다. 
 - html파일을 JSP 파일로 변경하는 작업은 실수할 확률도 높고 많은 시간이 걸립니다.
 
-
-
 ## 타임리프 기본문법
 
-## 타임리프 페이지 레이아웃
+### 타임리프의 주요 식(expression)
+- 타임리프는 크레 변수식, 페이지식, 링크 식의 세 가지 식과 선택 변수 식을 제공한다.
+
+- <b>변수 식: </b> ${OGNL}
+- <b>메시지 식:</b> #{코드}
+- <b>링크 식 : @{링크}
+- <b>선택 변수 식 :</b> \*{OGNL}
+
+- 변수 식은 OGNL에 해당하는 변수를 값으로 사용한다. 타임리프에는 템플릿을 변환할 때 필요한 데이터를 가진 컨텍스트가 존재하는데 변수명을 사용해서 이 컨텍스트에 보관된 객체에 접근한다. 스프링 MVC에 연동할 경우 <b>컨트롤러에서 생성한 모델 속성 이름이 변수명이 된다.</b>
+
+```
+<p>아이디: <span th:text="${member.id}">id</span></p>
+```
+
+- 메시지 식은 외부 메시지 자원에서 코드에 해당하는 문자열을 읽어와 출력한다. 지정한 경로에 위치한 프로퍼티 파일을 메시지 자원으로 사용한다. 스프링 MVC 연동을 하면 \<spring:message\>와 동일하게 스프링이 제공하는 MessageSource로 부터 코드에 해당하는 메시지를 읽어온다. 
+
+```
+<title th:text="${message.register}">title</title>
+```
+
+- 링크 식은 링크 문자열을 생성한다. 링크 식이 절대 경로면 JSTL의 \<c:url\>태그와 동일하게 웹 어플리케이션 컨텍스트 경로를 기준으로 링크를 생성한다.
+
+```
+<a href="#" th:href="@{/members}">목록</a>
+```
+
+- 링크의 일부를 식으로 변경하고 싶다면 경로에 {변수}를 사용할 수 있다. 
+
+```
+<a href="#" th:href="@{/members/{memId}(memId=${mem.id})}">상세</a>
+```
+
+- 위 코드에서 링크 식의 {memId}는 경로 변수이다. 경로 변수 memId에 넣을 값을 뒤에 붙인 괄호 안에 지정한다. 위 코드에서 뒤에 붙인 (memId=${memId})는 경로 변수 memId의 값으로 ${mem.id}를 사용한다는 것을 뜻한다. 
+
+
+- 선택 변수식 th:object 속성과 관련되어 있다. th:object 속성은 특정 객체를 선택하는데 선택 변수식은 th:object로 선택한 객체를 기준으로 나머지 경로를 값으로 사용한다. 
+- 예를 들어 아래 코드에서 \*{name}은 \<div\> 태그의 th:object에서 선택한 member 객체를 기준으로 name경로를 선택한다. 따라서 \*{name}은 ${member.name}과 같은 경로가 된다.
+
+```
+<div th:object="${member}">
+	<span th:text="*{name}">name</span>
+</div>
+```
+
+
+### 타임리프 식 객체
+- 타임리프는 식에서 사용할 수 있는 객체를 제공한다. 이 식 객체를 이용하면 문자열 처리나 날짜 형식 변환 등의 작업을 할 수 있다. "#객체명"을 사용해서 식 객체를 사용한다. 
+- 다음은 dates, 식 객체를 이용해서 Date 타입 변수 값을 형식에 맞게 출력하는 예이다.
+
+```
+<span th:text="${#dates.format(date, 'yyyy-MM-dd')}">date</span>
+```
+
+- 각 식 객체는 기능이나 속성을 제공한다. dates 식 객체의 경우 format을 비롯해 날짜 형식 포맷팅을 위한 다양한 기능을 제공한다. 
+
+#### 타임리프가 제공하는 주요 식 객체
+- #strings : 문자열 비교, 문자열 추출 등 String 타입을 위한 기능 제공
+- #numbers : 포맷팅 등 숫자 타입을 위한 기능 제공
+- #dates, #calendars, #temporals : Date타입과 Calendar 타입, LocalDateTIme 타입을 위한 기능 제공
+- #lists, #sets, #maps : List, Set, Map을 위한 기능 제공
+
+
+
+### th:text
+
+- 뷰 영역에서 사용할 MemberDto(커맨드 객체, 데이터 전달용 객체 Data Transfer Object)를 생성해서 사용합니다.
+
+- th:text : 식의 값을 태그 몸페로 출력한다. '\<'나 '&'와 같은 HTML 특수 문자를 '&lt;'과 '&amp;'와 같은 엔티티 형식으로 변환한다.
+- th:utext : 식의 값을 태그 몸체로 출력한다. '\<'나 '&'와 같은 HTML 특수 문자를 그대로 출력한다.
+
+#### src/main/java/dto/MemberDto.java
+
+```java
+package dto;
+
+import java.time.LocalDateTime;
+
+public class MemberDto {
+	
+	private Long memNo;
+	private String memId;
+	private String memNm;
+	private LocalDateTime regDt;
+	private LocalDateTime modDt;
+	
+	public Long getMemNo() {
+		return memNo;
+	}
+	
+	public void setMemNo(Long memNo) {
+		this.memNo = memNo;
+	}
+	
+	public String getMemId() {
+		return memId;
+	}
+	
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+	
+	public String getMemNm() {
+		return memNm;
+	}
+	
+	public void setMemNm(String memNm) {
+		this.memNm = memNm;
+	}
+	
+	public LocalDateTime getRegDt() {
+		return regDt;
+	}
+	
+	public void setRegDt(LocalDateTime regDt) {
+		this.regDt = regDt;
+	}
+	
+	public LocalDateTime getModDt() {
+		return modDt;
+	}
+	
+	public void setModDt(LocalDateTime modDt) {
+		this.modDt = modDt;
+	}
+}
+```
+
+#### src/main/java/controller/BasicController.java
+
+```
+package controller;
+
+import java.time.LocalDateTime;
+... 생략
+
+import dto.MemberDto;
+
+@Controller
+@RequestMapping("/tpl")
+public class BasicController {
+	... 생략
+	
+	@GetMapping("/ex02")
+	public String ex02(Model model) {
+		MemberDto memberDto = new MemberDto();
+		
+		memberDto.setMemNo(Long.valueOf(1));
+		memberDto.setMemId("user1");
+		memberDto.setMemNm("이름1");
+		memberDto.setRegDt(LocalDateTime.now());
+		
+		model.addAttribute("memberDto", memberDto);
+		return "ex02";
+	}
+}
+```
+
+#### src/webapps/WEB-INF/view/ex02.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="'http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <h1>회원정보 출력 예제</h1>
+        <div>
+            회원번호 : <span th:text="${memberDto.memNo}"></span>
+        </div>
+        <div>
+            아이디 : <span th:text="${memberDto.memId}"></span>
+        </div>
+        <div>
+            이름 : <span th:text="${memberDto.memNm}"></span>
+        </div>
+        <div>
+            가입일시 : <span th:text="${#temporals.format(memberDto.regDt, 'yyyy-MM-dd HH:mm:ss')}"></span>
+        </div>
+    </body>
+</html>
+```
+
+- 실행 결과
+
+![image3](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/15~16%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84(Thymeleaf)/images/image3.png)
+
+### th:each : 반복문
+
+#### src/main/java/controller/BasicController.java
+```
+package controller;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+... 생략
+
+@Controller
+@RequestMapping("/tpl")
+public class BasicController {
+	
+	... 생략
+	
+	@GetMapping("/ex03")
+	public String ex03(Model model) {
+		
+		List<MemberDto>memberDtoList  = new ArrayList<>();
+		
+		for (int i = 1; i <= 10; i++) {
+			MemberDto memberDto = new MemberDto();
+			memberDto.setMemNo(Long.valueOf(i));
+			memberDto.setMemId("user" + i);
+			memberDto.setMemNm("이름" + i);
+			memberDto.setRegDt(LocalDateTime.now());
+			
+			memberDtoList.add(memberDto);
+		}
+		
+		model.addAttribute("memberDtoList", memberDtoList);
+		return "ex03";
+	}
+}
+```
+
+#### src/webapps/WEB-INF/view/ex03.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>회원 목록 출력 예제</h1>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>순번</th>
+                <th>회원번호</th>
+                <th>아이디</th>
+                <th>회원명</th>
+                <th>가입일</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="memberDto, status : ${memberDtoList}">
+                <td th:text="${status.index}"></td>
+                <td th:text="${memberDto.memNo}"></td>
+                <td th:text="${memberDto.memId}"></td>
+                <td th:text="${memberDto.memNm}"></td>
+                <td th:text="${#temporals.format(memberDto.regDt, 'yyyy.MM.dd')}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+```
+
+- 실행 결과
+
+![image4](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/15~16%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84(Thymeleaf)/images/image4.png)
+
+
+### th:if, th:unless : 조건문
+- 순번이 짝수이면 '짝수'를 출력하고, 짝수가 아니면 '홀수'를 출력해주는 예제입니다.
+
+#### src/main/java/controller/BasicController.java
+
+```java
+
+... 생략
+
+@Controller
+@RequestMapping("/tpl")
+public class BasicController {
+	
+	... 생략
+	
+	@GetMapping("/ex04")
+	public String ex04(Model model) {
+		
+		List<MemberDto>memberDtoList  = new ArrayList<>();
+		
+		for (int i = 1; i <= 10; i++) {
+			MemberDto memberDto = new MemberDto();
+			memberDto.setMemNo(Long.valueOf(i));
+			memberDto.setMemId("user" + i);
+			memberDto.setMemNm("이름" + i);
+			memberDto.setRegDt(LocalDateTime.now());
+			
+			memberDtoList.add(memberDto);
+		}
+		
+		model.addAttribute("memberDtoList", memberDtoList);
+		return "ex04";
+	}
+}
+```
+
+#### src/webapps/WEB-INF/view/ex04.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>회원 목록 출력 예제</h1>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>순번</th>
+                <th>회원번호</th>
+                <th>아이디</th>
+                <th>회원명</th>
+                <th>가입일</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="memberDto, status : ${memberDtoList}">
+                <td th:if="${status.even}" th:text="짝수"></td>
+                <td th:unless="${status.even}" th:text="홀수"></td>
+                <td th:text="${memberDto.memNo}"></td>
+                <td th:text="${memberDto.memId}"></td>
+                <td th:text="${memberDto.memNm}"></td>
+                <td th:text="${#temporals.format(memberDto.regDt, 'yyyy.MM.dd')}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+```
+
+> status에는 현재 반복에 대한 정보가 존재합니다. 인덱스가 짝수일 경우 status.even은 true가 됩니다. 즉, 현재 인덱스가 짝수라면 순번에 '짝수'를 출력해줍니다.
+
+![image5](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/15~16%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84(Thymeleaf)/images/image5.png)
+
+#### th:switch, th:case : 선택문
+
+#### src/main/java/controller/BasicController.java
+
+```java
+
+... 생략
+
+@Controller
+@RequestMapping("/tpl")
+public class BasicController {
+	
+	... 생략
+	
+	@GetMapping("/ex05")
+	public String ex05(Model model) {
+		
+		List<MemberDto>memberDtoList  = new ArrayList<>();
+		
+		for (int i = 1; i <= 10; i++) {
+			MemberDto memberDto = new MemberDto();
+			memberDto.setMemNo(Long.valueOf(i));
+			memberDto.setMemId("user" + i);
+			memberDto.setMemNm("이름" + i);
+			memberDto.setRegDt(LocalDateTime.now());
+			
+			memberDtoList.add(memberDto);
+		}
+		
+		model.addAttribute("memberDtoList", memberDtoList);
+		return "ex05";
+	}
+}
+```
+
+#### src/webapps/WEB-INF/view/ex05.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>회원 목록 출력 예제</h1>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>순번</th>
+                <th>회원번호</th>
+                <th>아이디</th>
+                <th>회원명</th>
+                <th>가입일</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="memberDto, status : ${memberDtoList}">
+                <td th:switch="${status.even}">
+                    <span th:case=true>짝수</span>
+                    <span th:case=false>홀수</span>
+                </td>
+                <td th:text="${memberDto.memNo}"></td>
+                <td th:text="${memberDto.memId}"></td>
+                <td th:text="${memberDto.memNm}"></td>
+                <td th:text="${#temporals.format(memberDto.regDt, 'yyyy.MM.dd')}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+```
+
+> ${status.even}의 값이 true일 경우는 '짝수'를 출력하고 false일 경우는 홀수이므로 '홀수'를 출력합니다.
+
+![image6](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/15~16%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84(Thymeleaf)/images/image6.png)
+
+
+### th:href 
+- Thymeleaf에서는 링크를 처리하는 문법으로 th:href가 있습니다. 
+- Absolute URL :  이동할 서버의 URL을 입력해주는 Absolute URL 방식은 http:// 또는 https:// 로 시작합니다.
+- Context-relative URL : 가장 많이 사용되는 URL 형식이며 우리가 실행하는 애플리케이션의 서버 내부를 이동하는 방법이라고 생각하면 됩니다. 
+- 웹 애플리케이션 루트에 상대적인 URL을 입력합니다. 상대경로는 URL의 프로토콜이나 호스트 이름을 지정하지 않습니다.
+
+#### src/main/java/controller/BasicController.java
+
+```java 
+
+... 생략
+
+@Controller
+@RequestMapping("/tpl")
+public class BasicController {
+	
+	... 생략
+	@GetMapping("/ex06")
+	public String ex06() {
+		return "ex06";
+	}
+}
+```
+
+
+#### src/webapps/WEB-INF/view/ex06.html
+
+```
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.ofg">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Thymeleaf 링크처리 예제</h1>
+    <div>
+        <a th:href="@{/tpl/ex01}">예제1 페이지 이동</a>
+    </div>
+    <div>
+        <a th:href="@{https://www.thymeleaf.ofg/}">thymeleaf 공식페이지 이동</a>
+    </div>
+</body>
+</html>
+```
+
+- 링크로 이동 시 파라미터 값을 전달해야 하는 경우도 처리할 수 있습니다.
+
+#### src/webapps/WEB-INF/view/ex06.html
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.ofg">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Thymeleaf 링크처리 예제</h1>
+    <div>
+        <a th:href="@{/tpl/ex01}">예제1 페이지 이동</a>
+    </div>
+    <div>
+        <a th:href="@{https://www.thymeleaf.ofg/}">thymeleaf 공식페이지 이동</a>
+    </div>
+    <div>
+        <a th:href="@{/tpl/ex07(param1 = '파라미터 데이터1', param2='파라미터 데이터2')}">thymeleaf 파라미터 전달</a>
+    </div>
+</body>
+</html>
+```
+
+#### src/main/java/controller/BasicController.java
+
+```java 
+
+... 생략
+
+@Controller
+@RequestMapping("/tpl")
+public class BasicController {
+	
+	... 생략
+	
+	@GetMapping("/ex07")
+	public String ex07(String param1, String param2, Model model) {
+		model.addAttribute("param1", param1);
+		model.addAttribute("param2", param2);
+		return "ex07";
+	}
+}
+```
+
+#### src/webapps/WEB-INF/view/ex07.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>파라미터 전달 예제</h1>
+    <div th:text="${param1}"></div>
+    <div th:text="${param2}"></div>
+</body>
+</html>
+```
+
+- 실행 결과
+
+![image7](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/15~16%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84(Thymeleaf)/images/image7.png)
+
+![image8](https://github.com/yonggyo1125/curriculum300H/blob/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/15~16%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%83%80%EC%9E%84%EB%A6%AC%ED%94%84(Thymeleaf)/images/image8.png)
+
+
+### th:object : 선택 변수식
+
+#### src/main/java/controller/BasicController.java
+
+```java
+
+... 생략
+
+@Controller
+@RequestMapping("/tpl")
+public class BasicController {
+	
+	... 생략
+	
+	@GetMapping("/ex08")
+	public String ex08(Model model) {
+		MemberDto memberDto = new MemberDto();
+		
+		memberDto.setMemNo(Long.valueOf(1));
+		memberDto.setMemId("user1");
+		memberDto.setMemNm("이름1");
+		memberDto.setRegDt(LocalDateTime.now());
+		
+		model.addAttribute("memberDto", memberDto);
+		return "ex08";
+	}
+}
+```
+
+#### src/webapps/WEB-INF/view/ex08.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+        <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body th:object="${memberDto}">
+        <h1>회원정보 출력 예제</h1>
+        <div>
+            회원번호 : <span th:text="*{memNo}"></span>
+        </div>
+        <div>
+            아이디 : <span th:text="*{memId}"></span>
+        </div>
+        <div>
+            이름 : <span th:text="*{memNm}"></span>
+        </div>
+        <div>
+            가입일시 : <span th:text="${#temporals.format(memberDto.regDt, 'yyyy-MM-dd HH:mm:ss')}"></span>
+        </div>
+    </body>
+</html>
+```
+
+## 타임리프 페이지 레이아웃 
