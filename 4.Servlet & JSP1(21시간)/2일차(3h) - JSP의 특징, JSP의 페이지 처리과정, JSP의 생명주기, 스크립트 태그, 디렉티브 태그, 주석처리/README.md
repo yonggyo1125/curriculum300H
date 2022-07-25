@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1xbA6zXrtJJPWvSl-bA8K04gKVr4GWie_?usp=sharing)
+
 ## JSP의 특징
 - JSP는 서블릿 기술의 확장 
 - JSP는 유지 관리가 용이
