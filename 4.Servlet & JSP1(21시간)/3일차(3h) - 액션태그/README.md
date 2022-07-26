@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1vrtz1bk9WJmssVLZBEaTZ8txvNm2svem?usp=sharing)
+
 ## 액션태그
 - 액션 태그는 서버나 클라이언트에게 어떤 행동을 하도록 명령하는 태그로 스크립트 태그, 주석, 디렉티브 태그와 함게 JSP 페이지를 구성하는 태그입니다.
 - 액션 태그는 JSP 페이지에서 페이지와 페이지 사이를 제어하거나(forward), 다른 페이지의 실행 결과 내용을 현재 페이지에 포함하거나(include), 자바빈즈(javaBeans)등의 다양한 기능을 제공
