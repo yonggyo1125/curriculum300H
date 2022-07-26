@@ -141,3 +141,71 @@ application.name=project1
 ### Hello World 출력하기
 
 #### src/java/main/com/codefty/project1/Project1Application.java
+
+```java
+package com.codefty.project1;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@SpringBootApplication
+public class Project1Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run(Project1Application.class, args);
+	}
+
+	@GetMapping("/")
+	public String helloWorld() {
+		return "Hello World";
+	}
+}
+```
+
+#### @RestController
+
+- @RestController는 Restful Web API를 좀 더 쉽게 만들기 위해 스프링 프레임워크 4.0에 도입된 기능입니다. 
+- @Controller와 @ResponseBody를 합쳐 놓은 애노테이션입니다. 
+- 클래스 이름 위에 @Controller 애노테이션을 선언하면 해당 클래스를 요청을 처리하는 컨트롤러로 사용합니다. 
+- @ResponseBody 애노테이션은 자바 객체를 HTTP 응답 본문의 객체로 변환해 클라이언트에게 전송합니다. 이를 통해 따로 html 파일을 만들지 않아도 웹 브라우저에 "Hello World" 라는 문자열을 출력할 수 있습니다.
+
+
+#### @GetMapping
+
+- 컨트롤러 클래스에 @GetMapping 어노테이션을 이용해 클라이언트의 요청을 처리할 URL을 매핑합니다. 
+- 현재는 서버의 루트로 오는 요청을 처리할 수 있도록 "/"로 선언했습니다.
+
+
+#### 웹서버 시작 및 프로젝트 실행
+
+- STS 오른쪽 하단 Boot Dashboard의 local을 더보기 버튼을 클릭하여 열고 project1을 선택합니다.
+- 시작 버튼을 클릭하고 시작이 완료 되면 웹브라우저에 <b>localhost</b>라고 입력합니다. 
+
+![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/17~20%EC%9D%BC%EC%B0%A8(21h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8/images/image8.png)
+
+- 실행 결과
+
+![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/17~20%EC%9D%BC%EC%B0%A8(21h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8/images/image9.png)
+
+## Lombok 라이브러리
+
+- Lombok 라이브러리는 반복적인 Getter/Setter, ToString과 같은 반복적인 자바 코드를 컴파일할 때 자동으로 생성해주는 라이브러리 입니다.
+- Lombok 라이브러리를 사용하면 반복적인 소스코드를 제거할 수 있으므로 코드를 좀 더 깔끔하게 작성할 ㅅ후 있습니다.
+
+- Lombok을 사용하기 위해서 [mvnrepository](https://mvnrepository.com/) 에서 lombok을 검색하여 pom.xml에 의존성을 다음과 같이 추가합니다.
+
+#### pom.xml
+
+```xml
+<dependencies>
+... 생략 
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok</artifactId>
+	</dependency>
+... 생략 
+</dependencies>
+```
