@@ -456,7 +456,7 @@ public class Person {
 
 #### 자바빈즈 프로퍼티 값 출력 예 
 ```
-% out.println(“아이디 :＂＋member.getId()); %>
+<% out.println(“아이디 :＂＋member.getId()); %>
 또는 
 <jsp:getProperty name=“member” property=“id” />
 ```
