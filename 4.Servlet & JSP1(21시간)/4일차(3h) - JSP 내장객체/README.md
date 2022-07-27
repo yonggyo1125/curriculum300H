@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1brsIrMUdMi1ZLQgY5Urz73Cgvq1F_VZx?usp=sharing)
+
 ## JSP 내장객체
 - 내장 객체는 JSP 페이지에서 사용할 수 있도록 JSP 컨테이너에 미리 정의된 객체입니다.
 - JSP 페이지가 서블릿 프로그램으로 번역될 때 JSP 컨테이너가 자옫으로 내장 객체를 멤버 변수, 메서드 매개변수 등 각종 참조 변수(객체)로 포함합니다.
