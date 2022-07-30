@@ -43,6 +43,11 @@
 
 ![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/17~20%EC%9D%BC%EC%B0%A8(21h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8/images/image1.png)
 
+
+## 스프링 프레임워크 API 문서
+
+- [스프링 프레임워크 API 문서](https://docs.spring.io/spring-framework/docs/current/javadoc-api/)
+
 * * * 
 # 기본 설정 하기
 
@@ -193,7 +198,7 @@ public class Project1Application {
 ## Lombok 라이브러리
 
 - Lombok 라이브러리는 반복적인 Getter/Setter, ToString과 같은 반복적인 자바 코드를 컴파일할 때 자동으로 생성해주는 라이브러리 입니다.
-- Lombok 라이브러리를 사용하면 반복적인 소스코드를 제거할 수 있으므로 코드를 좀 더 깔끔하게 작성할 ㅅ후 있습니다.
+- Lombok 라이브러리를 사용하면 반복적인 소스코드를 제거할 수 있으므로 코드를 좀 더 깔끔하게 작성할 수 있습니다.
 
 - Lombok을 사용하기 위해서 [mvnrepository](https://mvnrepository.com/) 에서 lombok을 검색하여 pom.xml에 의존성을 다음과 같이 추가합니다.
 
@@ -208,4 +213,78 @@ public class Project1Application {
 	</dependency>
 ... 생략 
 </dependencies>
+```
+
+#### Lombok 라이브러리에서 자주 사용하는 애노테이션
+
+|애노테이션|설명|
+|----|-------|
+|@Getter/Setter|코드를 컴파일할 때 속성들에 대한 Getter/Setter 메서드 생성|
+|@ToString|toString() 메서드 생성|
+|@ToString(exclude={"변수명"})|원하지 않은 속성을 제외한 toString() 메소드 생성|
+|@NonNull|해당 변수 null 체크, NullPointException 예외 발생|
+|@EqualsAndHashCode|equals()와 hashCode() 메서드 생성|
+|@Builder|빌더 패턴을 이용한 객체 생성|
+|@NoArgsConstructor|파라미터가 없는 기본 생성자 생성|
+|@AllArgsConstructor|모든 속성에 대한 생성자 생성|
+|@RequiredArgsConstructor|초기화되지 않은 @NonNull 애노테이션이 붙은 필드에 대한 생성자 생성|
+|@Log|log 변수 자동 생성|
+|@Value|불변(immutable)클래스 생성|
+|@Data|@ToString, @EqualsAndHashCode, @Getter, @Setter, @RequiredArgsConstructor를 합친 애노테이션|
+
+### Lombok 라이브러리 적용하기
+
+#### src/java/main/com/codefty/project1/MemberDto.java
+
+```java
+package com.codefty.project1;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class MemberDto {
+	private int memNo;
+	private String memId;
+	private String memNm;
+}
+```
+
+![image10](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/17~20%EC%9D%BC%EC%B0%A8(21h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8/images/image10.png)
+
+#### src/java/main/com/codefty/project1/TestController.java
+
+```java
+package com.codefty.project1;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class TestController {
+
+	@GetMapping("/test")
+	public MemberDto test() {
+		MemberDto memberDto = new MemberDto();
+		memberDto.setMemNo(Long.valueOf(1));
+		memberDto.setMemId("user1");
+		memberDto.setMemNm("사용자명");
+		
+		return memberDto;
+	}
+}
+```
+
+- 실행 결과
+
+![image11](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/17~20%EC%9D%BC%EC%B0%A8(21h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8/images/image11.png)
+
+
+### 학습용 데이터 베이스 생성 
+
+```
+CREATE DATABASE sb_board;
 ```
