@@ -815,61 +815,6 @@ ResultSet executeQuery() throws SQLException
 </html>
 ```
 * * * 
-# 데이터베이스 커넥션 풀 설치 및 적용
-- 웹사이트에 접속하는 사용자 수가 아주 많으면 웹 서버 상에서 동시에 실행되는 웹 애플리케이션 프로그램의 수도 아주 많을 것이고, 그런 프로그램들이 동시에 같은 데이터베이스 연결을 시도하는 경우도 많을 것 입니다. 
-- 그런데 많은 상용 DBMS가 데이터베이스에 동시에 연결할 수 있는 수를 제한하고 있으며, 어떤 제품은 연결 수에 따라서 가격을 다르게 매기기도 합니다. 
-- 그리고 그런 제한이 없더라도 데이터베이스에 대한 연결은 컴퓨터 지원을 상당히 많이 소모하기 때문에, 동시 사용자의 수가 아주 많은 웹 사이트에서는 웹 애플리케이션 프로그램마다 제각기 데이터베이스로의 연결을 맺는 것이 사실상 불가능합니다.
-- 그래서 웹 프로그래밍 분야에서는 이런 문제를 해결하기 위한 장치를 고안해 두었습니다. 
-- 그 장치의 이름은 <b>데이터베이스 커넥션 풀(Database Connection Pool)</b>인데, 하드웨어 장치가 아니라 웹 컨테이너 상에 존재하는 일종의 소프트웨어 모듈입니다. 
-- 데이터베이스 커넥션 풀이란 데이터베이스에 대한 몇개의 연결(connection)을 미리 맺어놓은 후에 그 것을 한데 모아놓고 웹 애플리케이션 프로그램들이 필요할 때마다 가져가서 사용한 후 반환할 수 있도록 만들어 놓은 장소를 말합니다.
-
-#### 데이터베이스 커넥션 풀의 개념도
-
-
-- 이렇게 하면 각각의 웹 애플리케이션 프로그램이 데이터베이스에 연결을 맺고 끊을 때보다 컴퓨터 자원을 효율적으로 활용할 수 있고, 
-- 많은 시간이 걸리는 데이터베이스 연결 작업이 대부분 생략되기 때문에 사용자의 응답 대기 시간이 짧아진다는 장점이 생깁니다.
-- 데이터베이스 커넥션 풀을 사용하기 위해서는 아파치 웹 사이트에서 무상으로 다운로드 받을 수 있는 데이터페이스 커넥션 풀 모듈을 다운받아 설치하여야 합니다.
-- 모듈의 이름은 DBCP이고 이 모듈이 작동하기 위해서는 Pool과 Collections라는 두 가지 모듈이 필요합니다.
-
-
-
-## DBCP, Pool, Collections 모듈 다운로드 받기
-- [Apache Commons DBCP](https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2/2.9.0)
-	
-	![apache1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4/images/apache_commons1.png)
-	
-- [Apache Commons Pool](https://mvnrepository.com/artifact/org.apache.commons/commons-pool2/2.11.1)
-	
-	![apache2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4/images/apache_commons2.png)
-	
-- [Apache Commons Collections](https://mvnrepository.com/artifact/org.apache.commons/commons-collections4/4.4)
-	
-	![apache3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/5.JSP2%20%26%20JSP%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(60%EC%8B%9C%EA%B0%84)/6%EC%9D%BC%EC%B0%A8(3h)%20-%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4/images/apache_commons3.png)
-	
-- 다운로드 받은 jar 파일을 src/WEB-INF/lib 폴더에 복사해 주세요.
-
-### 데이터베이스 커넥션 풀을 사용하는 방법
-
-- 데이터페이스를 직접 사용하는 경우 
-```
-Class.forName("com.mysql.cj.jdbc.Driver");
-Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/webdb", "root", "1234");
-```
-
-- 데이터베이스 커넥션 풀을 통해 데이터베이스를 사용하는 코드
-```
-Class.forName("org.apache.commons.dbcp.PoolingDriver");
-Connection conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:/webdb_pool");
-```
-- 데이터베이스 커넥션 풀을 사용하기 위해서는 먼저 해야할 일이 있습니다. 앞서 설치한 것은 단지 데이터베이스 커넥션 풀의 사용에 필요한 소프트웨어 일 뿐, 데이베이스 커넥션 풀 자체는 아닙니다. 
-- 그 소프트웨어를 이용해서 데이터베이스 커넥션 풀을 만들고, 그 풀을 웹 컨테이너에 등록하는 일은 직접 해야 합니다.
-- 두 가지 방법으로 등록할 수 있습니다.
-	- 데이터베이스 커넥션 풀을 생성해서 등록하는 프로그램을 작성하는 방법
-	- 그런일을 하는 데 필요한 정보를 기술한 XML 문서를 작성해 놓는 방법입니다.
-
-
-
-* * * 
 # 마이바티스(mybatis) 프레임워크 설치 및 적용
 
 ## 설치
