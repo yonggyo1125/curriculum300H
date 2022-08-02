@@ -525,5 +525,3 @@ public class ProductInfo {
 	</body>
 </html>
 ```
-
-## 익스프레션 언어로 자바 정적 메서드 호출하기
