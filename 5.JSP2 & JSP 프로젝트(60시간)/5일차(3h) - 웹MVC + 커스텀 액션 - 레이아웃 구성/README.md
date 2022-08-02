@@ -1,4 +1,8 @@
+## 학습예제 소스
+- [예제 소스](https://github.com/yonggyo1125/Board_JSP/tree/layout)
+
 ## 컨트롤러 구성
+
 #### WEB-INF/web.xml
 ```
 <?xml version="1.0" encoding="UTF-8"?>
