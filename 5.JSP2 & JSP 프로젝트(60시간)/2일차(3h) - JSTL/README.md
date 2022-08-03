@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1tGuG_tVDW2PH1pyj-s86N5yN_uy35dB1?usp=sharing)
+
 # JSTL
 
 ## 설치하기
