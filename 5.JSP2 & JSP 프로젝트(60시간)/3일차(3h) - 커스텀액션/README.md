@@ -666,7 +666,7 @@ public class NewerLineTag extends SimpleTagSupport implements DynamicAttributes 
 
 ```
 public class NewerLineTag extends SimpleTagSupport implements DynamicAttributes {
-	private Map<String, Object> attrs == new HashMap<String, Object>();
+	private Map<String, Object> attrs = new HashMap<String, Object>();
 	... 
 	public void doTag() throws JspException, IOException {
 		... 
