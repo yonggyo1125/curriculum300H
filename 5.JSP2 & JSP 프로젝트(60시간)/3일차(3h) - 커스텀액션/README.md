@@ -580,7 +580,7 @@ public class NewLineTag extends SimpleTagSupport {
 	public void doTag() throws JspException, IOException {
 		JspContext context = getJspContext();
 		JspWriter out = context.getOut();
-		out.println("<font colort=" + color + ">");
+		out.println("<font color=" + color + ">");
 		for(int i = 0; i < size; i++) {
 			out.print("*");
 		}
