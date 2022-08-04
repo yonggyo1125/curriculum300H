@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1bG8Nx5rUDhdO07McGf1c5IK_g4Y7E0ca?usp=sharing)
+
 # 커스텀 액션 
 - JSP가 기본적으로 제공하는 표준액션과 JSTL 라이브러리에 포함되어 있는 커스텀 액션이 있지만 이런 액션으로 만족되니 않는 액션이 있다면?
 - 이럴 때는 직접 커스텀 액션을 만들어서 사용하면 됩니다.
