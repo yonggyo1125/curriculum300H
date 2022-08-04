@@ -1410,3 +1410,9 @@ DEBUG [main] - Setting autocommit to false on JDBC Connection [com.mysql.cj.jdbc
 DEBUG [main] - ==>  Preparing: INSERT INTO member(memId, memNm, email, memPw) VALUES (?,?,?, ?);
 DEBUG [main] - ==> Parameters: user1(String), 사용자1(String), user1@test.org(String), 123456(String)
 ```
+
+
+
+## 게시판 프로젝트 소스(데이터베이스 연결)
+
+- [예제 소스](https://github.com/yonggyo1125/Board_JSP/tree/database)
