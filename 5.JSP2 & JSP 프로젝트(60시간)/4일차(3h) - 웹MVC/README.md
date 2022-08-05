@@ -1,3 +1,8 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1-gr9TNZ8g3lCWoCsIijcFFU7xABVeIeX?usp=sharing)
+
+
 # 웹 MVC
 - MVC는 Model, View, Controller의 약자로 웹 애플리케이션을 비즈니스 로직, 프레젠테이션 로직, 데이터로 분리하는 디자인 패턴입니다.
 - 웹 애플리케이션에서는 일반적으로 애플리케이션을 비즈니스 로직, 프레젠테이션 로직, 요청 처리 데이터로 분류
