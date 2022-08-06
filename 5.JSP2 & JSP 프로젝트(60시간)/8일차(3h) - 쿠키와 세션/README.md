@@ -468,6 +468,7 @@ session.invalidate();
 ```
 * * *
 
-# 회원인증, 인가 처리하기(로그인, 로그아웃)
+# 게시판 프로젝트(회원인증, 인가 처리하기 - 로그인, 로그아웃)
 
+- [예제 소스](https://github.com/yonggyo1125/Board_JSP/tree/login_logout)
 
