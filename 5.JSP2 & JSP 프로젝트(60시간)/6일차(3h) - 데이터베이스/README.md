@@ -1413,6 +1413,6 @@ DEBUG [main] - ==> Parameters: user1(String), 사용자1(String), user1@test.org
 
 
 
-## 게시판 프로젝트 소스(데이터베이스 연결)
+## 게시판 프로젝트 소스(마이바티스 연동 및 회원가입 구현)
 
 - [예제 소스](https://github.com/yonggyo1125/Board_JSP/tree/database)
