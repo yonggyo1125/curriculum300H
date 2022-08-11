@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1_YzIZCb6xTFdYW5WrgBp60t__tJXZKfL?usp=sharing)
+
 # 파일업로드
 
 ## 파일 업로드를 위한 form 태그 구성
