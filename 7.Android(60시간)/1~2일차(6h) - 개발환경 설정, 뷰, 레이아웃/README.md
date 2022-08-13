@@ -57,3 +57,11 @@
 * * * 
 
 # 첫 프로젝트 만들기
+
+![image14](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image14.png)
+
+- [New Project]를 선택하면 안드로이드 프로젝트를 만들기 위한 대화상자가 순서대로 표시됩니다. 처음 나타난 대화상자에서는 앱 안에 만들어질 첫 화면의 모양을 선택합니다. Empty Activity가 자동으로 선택되어 있는데 화면 안에 아무 것도 없는 가장 단순한 모양입니다. 이 화면이 선택된 상태로 [Next]를 클릭하면 앱의 기본 정보를 입력하는 대화상자가 나타납니다.
+
+![image15](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image15.png)
+
+- 
