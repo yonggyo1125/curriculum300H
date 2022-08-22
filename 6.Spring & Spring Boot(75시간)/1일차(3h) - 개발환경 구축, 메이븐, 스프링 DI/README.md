@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1WjaVEtCqkZlL7q9gAwbPKTfM0dkiOE-T?usp=sharing)
+
 # 스프링 프레임워크란?
 스프링(Spring)은 매우 방대한 기능을 제공하고 있어서 스프링을 한마디로 정의하기는 힘들다. 흔히 스프링이라고 하면 스프링 프레임워크를 말하는데, 스프링 프레임워크의 주요 특징은 다음과 같다.
 - <b>의존 주입(Dependency Inject : DI)</b> 지원
