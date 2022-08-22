@@ -190,3 +190,50 @@ public class LayoutCodeActivity extends AppCompatActivity {
 |----|--------|
 |top|대상 객체를 위쪽 끝에 배치하기|
 |bottom|대상 객체를 아래쪽 끝에 배치하기|
+|left|대상 객체를 왼쪽 끝에 배치하기|
+|right|대상 객체를 오른쪽 끝에 배치하기|
+|center_vertical|대상 객체를 수직 방향의 중앙에 배치하기|
+|center_horizontal|대상 객체를 수평 방향의 중앙에 배치하기|
+|fill_vertical|대상 객체를 수직 방향으로 여유 공간만큼 확대하여 채우기|
+|fill_horizontal|대상 객체를 수평 방향으로 여유 공간만큼 확대하여 채우기|
+|center|대상 객체를 수직 방향과 수평 방향의 중앙에 배치하기|
+|fill|대상 객체를 수직 방향과 수평 방향으로 여유 공간만큼 확대하여 채우기|
+|clip_vertical|대상 객체의 상하 길이가 여유 공간보다 클 경우에 남는 부분을 잘라내기<br>top\|clip_vertical로 설정한 경우 아래쪽으로 남는 부분 잘라내기<br>bottom\|clip_vertical로 설정한 경우 위쪽에 남는 부분 잘라내기<br>center_vertical\|clip_vertical로 설정한 경우 위쪽과 아래쪽에 남는 부분 잘라내기|
+|clip_horizontal|대상 객체의 좌우 길이가 여유 공간보다 클 경우 남는 부분을 잘라내기<br>right\|clip_horizontal로 설정한 경우 왼쪽에 남는 부분 잘라내기<br>left\|clip_horizontal로 설정한 경우 오른쪽에 남는 부분 잘라내기<br>center_horizontal\|clip_horizontal로 설정한 경우 왼쪽과 오른쪽에 남는 부분 잘라내기|
+
+- 그런데 텍스트뷰로 화면을 구성하다 보면 텍스트가 옆의 텍스트뷰나 버튼에 들어 있는 텍스트와 높이가 맞지 않는 경우를 종종 볼 수 있습니다. 이런 경우는 단순히 layout_gravity나 gravity 속성 값을 설정하는 것만으로 정렬을 맞추기 어렵습니다. 이런 경우는 baselineAligned 속성을 사용할 수 있습니다.
+
+> 제약 레이아웃에서는 화면에 연결선을 만들어 텍스트 높이를 맞출 수 있습니다.<br>앞 장에서 살펴본 제약 레이아웃은 버튼이나 텍스트뷰에 표시된 글자를 다른 뷰의 글자와 맞추기 위해 뷰의 가운데 있는 연결점을 서로 연결합니다. 이렇게 연결하면 두 개의 뷰에 들어 있는 텍스트의 높이를 간단하게 맞출 수 있습니다.
+
+- 다음은 폰트 크기를 다르게 하여 뷰가 차지하는 영역이 달라진 세 개의 뷰를 만든 후 각각의 뷰 안에 표시된 텍스트의 아랫줄을 서로 일렬로 맞추는 XML 레이아웃입니다. /app/res/layout 폴더 안에 새로운 baseline.xml 파일을 새로 만듭니다.
+
+- 새로운 레이아웃 파일을 만들 때는 /app/res/layout 폴더를 선택한 후 마우스 오른쪽 버튼을 눌러서 [New -> Layout resource file] 메뉴를 선택합니다. 대화상자가 보이면 File name: 입력상자에 baseline.xml을 입력하고 Root element: 입력상자에는 LinearLayout을 입력합니다.
+
+- 디자인 화면이 열리면 전체 화면을 클릭해서 최상위 레이아웃의  orientation 속성 값을 horizontal로 변경합니다. 그리고 텍스트뷰 두 개와 버튼 한 개를 추가합니다. 그런데 디자인 화면에 텍스트뷰나 버튼을 추가할 때 layout_weight의 속성 값에 자동으로 1이 설정됩니다. 일단 텍스트뷰나 버튼에 설정된 layout_weight의 값을 지우세요.
+
+- 텍스트뷰와 버튼이 갖는 layout_width와 layout_height의 속성 값은 모두 wrap_content로 설정됩니다. 만약 wrap_content값이 아니라면 wrap_content값으로 변경하세요. 두 개의 텍스트뷰와 한 개의 버튼이 수평 방향으로 나란히 추가되었으며 각각의 뷰들은 뷰 안에 들어 있는 텍스트의 크기만큼 가로의 크기가 정해집니다. 
+- 텍스트뷰와 버튼의 크기를 textSize 속성에서 각각 40sp, 20sp, 14sp로 수정합니다.
+- text 속성 값에는 각각 '큰 글씨', '중간 글씨', '작은 글씨'를 입력하고 textColor의 속성 값은 각각 #ff0000, #00ff00, #0000ff로 입력합니다.
+
+![image36](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/layouts/image36.png)
+
+- 이렇게 속성을 수정하면 각각의 뷰에 들어 있는 텍스트의 아래쪽 바닥면이 똑같이 맞춰집니다. 이것은 baselineAligned 속성의 디폴트 값이 true이기 때문입니다. 이번에는 최상위 레이아웃인 리니어 레이아웃을 선택하고 baselineAligned 속성 값을 false로 설정합니다.
+
+- 디자인 화면에서 최상위 레이아웃을 선택할 때는 왼쪽 아래쪽의 Component Tree 창에서 가장 위에 있는 LinearLayout을 선택하면 됩니다. 그런 다음 오른쪽 속성 창에서 [View all attributes] 아이콘을 누르고 baselineAligned을 선택하면 됩니다. 그런 다음 오른쪽 속성 창에서 [View all attributes] 아이콘을 누르고 baselineAligned 속성을 찾아서 체크 박스를 해제합니다. 그러면 다음 그림처럼 글자의 높이가 서로 달라집니다.
+
+![image37](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/layouts/image37.png)
+
+- baselineAligned 속성으로 정렬을 맞춘 경우 텍스트의 정렬이 우선이기 때문에 뷰의 배치가 이상하게 될 수도 있습니다. 따라서 어떤 정렬을 우선 적용할 것인가에 따라 선택적으로 지정해야 합니다.
+
+## 뷰의 마진과 패딩 설정하기
+
+- 뷰를 담고 있는 부모 레이아웃이 차지하는 공간 중에서 남아 있는 공간에 새로운 뷰를 추가하면 그 뷰의 크기를 늘려 나머지 공간을 모두 채우거나 정렬 속성으로 위치를 지정할 수 있습니다. 그런데 뷰가 부모 레이아웃의 여유 공간을 꽉 채울 경우, 뷰가 서로 붙거나 그 안에 표시된 텍스트가 너무 꽉 차 보여서 화면 구성이 복잡하고 답답해 보이게 됩니다. 
+- XML 레이아웃을 만들 때도 뷰의 내부 공간을 띄울 수 있는 속성이 있습니다.
+
+- 뷰의 영역은 테두리선으로 표시할 수 있는데 보이게 할 수도 있고 보이지 않게 할 수도 있습니다. 뷰는 테두리선을 기준으로 바깥 공간과 안쪽 공간이 있으며, 이 모든 공간을 포함한 뷰의 공간을 셀(Cell) 이라고 합니다. 
+- 버튼이나 텍스트뷰를 위젯이라고 부르기 때문에 이 공간을 위젯 셀(Widget Cell)이라고 부르기도 합니다. 테두리선을 기준으로 테두리선의 바깥쪽 공간을 마진(Margin)이라 하고 layout_margin 속성을 얼마나 간격을 벌릴 것인지 지정할 수 있습니다. 그리고 테두리선 안쪽의 공간을 패딩(Padding)이라고 합니다. 즉, 뷰 안의 내용물인 텍스트나 이미지가 테두리선과 얼마나 떨어지게 할 것인지를 지정할 수 있으며 padding 속성을 이용합니다.
+
+- 마진이나 패딩은 상하좌우의 간격을 한꺼번에 조절하거나 각각 조절할 수도 있습니다. 예를 들어, padding 속성에 따라 안쪽 내용물과의 거리가 결정되는데 paddingTop, paddingBottom, paddingLeft, paddingRight 속성으로 지정할 수 있습니다.
+
+![image38](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/layouts/image38.png)
+
