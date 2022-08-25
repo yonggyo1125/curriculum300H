@@ -12,9 +12,9 @@
 이 외에도 스케줄링, 메시지 연동(JMS), 이메일 발송, 테스트 지원 등 자바 기반 어플리케이션을 개발하는데 필요한 다양한 기능을 제공한다.<br><br>
 
 실제로 스프링 프레임워크를 이용해서 웹 어플리케이션을 개발할 때에는 스프링 프레임워크만 단독으로 사용하기 보다는 여러 스프링 관련 프로젝트를 함께 사용한다. 현재 스프링을 주도적으로 개발하고 있는 피보탈(Pivotal)은 스프링 프레임워크뿐만 아니라 어플리케이션 개발에 필요한 다양한 프로젝트를 진행하고 있다. 이들 프로젝트 중 자주 사용되는 것은 다음과 같다.
-- **스프링 데이터** : 적은 양의 코드로 데이터 연동을 처리할 수 있도록 도와주는 프레임워크이다. JPA, 몽고DB, 레디스 등 다양한 저장소 기술을 지원한다.
-- **스프링 시큐리티** : 인증/인가와 관련된 프레임워크로서 웹 접근 제어, 객체 접근 제어, DB - 오픈 ID - LDAP 등 다양한 인증 방식, 암호화 기능을 제공한다.
-- **스프링 배치** : 로깅/추적, 작업 통계, 실패 처리 등 배치 처리에 필요한 기본 기능을 제공한다. <br><br>
+- <b>스프링 데이터</b> : 적은 양의 코드로 데이터 연동을 처리할 수 있도록 도와주는 프레임워크이다. JPA, 몽고DB, 레디스 등 다양한 저장소 기술을 지원한다.
+- <b>스프링 시큐리티</b> : 인증/인가와 관련된 프레임워크로서 웹 접근 제어, 객체 접근 제어, DB - 오픈 ID - LDAP 등 다양한 인증 방식, 암호화 기능을 제공한다.
+- <b>스프링 배치</b> : 로깅/추적, 작업 통계, 실패 처리 등 배치 처리에 필요한 기본 기능을 제공한다. <br><br>
 이 외에도 스프링 인티그레이션, 스프링 하둡, 스프링 소셜 등 다양한 프로젝트가 존재한다. 각 프로젝트에 대한 내용은 [https://spring.io](https://spring.io) 사이트를 참고하기 바란다.
 
 * * *
@@ -813,7 +813,7 @@ Assembler assembler = new Assembler();
 ChangePasswordService changePwdSvc = assembler.getChangePasswordService();
 changePwdSvc.changePassword("yonggyo00@kakao.com", "1234", newPwd);
 ```
-- Assembler.getChangePasswordService()로 구현한 ChangePasswordService 객체는 **pwdSvc = new ChangePasswordService();**에서 생성된 객체이므로 세터를 통해서 MemberDao 객체를 주입받은 객체이다.
+- Assembler.getChangePasswordService()로 구현한 ChangePasswordService 객체는 <b>pwdSvc = new ChangePasswordService();</b>에서 생성된 객체이므로 세터를 통해서 MemberDao 객체를 주입받은 객체이다.
 
 - MemberDao 클래스가 아니라 MemberDao 클래스를 상속받은 CachedMemberDao 클래스를 사용해야 한다면 Assembler에서 객체를 초기화하는 코드만 변경하면 된다.
 ```java
