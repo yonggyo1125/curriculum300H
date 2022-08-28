@@ -237,3 +237,53 @@ public class LayoutCodeActivity extends AppCompatActivity {
 
 ![image38](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/layouts/image38.png)
 
+- layout_margin은 padding 속성과 달리 테두리 바깥 부분에 여백을 주는 것입니다. 부모 컨테이너 여유 공간에서 위젯 셀이 차지하는 공간을 결정하는 역할을 합니다. 이 두 가지 속성은 모두 상하좌우 각 면에 여백을 지정하는 방법을 제공합니다. layout_margin은 각각 layout_marginLeft, layout_marginRight, layout_marginTop, layout_marginBottom 속성을 사용합니다.
+
+- 다음은 세 개의 텍스트뷰를 리니어 레이아웃 안에 넣고 layout_margin과 padding 속성으로 뷰가 차지하는 공간을 조절한 XML 레이아웃입니다. 각각의 텍스트뷰가 차지하는 영역을 확실히 구별하려고 background 속성 값으로 배경색을 설정했습니다. 이렇게 하면 뷰의 테두리 부분까지 배경색이 보이게 됩니다. 부모 컨테이너인 리니어 레이아웃의 배경색이 흰색이므로 마진을 주면 마진을 준 부분은 흰색으로 나타납니다.
+
+- /app/res/layout 폴더 안에 padding.xml 파일을 만듭니다. 새로운 레이아웃 파일을 만ㄷ늘 땐 Root element: 입력상자에 LinearLayout을 입력하여 만듭니다. 파일이 열리면 먼저 최상위 레이아웃인 리니어 레이아웃의 orientation 속성을 horizontal로 설정합니다.
+- 그런 다음 텍스트뷰 세 개를 추가하고 layout_width 속성 값을 wrap_content로 설정합니다. textSize 속성 값은 모두 24sp로 설정하고 textColor 속성의 값은 모두 #ff0000으로 설정합니다. background 속성의 값은 각각 #ffff00, #00ffff, #ff00ff로 설정합니다.
+
+![image39](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/layouts/image39.png)
+
+- 그런데 이 XML 레이아웃에 들어 있는 텍스트뷰들의 layout_margin과 padding 속성 값을 50dp로 늘리면 다음과 같은 이상한 모양이 됩니다.
+
+![image40](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/layouts/image40.png)
+
+- 이것은 수평 방향으로 추가된 세 개의 텍스트뷰 중에서 마지막 뷰(세 번째 텍스트 뷰)에 할당될 수 있는 부모 레이아웃의 여유 공간이 부족하기 때문입니다. 세 번째 텍스트뷰는 공간이 없다보니 아래쪽으로 밀리는 현상이 발생한 것입니다. 이런 문제는 실제 앱을 구성할 때도 발생할 수 있으므로 padding이나 layout_margin 속성을 지정할 때 부모 레이아웃이 남아 있는 공간이 충분한지를 고려해야 레이아웃의 형태가 이상해지지 않습니다.
+
+## 여유 공간을 분할하는 layout_weight 속성
+
+- 부모 레이아웃에 추가한 뷰들의 공간을 제외한 여유 공간은 layout_weight 속성으로 분할할 수 있습니다. 다시말해 layout_weight 속성은 부모 레이아웃에 남아 있는 여유 공간을 분할하여 기존에 추가했던 뷰들에게 할당할 수 있습니다. layout_weight 속성에 숫자 값을 넣으면 그 숫자는 분할 비율이 되며, 그 값의 비율만큼 여유 공간을 분할한 후 해당 뷰에게 할당합니다.
+- 예를 들어, layout_weight 속성에 각각 '1'의 값을 지정하면 두 개의 뷰는 1:1의 비율이 적용되어 반씩 여유 공간을 나눠 갖게 됩니다. 같은 방법으로 두 개의 뷰에 각각 '1'과 '2'의 값을 지정하면 각각 1/3과 2/3만큼 여유 공간을 분할한 후 나눠 갖게 됩니다.
+
+> layout_weight 속성으로 각 뷰에 할당하는 크기는 추가적인 값입니다. 즉, 뷰에 layout_width나 layout_height로 지정한 크기에 추가되는 값입니다. 예를 들어, 가로 방향으로 두 개의 버튼을 추가했을 떄 두 개의 버튼을 제외한 나머지 여유 공간이 있다면 그 여유 공간을 분할한 후 이 두개의 버튼에 각각 할당하게 됩니다.
+
+- 여기에서 주의할 점은 layout_width나 layout_height로 지정하는 뷰의 크기는 wrap_content나 숫자 값으로 지정되어야 한다는 것입니다. 만약 match_parent로 지정하면 예상하지 못한 결과가 발생할 수 있습니다.
+
+- layout_weight 속성이 갖고 있는 특징을 알아보기 위해 /app/res/layout 폴더 안에 weight.xml 파일을 만들고 코드를 입력합니다.
+- 리니어 레이아웃 안에 다시 리니어 레이아웃을 추가하는 방식으로 구성합니다. 리니어 레이아웃은 수직방향과 수평방향을 지정할 수 있으므로 격자 모양으로 구성하기 위해 최상위 레이아웃은 수직 방향으로 하고 그 안에 추가하는 리니어 레이아웃은 수평방향으로 지정합니다. 이렇게 하면 한 줄씩 뷰가 추가되도록 만들 수 있습니다. 
+- 최상위 레이아웃 안에 리니어 레이아웃을 추가한 후 그 안에 두 개의 텍스트뷰를 추가합니다.
+- 첫 번째 줄에 추가한 두 개의 뷰들은 layout_weight 속성 값을 똑같이 '1'로 설정하고 text 속성 값은 '텍스트'로 입력합니다. 두 개의 텍스트뷰는 layout_width 속성 값이 wrap_content로 되어 있습니다. 그리고 layout_weight 속성 값이 1로 설정되어 있습니다. 이렇게 하면 오른쪽에 남아 있던 여유 공간은 반반씩 분할되어 두 개의 뷰에 할당됩니다. 
+
+![image41](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/layouts/image41.png)
+
+- 두 개의 텍스트뷰는 layout_width 속성을 wrap_content로 지정해서 가로 길이가 같습니다. 그래서 여기에 같은 크기의 여유 공간을 더해도 두 개의 텍스트뷰는 똑같은 가로 길이를 갖게 됩니다. 
+- 이번에는 리니어 레이아웃 안에 다시 리니어 레이아웃을 하나 더 추가해서 한 줄을 더 만들겠습니다. 추가한 리니어 레이아웃 안에 두 개의 텍스트뷰를 추가한 후 layout_weight 속성 값을 1과 2로 지정합니다.
+
+- 이렇게 하면 오른쪽에 남아 있던 여유 공간은 1/3, 2/3씩 분할되어 두 개의 뷰에 할당됩니다. 디자인 화면에서 결과 화면을 확인하면 다음과 같습니다.
+
+![image42](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/layouts/image42.png)
+
+- 두 번째 줄에 추가한 두 개의 텍스트뷰는 가로 길이가 서로 다르게 보입니다. 이것은 두 개의 뷰가 남아 있던 여유 공간을 분할하여 가졌기 때문입니다. 그런데 만약 부모 레이아웃의 가로 공간을 1:2의 비율로 나눠 갖도록 하고 싶다면 다음과 같이 layout_width 속성 값을 0dp로 설정해야 합니다. 
+- 방향 속성(orientation 속성) 값이 horizontal인 리니어 레이아웃을 하나 더 추가하고 두 개의 텍스트뷰를 추가합니다. 텍스트뷰 두 개의 가로 길이를 모두 0dp로 설정합니다.
+
+- 이렇게 하면 부모 컨테이너의 가로 공간이 모두 남아있게 되고 layout_weight로 분할하면 그 값 그대로 두 개의 뷰가 갖는 가로 길이를 결정하게 됩니다. 
+
+![image43](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/layouts/image43.png)
+
+- 이렇게 layout_weight 속성으로 뷰의 가로 길이를 결정한 경우 layout_width 속성 값에 match_parent를 설정하면 안 됩니다. 또한 공간 분할 목적으로 사용할 때는 분할하려면 방향에 따라 layout_width나 layout_height의 값을 0dp로 만들어야 합니다.
+
+> 리니어 레이아웃은 한 방향으로만 뷰를 넣을 수 있기 때문에 처음에는 원하는 화면을 만들기 어렵다는 생각이 들 수도 있습니다. 그러나 레이아웃 안에 다시 레이아웃을 추가할 수 있기 때문에 어떤 모양이라도 대부분 만들수 있습니다.
+
+- 정렬 속성, 마진 속성, 패딩 속성 등은 리니어 레이아웃이 아닌 다른 레이아웃에도 적용될 수 있습니다.
