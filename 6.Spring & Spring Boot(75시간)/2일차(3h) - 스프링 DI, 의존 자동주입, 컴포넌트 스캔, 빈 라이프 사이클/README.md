@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1GQ6ssuV_sGAHpPWHw6nOiubhazIqqbNr?usp=sharing)
+
 # 스프링 DI 설정 및 사용
 - 앞서 의존이 무었이고 DI를 이용해서 의존 객체를 주입하는 방법에 대해서 알아 보았는데, 스프링 자체가 아닌 의존, DI, 조립기에 대해 먼저 알아본 이유는 스프링이 DI를 지원하는 조립기이기 때문이다.
 
