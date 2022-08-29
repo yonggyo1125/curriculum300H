@@ -857,7 +857,9 @@ private MemberDao memberDao;
 <br>
 - @Autowired 애노테이션을 memberDao 필드에 붙였으므로 다음과 같이 AppCtx 클래스의 @Bean 설정 메서드에서 의존을 주입하는 코드를 삭제하면 된다.  
 - changePwdSvc() 메서드에서 생성한 ChangePasswordService 객체의 setMemberDao() 메서드를 호출하지 않는다. setMemberDao()를 호출하서 MemberDao 빈 객체를 주입하지 않아도 스프링이 MemberDao 타입의 빈 객체를 주입하기 때문이다.
+
 #### src/main/java/config/AppCtx.java
+
 ```java
 ...
 @Configuration
@@ -875,7 +877,9 @@ public class AppCtx {
 <br>
 <br>
 - @Autowired 애노테이션은 메서드에도 붙일 수 있다.
+
 #### src/main/java/spring/MemberInfoPrinter.java
+
 ```java
 package spring;
 
@@ -908,7 +912,9 @@ public class MemberInfoPrinter {
 
 }
 ```
+
 #### src/main/java/config/AppCtx.java
+
 ```java
 ...
 @Configuration
@@ -922,12 +928,14 @@ public class AppCtx {
 	...
 }
 ```
+
 - MemberInfoPrinter 객체의 두 세터 메서드를 호출 하지 않도록 수정했으며 정상적으로 동작한다.
 - 빈 객체의 메서드에 @Autowired 애노테이션을 붙이면 스프링은 해당 메서드를 호출한다. 이때 메서드 매개변수 타입에 해당하는 빈 객체를 찾아서 주입한다.
 
 >@Autowired 애노테이션을 필드나 세터 메서드에 붙이면 스프링은 타입이 일치하는 빈 객체를 찾아서 주입한다.
 
 #### src/main/java/spring/MemberRegisterService.java
+
 ```java
 ...
 import org.springframework.beans.factory.annotation.Autowired;
@@ -950,6 +958,7 @@ public class MemberRegisterService {
 memberDao  필드에 @Autowired 애노테이션을 붙였고 매개변수 없는 생성자를 추가하였다.
 
 #### src/main/java/spring/MemberListPrinter.java
+
 ```java
 ...
 import org.springframework.beans.factory.annotation.Autowired;
@@ -994,7 +1003,9 @@ public class AppCtx {
 ```
 
 ### 일치하는 빈이 없는 경우
+
 @Autowired 애노테이션을 적용한 대상에 일치하는 빈이 없으면 UnsatisfiedDependencyException이 발생한다.
+
 ```java
 ...
 @Configuration
@@ -1015,16 +1026,19 @@ public class AppCtx {
 }
 ```
 memberDao() 메서드를 주석처리하고 MainForSpring을 실행하면 예외가 발생하면서 제대로 실행되지 않으며 다음과 같은 에러 메세지가 출력된다.
+
 ```
 6월 11, 2022 8:11:56 오후 org.springframework.context.support.AbstractApplicationContext refresh
 경고: Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'memberRegSvc': Unsatisfied dependency expressed through field 'memberDao'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'spring.MemberDao' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
 Exception in thread "main" org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'memberRegSvc': Unsatisfied dependency expressed through field 'memberDao'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'spring.MemberDao' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: 
 ... 생략
 ```
+
 이 에러 메세지는 @Autowired 애노테이션을 붙인 MemberRegisterService의 memberDao 필드에 주입할 MemberDao 빈이 존재하지 않아 에러가 발생했다는 사실을 알려준다.
 <br>
 <br>
 반대로 @Autowired 애노테이션을 붙인 주입 대상에 일치하는 빈이 두 개 이상이라면?
+
 ```java
 	/**
 	@Bean
@@ -1043,7 +1057,9 @@ Exception in thread "main" org.springframework.beans.factory.UnsatisfiedDependen
 		return new MemberPrinter();
 	}
 ```
+
 memberPrinter1(), memberPrinter2() 메서드를 추가한 뒤 memberPrinter()를 주석처리하고 MainForSpring을 실행하면 다음의 예외 메세지가 출력된다.
+
 ```
 월 11, 2022 8:16:44 오후 org.springframework.context.support.AbstractApplicationContext refresh
 경고: Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'listPrinter': Unsatisfied dependency expressed through method 'setMemberPrinter' parameter 0; nested exception is org.springframework.beans.factory.NoUniqueBeanDefinitionException: No qualifying bean of type 'spring.MemberPrinter' available: expected single matching bean but found 2: memberPrinter1,memberPrinter2
@@ -1051,12 +1067,15 @@ Exception in thread "main" org.springframework.beans.factory.UnsatisfiedDependen
 7) 
 ... 생략
 ```
-자동 주임을 하려면 해당 타입을 가진 빈이 어떤 빈인지 정확하게 한정할 수 있어야 하는데 MemberPrinter, 타입의 빈이 두 개여서 어떤 빈을 자동 주입 대상으로 선택해야 할지 한정할 수 없다. 이 경우 스프링은 자동 주입에 실패하고 예외를 발생시킨다.
+
+자동 주입을 하려면 해당 타입을 가진 빈이 어떤 빈인지 정확하게 한정할 수 있어야 하는데 MemberPrinter, 타입의 빈이 두 개여서 어떤 빈을 자동 주입 대상으로 선택해야 할지 한정할 수 없다. 이 경우 스프링은 자동 주입에 실패하고 예외를 발생시킨다.
 
 ## @Qualifier 애노테이션을 이용한 의존 객체 선택
+
 - 자동 주입 가능한 빈이 두 개 이상이라면 자동 주입할 빈을 지정할 수 있는 방법이 필요하다. 이때 @Qualifier 애노테이션을 사용한다. @Qualifier 애노테이션을 사용하면 자동 주입 대상 빈을 한정할 수 있다.
 - @Qualifier 애노테이션은 두 위치에서 사용가능하다
 - 첫 번째는 @Bean 애노테이션을 붙인 빈 설정 메서드이다.
+
 ```java
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -1083,6 +1102,7 @@ public class AppCtx {
 ```
 이 코드에서 memberPrinter1() 메서드에 "printer" 값을 갖는 @Qualifier 애노테이션을 붙였다. 이 설정은 해당 빈의 한정 값으로 "printer"를 지정한다.<br><br>
 이렇게 지정한 한정 값은 @Autowired 애노테이션에서 자동 주입할 빈을 한정할 떄 사용한다. 이곳이 @Qualifier 애노테이션을 사용하는 두 번째 위치이다. 
+
 ```java 
 public class MemberListPrinter {
 	private MemberDao memberDao;
@@ -1097,11 +1117,13 @@ public class MemberListPrinter {
 	}
 }
 ```
+
 setMemberPrinter() 메서드에 @Autowired 애노테이션을 붙였으므로 MemberPrinter 타입의 빈을 자동 주입한다. 이때 @Qualifier 애노테이션 값이 "printer"이므로 한정 값이 "printer"인 빈을 의존 주입 후보로 사용한다. 앞서 스프링 설정 클래스에서 @Qualifier 애노테이션의 값으로 "printer"를 준 MemberPrinter 타입의 빈(memberPrinter1)을 자동 주입 대상으로 사용한다.<br>
 MemberListPrinter 클래스뿐 아니라 MemberInfoPrinter의 setPrinter() 메서드에도 @Qualifier("printer") 애노테이션을 붙여서 의존 주입 대상을 설정한다. MemberPrinter 타입 빈을 주입받는 모든 @Autowired 애노테이션에 @Qualifier 애노테이션을 붙였으므로 다시 MainForSpring을 실행해보면 정상 동작한다.
 
 ### 빈 이름과 기본 한정자
 빈 설정에 @Qualifier 애노테이션이 없으면 빈의 이름을 한정자로 지정한다.
+
 ```java 
 @Configuration
 public class AppCtx2 {
@@ -1130,6 +1152,7 @@ public class AppCtx2 {
 #### 빈 이름과 한정자 관계
 
 |빈 이름|@Qualifier|한정자|
+|----|------|------|
 |printer||printer|
 |printer2|mprinter|mprinter|
 |infoPrinter||infoPrinter|
@@ -1138,6 +1161,7 @@ public class AppCtx2 {
 MemberPrinter 코드를 다음과 같이 변경해보자.
 
 #### src/main/java/spring/MemberPrinter.java
+
 ```java
 package spring;
 
@@ -1169,7 +1193,9 @@ public class MemberPrinter {
 	}
 }
 ```
+
 - MainForSpring 실행 결과
+
 ```
 6월 11, 2022 9:10:25 오후 org.springframework.context.support.AbstractApplicationContext refresh
 경고: Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'memberPrinter': Unsatisfied dependency expressed through method 'setDateFormatter' parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'java.time.format.DateTimeFormatter' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
@@ -1179,7 +1205,8 @@ Exception in thread "main" org.springframework.beans.factory.UnsatisfiedDependen
 dateTimeFormatter 필드가 null이면 날짜 형식을 %tF로 출력하고 이 필드가 null이 아니면 dateTimeFormatter를 이용해서 날짜 형식을 맞춰 출력하도록 print() 메서드를 수정했다. 세터 메서드는 @Autowired 애노테이션을 이용해서 자동 주입하도록 했다.<br><br>
 print() 메서드는 dateTimeFormatter가 null인 경우에도 알맞게 동작한다. 즉 반드시 setDateFormatter()를 통해서 의존 객체를 주입할 필요는 없다. setDateFormatter()에 주입할 빈이 존재하지 않아도 MemberPrinter가 동작하는데는 문제가 없다.<br><br>
 그런데 @Autowired 애노테이션은 기본적으로 @Autowired 애노테이션을 붙인 타입에 해당하는 빈이 존재하지 않으면 익셉션을 발생한다. 따라서 setDateFormatter() 메서드에서 필요로 하는 DateTimeFormatter 타입의 빈이 존재하지 않으면 익셉션이 발생한다. MemberPrinter는 setDateFormatter() 메서드에 자동 주입할 빈이 존재하지 않으면 익셉션이 발생하기보다는 그냥 dateTimeFormatter 필드가 null이면 된다.<br><br>
-이렇게 자동 주입할 대상이 필수가 아닌 경우에는 **@Autowired 애노테이션의 required 속성**을 다음과 같이 **false로 지정**하면 된다.
+이렇게 자동 주입할 대상이 필수가 아닌 경우에는 <b>@Autowired 애노테이션의 required 속성</b>을 다음과 같이 <b>false로 지정</b>하면 된다.
+
 ```java
 ... 생략
 public class MemberPrinter {
@@ -1197,7 +1224,8 @@ public class MemberPrinter {
 ```
 - @Autowired 애노테이션의 required 속성을 false로 지정하면 매칭되는 빈이 없어도 익셉션이 발생하지 않으며 자동 주입을 수행하지 않는다. 위 예에서 DateTimeFormatter 타입의 빈이 존재하지 않으면 익셉션을 발생하지 않고 setDateFormatter() 메서드를 실행하지 않는다.
 
-- 스프링 5 버전 부터는 @Autowired 애노테이션의 required 속성을 false로 하는 대신 다음과 같이 의존 주입 대상에 **자바1.8에서 도입된 Optional을 사용**해도 된다.
+- 스프링 5 버전 부터는 @Autowired 애노테이션의 required 속성을 false로 하는 대신 다음과 같이 의존 주입 대상에 <b>자바1.8에서 도입된 Optional을 사용</b>해도 된다.
+
 ```java
 public class MemberPrinter {
 	private DateTimeFormatter dateTimeFormatter;
@@ -1216,9 +1244,11 @@ public class MemberPrinter {
 	}
 }
 ```
+
 - 자동 주입 대상 타입이 Optional인 경우, 일치하는 빈이 존재하지 않으면 값이 없는 Optional을 인자로 전달하고(익셉션이 발생하지 않는다). 일치하는 빈이 존재하면 해당 빈을 값으로 갖는 Optional을 인자로 전달한다. Optional을 사용하는 코드는 값 존재 여부에 따라 알맞게 의존 객체를 사용하면 된다. 위 코드는 Optional#isPresent() 메서드가 true이면 값이 존재하므로 해당 값을 dateTImeFormatter 필드에 할당한다. 즉, DateTimeFormatter 타입 빈을 주입 받아 dateTimeFormatter 필드에 할당한다. 값이 존재하지 않으면 주입 받은 빈 객체가 없으므로 dateTimeFormatter 필드에 null을 할당한다.
 
-- 필수 여부를 지정하는 세번째 방법은 **@Nullable 애노테이션**을 사용하는 것이다.
+- 필수 여부를 지정하는 세번째 방법은 <b>@Nullable 애노테이션</b>을 사용하는 것이다.
+
 ```java
 import org.springframework.lang.Nullable;
 
@@ -1235,12 +1265,14 @@ public class MemberPrinter {
 	}
 }
 ```
+
 - @Autowired 애노테이션을 붙인 세터 메서드에서 @Nullable 애노테이션을 의존 주입 대상 매개변수에 붙이면, 스프링 컨테이너는 세터 메서드를 호출할 때 자동 주입할 빈이 존재하면 해당 빈을 인자로 전달하고, 존재하지 않으면 인자로 null을 전달한다.
 - @Autowired 애노테이션의 required 속성을 false로 할 때와 차이점은 @Nullable애노테이션을 사용하면 자동 주입할 빈이 존재하지 않아도 메서드가 호출된다는 점이다. 
 - @Autowired 애노테이션의 경우 required 속성이 false인데 대상 빈이 존재하지 않으면 세터 메서드를 호출하지 않는다.<br><br>
 
 앞서 설명한 세 가지 방식은 필드에도 그대로 적용된다. 필드에 @Autowired,. 애노테이션을 사용했다면 required 속성을 false로 지정하거나 Optional을 사용하거나 @Nullable 애노테이션을 사용해서 필수 여부를 지정할 수 있다.
 - required 속성을 false로 지정한 예
+
 ```java 
 public class MemberPrinter {
 	@Autowired(required=false)
@@ -1251,7 +1283,9 @@ public class MemberPrinter {
 	}
 } 
 ```
+
 - 필드 타입으로 Optional을 사용한 예
+
 ```java
 public class MemberPrinter {
 	@Autowired
@@ -1267,7 +1301,9 @@ public class MemberPrinter {
 	}
 }
 ```
+
 - @Nullable 애노테이션 사용 예
+
 ```java
 public class MemberPrinter {
 	@Autowired
@@ -1281,7 +1317,9 @@ public class MemberPrinter {
 ```
 
 ### 생성자 초기화 필수 여부 지정 방식 동작 이해
+
 #### src/main/java/spring/MemberPrinter.java
+
 ```java
 package spring;
 
@@ -1318,6 +1356,7 @@ public class MemberPrinter {
 }
 ```
 - MainForSpring 실행 결과
+
 ```
 명령어를 입력하세요:
 new yonggyo00@kakao.com 이용교 1234 1234
@@ -1329,12 +1368,15 @@ info yonggyo00@kakao.com
 
 명령어를 입력하세요:
 ```
+
 - 이 코드는 기본 생성자에서 dateTimeFormatter 필드의 값을 초기화 한다. 또한 @Autowired 애노테이션의 required 속성은 false로 지정했다.
 - DateTimeFormatter 타입의 빈이 존재하지 않은 상태에서 MainForSpring을 실행한 뒤 info 명령어로 회원 정보를 출력해보면 기본 생성자에서 초기화한 DateTimeFormatter를 사용해서 회원의 가입 일자를 출력하는 것을 확인할 수 있다.
 - 이 실행 결과를 통해 @Autowired 애노테이션의 required 속성이 false이면 일치하는 빈이 존재하지 않을 때 자동 주입대상이 되는 필드나 메서드에 null을 전달하지 않는다는 것을 알 수 있다. 만약 일치하는 빈이 존재하지 않을 때 setDateFormatter() 메서드에 null을 인자로 주어 호출한다면 기본 생성자에서 초기화한 DateTimeFormatter의 형식으로 출력하지 않을 것이다.<br><br>
 - @Autowired(required = false) 대신에 @Nullable을 사용하도록 바꿔보자
+
 #### src/main/java/spring/MemberPrinter.java
-```
+
+```java
 public class MemberPrinter {
 	private DateTimeFormatter dateTimeFormatter;
 	
@@ -1352,7 +1394,9 @@ public class MemberPrinter {
 	}
 }
 ```
+
 - MainForSpring 실행 결과
+
 ```java
 명령어를 입력하세요:
 new yonggyo00@kakao.com 이용교 1234 1234
@@ -1362,6 +1406,7 @@ new yonggyo00@kakao.com 이용교 1234 1234
 info yonggyo00@kakao.com
 회원정보: 아이디=1, 이메일=yonggyo00@kakao.com, 이름=이용교, 등록일=2022-06-11
 ```
+
 - @Nullable 애노테이션을 사용할 경우 스프링 컨테이너는 의존 주입 대상이 존재하지 않으면 null을 값으로 전달한다.
 - 위 예의 경우 setDateFormatter() 메서드에 null을 전달한다. 스프링 컨테이너는 빈을 초기화하기 위해 기본 생성자를 이용해서 객체를 생성하고 의존 자동 주입을 처리하기 위해 setDateFormatter() 메서드를 호출한다.
 
@@ -1375,6 +1420,7 @@ info yonggyo00@kakao.com
 다. 
 
 #### src/main/java/spring/MemberDao.java
+
 ```java
 package spring;
 
@@ -1389,6 +1435,7 @@ public class MemberDao {
 	... 생략
 }
 ```
+
 - 앞서 작성한 다음 클래스에도 MemberDao와 마찬가지로 @Component 애너테이션을 붙여보세요.
 	- ChangePasswordService
 	- MemberDao
@@ -1397,6 +1444,7 @@ public class MemberDao {
 - MemberInfoPrinter 클래스에는 다음과 같이 @Component 애노테이션에 속성 값을 준다.
 
 #### src/main/java/spring/MemberInfoPrinter.java
+
 ```java
 package spring;
 
@@ -1414,6 +1462,7 @@ public class MemberInfoPrinter {
 - @Component 애노테이션 값을 주면 그 값을 빈 이름으로 사용한다. MemberInfoPrinter 클래스는 빈 이름으로 "infoPrinter"를 사용한다.
 
 - MemberListPrinter 클래스도 다음과 같이 @Component 애노테이션을 설정한다.
+
 ```java 
 ... 생략
 import org.springframework.stereotype.Component;
@@ -1429,7 +1478,8 @@ public class MemberListPrinter {
 @Component 애노테이션을 붙인 클래스를 스캔해서 스프링 빈으로 등록하려면 설정 클래스에 @ComponentScan 애노테이션을 적용해야 한다. 설정 클래스인 AppCtx에 @ComponentScan 애노테이션을 적용한 코드는 다음과 같다.
 
 #### src/main/java/config/AppCtx.java
-```
+
+```java
 package config;
 
 import org.springframework.context.annotation.Bean;
@@ -1458,7 +1508,9 @@ public class AppCtx {
 }
 ```
 ## 예제 실행
+
 MainForSpring 클래스에서 일부 수정할 코드가 있다. MainForSpring 코드를 보면 다음과 같이 이름으로 빈을 검색하는 코드가 있다.
+
 ```java
 // processNewCommand() 메서드
 MemberRegisterService regSvc = ctx.getBean(MemberRegisterService.class);
@@ -1475,6 +1527,7 @@ MemberInfoPrinter infoPrinter = ctx.getBean("infoPrinter", MemberInfoPrinter.cla
 // processVersionCommand() 메서드
 VersionPrinter versionPrinter = ctx.getBean("versionPrinter", VersionPrinter.class);
 ```
+
 - 이 중에서 MemberRegisterService 타입 빈과 ChangePasswordService 타입의 빈은 이름이 달라졌다. 이 두 클래스에 @Component 애노테이션을 붙일 때 속성값을 주지 않았는데. 이 경우 클래스 이름의 첫 글자를 소문자로 바꾼 이름을 빈 이름으로 사용한다. 
 - 따라서 MemberRegisterService 타입 빈 객체의 이름은 "memberRegisterService"가 되고 ChangePasswordService 타입 빈 객체의 이름은 "changePasswordService"가 된다.
 - MemberListPrinter 클래스의 MemberInfoPrinter 클래스는 @Component 애노테이션 속성값으로 빈 이름을 알맞게 지정했으므로 MainForSpring에서 빈을 구하는 코드를 수정할 필요가 없다.
@@ -1492,6 +1545,7 @@ VersionPrinter versionPrinter = ctx.getBean("versionPrinter", VersionPrinter.cla
 - @Configuration(org.springframework.context.annotation 패키지)
 <br><br>
 @Aspect 애노테이션을 제외한 나머지 애노테이션은 실제로는 @Component 애노테이션에 대한 특수 애노테이션이다. 예를 들어 @Controller 애노테이션은 다음과 같다.
+
 ```java
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -1508,6 +1562,7 @@ public @interface Controller {
 
 ## 컴포넌트 스캔에 따른 충돌 처리
 excludeFilters 속성을 사용하면 스캔할 때 특정 대상을 자동 등록 대상에서 제외할 수 있다. 다음 코드는 excludeFilters 속성의 사용 예를 보여준다.
+
 ```java
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
@@ -1528,10 +1583,12 @@ public class AppCtxWithExclude {
 	}
 }
 ```
+
 - 이 코드는 @Filter 애노테이션의 type 속성으로 FilterType.REGEX를 주었다. 이는 정규표현식을 사용해서 제외 대상을 지정한다는 것을 의미한다.
 - Pattern 속성은 FilterType에 적용할 값을 설정한다. 위 설정에서는 "spring."으로 시작하고 Dao로 끝나는 정규표현식을 지정했으므로 spring.MemberDao 클래스를 컴포넌트 스캔 대상에서 제외한다.
 <br><br>
 - FilterType.ASPECTJ를 필터 타입으로 설정할 수도 있다. 이 타입을 사용하면 정규표현식 대신 AspectJ 패턴을 사용해서 대상을 지정한다.
+
 ```java
 @Configuration
 @ComponentScan(basePackages = {"spring"},
@@ -1543,8 +1600,10 @@ public class AppCtxWithExclude {
 	}
 }
 ```
+
 - AspectJ 패턴은 정규표현식과 다른데, 이에 관련된 내용은 [3일차 - AOP 프로그래밍](https://github.com/yonggyo1125/curriculum300H/tree/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)) 에서 학습할 예정입니다. 
 - AspectJ 패턴이 동작하려면 의존 대상에 aspectjweaver 모듈을 추가해야 한다.
+
 ```xml
 <dependency>
     <groupId>org.aspectj</groupId>
@@ -1552,9 +1611,11 @@ public class AppCtxWithExclude {
     <version>1.9.9.1</version>
 </dependency>
 ```
+
 - patterns 속성은 String[] 타입이므로 배열을 이용해서 패턴을 한 개 이상 지정할 수 있다.
 <br><br>
 - 특정 애노테이션을 붙인 타입을 컴포넌트 대상에서 제외할 수도 있다.
+
 ```java
 @Retention(RUNTIME)
 @Target(TYPE)
@@ -1566,7 +1627,9 @@ public @interface NoProduct {
 public @interface ManualBean {
 }
 ```
+
 - 이 두 애노테이션을 붙인 클래스를 컴포넌트 스캔 대상에서 제외하려면 다음과 같이 excludeFilters 속성을 설정한다.
+
 ```java
 @Configuration
 @ComponentScan(basePackages = {"spring", "spring2"}, 
@@ -1579,8 +1642,10 @@ public class AppCtxWithExclude {
 	...
 }
 ```
+
 - type 속성 값으로 FilterType.ANNOTATION을 사용하면 classes속성에 필터로 사용될 애노테이션 타입을 값으로 준다.
 - 이 코드는 @ManualBean 애노테이션을 제외 대상에 추가했으므로 다음 클래스를 컴포넌트 스캔 대상에서 제외한다.
+
 ```java
 @ManualBean 
 @Component
@@ -1590,6 +1655,7 @@ public class MemberDao {
 ```
 
 특정 타입이나 그 하위 타입을 컴포넌트 스캔 대상에서 제외하려면 ASSIGNABLE_TYPE을 FilterType으로 사용한다.
+
 ```java
 @Configuration
 @ComponentScan(basePackages = {"spring"},
@@ -1603,9 +1669,11 @@ public class AppCtxWithExclude {
 	...
 }
 ```
+
 classes 속성에는 제외할 타입 목록을 지정한다. 위 설정은 제외할 타입이 한 개이므로 배열 표기를 사용하지 않았다.<br><br>
 
 설정할 필터가 두 개 이상이면 @ComponentScan의 excludeFilters 속성에 배열을 사용해서 @Filter 목록을 전달하면 된다.
+
 ```java
 @Configuration
 @ComponentScan(basePackages = {"spring"}, 
@@ -1615,10 +1683,9 @@ classes 속성에는 제외할 타입 목록을 지정한다. 위 설정은 제�
 	})
 ```
 
-
-
 ### 빈 이름 충돌
 spring 패키지와 spring2 패키지에 MemberRegisterService 클래스가 존재하고 두 클래스 모두 @Component 애노테이션을 붙였다고 하자. 이 상태에서 다음 @ComponentScan 애노테이션을 사용하게 되면 예외(BeanDefinitionStoreException)가 발생한다.
+
 ```java
 @Configuration
 @ComponentScan(basePackages={"spring", "spring2"})
@@ -1626,17 +1693,21 @@ public class AppCtx {
 	...
 }
 ```
+
 이런 문제는 컴포넌트 스캔 과정에서 쉽게 발생할 수 있다. 이렇게 컴포넌트 스캔 과정에서 서로 다른 타입인데 같은 빈 이름을 사용하는 경우가 있다면 둘 중 하나에 명시적으로 빈 이름을 지정해서 이름 충돌을 피해야 한다.
 
 ### 수동 등록한 빈과 충돌
 앞서 MemberDao 클래스에 @Component 애노테이션을 붙였다.
+
 ```java
 @Component
 public class MemberDao {
 	...
 }
 ```
+
 MemberDao 클래스는 컴포넌트 스캔 대상이다. 자동 등록된 빈의 이름은 클래스 이름의 첫 글자를 소문자로 바꾼 "memberDao"이다. 그런데 다음과 같이 설정 클래스에 직접 MemberDao 클래스를 "memberDao"라는 이름의 빈으로 등록하게 되면 어떻게 될까?
+
 ```java
 @Configuration
 @ComponentScan(basePackages={"spring"})
@@ -1648,8 +1719,10 @@ public class AppCtx {
 	}
 }
 ```
-- 스캔할 때 사용하는 빈 이름과 수동 등록한 빈 이름이 같은 경우 **수동 등록한 빈이 우선한다.** 즉, MemberDao 타입의 빈은 AppCtx에서 정의한 한 개만 존재한다.
+
+- 스캔할 때 사용하는 빈 이름과 수동 등록한 빈 이름이 같은 경우 <b>수동 등록한 빈이 우선한다.</b> 즉, MemberDao 타입의 빈은 AppCtx에서 정의한 한 개만 존재한다.
 - 다음과 같이 다른 이름을 사용한다면 어떻게 될까?
+
 ```java
 @Configuration
 @ComponentScan(basePackages = {"spring"})
@@ -1661,53 +1734,63 @@ public class AppCtx {
 	}
 }
 ```
+
 이 경우 스캔을 통해 등록한 "memberDao" 빈과 수동 등록한 "memberDao2" 빈이 모두 존재한다. MemberDao 타입의 빈이 두 개 생성되므로 자동 주입하는 코드는 @Qualifier 애노테이션을 사용해서 알맞은 빈을 선택해야 한다.
 
 * * *
 # 빈 라이프 사이클과 범위
 
 ## 컨테이너 초기화와 종료
-스프링 컨테이너는 **초기화와 종료**라는 라이픗하이클을 갖는다.
+스프링 컨테이너는 <b>초기화와 종료</b>라는 라이프 사이클을 갖는다.
 - 1. 컨테이너 초기화
+
 ```java
 AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(AppContext.class);
 ```
-	- AnnotationConfigApplicationContext의 생성자를 이용해서 컨텍스트 객체를 생성하는데 이 시점에 스프링 컨테이너를 초기화한다. 
-	- 스프링 컨테이너는 설정 클래스에서 정보를 읽어와 알맞은 빈 객체를 생성하고 각 빈을 연결(의존 주입)하는 작업을 수행한다.
+
+- AnnotationConfigApplicationContext의 생성자를 이용해서 컨텍스트 객체를 생성하는데 이 시점에 스프링 컨테이너를 초기화한다. 
+- 스프링 컨테이너는 설정 클래스에서 정보를 읽어와 알맞은 빈 객체를 생성하고 각 빈을 연결(의존 주입)하는 작업을 수행한다.
 	
 - 2. 컨테이너에서 빈 객체를 구해서 사용
+
 ```java
 Greeter g = ctx.getBean("greeter", Greeter.class);
 String msg = g.greet("스프링");
 System.out.println(msg);
 ```
-	- 컨테이너 초기화가 완료되면 컨테이너를 사용할 수 있다. 
-	- 컨테이너를 사용한다는 것은 getBean()과 같은 메서드를 이용해서 컨테이너에 보관된 빈 객체를 구한다는 것을 뜻한다.
+
+- 컨테이너 초기화가 완료되면 컨테이너를 사용할 수 있다. 
+- 컨테이너를 사용한다는 것은 getBean()과 같은 메서드를 이용해서 컨테이너에 보관된 빈 객체를 구한다는 것을 뜻한다.
 
 - 3. 컨테이너 종료
+
 ```java
 ctx.close();
 ```
-	- 컨테이너 사용이 끝나면 컨테이너를 종료한다. 컨테이너를 종료할 때 사용하는 메서드가 close() 메서드이다.
-	- close() 메서드는 AbstractApplicationContext 클래스에 정의되어 있다. 
-	- 자바 설정을 사용하는 AnnotationConfigApplicationContext 클래스나 XML 설정을 사용하는 GenericXmlApplicationContext 클래스 모두 AbstractApplicationContext 클래스를 상속받고 있다. 따라서 앞서 코드처럼 close() 메서드를 이용해서 컨테이너를 종료할 수 있다.
+
+- 컨테이너 사용이 끝나면 컨테이너를 종료한다. 컨테이너를 종료할 때 사용하는 메서드가 close() 메서드이다.
+- close() 메서드는 AbstractApplicationContext 클래스에 정의되어 있다. 
+- 자바 설정을 사용하는 AnnotationConfigApplicationContext 클래스나 XML 설정을 사용하는 GenericXmlApplicationContext 클래스 모두 AbstractApplicationContext 클래스를 상속받고 있다. 따라서 앞서 코드처럼 close() 메서드를 이용해서 컨테이너를 종료할 수 있다.
 	
 - 컨테이너를 초기화하고 종료할 때는 다음의 작업도 함께 수행한다.
-	- **컨테이너 초기화** : 빈 객체의 생성, 의존 주입, 초기화
-	- **컨테이너 종료** : 빈 객체의 소멸
+	- <b>컨테이너 초기화</b> : 빈 객체의 생성, 의존 주입, 초기화
+	- <b>컨테이너 종료</b> : 빈 객체의 소멸
 	
 - 스프링 컨테이너의 라이프사이클에 따라 빈 객체도 자연스럽게 생성과 소멸이라는 라이프사이클을 갖는다.
 
 #### 실습 프로젝트 생성 
 - 1. 프로젝트 생성
+
 	```
 	mvn archetype:generate
 	```
+	
 	- groupId, artifactId는 적절하게 입력해 줍니다.
 
 - 2. pom.xml
 	- 자바 실습 버전을 최신버전(17)로 변경합니다.
 	- spring-context 의존성을 [mvnrepository](https://mvnrepository.com) 에서 검색하여 다음과 같이 추가합니다.
+	
 	```xml
 	... 생략
 	
@@ -1729,11 +1812,14 @@ ctx.close();
 		... 생략
 	</dependencies>
 	```
+	
 - 3. 이클립스에서 Import - Existing Maven Projects를 클릭하여 생성된 폴더를 선택하여 생성해 줍니다.
 
 ## 스프링 빈 객체의 라이프사이클 
 스프링 컨테이너는 빈 객체의 라이프사이클을 관리한다. 
+
 #### 빈 객체의 라이프 사이클 
+
 객체 생성 -> 의존 설정 -> 초기화 -> 소멸
 <br><br>
 - 스프링 컨테이너를 초기화할 때 스프링 컨테이너는 가장 먼저 빈 객체를 생성하고 의존을 설정한다. 
@@ -1746,6 +1832,7 @@ ctx.close();
 - 스프링은 다음의 두 인터페이스에 이 메서드를 정의하고 있다.
 	- org.springframework.beans.factory.InitializingBean
 	- org.springframework.beans.factory.DisposableBean
+	
 ```java
 public interface InitializingBean {
 	void afterPropertiesSet() throws Exception;
@@ -1755,6 +1842,7 @@ public interface DisposableBean {
 	void destroy() throws Exception;
 }
 ```
+
 - 빈 객체가 InitializingBean 인터페이스를 구현하면 스프링 컨테이너는 초기화 과정에서 빈 객체의 afterPropertiesSet() 메서드를 실행한다.
 - 빈 객체를 생성한 뒤에 초기화 과정이 필요하면 InitializingBean 인터페이스를 상속하고 afterPropertiesSet() 메서드를 알맞게 구현하면 된다.
 <br>
@@ -1762,6 +1850,7 @@ public interface DisposableBean {
 - 빈 객체의 소멸 과정이 필요하면 DisposableBean 인터페이스를 상속하고 destroy() 메서드를 알맞게 구현하면 된다.
 
 #### src/main/java/spring/Client.java
+
 ```java
 package spring;
 
@@ -1792,6 +1881,7 @@ public class Client implements InitializingBean, DisposableBean {
 ```
 
 #### src/main/java/config/AppCtx.java
+
 ```java
 package config;
 
@@ -1811,7 +1901,9 @@ public class AppCtx {
 	}
 }
 ```
+
 #### src/main/java/main/Main.java
+
 ```java
 package main;
 
@@ -1835,7 +1927,9 @@ public class Main {
 	}
 }
 ```
+
 - 실행 결과
+
 ```
 Client.afterPropertiesSet() 실행
 Client.send() to host
@@ -1849,6 +1943,7 @@ Client.destroy() 실행
 - 방법은 @Bean 태그에서 initMethod 속성과 destroyMethod 속성를 사용해서 초기화 메서드와 소멸 메서드의 이름을 지정하면 된다.
 
 #### src/main/java/spring/Client2.java
+
 ```java
 package spring;
 
@@ -1874,7 +1969,8 @@ public class Client2 {
 ```
 
 #### src/main/java/config/AppCtx.java
-```
+
+```java
 ... 생략 
 import spring.Client;
 import spring.Client2;
@@ -1895,6 +1991,7 @@ public class AppCtx {
 > initMethod 속성과 destroyMethod 속성에 지정한 메서드는 매개변수가 없어야 한다. 이 두 속성에 지정한 메서드에 매개변수가 존재할 경우 스프링 컨테이너는 예외를 발생시킨다. 
 
 #### src/main/java/main/Main2.java
+
 ```java
 package main;
 
@@ -1918,7 +2015,9 @@ public class Main2 {
 	}
 }
 ```
+
 - 실행 결과
+
 ```
 Client.afterPropertiesSet() 실행
 Client2.connect() 실행
@@ -1929,20 +2028,25 @@ Client.destroy() 실행
 ## 빈 객체의 생성과 관리 범위
 - 스프링 컨테이너는 빈 객체를 한 개만 생성한다고 합니다.
 - 예를 들어 아래 코드와 같이 동일한 이름을 갖는 빈 객체를 구하면 client1과 client2는 동일한 빈 객체를 참조합니다.
+
 ```java
 Client client1 = ctx.getBean("client", Client.class);
 Client client2 = ctx.getBean("client", Client.class);
 // client1 == client -> true
 ```
+
 - 이와 같이 한 식별자에 대해 한 개의 객체만 존재하는 빈은 <b>싱글톤(singleton) 범위(scope)</b>를 갖는다. 별도 설정을 하지 않으면 빈은 싱글톤 범위를 갖는다.
 - 사용 빈도가 낮긴 하지만 프로토타입 범위의 빈을 설정할 수도 있다. 빈의 범위를 프로토타입으로 지정하면 빈 객체를 구할 때 마다 매번 새로운 객체를 생성한다.
+
 ```java
 // client 빈의 범위가 프로토타입일 경우, 매번 새로운 객체를 생성
 Client client1 = ctx.getBean("client", Client.class);
 Client client2 = ctx.getBean("client", Client.class);
 // client1 != client2 -> true
 ```
+
 - 특정 빈을 프로토타입 범위로 지정하려면 다음과 같이 값으로 "prototype"을 갖는 **Scope 애노테이션**을 @Bean 애노테이션과 함께 사용하면 된다.
+
 ```java
 import org.springframework.context.annotation.Scope;
 
@@ -1957,7 +2061,9 @@ public class AppCtxWithPrototype {
 	}
 }
 ```
+
 - 싱글톤 범위를 명시적으로 지정하고 싶다면 @Scope 애노테이션 값으로 "singleton"을 주면 된다.
+
 ```java
 @Bean(initMethod = "connect", destroyMethod = "close")
 @Scope("singleton")
@@ -1967,6 +2073,7 @@ public Client2 client2() {
 	return client;
 }
 ```
+
 - 프로토타입 범위를 갖는 빈은 완전한 라이프사이클을 따르지 않는다는 점에 주의해야 한다.
 - 스프링 컨터이너는 프로토타입의 빈 객체를 생성하고 프로퍼티를 설정하고 초기화 작업까지는 수행하지만 컨테이너를 종료한다고 해서 생성자 프로토타입 빈 객체의 소멸 메서드를 실행하지는 않는다.
 - 따라서 프로토타입 범위의 빈을 사용할 때에는 빈 객체의 소명 처리를 코드에서 직접 해야 한다.
