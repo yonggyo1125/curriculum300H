@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1F9_rKwDSd62GofwpC-f71kn5mtm0GlOI?usp=sharing)
+
 # AOP 프로그래밍
 
 뒤에서 설명할 트랜잭션의 처리 방식을 이해하려면 AOP(Aspect Oriented Programming)를 알아야 한다. 
