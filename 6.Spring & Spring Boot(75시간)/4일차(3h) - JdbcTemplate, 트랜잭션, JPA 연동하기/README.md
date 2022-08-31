@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1Sf5cKkmnGAoo5YZPnKSRFAbRxJ4ys53C?usp=sharing)
+
 # 데이터베이스 연동
 
 ## JDBC 프로그래밍의 단점을 보완하는 스프링
