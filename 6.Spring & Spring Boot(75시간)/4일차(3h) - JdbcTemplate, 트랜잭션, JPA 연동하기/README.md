@@ -1829,11 +1829,6 @@ mvn archetype:generate
 	<version>5.3.22</version>
 </dependency>
 <dependency>
-	<groupId>org.springframework.data</groupId>
-  	<artifactId>spring-data-jpa</artifactId>
-  	<version>2.7.2</version>
-</dependency>
-<dependency>
 	<groupId>org.hibernate</groupId>
   	<artifactId>hibernate-entitymanager</artifactId>
   	<version>5.6.10.Final</version>
