@@ -412,7 +412,7 @@ public class MvcConfig implements WebMvcConfigurer {
 
 - HandlerMapping은 클라이언트의 요청 경로를 이용해서 이를 처리할 <b>컨트롤러 빈 객체를 DispatcherServlet에 전달</b>한다. 예를 들어 웹 요청 경로가 '/hello'라면 등록된 컨트롤러 빈 중에서 '/hello' 요청 경로를 처리할 컨트롤러를 리턴한다.
 
-- 컨트롤러 객체를 DispatcherServlet이 전달받았다고 해서 바로 컨트롤러 객체의 메서드를 실행할 수 있는 것은 나미다. DispatcherServlet은 @Controller 애노테이션을 이용해서 구현한 컨트롤러뿐만 아니라 스프링 2.5까지 주로 사용됐던 Controller 인터페이스를 구현한 컨트롤러, 그리고 특수목적으로 사용되는 HttpRequestHandler 인터페이스를 구현한 클래스를 동일한 방식으로 실행할 수 있도록 만들어졌다.
+- 컨트롤러 객체를 DispatcherServlet이 전달받았다고 해서 바로 컨트롤러 객체의 메서드를 실행할 수 있는 것은 아니다. DispatcherServlet은 @Controller 애노테이션을 이용해서 구현한 컨트롤러뿐만 아니라 스프링 2.5까지 주로 사용됐던 Controller 인터페이스를 구현한 컨트롤러, 그리고 특수목적으로 사용되는 HttpRequestHandler 인터페이스를 구현한 클래스를 동일한 방식으로 실행할 수 있도록 만들어졌다.
 - <b>@Controller, Controller 인터페이스, HttpRequestHandler 인터페이스를 동일한 방식으로 처리</b>하기 위해 중간에 사용되는 것이 바로 <b>HandlerAdapter 빈</b>이다.
 
 - DispatcherServlet은 HandlerMapping이 찾아준 컨트롤러 객체를 처리할 수 있는 HandlerAdapter 빈에게 요청 처리를 위임한다(3번 과정) HandlerAdapter는 컨트롤러에 알맞은 메서드를 호출해서 요청을 처리하고(4~5번 과정) 그 결과를 DispatcherServlet에 리턴한다(6번 과정). 이때 HandlerAdapter는 컨트롤러의 처리 결과를 ModelAndView라는 객체로 변환해서 DispatcherServlet에 리턴한다.
@@ -551,7 +551,7 @@ public interface WebMvcConfigurer {
 ```
 
 - 기본 구현은 모두 빈 구현이다. 이 인터페이스를 상속한 설정 클래스는 재정의가 필요한 메서드만 구현하면 된다. 
-- 앞서 예제도 모든 메서드가 아닌 구 개의 메서드만 재정의했다.
+- 앞서 예제도 모든 메서드가 아닌 두 개의 메서드만 재정의했다.
 
 
 > 스프링 4.x 버전은 자바 6을 기준으로 한다. 자바 1.7 버전 까지는 인터페이스에 디폴트 메서드가 없기 때문에 설정 클래스에서 WebMvcConfigurer 인터페이스를 상속하면 인터페이스에 정의되어 있는 모든 메서드를 추가해야 했다. 이런 이유로 WebMvcConfigurer 인터페이스 대신 이 인터페이스의 기본 구현을 제공하는 WebMvcConfigurerAdapter 클래스를 상속해서 필요한 메서드만 재정의하는 방식으로 설정했다.
