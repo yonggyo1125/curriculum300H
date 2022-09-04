@@ -61,7 +61,7 @@
 - 이제 자바 소스 코드에서 버튼을 누를 때마다 두 개의 이미지뷰가 가지는 visibility 속성을 바꿔주면 두개의 이미지가 서로 전환되는 효과를 만들 수 있습니다. MainActivity.java 소스 파일을 열고 다음 코드를 입력합니다.
 
 
-#### SampleFrameLayout>/app/java/org.techtown.sampleframelayout/MainActivity.java
+#### SampleFrameLayout>/app/java/org.koreait.sampleframelayout/MainActivity.java
 
 ```java
 package org.koreait.sampleframelayout;
