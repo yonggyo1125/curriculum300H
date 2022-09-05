@@ -144,3 +144,157 @@ public class MainActivity extends AppCompatActivity {
 ![image3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B8%B0%EB%B3%B8%20%EC%9C%84%EC%A0%AF%2C%EB%93%9C%EB%A1%9C%EC%96%B4%EB%B8%94%2C%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC%2C%20%ED%86%A0%EC%8A%A4%ED%8A%B8%2C%20%EC%8A%A4%EB%82%B5%EB%B0%94%2C%20%EB%8C%80%ED%99%94%EC%83%81%EC%9E%90%2C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A0%88%EC%8A%A4%EB%B0%94/3.%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC%20%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0/images/image3.png)
 
 - 이 예제를 통해 손가락의 상태를 구별할 수 있고 손가락이 어느 위치에 있는지를 확인할 수 있다는 것을 알았습니다. 이 예제를 사용하면 손가락이 움직일 때 사진이 따라서 움직이도록 만들 수도 있으며,손가락의 움직임에 따라 선을 그리도록 만들 수도 있습니다.
+
+## 제스처 이벤트 처리하기
+
+- 제스처 이벤트는 터치 이벤트 중에서 스크롤 등을 구별한 후 알려주는 이벤트입니다. 제스처 이벤트를처리해주는 클래스는 GestureDetector이며, 이 객체를 만들고 터치 이벤트를 전달하면 GestureDetector 객체에서 각 상황에 맞는 메서드를 호출합니다. 화면에 추가했던 두 번째 뷰를 터치했을 때 제스처 이벤트로 처리하도록 onCreate 메서드 안에 다음 코드를 추가합니다.
+
+
+##### SampleEvent>/app/java/org.koreait.sampleevent/MainActivity.Java
+
+```java
+
+... 생략
+
+public class MainActivity extends AppCompatActivity {
+
+    TextView textView;
+    GestureDetector detector;  // 제스터 디렉터 객체 선언
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+       
+	   ... 생략
+
+        detector = new GestureDetector(this, new GestureDetector.OnGestureListener() {
+
+            @Override
+            public boolean onDown(MotionEvent motionEvent) {
+                println("onDown() 호출됨.");
+                return true;
+            }
+
+            @Override
+            public void onShowPress(MotionEvent motionEvent) { 
+                println("onShowPress() 호출됨.");
+            }
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent motionEvent) {
+                println("onSingleTabUp() 호출됨.");
+
+                return true;
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+                println("onScroll() 호출됨 : " + v + ", " + v1);
+
+                return true;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent motionEvent) {
+                println("onLongPress() 호출됨.");
+            }
+
+            @Override
+            public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+                println("onFling() 호출됨 : " + v + ", " + v1);
+                
+                return true;
+            }
+        });
+		
+		View view2 = findViewById(R.id.view2);
+        view2.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                detector.onTouchEvent(motionEvent);
+                return true;
+            }
+        });
+    }
+
+    public void println(String data) {
+        textView.append(data + "\n");
+    }
+}
+```
+
+- 두 번째 뷰(view2)에는 OnTouchListener 객체를 설정하고 있습니다. 따라서 두 번째 뷰 객체를 터치했을 때는 자동으로 on Touch 메서드가 호출됩니다. 그리고 on Touch 메서드 안에서는 GestureDetector 객체의 onTouchEvent 메서드를 호출하면서 MotionEvent 객체를 전달합니다. 이렇게 하면 GestureDetector 객체가 터치 이벤트를 처리한 후 GestureDetector 객체에 정의된 메서드를 호출합니다. 제스처 이벤트 중에서 대표적인 것이 스크롤(Scroll)과 플링(Fling)인데 <b>스크롤</b>은 <b>손가락으로 드래그하는 경우</b>를 말하고 <b>플링</b>은 <b>빠른 속도로 스크롤을 하는 것</b>을 말합니다. 따라서 스크롤은 이동한 거리 값이 중요하게 처리되며, 플링은 이동한 속도 값이 중요하게 처리됩니다.
+
+
+- 여러분이 마우스 포인터의 위치 변화를 일일이 계산하기는 쉽지 않습니다. 그래서 <b>GestureDetector 객체는 이런 이벤트를 간단하게 처리할 수 있도록 거리나 속도의 값을 파라미터로 전달</b>합니다. 그 외에도 오랫동안 손가락으로 누르고 있을 때 호출되는 onLongPress를 확인할 수 있습니다. 이 앱을 실행한 후 두 번째 뷰 위에서 빠른 속도로 드래그하거나 한 부분을 오랫동안 누르고 있다가 떼면 다음과 같은 화면을 볼 수 있습니다.
+
+![image4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B8%B0%EB%B3%B8%20%EC%9C%84%EC%A0%AF%2C%EB%93%9C%EB%A1%9C%EC%96%B4%EB%B8%94%2C%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC%2C%20%ED%86%A0%EC%8A%A4%ED%8A%B8%2C%20%EC%8A%A4%EB%82%B5%EB%B0%94%2C%20%EB%8C%80%ED%99%94%EC%83%81%EC%9E%90%2C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A0%88%EC%8A%A4%EB%B0%94/3.%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC%20%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0/images/image4.png)
+
+## 키 이벤트 처리하기
+
+- 키 입력은 onKeyDown 메서드를 재정의하여 처리할 수 있습니다. onKeyDown 메서드로 전달되는 파라미터는 두 개이며, KeyCode는 어떤 키가 사용되는지 구별할 때 사용되고 KeyEvent는 키 입력 이벤트에 대한 정보를 알고 싶을 때 사용됩니다. 이러한 키 입력 이벤트는 하드웨어 키보드나 소프트 키패드에 상관없이 동일한 이벤트로 전달되며 시스템 버튼 중의 하나인 [BACK] 버튼도 이 이벤트로 처리할 수 있습니다. 시스템 버튼은 단말 아래쪽에 보이는 버튼으로 앱과 관계없이 단말에 의해 동작하며 그중에서 이전화면으로 돌아가거나 작업을 취소하는 목적으로 쓰이는 버튼이 [BACK] 버튼입니다. 나머지 두 개의 버튼은 [HOME] 버튼과 [Recent Apps] 버튼으로, 하나는 홈 화면으로 이동하는 데 사용되고 다른 하나는 최근에 실행된 앱 목록을 보여주는 데 사용됩니다. 이 두 개의 시스템 버튼은 앱에서 직접 제어는 안 되며 키가 입력되었는지 정보만 전달받을 수 있습니다.
+
+```java
+boolean onKeyDown (int keyCode, KeyEvent event)
+boolean onKey (View v, int keyCode, KeyEvent event)
+```
+
+- 두 번째 onKey 메서드는 뷰의 OnKeyListener 인터페이스를 구현할 때 사용됩니다. 다음은 keyCode정수 값으로 구분할 수 있는 대표적인 키 값을 설명하고 있습니다.
+
+|키코드|설명|
+|----|-----|
+|KEYCODE_DPAD_LEFT|왼쪽 화살표|
+|KEYCODE_DPAD_RIGHT|오른쪽 화살표|
+|KEYCODE_DPAD_UP|위쪽 화살표|
+|KEYCODE_DPAD_DOWN|아래쪽 화살표|
+|KEYCODE_DPAD_CENTER|[중앙] 버튼|
+|KEYCODE_CALL|[통화] 버튼|
+|KEYCODE_ENDCALL|[통화 종료] 버튼|
+|KEYCODE_BACK|[뒤로 가기] 버튼|
+|KEYCODE_VOLUMN_UP|[소리 크기 증가] 버튼|
+|KEYCODE_VOLUMN_DOWN|[소리 크기 감소] 버튼|
+|KEYCODE_0 \~ KEYCODE_9|숫자 0부터 9까지의 키의 값|
+|KEYCODE_A \~ KEYCODE_Z|알파벳 A부터 Z까지의 키 값|
+
+
+
+- 실제 앱을 구성하면서 사용하는 키 입력의 대표적인 예는 카메라 미리보기를 하면서 사용하는 [카메라] 버튼과 시스템 [BACK] 버튼이 있습니다. 이 버튼들은 각각 KEYCODE_CAMERA와 KEYCODE_BACK으로 구분되는 코드 값을 가지고 있습니다. 시스템 [BACK] 버튼 이벤트는 onKeyDown 메서드를 사용하면 간단히 처리할 수 있습니다.
+
+> <b>시스템 [BACK] 키가 눌렸을 때 간단히 처리하는 방법</b><br>시스템 [BACK] 키를 누르는 경우는 자주 사용되므로 onBackPressed 메서드만 다시 정의하면 간단하게 이벤트를 처리할 수도 있습니다.<br><code>void onBackPressed()</code>
+
+- MainActivity.java 파일을 연 상태에서 MainActivity 클래스를 클릭한 후 마우스 오른쪽 버튼을 누릅니다. 팝업 메뉴가 보이면 [Generate... -> Override Methods...] 메뉴를 선택합니다. 그리고 메서드를 재정의하는 대화상자가 보이면 onKeyDown 메서드를 선택한 후 [OK]를 누릅니다. onKeyDown 메서드가 MainActivity 클래스 안에 추가되면 다음과 같이 코드를 입력합니다.
+
+#### SampleEvent>/app/java/org.techtown.sampleevent/MainActivity.java
+
+```java
+
+... 생략
+
+public class MainActivity extends AppCompatActivity {
+	
+	... 생략 
+		
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Toast.makeText(this, "시스템 [BACK] 버튼이 눌렸습니다.", Toast.LENGTH_LONG).show();
+        }
+        return false;
+    }
+
+	... 생략
+	
+}
+```
+
+- onKeyDown 메서드로 KEYCODE_BACK 이벤트를 확인하면 토스트 메시지가 표시되게 합니다. 앱을 실행하고 시스템 [BACK] 버튼을 누르면 토스트 메시지를 볼 수 있습니다.
+
+![image5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B8%B0%EB%B3%B8%20%EC%9C%84%EC%A0%AF%2C%EB%93%9C%EB%A1%9C%EC%96%B4%EB%B8%94%2C%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC%2C%20%ED%86%A0%EC%8A%A4%ED%8A%B8%2C%20%EC%8A%A4%EB%82%B5%EB%B0%94%2C%20%EB%8C%80%ED%99%94%EC%83%81%EC%9E%90%2C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A0%88%EC%8A%A4%EB%B0%94/3.%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC%20%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0/images/image5.png)
+
+## 단말 방향을 전환했을 때 이벤트 처리하기
+
+- 앱을 만들면서 자주 마주하는 문제 중 하나가 단말을 세로/가로 방향으로 바꿨을 때 발생하는 방향(Orientation) 전환 문제입니다. 단말의 방향이 바뀌었을 때는 가로와 세로 화면의 비율에 따라 화면이다시 보이게 됩니다. 다시 말하면 XML 레이아웃이 다르게 보여야 하는 거죠. 이 때문에 액티비티는 메모리에서 없어졌다가 다시 만들어집니다.
+
+- 보통 사용자는 세로 방향으로 보던 내용을 가로 방향으로 바꾸면 내용을 좀 더 크게 보거나 또는 왼쪽과 오른쪽에 좀 더 다양한 내용이 나타나길 바랍니다. 따라서 단말의 방향이 바뀌었을 때 세로 방향의 XML 레이아웃과 가로 방향의 XML 레이아웃을 따로 만들어 둘 필요가 있습니다. 어차피 방향 전환을할 때 액티비티가 없어졌다가 다시 보이게 되니까 말이죠.
+
+- 단말 방향을 바꿨을 때 서로 다른 XML 레이아웃을 보여주는 방법을 알아보기 위해 SampleOrientation이라는 이름의 새로운 프로젝트를 만듭니다. 그리고 왼쪽 프로젝트 창에서 res 폴더 아래에 새로운폴더를 만듭니다. 새로운 폴더를 만들려면 res 폴더를 선택한 후 마우스 오른쪽 버튼을 누르고 [New→ Android Resource Directory] 메뉴를 선택합니다. Directory name: layout-land를 입력하고 Resource type은 layout을 선택합니다. [OK] 버튼을 누르면 새로운 리소스 폴더가 만들어집니다.
