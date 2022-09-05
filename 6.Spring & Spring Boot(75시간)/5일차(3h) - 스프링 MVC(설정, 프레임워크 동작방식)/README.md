@@ -1,3 +1,8 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1mukZXBDsNe-SJQ5bcxtvJqQhI8TwsSQj?usp=sharing)
+
+
 # 스프링 MVC 시작하기
 
 - 스프링을 사용하는 여러 이유가 있지만 한 가지 이유를 꼽자면 스프링이 지원하는 웹 MVC 프레임워크 때문이다. 
