@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1dmTNHLyDuEJQ0SirhQUFGUeh2OVxyBxx?usp=sharing)
+
 # 스프링 MVC : 요청 매핑, 커맨드 객체, 리다이렉트, 폼 태그, 모델
 - 스프링 MVC를 사용해서 웹 어플리케이션을 개발한다는 것은 결국 컨트롤러와 뷰 코드를 구현한다는 것을 뜻한다.
 - 대부분의 설정은 개발 초기에 완성된다. 개발이 완료될 때까지 개발자가 만들어야 하는 코드는 컨트롤러와 뷰 코드이다. 
