@@ -120,6 +120,43 @@ public class MainActivity extends AppCompatActivity {
 
 - 이렇게 정의한 XML 정보는 자바 코드의 setView 메서드를 이용해 토스트 객체에 설정됩니다. 이 앱을 실행하고 [모양 바꿔 띄우기] 버튼을 누르면 다음과 같은 화면을 볼 수 있습니다.
 
-
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B8%B0%EB%B3%B8%20%EC%9C%84%EC%A0%AF%2C%EB%93%9C%EB%A1%9C%EC%96%B4%EB%B8%94%2C%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC%2C%20%ED%86%A0%EC%8A%A4%ED%8A%B8%2C%20%EC%8A%A4%EB%82%B5%EB%B0%94%2C%20%EB%8C%80%ED%99%94%EC%83%81%EC%9E%90%2C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A0%88%EC%8A%A4%EB%B0%94/4.%20%ED%86%A0%EC%8A%A4%ED%8A%B8%2C%20%EC%8A%A4%EB%82%B5%EB%B0%94%2C%20%EB%8C%80%ED%9A%8C%EC%83%81%EC%9E%90%20%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/images/image1.png)
 
 - 이제 앱에서 토스트 메시지를 자주 사용하는 경우 필요한 모양과 색상으로 변경하여 사용할 수 있을 것입니다.
+
+* * * 
+## 스낵바 보여주기
+
+- 간단한 메시지를 보여줄 때 토스트 대신 스낵바(Snackbar)를 사용하는 경우도 많습니다. activity_main.xml 파일에 새로운 버튼을 하나 더 추가하고 '스낵바 띄우기'라는 글자가 보이도록 코드를 수정합니다. 버튼을 클릭했을 때는 onButton2Clicked 메서드가 호출되도록 onClick 속성을 추가합니다. 그다음 MainActivity.java 파일을 열고 MainActivity 클래스 안에 onButton2Clicked 메서드를 추가합니다.
+
+#### SampleToast>/app/java/org.koreait.sampletoast/MainActivity.java
+
+```
+
+... 생략
+
+public class MainActivity extends AppCompatActivity {
+
+	... 생략
+
+    public void onButton2Clicked(View v) {
+        Snackbar.make(v, "스낵바입니다.", Snackbar.LENGTH_LONG).show();
+    }
+}
+```
+
+- 앱을 실행하고 [스낵바 띄우기] 버튼을 누르면 화면 아래쪽에서 메시지가 올라왔다가 사라집니다.
+
+![image2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B8%B0%EB%B3%B8%20%EC%9C%84%EC%A0%AF%2C%EB%93%9C%EB%A1%9C%EC%96%B4%EB%B8%94%2C%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC%2C%20%ED%86%A0%EC%8A%A4%ED%8A%B8%2C%20%EC%8A%A4%EB%82%B5%EB%B0%94%2C%20%EB%8C%80%ED%99%94%EC%83%81%EC%9E%90%2C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A0%88%EC%8A%A4%EB%B0%94/4.%20%ED%86%A0%EC%8A%A4%ED%8A%B8%2C%20%EC%8A%A4%EB%82%B5%EB%B0%94%2C%20%EB%8C%80%ED%9A%8C%EC%83%81%EC%9E%90%20%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/images/image2.png)
+
+- 스낵바는 화면 아래쪽에서 올라오기 때문에 아래쪽의 화면 일부분을 가리지만 토스트와는 다른 방식으로 메시지를 보여줄 수 있다는 장점이 있습니다.
+
+* * * 
+
+## 알림 대화상자 보여주기
+
+- 토스트와 함께 많이 사용되는 알림 대화상자는 사용자에게 확인을 받거나 선택하게 할 때 사용합니다. 보통 알림 대화상자는 사용자의 입력을 받기보다는 일방적으로 메시지를 전달하는 역할을 주로 하며 '예', '아니오'와 같은 전형적인 응답을 처리합니다.
+
+- 새로운 SampleDialog 프로젝트를 만들고 activity_main.xml 파일에 텍스트뷰 하나와 버튼 하나를 추가합니다. 텍스트뷰에는 '버튼을 누르면 대화상자가 뜹니다.'라는 글자가 보이게 하고, 버튼에는 '띄우기'라는 글자가 보이도록 합니다. 텍스트뷰의 글자 크기는 25sp로 설정합니다. 그리고 버튼의 id는 button, 텍스트뷰의 id는 textView로 자동 부여되었는지 다시 한 번 확인합니다. 그다음 MainActivity. java 파일을 열어 다음 코드를 추가합니다. 이 코드는 버튼을 눌렀을 때 대화상자를 보여주는 코드입니다.
+
+
