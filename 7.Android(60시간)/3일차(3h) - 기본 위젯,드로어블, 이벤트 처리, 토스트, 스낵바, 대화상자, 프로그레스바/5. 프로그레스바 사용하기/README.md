@@ -27,4 +27,72 @@ requestWindowFeature(Window.FEATURE_PROGRESS);
 
 - 좌측 상단의 팔레트에서 Widgets 폴더 안에 들어 있는 ProgressBar (Horizontal)를 찾아 화면에 끌어다 놓습니다. 그리고 max 속성의 값은 100으로 설정합니다. 그런 다음 프로그레스바 아래에 두 개의 버튼을 나란히 추가하기 위해서 LinearLayout(horizontal)을 추가한 후 버튼은 각각 '보여주기'와 '닫기' 글자가 보이도록 text 속성을 설정합니다. 이렇게 하면 다음과 같은 XML 레이아웃이 만들어집니다.
 
+- 버튼을 나란히 추가하기 위해서 LinearLayout(horizontal)을 추가한 후 버튼은 각각 '보여주기'와 '닫기' 글자가 보이도록 text 속성을 설정합니다. 이렇게 하면 다음과 같은 XML 레이아웃이 만들어집니다
 
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B8%B0%EB%B3%B8%20%EC%9C%84%EC%A0%AF%2C%EB%93%9C%EB%A1%9C%EC%96%B4%EB%B8%94%2C%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC%2C%20%ED%86%A0%EC%8A%A4%ED%8A%B8%2C%20%EC%8A%A4%EB%82%B5%EB%B0%94%2C%20%EB%8C%80%ED%99%94%EC%83%81%EC%9E%90%2C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A0%88%EC%8A%A4%EB%B0%94/5.%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A0%88%EC%8A%A4%EB%B0%94%20%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/images/image1.png)
+
+- 첫 번째 버튼은 프로그레스바를 대화상자로 보여주고 두 번째 버튼은 그 대화상자를 없애주는 역할을 하도록 만들 것입니다. 프로그레스바를 XML 레이아웃에 추가하려면 단순히 태그를 \<ProgressBar\>로 만들어 주면 됩니다. XML 레이아웃의 [Code] 아이콘을 눌러서 \<ProgressBar\> 태그에 사용된 style 속성을 보면 막대 모양의 프로그레스바로 설정하고 있습니다. 그 값이 ?android:attr/progressBarStyleHorizontal로 되어 있어 조금 복잡하게 보이지만 팔레트에서 끌어다 놓을 때는 자동으로 생성됩니다. max값은 프로그레스바의 최댓값을 설정하는 데 사용됩니다. 이 XML 레이아웃을 사용하는 메인 액티비티의 코드는 MainActivity.java 파일을 열고 다음과 같이 입력합니다. 
+
+
+#### SampleProgress>/app/java/org.koreait.sampleprogress/MainActivity.java
+
+```java
+package org.koreait.sampleprogress;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.ProgressDialog;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+
+public class MainActivity extends AppCompatActivity {
+    ProgressDialog dialog;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    
+        // 프로그레스바 객체 참조하여 설정하기
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar.setIndeterminate(false);
+        progressBar.setProgress(80);
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                // 프로그레스 대화상자 객체 만들고 설정하기
+                dialog = new ProgressDialog(MainActivity.this);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("데이터를 확인하는 중입니다.");
+
+                dialog.show();
+            }
+        });
+
+        Button button2 = findViewById(R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                // 프로그레스 대화상자 없애기
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+    }
+}
+```
+
+- 이 코드에서는 XML 레이아웃에 들어 있는 프로그레스바를 findViewById 메서드로 찾은 후 그 값을 80으로 설정합니다. 버튼을 클릭했을 때는 프로그레스바대화상자가 표시되도록 합니다. 멈추지않는 프로그레스바를 대화상자 안에서 보여주려면 ProgressDialog 객체를 하나 만들고 그 스타일을 ProgressDialog.STYLE_SPINNER로 설정합니다. 이렇게 만든 ProgressDialog 객체는 show메서드를 호출하면 화면에 표시됩니다. ProgressDialog 객체를 생성할 때는 Context 객체가 파라미터로 전달되어야 하는데 액티비티인 MainActivity 객체를 전달하기 위해 파라미터를 MainActivity.this로 지정했습니다. 프로그레스 대화상자가 보이는 영역 밖을 터치하면 프로그레스바는 없어집니다. 
+- 그러나 어떤 이벤트가 발생했을 때 대화상자를 보이지 않게 하고 싶다면 dismiss 메서드를 호출하면 됩니다. [닫기] 버튼은 화면에 표시된 ProgressDialog를 닫는 dismiss 메서드를 호출합니다. 다음은 이 앱을 실행한 화면을 보여주고 있습니다.
+
+![image2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B8%B0%EB%B3%B8%20%EC%9C%84%EC%A0%AF%2C%EB%93%9C%EB%A1%9C%EC%96%B4%EB%B8%94%2C%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC%2C%20%ED%86%A0%EC%8A%A4%ED%8A%B8%2C%20%EC%8A%A4%EB%82%B5%EB%B0%94%2C%20%EB%8C%80%ED%99%94%EC%83%81%EC%9E%90%2C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A0%88%EC%8A%A4%EB%B0%94/5.%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A0%88%EC%8A%A4%EB%B0%94%20%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/images/image2.png)
+
+![image3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/3%EC%9D%BC%EC%B0%A8(3h)%20-%20%EA%B8%B0%EB%B3%B8%20%EC%9C%84%EC%A0%AF%2C%EB%93%9C%EB%A1%9C%EC%96%B4%EB%B8%94%2C%20%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B2%98%EB%A6%AC%2C%20%ED%86%A0%EC%8A%A4%ED%8A%B8%2C%20%EC%8A%A4%EB%82%B5%EB%B0%94%2C%20%EB%8C%80%ED%99%94%EC%83%81%EC%9E%90%2C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A0%88%EC%8A%A4%EB%B0%94/5.%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A0%88%EC%8A%A4%EB%B0%94%20%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/images/image3.png)
+
+- 표시되면 [닫기] 버튼을 누를 수 없으므로 대화상자 이외의 화면 영역 또는 시스템 [BACK] 버튼을 눌러야 이전 화면으로 돌아갈 수 있습니다.
