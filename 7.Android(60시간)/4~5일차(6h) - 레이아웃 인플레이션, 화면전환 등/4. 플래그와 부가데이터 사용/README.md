@@ -7,3 +7,5 @@
 
 - 플래그를 이해하려면 액티비티가 처리되는 방식을 이해해야 합니다. 액티비티는 액티비티 매니저(ActivityManager)라는 객체에 의해 '액티비티 스택(Activity Stack)'이라는 것으로 관리됩니다. 그리고 이스택은 액티비티를 차곡차곡 쌓아두었다가 가장 상위에 있던 액티비티가 없어지면 이전의 액티비티가 다시 화면에 보이게 합니다. 다음 그림은 액티비티 스택의 처리 과정을 나타낸 것입니다.
 
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/4~5%EC%9D%BC%EC%B0%A8(6h)%20-%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EC%9D%B8%ED%94%8C%EB%A0%88%EC%9D%B4%EC%85%98%2C%20%ED%99%94%EB%A9%B4%EC%A0%84%ED%99%98%20%EB%93%B1/4.%20%ED%94%8C%EB%9E%98%EA%B7%B8%EC%99%80%20%EB%B6%80%EA%B0%80%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%82%AC%EC%9A%A9/images/image1.png)
+
