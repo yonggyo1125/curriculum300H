@@ -108,3 +108,72 @@ public class MainActivity extends AppCompatActivity {
 ```
 
 - 앱을 실행하면 다음과 같은 화면을 볼 수 있으며 버튼을 누르면 전화걸기 화면으로 이동합니다.
+
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/4~5%EC%9D%BC%EC%B0%A8(6h)%20-%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EC%9D%B8%ED%94%8C%EB%A0%88%EC%9D%B4%EC%85%98%2C%20%ED%99%94%EB%A9%B4%EC%A0%84%ED%99%98%20%EB%93%B1/3.%20%EC%9D%B8%ED%85%90%ED%8A%B8/images/image1.png)
+
+![image2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/4~5%EC%9D%BC%EC%B0%A8(6h)%20-%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EC%9D%B8%ED%94%8C%EB%A0%88%EC%9D%B4%EC%85%98%2C%20%ED%99%94%EB%A9%B4%EC%A0%84%ED%99%98%20%EB%93%B1/3.%20%EC%9D%B8%ED%85%90%ED%8A%B8/images/image2.png)
+
+- 버튼을 누르면 입력상자에 입력된 값을 가져와 인텐트의 파라미터로 전달하므로 입력상자에 입력된 전화번호를 바꾸면 다른 번호로 전화를 걸도록 만들 수 있습니다.
+
+- 이제 인텐트를 사용하여 액티비티를 띄워주는 두 번째 경우를 살펴보도록 하겠습니다. activity_main.xml 파일에 새로운 버튼을 하나 더 추가하고 '메뉴 화면 띄우기' 글자가 표시되도록 합니다. 메뉴 화면은 왼쪽 프로젝트 창에서 app 항목을 선택한 후 마우스 오른쪽 버튼을 눌러 보이는 메뉴에서 [New → Activity → Empty Activity]를 선택해서 만듭니다. 새로 추가하는 액티비티의 이름은 MenuActivity로 합니다. 다시 MainActivity.java 파일로 돌아와 [메뉴 화면 띄우기] 버튼을 누르면 MenuActivity가 나타나도록 코드를 입력하겠습니다.
+
+#### SampleCalllIntent>/app/java/org.koreait.samplecallintent/MainActivity.java
+
+```java
+
+... 생략
+
+public class MainActivity extends AppCompatActivity {
+    EditText editText;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main); // 뷰 객체 참조
+
+		... 생략
+
+        Button button2 = findViewById(R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                // 컴포넌트 이름을 지정할 수 있는 객체 생성
+                ComponentName name = new ComponentName("org.koreait.samplecallintent", "org.koreait.samplecallintent.MenuActivity");
+                intent.setComponent(name); // 인텐트 객체에 컴포넌트 지정
+                startActivityForResult(intent, 101); // 액티비티 띄우기
+            }
+        });
+    }
+}
+```
+
+- 컴포넌트 이름은 ComponentName 객체를 만들어 인텐트에 설정하는데 두 개의 파라미터는 각각 패키지 이름과 클래스 이름이 됩니다. 앱을 실행해 보면 기존에 새로운 액티비티의 클래스 객체를 전달하여 액티비티를 띄울 때와 동일한 결과를 볼 수 있습니다. 이렇게 인텐트를 이용해 다른 화면을 띄워줄 수 있는데 이 화면은 여러분들이 직접 만든 화면이 될 수도 있고 다른 사람이 만든 앱의 화면이 될 수도 있습니다.
+
+> ComponentName 객체를 만들어 대상 액티비티의 이름을 지정할 때도 패키지 이름까지 함께 사용합니다.
+
+- 다음은 인텐트(Intent) 클래스에 정의된 다양한 액션 정보를 보여줍니
+	- ACTION_MAIN
+	- ACTION_VIEW
+	- ACTION_ATTACH_DATA
+	- ACTION_ANSWER
+	- ACTION_EDIT
+	- ACTION_INSERT
+	- ACTION_PICK
+	- ACTION_DELETE
+	- ACTION_CHOOSER
+	- ACTION_RUN
+	- ACTION_GET_CONTENT
+	- ACTION_SYNC
+	- ACTION_DIAL
+	- ACTION_PICK_ACTIVITY
+	- ACTION_CALL
+	- ACTION_SEARCH
+	- ACTION_SEND 
+	- ACTION_ACTION_WEB_SEARCH
+	- ACTION_SENDTO
+	- ACTION_FACTORY_TEST
+
+- 액션들 중에서 ACTION_MAIN과 ACTION_EDIT가 가장 많이 사용되는 액션 중의 하나입니다.
+
