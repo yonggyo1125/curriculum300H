@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1RckW-zMpluNhsKng9TGuB-QN1zEWuwLF?usp=sharing)
+
 # 스프링 MVC : 날짜 값 변환, @PathVariable, 익셉션 처리
 
 ## 프로젝트 준비
