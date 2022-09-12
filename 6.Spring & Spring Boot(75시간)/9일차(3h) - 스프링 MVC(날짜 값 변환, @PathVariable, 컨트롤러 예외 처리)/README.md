@@ -286,13 +286,13 @@ public String list(@ModelAttribute("cmd") ListCommand listCommand, Model model) 
 ### 변환 에러 처리
 
 - 폼에서 from이나 to에 '20220702'을 입력해보자. 원래 지정한 형식은 "yyyyMMddHH"이기 때문에 "yyyMMdd" 부분만 입력하면 지정한 형식과 일치하지 않게 된다. 
-- 형식에맞지 않은 값을 폼에 입력한 뒤 '조회'를 실행하면 다음과 같은 400 에러가 발생한다.
+- 형식에 맞지 않은 값을 폼에 입력한 뒤 '조회'를 실행하면 다음과 같은 400 에러가 발생한다.
 
 ![image3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/9%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EB%82%A0%EC%A7%9C%20%EA%B0%92%20%EB%B3%80%ED%99%98%2C%20%40PathVariable%2C%20%EC%BB%A8%ED%8A%B8%EB%A1%A4%EB%9F%AC%20%EC%98%88%EC%99%B8%20%EC%B2%98%EB%A6%AC)/images/image3.png)
 
 
 - 잘못 입력했을 때 위와 같은 에러 화면을 보고 싶은 사용자는 없다. 
-- 400 에러 대신 폼에알맞은 에러 메시지를 보여주고 싶다면 다음처럼 Errors 타입 파라미터를 요청매핑 애노테이션 적용 메서드에 추가하면 된다.
+- 400 에러 대신 폼에 알맞은 에러 메시지를 보여주고 싶다면 다음처럼 Errors 타입 파라미터를 요청매핑 애노테이션 적용 메서드에 추가하면 된다.
 - Error 타입 파라미터를 listCommand 파라미터 바로 뒤에 위치시킨 것에 유의한다.
 
 #### src/main/java/controller/MemberListController.java
@@ -393,7 +393,7 @@ typeMismatch.java.time.LocalDateTime=잘못된 형식
 
 - DefaultFormattingConversionService는 int, long과 같은 기본 데이터 타입뿐만 아니라 @DateTimeFormat 애노테이션을 사용한 시간 관련 타입 변환 기능을 제공한다. 이런 이유로 커맨드로 사용할 클래스에 @DateTimeFormat 애노테이션만 붙이면 지정한형식의 문자열을 시간 타입 값으로 받을 수 있는 것이다.
 
-- WebDataBinder는 \<forminput\>에도 사용된다. \<form:input\> 태그를 사용하면 다음과 같이 path 속성에 지정한 프로퍼티 값을 String으로 변환해서 \<input\> 태그의value 속성값으로 생성한다. 이때 프로퍼티 값을 String으로 변환할 때 WebDataBinder의 ConversionService를 사용한다.
+- WebDataBinder는 \<form:input\>에도 사용된다. \<form:input\> 태그를 사용하면 다음과 같이 path 속성에 지정한 프로퍼티 값을 String으로 변환해서 \<input\> 태그의 value 속성값으로 생성한다. 이때 프로퍼티 값을 String으로 변환할 때 WebDataBinder의 ConversionService를 사용한다.
 
 ![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/6.Spring%20%26%20Spring%20Boot(75%EC%8B%9C%EA%B0%84)/9%EC%9D%BC%EC%B0%A8(3h)%20-%20%EC%8A%A4%ED%94%84%EB%A7%81%20MVC(%EB%82%A0%EC%A7%9C%20%EA%B0%92%20%EB%B3%80%ED%99%98%2C%20%40PathVariable%2C%20%EC%BB%A8%ED%8A%B8%EB%A1%A4%EB%9F%AC%20%EC%98%88%EC%99%B8%20%EC%B2%98%EB%A6%AC)/images/image6.png)
 
