@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1Ac-NOCJ2YnfnaQA7I118gE9THAzhPMgG?usp=sharing)
+
 # 스프링 MVC : 세션, 인터셉터, 쿠키
 
 ## 프로젝트 준비 
