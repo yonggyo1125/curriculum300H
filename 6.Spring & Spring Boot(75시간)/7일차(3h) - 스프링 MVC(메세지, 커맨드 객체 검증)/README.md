@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1CvU-oyUlnehxVJjGiN0l3nehlzS5zWF_?usp=sharing)
+
 # 스프링 MVC : 메시지, 커맨드 객체 검증
 
 ## 프로젝트 준비
