@@ -159,10 +159,88 @@ abar.hide();
 
 - 액션바를 다뤄보기 위해 새로운 SampleActionBar1 프로젝트를 만듭니다. 프로젝트를 만들 때 패키지 이름은 org.koreait.actionbar로 입력합니다. 새로운 프로젝트 창이 열리면 activity_main.xml파일에 버튼 하나를 추가합니다. 버튼에는 '액션바 아이콘 바꾸기'라는 글자가 보이게 합니다. 텍스트뷰의 글자인 Hello World!의 크기는 30sp로 설정합니다. 이 텍스트뷰에는 메뉴를 선택했을 때 어떤 메뉴를 선택했는지를 보여줄 것입니다. /app/res 폴더 안에 menu 폴더를 만들고 앞에서 만들었던 SampleOptionMenu 프로젝트의 메뉴 XML 파일을 복사합니다. /app/res/drawable 폴더의 이미지와 이 학습 소스에서 제공하는 이미지(home.png)도 추가로 복사하여 가져다 놓습니다. 그다음 MainActivity. java 파일도 SampleOptionMenu 프로젝트에서 만든 코드를 복사한 후 onCreate 메서드에 다음 코드를 추가합니다.
 
-#### SampleActionBar1>/app/java/org.techtown.actionbar/MainActivity.java
+#### SampleActionBar1>/app/java/org.koreait.actionbar/MainActivity.java
 
 ```java
+package org.koreait.actionbar;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+    ActionBar abar;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        abar = getSupportActionBar();
+
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                abar.setLogo(R.drawable.home);
+                abar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME|ActionBar.DISPLAY_USE_LOGO);
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int curId = item.getItemId();
+        switch(curId) {
+            case R.id.menu_refresh:
+                Toast.makeText(this, "새로고침 메뉴가 선택되었습니다.", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.menu_search :
+                Toast.makeText(this, "검색 메뉴가 선택되었습니다.", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.menu_settings :
+                Toast.makeText(this, "설정 메뉴가 선택되었습니다.", Toast.LENGTH_SHORT).show();
+                break;
+            default :
+                break;
+        }
+        
+        return super.onOptionsItemSelected(item);
+    }
+}
 ```
 
+- ActionBar는 androidx.appcompat.app 패키지 안에 들어 있는 클래스를 import하도록 합니다. 클래스 안에는 ActionBar 자료형의 변수가 선언되었으며, onCreate 메서드 안에서 getSupportActionBar 메서드를 이용해 XML 레이아웃에 들어 있는 ActionBar 객체를 참조합니다. ActionBar 객체는 직접 XML 레이아웃에 추가할 수도 있고 액티비티에 적용한 테마에 따라 자동으로 부여될 수도 있습니다. 버튼을 클릭했을 때 액션바가 보이는 모양을 바꾸도록 setDisplayOptions 메서드를 사용합니다.setDisplayOptions 메서드에는 미리 정의된 상수가 파라미터로 전달될 수 있으며 여기에서 사용된 상수들의 의미는 다음과 같습니다.
 
+|디스플레이 옵션 상수|설명|
+|-----|-------|
+|DISPLAY_USE_LOGO|홈 아이콘 부분에 로고 아이콘을 사용합니다.|
+|DISPLAY_SHOW_HOME|홈 아이콘을 표시하도록 합니다.|
+|DISPLAY_HOME_AS_UP|홈 아이콘에 뒤로 가기 모양의 \< 아이콘을 같이 표시합니다.|
+|DISPLAY_SHOW_TITLE|타이틀을 표시하도록 합니다.|
+
+- 여기에서 로고 아이콘은 매니페스트에 등록된 액티비티의 속성으로 지정할 수도 있습니다. 앱을 실행하면 화면 위쪽에 있는 액션바에 두 개의 메뉴 아이콘이 표시된 것을 볼 수 있습니다. 가운데 있는 버튼을 누르면 타이틀 부분에 집 모양의 로고 아이콘이 표시됩니다.
+
+![image3](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/2.%20%EC%95%A1%EC%85%98%EB%B0%94/images/image3.png)
+
+![image4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/2.%20%EC%95%A1%EC%85%98%EB%B0%94/images/image4.png)
+
+- 앞에서 복사해 만들었던 메뉴 XML 파일(/app/res/menu/menu_main.xml)을 다시 한 번 살펴보면 추가된 메뉴 아이템의 몇 가지 속성이 눈에 띕니다. 그 속성들 외에 세 개의 \<item\> 태그에 showAsAction 속성을 추가하고 그 값을 각각 'always', 'always withText', 'never'로 설정합니다. 이 중에서 'never'로 값을 설정하면 액션바에 메뉴가 보이지 않게 됩니다. 그리고 orderInCategory 속성도 추가합니다. 이 속성은 메뉴가 보이는 순서를 결정하며 101, 102, 103처럼 작은 숫자부터 순서대로 지정합니다.
+
+- 이 코드의 수정은 메뉴 XML 파일(/app/res/menu/menu_main.xml)을 열어서 확인한 후 직접 수정해보기 바랍니다. 이렇게 액션바의 기능은 필요에 따라 약간씩 조정할 수 있는데 단순히 메뉴 아이콘을 표시하는 것이 아니라 입력상자와 같은 다른 형태의 뷰를 직접 보여줄 수 있다는 것을 알면 용도가 훨씬 더 다양하다는 것을 알 수 있을 것입니다.
+
+- 이번에는 액션바에 검색어를 입력할 수 있는 입력상자를 넣어보겠습니다. 새로운 SampleActionBar2 프로젝트를 만듭니다. 프로젝트의 패키지명은 org.koreait.actionbar로 합니다. 책에서 제공된 이미지들은 /app/res/drawable 폴더로 복사합니다. 다음은 액션바 안에 입력상자를 넣으려고 만든 XML레이아웃으로 텍스트뷰 하나와 입력상자 하나로만 구성된 간단한 레이아웃입니다. 이 레이아웃은 입력상자에 검색어를 입력한 후 키패드에서 '완료' 키를 누르면 검색 기능을 수행할 수 있도록 하려고 만든 것입니다. /app/res/layout 폴더 안에 search_layout.xml 파일을 새로 만듭니다. 파일이 열리면 디자인 화면의 우측 상단에 있는 [Code] 아이콘을 눌러 XML 원본 코드를 띄웁니다. 그리고 다음 코드를 입력합니다.
