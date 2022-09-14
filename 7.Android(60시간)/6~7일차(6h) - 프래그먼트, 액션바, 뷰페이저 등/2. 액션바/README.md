@@ -244,3 +244,144 @@ public class MainActivity extends AppCompatActivity {
 - 이 코드의 수정은 메뉴 XML 파일(/app/res/menu/menu_main.xml)을 열어서 확인한 후 직접 수정해보기 바랍니다. 이렇게 액션바의 기능은 필요에 따라 약간씩 조정할 수 있는데 단순히 메뉴 아이콘을 표시하는 것이 아니라 입력상자와 같은 다른 형태의 뷰를 직접 보여줄 수 있다는 것을 알면 용도가 훨씬 더 다양하다는 것을 알 수 있을 것입니다.
 
 - 이번에는 액션바에 검색어를 입력할 수 있는 입력상자를 넣어보겠습니다. 새로운 SampleActionBar2 프로젝트를 만듭니다. 프로젝트의 패키지명은 org.koreait.actionbar로 합니다. 책에서 제공된 이미지들은 /app/res/drawable 폴더로 복사합니다. 다음은 액션바 안에 입력상자를 넣으려고 만든 XML레이아웃으로 텍스트뷰 하나와 입력상자 하나로만 구성된 간단한 레이아웃입니다. 이 레이아웃은 입력상자에 검색어를 입력한 후 키패드에서 '완료' 키를 누르면 검색 기능을 수행할 수 있도록 하려고 만든 것입니다. /app/res/layout 폴더 안에 search_layout.xml 파일을 새로 만듭니다. 파일이 열리면 디자인 화면의 우측 상단에 있는 [Code] 아이콘을 눌러 XML 원본 코드를 띄웁니다. 그리고 다음 코드를 입력합니다.
+
+#### SampleActionBar2>/app/res/layout/search_layout.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- 문자열 표시를 위한 텍스트 뷰 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="검색 :"
+        android:textSize="16sp"
+        android:textColor="#ffad8745" />
+
+    <!-- 검색어를 입력하기 위한 입력상자 -->
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:inputType="text"
+        android:imeActionId="1337"
+        android:imeOptions="actionDone" />
+
+</LinearLayout>
+```
+
+- 이렇게 만든 XML 레이아웃을 액션바에 넣어서 보여주려면 액션바에 추가된 메뉴 아이템 중 하나가 화면에 보일 때 이 레이아웃이 보이게 설정해야 합니다. 우선 파일 탐색기를 열고 SampleActionBar1 프로젝트에서 만든 /app/res/menu 폴더를 복사해서 SampleActionBar2 프로젝트의 /app/res 폴더로복사합니다. 그런 다음 그 폴더 안에 있는 menu_main.xml 파일을 열고 코드 가장 아래쪽에 다음 코드를 추가하세요. 메뉴가 정의된 XML 파일인 menu_main.xml 파일 안에 있는 메뉴 아이템 중에서 id 값이 'menu_search'인 아이템의 속성으로 메뉴가 화면에 보여질 때의 레이아웃을 설정합니다. 이때 사용되는 속성은 app:actionLayout입니다.
+
+
+#### SampleActionBar2>/app/res/menu/menu_main.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_refresh"
+        android:icon="@drawable/menu_refresh"
+        android:title="새로고침"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/menu_settings"
+        android:title="설정"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_search"
+        android:orderInCategory="102"
+        android:title="검색"
+        app:actionLayout="@layout/search_layout"
+        app:showAsAction="always|withText" />
+    
+</menu>
+```
+
+- 그다음에는 MainActivity.java 파일을 열어서 레이아웃에 들어 있는 EditText 객체에 사용자가 검색어를 입력하고 '완료' 키를 눌렀을 때 원하는 기능이 수행될 수 있도록 코드를 수정합니다. 이때 MainActivity 클래스를 마우스 오른쪽 버튼으로 눌러 [Generate... → Override Methods...] 메뉴를 선택하거나 단축키 [Ctrl] + [O] 를 누릅니다. 재정의할 수 있는 [Select Methods th Override/Implement] 대화상자가 보이면 onCreateOptionsMenu 메서드를 선택한 후 [OK]를 눌러서 추가합니다. onCreateOptionsMenu 메서드 안에 EditText 객체를 참조하고 리스너를 설정하는 코드를 추가합니다.
+
+#### SampleActionBar2>/app/java/org.koreait.actionbar/MainActivity.java
+
+```java
+package org.koreait.actionbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        View v = menu.findItem(R.id.menu_search).getActionView();
+
+        if (v != null) {
+            EditText editText = v.findViewById(R.id.editText);
+
+            if (editText != null) {
+                editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        Toast.makeText(getApplicationContext(), "입력됨.", Toast.LENGTH_LONG).show();
+                        return true;
+                    }
+                });
+            }
+        }
+
+        return true;
+    }
+}
+```
+
+- EditText 객체에 설정된 리스너에서는 토스트 메시지를 보여줍니다. 이 부분은 필요에 따라 사전 또는 인터넷 검색 기능을 만들어 호출하도록 변경할 수도 있을 것입니다.
+
+- 다음은 앱을 실행했을 때의 화면입니다. 액션바에 검색할 수 있는 입력상자가 보이며, 검색어를 입력한 후 키패드에 있는 '완료' 키를 누르면 '입력됨'이라는 토스트 메시지가 표시됩니다.
+
+![image5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/2.%20%EC%95%A1%EC%85%98%EB%B0%94/images/image5.png)
+
+- 지금까지 액션바에 메뉴를 넣어 보여주는 방법을 자세히 살펴보았습니다. 액션바는 앱의 상단에 타이틀 뿐만 아니라 버튼이나 입력상자 등을 배치할 수 있는 공간이므로 앱을 만들 때 유용하게 사용할 수 있습니다.
+
+* * * 
+# 상단 탭과 하단 탭 만들기
+
+## 상단 탭 보여주기
+
+- 모바일 단말은 일반적으로 화면의 크기가 작기 때문에 하나의 화면에 너무 많은 구성 요소를 넣으면 성능이나 사용성(Usability) 면에서 좋지 않습니다. 안드로이드의 경우에도 하나의 화면을 나타내는 액티비티를 최대한 많이 분리시켜서 하나의 화면에 보이는 뷰의 개수를 줄여주는 것이 좋습니다.
+
+- 그러나 때로는 하나의 화면에 여러 가지 구성 요소를 넣어두고 필요할 때 전환하여 보여주는 게 좋을때도 있습니다. 대표적인 것이 서브 화면들입니다. 예를 들어, 상단에 버튼이 두 개 있고 그 두 개의 버튼을 누를 때마다 아래에 다른 화면을 보여주는 방식으로 만든다면 고객의 일반 정보와 신용도를 구분하여 보여줄 수 있습니다. 이처럼 한 명의 고객과 관련된 서로 다른 두 가지 정보를 한 화면에서 전환하여 보여줄 수 있으므로 더 직관적인 화면을 구성할 수 있습니다.
+
+- 이렇게 몇 개의 버튼을 두고 그중 하나의 버튼을 눌러 서브 화면을 전환하는 방식처럼 하나의 뷰에서여러 개의 정보를 볼 때 일반적으로 사용하는 뷰로 탭(Tab)을 들 수 있습니다. 탭은 안드로이드의 전화번호부를 비롯한 몇 개의 기본 앱에서 볼 수 있는데 상단에 있는 탭을 누를 때마다 내용이 보이는 화면 영역이 전환되어 나타납니다. 탭은 내비게이션(Navigation) 위젯이라고 불리기도 하며 상단 탭과 하단 탭(Bottom Navigation)으로 구분할 수 있습니다. 최근에는 하단 탭을 더 많이 사용합니다. 상단탭의 경우에는 액션바에 탭 기능을 넣어 보여주는 방법으로 제공되며 하단 탭은 별도의 위젯으로 제공됩니다.
+
+- 그럼 상단 탭을 어떻게 간단하게 만들 수 있는지 살펴보겠습니다. 새로운 SampleTab 프로젝트 파일을 만들고 프로젝트의 패키지명은 org.koreait.tab으로 합니다. activity_main.xml 파일을 열고 다음과 같이 입력합니다.
+
+#### SampleTab>/app/res/layout/activity_main.xml
+
+```xml
+
+````
+
+
