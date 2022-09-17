@@ -381,7 +381,388 @@ public class MainActivity extends AppCompatActivity {
 #### SampleTab>/app/res/layout/activity_main.xml
 
 ```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
-````
+   <androidx.coordinatorlayout.widget.CoordinatorLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+       <com.google.android.material.appbar.AppBarLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+           <androidx.appcompat.widget.Toolbar
+               android:id="@+id/toolbar"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:background="?colorPrimary"
+               android:elevation="1dp"
+               android:theme="@style/ThemeOverlay.AppCompat.Dark">
+               <TextView
+                   android:id="@+id/titleText"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="타이틀"
+                   android:textAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title" />
+
+          </androidx.appcompat.widget.Toolbar>
+           <com.google.android.material.tabs.TabLayout
+               android:id="@+id/tabs"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:background="@android:color/background_light"
+               android:elevation="1dp"
+               app:tabGravity="fill"
+               app:tabMode="fixed"
+               app:tabSelectedTextColor="?colorAccent"
+               app:tabTextColor="?colorPrimary" />
+       </com.google.android.material.appbar.AppBarLayout>
+
+       <FrameLayout
+           android:id="@+id/container"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+       </FrameLayout>
+
+   </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+- 내용이 조금 많아 보아지만 다음과 같이 태그 이름만 가지고 구분하면 그리 복잡하지는 않습니다.
+
+```xml
+<CoordinatorLayout>
+	<AppBarLayout>
+		<ToolBar>
+		</ToolBar>
+		<TabLayout>
+		</TabLayout>
+	</AppBarLayout>
+	<FrameLayout>
+	</FrameLayout>
+</CoordinatorLayout>
+```
+
+- CoordinatorLayout은 액션바 영역을 포함한 전체 화면의 위치를 잡아주는 역할을 하므로 가장 바깥에 위치하고 있습니다. CoordinatorLayout 안에 AppBarLayout과 함께 다른 레이아웃을 넣으면 그 둘 간의 간격이나 위치가 자동으로 결정됩니다. AppBarLayout은 액션바를 가리키는데 이 안에는 Toolbar가 들어갈 수 있으며, 탭을 사용하는 경우에는 탭의 버튼들이 들어갈 수 있는 TabLayout을 추가할 수 있습니다. AppBarLayout 아래쪽에는 FrameLayout을 넣어 화면의 내용을 구성할 수 있습니다.
+
+- 이 코드를 입력하고 나면 속성 앞에 붙는 app가 빨간색으로 표시될 수 있습니다. app는 이 XML 코드에서 사용하는 속성 중에서 안드로이드 기본 API가 아니라 외부 라이브러리에 들어 있는 속성을 지정하고 싶을 때 사용합니다. android나 app 속성 앞에 붙는 접두어(prefix)라고 할 수 있는데 가장 상위 태그의 속성으로 지정됩니다.
+
+```
+[속성 앞에 붙는 접두어]
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+```
+
+- 이 접두어의 이름은 xmlns: 뒤에 붙는 이름으로 사용되므로 만약 xmlns:app 대신 xmlns:myapp 으로 변경하고 싶다면 그 파일 안에서 참조하는 app도 모두 myapp로 변경해야 합니다. 이 xmlns:app 속성을 추가하지 않은 채로 그 안에 들어 있는 위젯의 속성에 app:가 포함되는 경우 app에 빨간색이 표시될 수 있습니다. 이 빨간색을 없애려면 툴팁이 보일 때 [Alt] + [Enter]를 누르면 됩니다.
+
+- Toolbar 안에는 텍스트뷰를 하나 넣어 제목을 표시할 수 있도록 합니다. TabLayout에는 여러 가지 속성이 들어갈 수 있는데, tabMode의 값을 fixed로 하고 tabGravity의 값을 fill로 설정하여 [탭] 버튼들이 동일한 크기를 갖게 만듭니다. FrameLayout의 id 값은 container로 설정하여 자바 소스 코드에서 이 안에 프래그먼트를 넣을 수 있도록 합니다.
+
+- 탭은 세 개를 만들 것입니다. 그러면 각각의 탭을 누를 때마다 하단에 다른 내용이 보여야 합니다. 액티비티는 하나인데 그중에서 일부분만 화면이 변경되도록 해야 하므로 앞에서 살펴보았던 프래그먼트를 사용할 수 있습니다.
+
+- FrameLayout으로 하단에 공간을 확보한 후 그 안에 상황에 따라 서로 다른 프래그먼트를 넣어줄 수 있습니다. 여기서는 FrameLayout 안에는 세 개의 프래그먼트를 넣을 것이므로 먼저 세 개의 프래그먼트를 프로젝트 폴더의 res/layout 폴더 안에 추가합니다. 첫 번째 프래그먼트를 위한 XML 레이아웃은 fragment1.xml이라는 이름으로 만들고 최상위 레이아웃을 LinearLayout으로 변경한 후 그 안에 버튼을 하나 추가합니다. 버튼에 보일 글자는 '첫 번째'라고 입력하고 다른 프래그먼트와 쉽게 구분되도록 배경색도 넣어줍니다.
+
+![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/2.%20%EC%95%A1%EC%85%98%EB%B0%94/images/image6.png)
+
+- 첫 번째 프래그먼트의 소스 파일 이름은 Fragment1.java로 만든 후 fragment1.xml 파일을 인플레이션하도록 설정합니다.
+
+#### SampleTab>/app/java/org.koreait.tab/Fragment1.java
+
+```java
+
+... 생략
+
+public class Fragment1 extends Fragment {
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment1, container, false);
+    }
+}
+```
+
+- 이 두 개 파일이 하나의 프래그먼트가 되므로 java 파일과 xml 파일을 각각 복사해서 두 번째 프래그먼트와 세 번째 프래그먼트를 만듭니다. 두 번째와 세 번째 프래그먼트 화면에서는 버튼의 글자와 배경색을 다른 것으로 변경합니다. 물론 Fragment2.java와 Fragment3.java 파일에서 인플레이션 대상이 되는 XML 레이아웃 파일도 각각 R.layout.fragment2와 R.layout.fragment3으로 변경해야 합니다. 그리고 fragment2.xml과 fragment3.xml 파일의 텍스트 속성 값도 '두 번째', '세 번째로 수정합니다.
+
+이제 MainActivity.java 파일을 열고 액션바를 설정한 후 프래그먼트 객체를 생성합니다.
 
 
+#### SampleTab>/app/java/org.koreait.tab/MainActivity.java 
+
+```java
+package org.koreait.tab;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import android.os.Bundle;
+
+public class MainActivity extends AppCompatActivity {
+    Toolbar toolbar;
+
+    Fragment1 fragment1;
+    Fragment2 fragment2;
+    Fragment3 fragment3;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+
+        fragment1 = new Fragment1();
+        fragment2 = new Fragment2();
+        fragment3 = new Fragment3();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment1).commit();
+    }
+}
+```
+
+- XML 레이아웃에서 정의한 Toolbar 객체는 코드에서 setSupportActionBar 메서드를 사용해 액션바로 설정해야 합니다. 이 Toolbar 객체를 참조할 때 Toolbar에 빨간색 표시가 보일 수도 있습니다. 이것은 Toolbar 클래스가 여러 개이기 때문에 import를 자동으로 진행할 수 없어서 발생하는 문제입니다. Toolbar 코드 앞에 커서를 두고 메시지가 보이면 [Alt] + [Enter]를 누른 후 androidx.appcompat.widget 패키지 안에 들어 있는 Toolbar를 import하도록 합니다.
+
+- setSupportActionBar 메서드는 액티비티에 디폴트로 만들어진 액션바가 없을 경우에만 동작합니다. 그런데 프로젝트가 만들어질 때 메인 액티비티에는 자동으로 액션바가 만들어집니다. 이것은 테마(theme)를 액션바가 들어 있는 테마로 설정했기 때문입니다. 액티비티에 설정된 테마를 변경하기 위해 /app/res/values 폴더 안에 있는 themes.xml 파일을 엽니다. 그 안에 AppTheme라는 name 속성값을 가진 \<style\> 태그가 들어 있습니다. 그리고 parent 속성의 값으로 API에서 미리 정의한 테마 중의 하나가 지정되어 있습니다. 이 테마는 AndroidManifest.xml 파일에서 \<application\> 또는 \<activity\> 태그에 지정되어 액티비티의 테마로 설정됩니다. 이 액티비티의 스타일을 액션바가 없는 스타일(NoActionBar)로 변경합니다.
+
+#### SampleTab>/res/values/themes.xml
+
+```xml
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.SampleTab" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        
+		... 생략 
+		
+    </style>
+</resources>
+```
+
+- NoActionBar 스타일로 바꾸면 이 스타일을 적용한 액티비티에는 액션바가 만들어지지 않습니다. 따라서 코드에서 setSupportActionBar 메서드를 호출하여 직접 액션바를 설정해야 합니다. 이미 액션바를 코드에서 설정했으므로 세 개의 프래그먼트 객체를 만들어 변수에 할당하고 첫 번째 프래그먼트가 화면에 보이도록 합니다.
+
+####  SampleTab>/app/java/org.koreait.tab/MainActivity.java
+
+```java
+
+... 생략
+
+public class MainActivity extends AppCompatActivity {
+	
+	... 생략
+	
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+	
+		... 생략
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment1).commit();
+
+        TabLayout tabs = findViewById(R.id.tabs);
+        tabs.addTab(tabs.newTab().setText("통화기록"));
+        tabs.addTab(tabs.newTab().setText("스팸기록"));
+        tabs.addTab(tabs.newTab().setText("연락처"));
+
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                Log.d("MainActivity", "선택된 탭 : " + position);
+
+                Fragment selected = null;
+                if (position == 0) {
+                    selected = fragment1;
+                } else if (position == 1) {
+                    selected = fragment2;
+                } else if (position == 2) {
+                    selected = fragment3;
+                }
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, selected).commit();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
+    }
+}
+```
+
+- TabLayout에는 addTab 메서드가 있어서 [탭] 버튼을 추가할 수 있게 합니다. 여기서는 세 개의 [탭]버튼을 추가했으며 각각의 [탭] 버튼을 눌렀을 때 container라는 id를 가진 FrameLayout 안에 각각의 [탭] 버튼에 해당하는 프래그먼트 화면이 보이도록 합니다.
+
+- TabLayout에는 OnTabSelectedListener를 설정할 수 있는데 이 리스너는 [탭] 버튼이 선택될 때마다 그 리스너 안에 있는 on TabSelected 메서드가 호출되도록 합니다. 이 메서드로는 현재 선택된 탭 객체가 전달되므로 탭의 position 정보를 확인한 후 그 값이 0일 때는 첫 번째 프래그먼트, 1일 때는 두 번째 프래그먼트, 2일 때는 세 번째 프래그먼트를 FrameLayout 안에 추가합니다.
+
+- 앱을 실행하면 다음과 같이 [탭] 버튼들이 상단 툴바 아래쪽에 추가되어 표시됩니다.
+
+
+![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/2.%20%EC%95%A1%EC%85%98%EB%B0%94/images/image7.png)
+
+![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/2.%20%EC%95%A1%EC%85%98%EB%B0%94/images/image8.png)
+
+- 각각의 [탭] 버튼을 누르면 아래쪽의 FrameLayout에 보이는 프래그먼트가 바뀌는 것을 알 수 있습니다. 탭에는 글자가 표시되어 있지만 필요에 따라 아이콘이 보이도록 하거나 아이콘과 글자가 함께 보이도록 만들 수도 있습니다.
+
+## 하단 탭 보여주기
+
+- 하단 탭은 BottomNavigation View 위젯으로 만들 수 있습니다. 하단 탭을 보여주기 위한 새로운 프로젝트를 SampleTab2 라는 이름으로 만듭니다. 프로젝트를 만들 때 패키지 이름은 org.koreait.tab으로 입력합니다. 하단 탭에 보이는 각각의 탭에는 이미지나 글자가 들어갈 수 있는데 이 버튼들은 메뉴XML 파일로 만들게 됩니다. /app/res 폴더에 menu 폴더를 만든 후 그 안에 menu_bottom.xml이라는 이름의 파일을 만듭니다. 그리고 그 파일에 다음 코드를 추가합니다.
+
+#### SampleTab2>/app/res/menu/menu_bottom.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/tab1"
+        app:showAsAction="ifRoom"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_dialog_email"
+        android:title="이메일" />
+
+    <item
+        android:id="@+id/tab2"
+        app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:title="정보" />
+
+    <item
+        android:id="@+id/tab3"
+        app:showAsAction="ifRoom"
+        android:enable="true"
+        android:icon="@android:drawable/ic_dialog_map"
+        android:title="위치" />
+    
+</menu>
+```
+
+- @android:drawable은 기본 API에 포함된 이미지를 참조할 수 있도록 합니다. 세 개의 아이콘은 기본 API에 포함된 이미지로 지정되었으며 각각 '이메일', '정보', '위치'라는 글자가 함께 보이도록 설정되 있습니다. 그리고 id 속성 값은 각각 tab1, tab2, tab3으로 설정되었습니다. 이제 activity_main.xml 파일을 읽고 메인 화면을 위한 XML 레이아웃을 정의합니다.
+
+#### SampleTab2>/app/res/layout/activity_main.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+   <FrameLayout
+       android:id="@+id/container"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:itemBackground="?colorPrimary"
+        app:itemIconTint="@drawable/item_color"
+        app:itemTextColor="@drawable/item_color"
+        app:menu="@menu/menu_bottom" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+- 하단 탭을 보여주는 위젯은 BottomNavigationView이므로 화면의 하단에 표시될 수 있도록 ConstraintLayout 안에 넣었습니다. 그리고 화면 전체는 FrameLayout이 차지하도록 만듭니다. BottomNavigationView app:layout_constraintBottom_toBottomOf, layout_constraintLeft_toLeftOf, layout_constraintright_toRightOf의 속성 값을 parent로 설정한 것을 볼수 있으며, 그 외에 itemBackground, itemColorTint, item TextColor. itemBackground는 각 탭의 배경색을 의미하며 itemIconTint는 아이콘 색상, 그리고 itemTextColor는 텍스트 색상을 의미합니다. menu 속성의 값으로 @menu/menu_bottom이 설정되었으므로 앞에서 만들었던 menu_bottom.xml 파일의 내용이 탭으로 보인다는 점은 충분히 이해할 수 있을 것입니다.
+
+
+#### SampleTab2>/app/res/drawable/item_color.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="#51032d" />
+    <item android:color="#CFD8DC" />
+</selector>
+```
+
+- 각 탭을 놀렸을 때 가운데 보이는 프레임 레이아웃 안에 또래 그랜드를 바꿔가며 보여줘야 합니다. 그래서 이전에 만들었던 SampleTab에서 프래그먼트를 위해 만들었던 세 개의 레이아웃 파일(fragment1.xml, fragment2.xml, fragment3.xml)과 세 개의 소스 파일(Fragment1, Fragment2, Fragment3)을 복사해서 SampleTab2의 /app/res/layout 폴더 안에 붙여 넣습니다. 우선 [File -> Open Recent -> SampleTab]을 선택하면 [Open Project] 대화상자가 나타납니다. 여기에서 [New Window] 버튼을 눌러 새로운 안드로이드 스튜디오 창을 열고 /app/res/layout 폴더 안에 있는 해당 파일을 복사해서 붙여 넣으면 됩니다. 그리고 MainActivity.java 파일을 연 후 다음 코드를 입력합니다.
+
+#### Sample Tab2>/app/java/org.koreait.tab/MainActivity.java
+
+```java
+package org.koreait.tab;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+public class MainActivity extends AppCompatActivity {
+    Fragment1 fragment1;
+    Fragment2 fragment2;
+    Fragment3 fragment3;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        fragment1 = new Fragment1();
+        fragment2 = new Fragment2();
+        fragment3 = new Fragment3();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment1).commit();
+
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
+        bottomNavigation.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.tab1 :
+                                Toast.makeText(getApplicationContext(), "첫 번째 탭 선택됨", Toast.LENGTH_LONG).show();
+                                getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment1).commit();
+
+                                return true;
+                            case R.id.tab2 :
+                                Toast.makeText(getApplicationContext(), "두 번째 탭 선택됨", Toast.LENGTH_LONG).show();
+                                getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment2).commit();
+
+                                return true;
+                            case R.id.tab3 :
+                                Toast.makeText(getApplicationContext(), "세 번쨰 탭 선택됨", Toast.LENGTH_LONG).show();
+                                getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment3).commit();
+
+                                return true;
+                        }
+
+                        return false;
+                    }
+                });
+    }
+}
+```
+
+- 앱이 실행되었을 때 첫 번째 프래그먼트가 보이게 설정했습니다. 그리고 탭이 선택되었을 때의 이벤트를 받아 처리하려면 BottomNavigationView가 가지고 있는 setOnNavigationItemSelectedListener 메서드를 사용해서 리스너를 설정하면 됩니다. 그러면 탭이 선택되었을 때 onNavigationItemSelected 메서드가 호출됩니다. 여기서는 탭이 선택되었을 때 토스트 메시지를 띄운 후 프래그먼트를 바꿔주도록 했습니다.
+
+앱을 실행하면 다음과 같이 하단 탭이 동작하는 것을 볼 수 있습니다.
+
+![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/2.%20%EC%95%A1%EC%85%98%EB%B0%94/images/image9.png)
+
+![image10](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/2.%20%EC%95%A1%EC%85%98%EB%B0%94/images/image10.png)
