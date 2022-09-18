@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1xgCfkaBhtddM-tMvDL915c3qIhxKVRKk?usp=sharing)
+
 # JSON 응답과 요청 처리
 
 - 웹 페이지에서 Ajax를 이용해서 서버 API를 호출하는 사이트가 많다. 이들 API는 웹 요청에 대한 응답으로 HTML 대신 JSON이나 XML을 사용한다.
@@ -468,7 +472,7 @@ public class RestMemberController {
 ```
 
 - 스프링 MVC가 JSON 형식으로 전송된 데이터를 올바르게 처리하려면 요청 컨텐츠 타입이 application/json이어야 한다. 
-- 보통 POST 방식의 폼 데이터는 쿼리 문자열인 "p1=v1&p2=v2" 로 전송되는데 이때 컨텐츠 타입은 application/x-www-formurlencoded이다. 
+- 보통 POST 방식의 폼 데이터는 쿼리 문자열인 "p1=v1&p2=v2" 로 전송되는데 이때 컨텐츠 타입은 application/x-www-form-urlencoded이다. 
 - 쿼리 문자열 대신 JSON 형식을 사용하려면 application/json 타입으로 데이터를 전송할 수 있는 별도 프로그램이 필요하다. 
 - 크롬 브라우저에는 [Advanced REST client 확장 프로그램](https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo) 이나 Postman 등 JSON 형식의 데이터를 보낼 수 있는 확장 프로그램이 존재한다. 명령행 프롬프트에서는 httpie와 같은 콘솔 프로그램을 설치해서 확인할 수도 있다. 
 
