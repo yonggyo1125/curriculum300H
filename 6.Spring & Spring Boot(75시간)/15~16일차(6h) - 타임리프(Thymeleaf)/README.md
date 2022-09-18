@@ -1,3 +1,7 @@
+# 강의 동영상 링크
+
+[동영상 링크](https://drive.google.com/drive/folders/1If0UBN3tlYqO5dyFSmXApJ9_Al-ZE6iL?usp=sharing)
+
 # 타임리프(Thymeleaf)
 
 ## 프로젝트 생성
@@ -305,7 +309,7 @@ public class BasicController {
 ## 타임리프 기본문법
 
 ### 타임리프의 주요 식(expression)
-- 타임리프는 크레 변수식, 페이지식, 링크 식의 세 가지 식과 선택 변수 식을 제공한다.
+- 타임리프는 크게 변수식, 페이지식, 링크 식의 세 가지 식과 선택 변수 식을 제공한다.
 
 - <b>변수 식: </b> ${OGNL}
 - <b>메시지 식:</b> #{코드}
@@ -321,7 +325,7 @@ public class BasicController {
 - 메시지 식은 외부 메시지 자원에서 코드에 해당하는 문자열을 읽어와 출력한다. 지정한 경로에 위치한 프로퍼티 파일을 메시지 자원으로 사용한다. 스프링 MVC 연동을 하면 \<spring:message\>와 동일하게 스프링이 제공하는 MessageSource로 부터 코드에 해당하는 메시지를 읽어온다. 
 
 ```
-<title th:text="${message.register}">title</title>
+<title th:text="#{message.register}">title</title>
 ```
 
 - 링크 식은 링크 문자열을 생성한다. 링크 식이 절대 경로면 JSTL의 \<c:url\>태그와 동일하게 웹 어플리케이션 컨텍스트 경로를 기준으로 링크를 생성한다.
