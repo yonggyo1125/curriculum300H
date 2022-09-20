@@ -28,3 +28,156 @@
 
 ![image4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/4.%20%EC%84%9C%EB%B9%84%EC%8A%A4/images/image4.png)
 
+- 이제 activity_main.xml 파일을 열고 기존에 있던 텍스트뷰를 삭제한 후 버튼과 입력상자 하나를 화면 가운데 추가합니다. 그리고 버튼은 '서비스로 보내기' 글자가 표시되도록 수정합니다.
+
+![image5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/4.%20%EC%84%9C%EB%B9%84%EC%8A%A4/images/image5.png)
+
+﻿- [서비스로 보내기] 버튼을 누르면 입력상자에 입력한 글자를 서비스에 전달하도록 만들 것입니다. 서비스에 데이터를 전달할 때는 startService 메서드를 사용하며 인텐트 안에 부가 데이터를 추가하여 전달하면 됩니다. MainActivity.java 파일을 열고 다음 코드를 입력합니다.
+
+####  SampleService>/app/java/org.koreait.service/MainActivity.java
+ 
+```java 
+package org.koreait.service;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+public class MainActivity extends AppCompatActivity {
+    EditText editText;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editText = findViewById(R.id.editText);
+
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name = editText.getText().toString();
+
+                // 인텐트 객체 만들고 부가 데이터 넣기
+                Intent intent = new Intent(getApplicationContext(), MyService.class);
+                intent.putExtra("command", "show");
+                intent.putExtra("name", name);
+
+                startService(intent); // 서비스 시작하기
+            }
+        });
+    }
+}
+```
+
+- 인텐트 안에는 두 개의 부가 데이터를 넣었습니다. 하나는 command라는 키(Key)를 부여하였으며 또다른 하나는 name이라는 키를 부여했습니다. command는 서비스 쪽으로 전달한 인텐트 객체의 데이터가 어떤 목적으로 사용되는지를 구별하기 위해 넣은 것입니다. name은 입력상자에서 가져온 문자열을 전달하기 위한 것입니다.
+
+- startService 메서드에 담은 인텐트 객체는 MyService 클래스의 onStartCommand 메서드로 전달됩니다. MyService.java 파일을 열고 다음 코드를 수정 및 추가 입력합니다.
+
+#### SampleService>/app/java/org.koreait.service/MyService.java
+
+```java
+package org.koreait.service;
+
+import static android.content.ContentValues.TAG;
+
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.os.IBinder;
+import android.util.Log;
+
+public class MyService extends Service {
+    public MyService() {
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d(TAG, "onCreate() 호출됨.");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand() 호출됨.");
+
+        // 인텐트 객체가 널이 아니면 processCommand() 메서드 호출하기
+        if (intent == null) {
+            return Service.START_STICKY;
+        } else {
+            processCommand(intent);
+        }
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void processCommand(Intent intent) {
+        // 인텐트에서 부가 데이터 가져오기
+        String command = intent.getStringExtra("command");
+        String name = intent.getStringExtra("name");
+
+        Log.d(TAG, "command : " + command + ", name : " + name);
+
+        for (int i = 0; i < 5; i++) {
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {}
+            Log.d(TAG, "Waiting " + i + " seconds.");
+        }
+    }
+	
+	... 생략 
+}
+```
+
+- ﻿Service 클래스를 상속하는 Myservice 클래스 안에는 onCreate, onDestroy, onStartCommand 메서드가 있습니다. 이번에는 startservice 메서드에 전달한 인텐트의 부가 데이터를 출력하기 위하여 토스트 메시지가 아니라 Log.d 메서드를 사용해서 로그를 유력합니다. 새로운 방법이라고 당황한 필요는없습니다. 토스트 메시지는 화면에 메시지를 띄우는 것이고 로그는 Logeat 창에서 확인할 수 있는 메시지입니다. 심부에서는 로그를 더 많이 사용하니 알아두는 것이 좋습니다.
+
+## 로그 사용하여 인텐트의 부가 데이터 출력하기
+
+- 로그 출력을 위해서는 첫 번째 파라미터로 로그를 구분할 수 있는 문자열을 전달해야 합니다. 이것을 보통 태그(Tag)라고 부릅니다. 여기서는 "MyService"라는 문자열을 상수로 정의한 후 사용했습니다. 서비스에 추가한 세 개의 메서드 중 onStartCommand 메서드가 인텐트 객체를 전달받습니다. 이때 onStartCommand 메서드는 서비스 내에서 아주 중요한 역할을 합니다. 서비스는 시스템에 의해 자동으로 다시 시작될 수 있기 때문에 onStartCommand 메서드로 전달되는 인텐트 객체가 null인 경우도 검사합니다. 만약 인텐트 객체가 null이면 onStartCommand 메서드는 <b>Service.START_STICKY을 반환</b>합니다. 그리고 이 값을 반환하면 <b>서비스가 비정상 종료</b>되었다는 의미이므로 <b>시스템이 자동으로 재시작</b>합니다. 만약 자동으로 재시작하지 않도록 만들고 싶다면 다른 상수를 사용할 수 있습니다.
+
+- 여기서는 onStartCommand 메서드에 코드를 너무 많이 넣으면 복잡해 보일 수 있어 새로운 processCommand 메서드를 정의하여 호출합니다. processCommand 메서드는 for문을 사용해 5초 동안 1초에 한 번씩 로그를 출력합니다.
+
+- <b>서비스가 서버 역할을 하면서 액티비티와 연결될 수 있도록 만드는 것을 바인딩(Binding)</b>이라고 합니다. <b>이를 위해서는 onBind 메서드를 재정의</b>해야 합니다. 하지만 여기서는 바인딩 기능을 사용하지 않으므로 메서드가 정의된 상태로 두고 다음으로 진행하세요.
+
+- 앱을 실행하고 화면에 보이는 버튼을 클릭하면 서비스가 실행됩니다. 서비스는 화면에 보이지 않으므로 안드로이드 스튜디오 창 하단에 보이는 [Logcat] 탭에서 어떤 로그가 출력되는지 확인합니다. 로그를 볼 때는 Logcat 창의 우측 상단에 있는 콤보박스에서 Edit Filter Configuration을 선택하고 Tag:란에 MyService를 입력합니다. 이렇게 하면 여러분의 앱에서 출력하는 로그만 선택적으로 볼 수 있습니다.
+
+![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/4.%20%EC%84%9C%EB%B9%84%EC%8A%A4/images/image6.png)
+
+﻿- 액티비티에서 인텐트에 넣어 전달한 데이터는 서비스에서 그대로 출력됩니다. 그런데 이렇게 액티비티에서 서비스로 데이터를 전달할 수 있는 것처럼 서비스에서 액티비티로도 데이터를 전달할 수 있어야 합니다. 서비스에서 액티비티로 전달하고 싶다면 서비스에서 startActivity 메서드를 사용합니다. startActivity 메서드를 호출하면서 인텐트 객체를 전달하면 액티비티에서는 그 안에 들어 있는 부가 데이터를 받아볼 수 있습니다.
+
+그럼 processCommand 메서드의 마지막 부분에서 액티비티 쪽으로 인텐트를 전달해 보겠습니다. 메인 액티비티에서는 이 인텐트를 전달 받아 화면에 보여줄 수 있을 것입니다. 다음은 processCommand 메서드에 추가한 코드입니다.
+
+```java
+
+... 생략 
+
+	private void processCommand(Intent intent) {
+		... 생략 
+
+        // 액티비티를 띄우기 위한 인텐트 객체 만들기
+        Intent showIntent = new Intent(getApplicationContext(), MainActivity.class);
+
+        // 인텐트에 플래그 추가하기
+        showIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                Intent.FLAG_ACTIVITY_SINGLE_TOP |
+                                Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        showIntent.putExtra("command", "show");
+        showIntent.putExtra("name", name + " from service.");
+        startActivity(showIntent);
+    }
+```
+- 인텐트 객체를 new 연산자로 생성할 때 첫 번째 파라미터로는 getApplicationContext 메서드를 호출하여 Context 객체가 전달되도록 했습니다. 그리고 두 번째 파라미터로는 MainActivity.class 객체가 전달되도록 했습니다. 이 인텐트 객체를 startActivity 메서드로 호출하면서 전달하면 메인 액티비티 쪽으로 인텐트 객체가 전달됩니다. 이 인텐트 객체에는 부가 데이터를 두 개 추가했으며 하나는 command, 다른 하나는 name 키를 갖고 있습니다. <b>이렇게 서비스에서 startActivity 메서드를 호출할 때는 새로운 태스크(Task)를 생성하도록 FLAG_ACTIVITY_NEW_TASK 플래그를 인텐트에 추가</b>해야 합니다. <b>서비스는 화면이 없기 때문에 화면이 없는 서비스에서 화면이 있는 액티비티를 띄우려면 새로운 태스크를 만들어야 하기 때문</b>입니다. 그리고 <b>MainActivity 객체가 이미 메모리에 만들어져 있을 때 재사용하도록 FLAG_ACTIVITY_SINGLE_TOP과 FLAG_ACTIVITY_CLEAR_TOP 플래그도 인텐트에 추가</b>합니다.
+
+- ﻿서비스에서 5초 후에 메인 액티비티에 전달한 인텐트는 메인 액티비티에서 받아 처리할 수 있습니다. MainActivity.java 파일을 열고 다음 코드를 입력합니다.
+
+#### SampleService>/app/java/org.koreait.service/MainActivity.java
+
+```java
+
+```
