@@ -180,4 +180,45 @@ public class MyService extends Service {
 
 ```java
 
+... 생략
+
+public class MainActivity extends AppCompatActivity {
+    EditText editText;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+	
+        ... 생략 
+
+        // 액티비티가 새로 만들어질 떄 전달된 인텐트 처리하기
+        Intent passedIntent = getIntent();
+        processIntent(passedIntent);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+
+        // 액티비티가 이미 만들어져 있을 때 전달된 인텐트 처리하기
+        processIntent(intent);
+
+        super.onNewIntent(intent);
+    }
+
+    private void processIntent(Intent intent) {
+        if (intent != null) {
+            String command = intent.getStringExtra("command");
+            String name = intent.getStringExtra("name");
+
+            Toast.makeText(this, "command : " + command + ", name : " + name, Toast.LENGTH_LONG).show();
+        }
+    }
+}
 ```
+
+- MainActivity가 메모리에 만들어져 있지 않은 상태에서 처음 만들어진다면 onCreate 메서드 안에서 getIntent 메서드를 호출하여 인텐트 객체를 참조합니다. 하지만 MainActivity가 이미 메모리에 만들어져 있다면 onCreate 메서드는 호출되지 않고 onNewIntent 메서드가 호출됩니다. 그리고 인텐트는 이 메서드의 파라미터로 전달됩니다. 여기서는 processIntent 메서드를 만들고 onNewIntent 메서드﻿가 호출되었을 때 processIntent 메서드를 호출하도록 했습니다. 인텐트로 전달받은 데이터는 토스트메시지로 보이도록 했으므로 앱을 실행하고 버튼을 누른 후 5초를 기다리면 다음과 같은 토스트 메시지를 확인할 수 있습니다.
+
+![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/4.%20%EC%84%9C%EB%B9%84%EC%8A%A4/images/image7.png)
+
+- 요즘 앱들은 서비스를 자주 사용합니다. 따라서 액티비티에서 서비스로 데이터를 전달하거나 서비스에서 액티비티로 데이터를 전달하는 방법을 잘 알아두어야 합니다. 코드에서 이미 살펴본 것처럼 서비스를 시작하려면 startService를 호출하는 것만으로 충분합니다. 그리고 이렇게 실행된 서비스를 종료하고 싶다면 stopService 메서드를 호출하면 됩니다.
+
+- Service 외에도 IntentService라는 클래스가 있습니다. 인텐트 서비스는 지금까지 살펴본 서비스와 달리 필요한 함수가 수행되고 나면 종료됩니다. 즉, 백그라운드에서 실행되는 것은 같지만 길게 지속되는서비스라기보다는 한 번 실행되고 끝나는 작업을 수행할 때 사용합니다. 인텐트 서비스에는 onHandleIntent라는 이름의 메서드가 있으며 이 함수는 onStartCommand 메서드로 전달된 인텐트를 전달 받으면서 실행됩니다. 그리고 이 함수의 실행이 끝나면 서비스는 자동 종료됩니다.
