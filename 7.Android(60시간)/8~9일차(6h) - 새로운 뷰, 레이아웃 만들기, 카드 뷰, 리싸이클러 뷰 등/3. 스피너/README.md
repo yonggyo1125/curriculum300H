@@ -60,6 +60,8 @@ public ArrayAdapter (Context context, int textViewResourceId, T[] objects)
 
 - 첫 번째 파라미터는 Context 객체이므로 액티비티인 this를 전달하면 됩니다. 두 번째 파라미터는 뷰를 초기화할 때 사용되는 XML 레이아웃의 리소스 ID 값으로 이 코드에서는 <b>android.R.layout.simple_spinner_item</b>을 전달하였습니다. 이 레이아웃은 문자열을 아이템으로 보여주는 단순 스피너 아이템의 레이아웃이라고 보면 됩니다. 이 레이아웃 안에는 텍스트뷰 객체가 들어 있습니다. 세 번째 파라미터는 아이템으로 보일 문자열 데이터들의 배열입니다. 여기에서는 변수로 정의한 items이 전달되었습니다. <b>setDropDownViewResource</b> 메서드는 스피너의 각 아이템들을 보여줄 뷰에 사용되는 레이아웃을 지정하는 데 사용되며 안드로이드에서 미리 정의한 리소스인 <b>android.R.layout.simple_spinner_dropdown_item</b> 값을 전달하면 가장 단순한 형태의 뷰가 보이게 됩니다. 다음은 이 앱을 실행한 화면입니다.
 
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/8~9%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%83%88%EB%A1%9C%EC%9A%B4%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EB%A7%8C%EB%93%A4%EA%B8%B0%2C%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0%20%EB%93%B1/3.%20%EC%8A%A4%ED%94%BC%EB%84%88/images/image1.png)
 
+![image2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/8~9%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%83%88%EB%A1%9C%EC%9A%B4%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EB%A7%8C%EB%93%A4%EA%B8%B0%2C%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0%20%EB%93%B1/3.%20%EC%8A%A4%ED%94%BC%EB%84%88/images/image2.png)
 
 - 메인 화면의 스피너에는 기본 값인 'mike'가 선택되어 있고 텍스트뷰에도 그 값이 들어 있는 것을 볼 수있습니다. 이 스피너를 터치하면 새로운 뷰가 화면에 보이게 되는데 코드에서 문자열로 된 배열에 넣어둔 값들이 리스트 형태로 나타납니다. 이중 하나의 값을 선택하면 그 값이 스피너와 텍스트뷰에 보이도록 되어 있습니다. 스피너를 터치했을 때 보이는 것은 앞에서 다뤄 보았던 리싸이클러뷰와 비슷합니다. 하지만 이 리스트 모양은 앞 단락에서 보았던 것보다 훨씬 단순한 문자열로만 구성되어 있습니다.
