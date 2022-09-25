@@ -28,7 +28,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td rowpspan='4'>효과</td>
+			<td rowspan='4'>효과</td>
 			<td>위치 이동</td>
 			<td>Translate로 정의한 액션은 대상의 위치를 이동시키는 데 사용되는 효과입니다.</td>
 		</tr>
