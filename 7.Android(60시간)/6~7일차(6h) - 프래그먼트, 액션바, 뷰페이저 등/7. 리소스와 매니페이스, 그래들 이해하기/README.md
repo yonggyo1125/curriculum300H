@@ -95,11 +95,84 @@
 
 - 안드로이드 앱을 실행하거나 앱 스토어에 올릴 때는 소스 파일이나 리소스 파일을 빌드하거나 배포하는 작업이 필요합니다. 이때 사용되는 것이 그래들(Gradle)입니다. 다시 말해, 그래들은 안드로이드 스튜디오에서 사용하는 빌드 및 배포 도구인 것입니다.
 
-- 한 앱의 빌드 설정은 build.gradle 파일에 넣어 관리합니다. 이때 그래들 파일은 프로젝트 수준과 모듈 수준으로 나눠 관리하기 때문에새로운 프로젝트를 만들면 두 개의 build.gradle 파일이 생깁니다. 그러면 앞에서 만들었던 SamplePermission2 프로젝트의 그래들 설정 파일을 살펴보겠습니다. 왼쪽에서 Gradle Scripts를 펼쳐보세요. 먼저 프로젝트 수준의 그래들 설정파일의 이름은 build.gradle (Project: SamplePermission2) 파일입니다
+- 한 앱의 빌드 설정은 build.gradle 파일에 넣어 관리합니다. 이때 그래들 파일은 프로젝트 수준과 모듈 수준으로 나눠 관리하기 때문에새로운 프로젝트를 만들면 두 개의 build.gradle 파일이 생깁니다. 
+
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/7.%20%EB%A6%AC%EC%86%8C%EC%8A%A4%EC%99%80%20%EB%A7%A4%EB%8B%88%ED%8E%98%EC%9D%B4%EC%8A%A4%2C%20%EA%B7%B8%EB%9E%98%EB%93%A4%20%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0/images/image1.png)
+
+- 그러면 앞에서 만들었던 SamplePermission2 프로젝트의 그래들 설정 파일을 살펴보겠습니다. 왼쪽에서 Gradle Scripts를 펼쳐보세요. 먼저 프로젝트 수준의 그래들 설정파일의 이름은 build.gradle (Project: SamplePermission2) 파일입니다
 
 
 #### SamplePermission2>/Gradle Scripts/build.gradle (Project: SamplePermission2)
 
 ```
+plugins {
+    id 'com.android.application' version '7.2.2' apply false
+    id 'com.android.library' version '7.2.2' apply false
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
 ```
 
+- 이 파일은 프로젝트 안에 들어있는 모든 모듈에 적용되는 설정을 담고 있습니다. 이 파일을 수정하는 경우는 거의 없습니다. 
+- 다음은 모듈 수준의 그래들 설정 파일입니다. 파일의 이름은 build.gradle(Module: SamplePermission2.app) 입니다.
+
+#### SamplePermission2>/Gradle Scripts/build.gradle (Module: SamplePermission2)
+
+```
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "org.koreait.permission2"
+        minSdk 21
+        targetSdk 32
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'com.yanzhenjie:permission:2.0.2'
+}
+```
+
+- 이 파일은 각각의 모듈에 대한 설정을 담고 있습니다. 프로젝트가 만들어지면 app 모듈은 기본으로 만들어지는데, 이 파일이 app 모듈의 설정 정보를 담고 있는 것입니다. 만약 새로운 모듈을 추가한다면 그 모듈에 대한 build.gradle 파일도 새로 추가됩니다. 이 파일에는 빌드에 필요한 중요한 정보들이 들어 있습니다. 여러분이 꼭 살펴보면 좋을 모듈 정보에 대해서 설명하겠습니다.
+
+- applicationld는 이 앱의 id 값입니다. 여러분이 만든 앱은 id 값으로 구분되기 때문에 id 값은 전 세계에서 유일한 값으로 설정되어야 합니다. compileSdkVersion은 빌드를 진행할 때 어떤 버전의 SDK를 사용할 것인지를 지정합니다. 보통 최신 버전의 SDK 버전을 지정하게 됩니다. minSdkVersion은 이앱이 어떤 하위 버전까지 지원하도록 할 것인지를 지정합니다. 모든 단말을 지원하면 좋겠지만 보통 앱에서 사용하는 최신 기능을 하위 단말에서 지원하지 못하는 경우에는 앱에서 사용하는 기능을 지원하기 시작한 버전을 minSdkVersion으로 지정하게 됩니다. targetSdkVersion은 이 앱이 검증된 버전이 어떤 SDK 버전인지를 지정합니다. 만약 새로운 SDK가 출시되었다고 하더라도 해당 SDK에서 검증되지 않은 앱은 이 버전을 이전 버전으로 지정할 수도 있습니다. dependencies에는 외부 라이브러리를 추가할 수 있습니다. 위의 기본 설정을 사용하면 libs 폴더 안에 들어있는 jar 파일을 읽어 들이고 support 패키지를 추가합니다. 가장 마지막 줄에 있는 implementation으로 시작하는 한 줄은 여러분이 직접 추가한 외부 라이브러리입니다.
+
+- 마지막으로 settings.gradle 파일에는 프로젝트의 이름과 함께 어떤 모듈을 포함할 것인지에 대한 정보가 들어 있습니다.
+
+#### SamplePermission2>/Gradle Scripts/settings.gradle
+
+```
+rootProject.name = "SamplePermission2"
+include ':app'
+```
+
+- 이 내용은 안드로이드 스튜디오에서 어떻게 설정하는가에 따라 자동으로 변경될 수 있습니다. 이 외에 local.properties 파일 안에는 현재 사용하고 있는 PC에 설치된 SDK의 위치가 기록되어 있으며 gradle.properties 파일 안에는 메모리 설정이 들어있습니다. 그리고 gradle-wrapper.properties 파일에는 그래들 버전 정보 등이 들어 있는데, 이런 정보들은 안드로이드 스튜디오에서 자동 설정하는 경우가 많아 여러분이 굳이 기억하지 않아도 됩니다.
