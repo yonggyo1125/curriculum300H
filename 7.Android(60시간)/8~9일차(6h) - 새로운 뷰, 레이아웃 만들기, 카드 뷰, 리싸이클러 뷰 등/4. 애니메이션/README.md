@@ -274,23 +274,23 @@ public class MainActivity extends AppCompatActivity {
 <table>
 	<tr>
 		<th>위치 이동</th>
-		<td>\<translate\> -> TranslateAnimation</td>
+		<td>\<translate\> -\> TranslateAnimation</td>
 	</tr>
 	<tr>
 		<th>회전</th>
-		<td>\<rotate\> -> RotateAnimation</td>
+		<td>\<rotate\> -\> RotateAnimation</td>
 	</tr>
 	<tr>
 		<th>확대/축소</th>
-		<td>\<scale\> -> ScaleAnimation</td>
+		<td>\<scale\> -\> ScaleAnimation</td>
 	</tr>
 	<tr>
 		<th>투명도</th>
-		<td>\<alpha\> -> AlphaAnimation</td>
+		<td>\<alpha\> -\> AlphaAnimation</td>
 	</tr>
 	<tr>
 		<th>애니메이션 집합</th>
-		<td>\<set\> -> AnimationSet</td>
+		<td>\<set\> -\> AnimationSet</td>
 	</tr>
 </table>
 
