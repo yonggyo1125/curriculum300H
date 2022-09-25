@@ -606,3 +606,223 @@ public class MainActivity extends AppCompatActivity {
 ![image14](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/8~9%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%83%88%EB%A1%9C%EC%9A%B4%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EB%A7%8C%EB%93%A4%EA%B8%B0%2C%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0%20%EB%93%B1/2.%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0/images/image14.png)
 
 - 리스트 모양으로 보여줄 수 있게 되었으니 이번에는 격자 모양으로 보이도록 변경해보고 각 아이템을 클릭했을 때 동작하도록 만들어 봅니다. 프로젝트를 새로 만들 수도 있지만 만들어둔 소스 코드를 일부 수정하기만 할 예정이므로 파일 탐색기를 열고 프로젝트 폴더가 저장된 위치를 찾은 후 폴더 전체를 복사합니다. 복사하여 만들어진 폴더의 이름은 SampleRecyclerView2로 합니다.
+
+- 안드로이드 스튜디오에서 새로 만들어진 프로젝트를 열어줍니다. 기존 프로젝트 창은 [File → Close Project] 메뉴를 눌러 닫아줍니다. 시작 화면이 보이면 두 번째 [Open an existing Android Studioproject] 메뉴를 누르고 새로 만들어진 프로젝트 폴더 (SampleRecyclerView2)를 지정합니다. 그러면 새로운 프로젝트가 열립니다. 새로 연 프로젝트의 내용은 이전과 동일합니다.
+
+- 이제 리싸이클러뷰가 격자 형태로 보이도록 수정해 보겠습니다. 리싸이클러뷰가 보이는 모양은 레이아웃 매니저를 통해 결정한다고 했으니 MainActivity.java 파일을 열고 레이아웃 매니저를 GridLayoutManager로 변경합니다.
+
+#### SampleRecyclerView2>/app/java/org.koreait.recyclerview/MainActivity.java
+
+```java
+
+... 생략
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+
+        // 리사이클러뷰에 GridLayoutManager를 레이아웃 매니저로 설정하기
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        recyclerView.setLayoutManager(layoutManager);
+		
+		... 생략
+		
+    }
+}
+```
+
+- GridLayoutManager의 생성자에는 전달된 두 번째 파라미터는 칼럼의 개수를 의미합니다. 여기에서는 2를 전달하여 두 칼럼으로 표시되는 격자 모양의 레이아웃으로 설정했습니다. 화면에 보이는 아이템의 개수를 늘리기 위해 어댑터에 추가하는 Person 객체를 더 많이 늘려줍니다.
+
+- 기존 SampleRecyclerView 프로젝트를 복사했으므로 앱의 패키지 이름이 동일합니다. 이것을 변경하면 기존 앱과 다른 앱으로 인식될 것입니다. 앱의 패키지 이름을 바꾸기 위해 왼쪽 프로젝트 창에서 /app/java/org.koreait.recyclerview 를 선택한 후 마우스 오른쪽 버튼을 누릅니다. 메뉴가 보이면 [Refactor → Rename] 메뉴를 누릅니다.
+
+- 그러면 다음과 같은 경고 화면이 나옵니다. 이것은 여러 폴더가 바뀔 것이라는 것을 알려주는 안내 글이므로 안심해도 좋습니다. [Rename package] 버튼을 누르세요.
+
+![image15](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/8~9%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%83%88%EB%A1%9C%EC%9A%B4%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EB%A7%8C%EB%93%A4%EA%B8%B0%2C%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0%20%EB%93%B1/2.%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0/images/image15.png)
+
+- 대화상자가 표시되면 새로운 패키지명을 입력하면 됩니다. 기존 패키지명의 마지막 글자가 recyclerview였는데 이것을 recyclerview2로 변경합니다.
+
+![image16](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/8~9%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%83%88%EB%A1%9C%EC%9A%B4%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EB%A7%8C%EB%93%A4%EA%B8%B0%2C%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0%20%EB%93%B1/2.%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0/images/image16.png)
+
+- ﻿[Do Refactor] 버튼을 누르면 소스 파일의 패키지명뿐만 아니라 프로젝트 내의 패키지명까지 찾아 모두 변경합니다. 프로젝트 안에 사용된 패키지명은 자동으로 검색되고 아래쪽에 표시됩니다.
+
+#### SampleRecyclerView2>/Gradle Scripts/build.gradle(Module: SampleRecyclerView.app)
+
+```
+
+... 생략
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "org.koreait.recyclerview2"
+        
+		... 생략
+    }
+	
+	... 생략
+}
+```
+
+- 패키지명을 변경했으므로 기존에 빌드된 파일들을 삭제합니다. 파일 탐색기에서 프로젝트 폴더를 찾은 후 그 안에 있는 app/build 폴더를 삭제합니다. 이 폴더는 앱이 빌드되면서 만들어지는 폴더로 새로운 프로젝트로 복사하거나 소스 코드 등의 변경이 일어난 경우에는 새로 빌드될 수 있도록 삭제하는 것이 좋습니다. 물론 여러분이 만든 프로젝트를 다른 PC에 옮길 경우에도 마찬가지로 build 폴더를 삭제하고 압축한 후 옮기는 것이 좋습니다. 이 폴더의 크기가 상당히 크기 때문에 간단한 변경인 경우에는 안드로이드 스튜디오 창의 오른쪽 위에 있는 아이콘 중에서 [Sync Project...] 아이콘을 눌러도 됩니다. 다만 이 아이콘을 눌러 수정 사항을 반영해도 기존 빌드 코드가 남아있는 경우가 있으니 그럴 때는 build폴더를 삭제해보기 바랍니다.
+
+- 앱을 실행하면 격자 모양으로 화면이 표시됩니다. 그리고 아이템이 충분히 추가되었다면 스크롤도 되는 것을 확인할 수 있습니다. 다만 글자의 크기가 커서 이름이나 전화번호가 다 보이지 않을 수 있습니다. 이때는 텍스트뷰의 글자 크기를 더 작게 변경하면 됩니다. person_item.xml 파일에서 텍스트뷰의 글자 크기를 줄인 후 다시 실행해보기 바랍니다.
+
+![image17](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/8~9%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%83%88%EB%A1%9C%EC%9A%B4%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EB%A7%8C%EB%93%A4%EA%B8%B0%2C%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0%20%EB%93%B1/2.%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0/images/image17.png)
+
+- 이제 사용자가 각 아이템을 클릭했을 때 토스트 메시지가 표시되도록 수정해 보겠습니다. 클릭 이벤트는 리싸이클러뷰가 아니라 각 아이템에 발생하게 되므로 뷰홀더 안에서 클릭 이벤트를 처리할 수 있도록 만드는 것이 좋습니다. 뷰홀더의 생성자로 뷰 객체가 전달되므로 이 뷰 객체에 OnClickListener를 설정합니다. 그러면 이 뷰를 클릭했을 때 그 리스너의 onClick 메서드가 호출됩니다. <b>그런데 이 리스너안에서 토스트 메시지를 띄우게 되면 클릭했을 때의 기능이 변경될 때마다 어댑터를 수정해야 하는 문제가 생깁니다.</b> 따라서 <b>어댑터 객체 밖에서 리스너를 설정하고 설정된 리스너 쪽으로 이벤트를 전달받도록 하는 것이 좋습니다.</b>
+
+- 이를 위해 OnPersonItemClickListener 인터페이스를 먼저 정의합니다. /app/java/org.koreait.recyclerview2 폴더를 선택한 상태에서 마우스 오른쪽 버튼을 누르고 [New → Java Class] 메뉴를 누르세요. 입력란에 OnPersonItemClickListener를 입력하고 Interface를 선택한 후 Enter를 칩니다. 파일이 만들어지면 다음과 같은 인터페이스를 정의합니다.
+
+#### SampleRecyclerView2>/app/java/org.techtown.recyclerview2/OnPersonItemClickListener.java 
+```java
+package org.koreait.recyclerview2;
+
+import android.view.View;
+
+public interface OnPersonItemClickListener {
+    public void onItemClick(PersonAdapter.ViewHolder holder, View view, int position);
+}
+```
+
+- onItemClick 메서드가 호출될 때 파라미터로 뷰홀더 객체와 뷰 객체 그리고 뷰의 position 정보가 전달되도록 합니다. position 정보는 몇 번째 아이템인지를 구분할 수 있는 인덱스 값입니다. 이 인터페이스를 사용하도록 ViewHolder 클래스를 수정합니다.
+
+#### SampleRecyclerView2>/app/java/org.koreait.recyclerview2/PersonAdapter.java
+
+```java
+	
+... 생략
+	
+	static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView textView;
+        TextView textView2;
+
+        // 뷰홀더 생성자로 전달되는 뷰 객체 참조하기
+        public ViewHolder(View itemView, final OnPersonItemClickListener listener) {
+            super(itemView);
+
+            // 뷰 객체에 들어 있는 텍스트뷰 참조하기
+            textView = itemView.findViewById(R.id.textView);
+            textView2 = itemView.findViewById(R.id.textView2);
+
+            // 아이템 뷰에 OnClickListener 설정하기
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+
+                    if (listener != null) {
+                        listener.onItemClick(ViewHolder.this, view, position);
+                    }
+                }
+            });
+        }
+
+        public void setItem(Person item) {
+            textView.setText(item.getName());
+            textView2.setText(item.getMobile());
+        }
+    }
+		
+... 생략
+
+```
+
+- 뷰홀더 객체의 생성자가 호출될 때 리스너 객체가 파라미터로 전달되도록 수정되었습니다. 이 리스너 객체는 어댑터 밖에서 설정할 것이며 뷰홀더까지 전달됩니다. 이렇게 전달된 리스너 객체의 onItemClick 이벤트는 뷰가 클릭되었을 때 호출됩니다. 이 코드에서 getAdapterPosition 메서드를 볼 수 있는데 이 메서드는 이 뷰홀더에 표시할 아이템이 어댑터에서 몇 번째인지 정보를 반환합니다. 다시 말해 아이템의 인덱스 정보를 반환합니다. 따라서 이 메서드를 호출하여 반환된 정수 값을 리스너에 전달할 수 있습니다.
+
+- 뷰홀더(static class ViewHolder ...) 코드를 수정했으니 이제 어댑터(public class PersonAdapter ...)코드를 수정합니다.
+
+#### SampleRecyclerView2>/app/java/org.koreait.recyclerview2/PersonAdapter.java
+
+```java 
+
+... 생략
+
+// 어댑터 클래스가 새로 정의한 리스너 인터페이스 구현하도록 하기
+public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder> implements OnPersonItemClickListener {
+    ArrayList<Person> items = new ArrayList<Person>();
+
+    static OnPersonItemClickListener listener;
+
+    ... 생략
+
+    // 외부에서 리스너를 설정할 수 있도록 메서드 추가하기
+    public void setOnItemClickListener(OnPersonItemClickListener listener) {
+        PersonAdapter.listener = listener;
+    }
+
+    @Override
+    public void onItemClick(ViewHolder holder, View view, int position) {
+        if (listener != null) {
+            listener.onItemClick(holder, view, position);
+        }
+    }
+	
+	... 생략
+}
+```
+
+- 어댑터 클래스는 새로 정의한 OnPersonItemClickListener 인터페이스를 구현하도록 합니다. 그리고 이 인터페이스에서 정의한 onItemClick 메서드를 추가합니다. 이 메서드는 뷰홀더 클래스 안에서 뷰가 클릭되었을 때 호출되는 메서드입니다. 그런데 이 어댑터 클래스 안에서가 아니라 밖에서 이벤트 처리를 하는 것이 일반적이므로 listener라는 이름의 변수를 하나 선언하고 setOnItemClickListener 메서드를 추가하여 이 메서드가 호출되었을 때 리스너 객체를 변수에 할당하도록 합니다. 이렇게 하면 onltemClick 메서드가 호출되었을 때 다시 외부에서 설정된 메서드가 호출되도록 만들 수 있습니다. 마지막으로 onCreateViewHolder 메서드 안에서 new 연산자를 이용해 ViewHolder 객체를 생﻿성하는 코드를 수정합니다. 이전에는 뷰 객체만 파라미터로 전달했지만 여기에 리스너인 this 를 추가로 전달합니다.
+
+- 어댑터 코드가 수정되었으니 이제 MainActivity.java 파일을 열고 어댑터에 리스너 객체를 설정하는 코드를 추가합니다.
+
+#### SampleRecyclerView2>/app/java/org.koreait.recyclerview2/MainActivity.java
+
+```java
+package org.koreait.recyclerview2;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+    RecyclerView recyclerView;
+    PersonAdapter adapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        recyclerView = findViewById(R.id.recyclerView);
+
+        // 리사이클러뷰에 GridLayoutManager를 레이아웃 매니저로 설정하기
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        recyclerView.setLayoutManager(layoutManager);
+
+        adapter = new PersonAdapter();
+
+        adapter.addItem(new Person("김민수", "010-1000-1000"));
+        adapter.addItem(new Person("김하늘", "010-2000-2000"));
+        adapter.addItem(new Person("홍길동", "010-3000-3000"));
+
+        // 리싸이클러뷰에 어댑터 설정하기
+        recyclerView.setAdapter(adapter);
+        
+        // 어댑터에 리스너 설정하기
+        adapter.setOnItemClickListener(new OnPersonItemClickListener() {
+            @Override
+            public void onItemClick(PersonAdapter.ViewHolder holder, View view, int position) {
+                // 아이템 클릭 시 어댑터에서 해당 아이템의 Person 객체 가져오기
+                Person item = adapter.getItem(position);
+                Toast.makeText(getApplication(), "아이템 선택됨: " + item.getName(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+}
+```
+
+- 리싸이클러뷰 객체와 어댑터 객체는 이 클래스 안의 어디서든 접근할 수 있도록 클래스 안에 선언된 변수에 할당되었습니다. 그리고 어댑터 객체에는 setOnItemClickListener 메서드를 호출하면서 리스너 객체를 설정했습니다. 이렇게 하면 각 아이템이 클릭되었을 때 이 리스너의 onItemClick 메서드가 호출됩니다. onItemClick 메서드 안에서는 어댑터 객체의 getItem 메서드를 이용해 클릭된 아이템 객체를 확인합니다.
+
+- 앱을 실행하고 리스트 모양으로 보이는 뷰 안의 아이템을 하나 선택하면 토스트가 선택된 아이템의 이름을 표시합니다.
+
+![image18](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/8~9%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%83%88%EB%A1%9C%EC%9A%B4%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EB%A7%8C%EB%93%A4%EA%B8%B0%2C%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0%20%EB%93%B1/2.%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0/images/image18.png)
