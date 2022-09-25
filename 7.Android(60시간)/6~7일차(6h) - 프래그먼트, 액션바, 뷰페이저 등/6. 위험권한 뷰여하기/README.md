@@ -248,3 +248,4 @@ public class MainActivity extends AppCompatActivity {
 
 ![image4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/6~7%EC%9D%BC%EC%B0%A8(6h)%20-%20%ED%94%84%EB%9E%98%EA%B7%B8%EB%A8%BC%ED%8A%B8%2C%20%EC%95%A1%EC%85%98%EB%B0%94%2C%20%EB%B7%B0%ED%8E%98%EC%9D%B4%EC%A0%80%20%EB%93%B1/6.%20%EC%9C%84%ED%97%98%EA%B6%8C%ED%95%9C%20%EB%B7%B0%EC%97%AC%ED%95%98%EA%B8%B0/images/image4.png)
 
+- 위험 권한을 부여하는 두 가지 방식을 알아보았습니다. 매니페스트 파일에 들어 있는 권한 중에서 자동으로 위험 권한 요청 대화상자를 띄워주는 방식이 좀 더 간단하다는 것을 알게 되었습니다. 이 두 가지 방식 중에서 어떤 것을 사용해도 상관없지만 위험 권한을 부여하는 경우가 많기 때문에 어떻게 부여해야 하는지 잘 이해해고 있어야 합니다.
