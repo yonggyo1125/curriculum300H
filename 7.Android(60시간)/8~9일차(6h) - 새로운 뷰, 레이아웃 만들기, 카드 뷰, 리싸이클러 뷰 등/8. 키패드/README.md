@@ -25,7 +25,6 @@ boolean hideSoftInputFromWindow(IBinder windowToken, int flags [, ResultReceiver
 
 - 지금부터 입력상자를 추가해서 키패드가 어떻게 뜨는지, 그리고 버튼을 눌렀을 때 키패드가 사라지게 할 수 있는지 알아보겠습니다. 새로운 SampleKeypad 프로젝트를 만들고 패키지 이름은 org.koreait.keypad로 설정합니다. 프로젝트 창에서 activity_main.xml 파일을 열고 텍스트뷰를 삭제합니다. 팔레트에서 입력상자를 하나 끌어다 화면 가운데에 놓은 다음 입력상자 위쪽에 버튼도 하나 끌어다 놓습니다. 입력상자에 입력되어 있던 글자는 삭제하고 버튼의 글자는 '키패드 닫기'라고 수정합니다.
 
-- 이 상태로 앱을 실행하면 화면이 보이면서 동시에 키패드가 아래쪽에서 올라오는 것을 확인할 수 있습니다. 화면에 있는 입력상자가 포커스를 받으면 키패드는 자동으로 올라오기 때문에 굉장히 자연스러운 기능입니다. 하지만 때로는 화면이 떴을 때 키패드가 올라오지 않게 만드는 것이 필요할 때도 있습니다.
 
 #### activity_main.xml
 
@@ -61,5 +60,72 @@ boolean hideSoftInputFromWindow(IBinder windowToken, int flags [, ResultReceiver
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
+![image1](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/8~9%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%83%88%EB%A1%9C%EC%9A%B4%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EB%A7%8C%EB%93%A4%EA%B8%B0%2C%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0%20%EB%93%B1/8.%20%ED%82%A4%ED%8C%A8%EB%93%9C/images/image1.png)
+
+- 이 상태로 앱을 실행하면 화면이 보이면서 동시에 키패드가 아래쪽에서 올라오는 것을 확인할 수 있습니다. 화면에 있는 입력상자가 포커스를 받으면 키패드는 자동으로 올라오기 때문에 굉장히 자연스러운 기능입니다. 하지만 때로는 화면이 떴을 때 키패드가 올라오지 않게 만드는 것이 필요할 때도 있습니다.
+
+
 키패드가 올라오지 않도록 하려면 매니페스트에 속성을 추가해야 합니다. /app/manifests 폴더에 있는 AndroidManifest.xml 파일을 열고 \<activity\> 태그에 다음 속성을 추가합니다.
+
+```
+android:windowSoftInputMode="stateHidden" 
+```
+
+#### SampleKeypad>/app/manifests/AndroidManifest.xml
+```xml
+	
+	... 생략
+	
+       <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="stateHidden" 
+            android:exported="true">
+			
+		... 생략
+		
+		</activity>
+		
+	... 생략
+```
+
+- 다시 앱을 실행하면 키패드가 나타나지 않습니다. 이제 입력상자의 inputType 속성 값을 number로 변경해서 버튼을 눌렀을 때 키패드가 닫히게 만들겠습니다. 먼저 activity_main.xml 파일을 열고 입력상자의 inputType 속성 값을 number로 변경합니다. 그리고 MainActivity.java 파일을 열고 onCreate 메서드 안에 버튼을 눌렀을 때 키패드가 닫히도록 만드는 코드를 입력합니다.
+
+#### SampleKeypad>/app/java/org.koreait.keypad/MainActivity.java
+
+```java
+package org.koreait.keypad;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getCurrentFocus() != null) {
+                    // InputMethodManager 객체 잠조하기
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    // 키패드 감추기
+                    inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                }
+            }
+        });
+    }
+}
+```
+
+- 이제 앱을 다시 실행하고 입력상자를 클릭하면 숫자 키패드가 보입니다. 그리고 [키패드 닫기] 버튼을 누르면 키패드가 사라집니다.
+
+![image2](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/8~9%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%83%88%EB%A1%9C%EC%9A%B4%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83%20%EB%A7%8C%EB%93%A4%EA%B8%B0%2C%20%EC%B9%B4%EB%93%9C%20%EB%B7%B0%2C%20%EB%A6%AC%EC%8B%B8%EC%9D%B4%ED%81%B4%EB%9F%AC%20%EB%B7%B0%20%EB%93%B1/8.%20%ED%82%A4%ED%8C%A8%EB%93%9C/images/image2.png)
 
