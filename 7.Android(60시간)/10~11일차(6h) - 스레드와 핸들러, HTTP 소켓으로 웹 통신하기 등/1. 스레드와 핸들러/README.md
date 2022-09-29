@@ -144,3 +144,178 @@ public class MainActivity extends AppCompatActivity {
 ﻿- 새로 만든 스레드(스레드 #1)가 수행하려는 정보를 메인 스레드로 전달하기 위해서는 먼저 캔들러가 관리하는 메시지 큐에서 처리할 수 있는 메시지 객체 하나를 참조해야 합니다. 이 첫 번째 과정에서는 obtainMessage 메서드를 이용할 수 있으며 호흡의 결과로 메시지 객체를 반환받게 됩니다. 이 메시지 객체에 필요한 정보를 넣은 후 sendMessage 메서드를 이용해 메시지 큐에 넣을 수 있습니다. 메시지 큐에 들어간 메시지는 순서대로 핸들러가 처리하게 되며 이때 handleMessage 메서드에 정의된 기능이 수행됩니다. 이때 handleMessage에 들어 있는 코드가 수행되는 위치는 새로 만든 스레드가 아닌 메인 스레드가 됩니다.앞에서 만들었던 프로젝트에 핸들러를 적용해보기 위해 SampleThread 프로젝트를 복사하여 Samplethread2 프로젝트를 만듭니다. 이때 애플리케이션의 실행이 원활할 수 있도록 app 폴더의 build 폴더를 삭제하는 것을 잊지 마세요. 새로 복사한 프로젝트를 시작화면에서 [Open an existing Android Studio project] 메뉴를 눌러 열어줍니다. 프로젝트 창에서 /app/java/org.techtown.thread/MainActivity. java 파일을 더블클릭하여 수정합니다. 
 
 > 파일 탐색기에서 C:\Users\사용자계정\Android StudioProjects 폴더에 있는 SampleThread 폴더를 복사해서 붙여 넣은 후 폴더명을 SampleThread2로 변경하면 됩니다.
+
+#### SampleThread2>/app/java/org.koreait.thread/MainActivity.java
+
+```java
+package org.koreait.thread;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+
+    TextView textView;
+    MainHandler handler;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textView = findViewById(R.id.textView);
+
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 스레드 객체 생성하고 시작하기
+                BackgroundThread thread = new BackgroundThread();
+                thread.start();
+            }
+        });
+
+        handler = new MainHandler();
+    }
+
+    class BackgroundThread extends Thread {
+        int value = 0;
+
+        public void run() {
+            for (int i = 0; i < 100; i++) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {}
+
+                value += 1;
+                Log.d("Thread", "value : " + value);
+
+                Message message = handler.obtainMessage();
+                Bundle bundle = new Bundle();
+                bundle.putInt("value", value);
+                message.setData(bundle);
+
+                handler.sendMessage(message); // 핸들러로 메시지 객체 보내기
+
+            }
+        }
+    }
+
+    class MainHandler extends Handler {
+        // 핸들러 안에서 전달 받은 메시지 객체 처리하기
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+
+            Bundle bundle = msg.getData();
+            int value = bundle.getInt("value");
+            textView.setText("value 값: " + value);
+        }
+    }
+}
+```
+
+- Handler 클래스를 상속한 MainHandler 클래스가 새로 정의되었습니다. Handler와 Message는 android.os 패키지에 들어 있는 클래스는 사용합니다. Handler 클래스에는 handleMessage 메서드가 들어 있어 이 메서드를 다시 정의하면 메시지가 메인 스레드에서 수행될 때 필요한 기능을 넣어둘 수 있습니다. 이렇게 정의한 핸들러는 onCreate 메서드에서 액티비티가 초기화될 때 new 연산자를 이용해 객체로 만들어집니다.
+
+- 새로 만든 스레드 객체에서 수행한 작업의 결과가 나왔을 때는 핸들러 객체의 obtainMessage로 메시지 객체 하나를 참조한 후 sendMessage 메서드를 이용해 메시지 큐에 넣게 됩니다. 그런데 데이터를 전달하고자 할 때는 어떻게 할까요? 텍스트뷰 객체의 setText 메서드를 호출하는 코드가 핸들러 클래﻿스의 handleMessage 메서드 안으로 이동해야 하므로 이 handleMessage 메서드로 value 값을 전달해야 하는 문제가 생깁니다. 따라서 이 value 값을 Message 객체에 넣어서 보내는 것이 필요합니다. Message 객체에는 Bundle 객체가 들어 있어 putOOO 메서드로 데이터를 넣었다가 getOOO 메서드로 데이터를 가져올 수 있게 되어 있습니다(여기에서 ○○○은 자료형에 따라 달라질 수 있음).
+
+- 앱을 실행하고 버튼을 누르면 화면에 value 값이 표시되고 계속 변하는 것을 확인할 수 있습니다.
+
+![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/1.%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC/images/image6.png)
+
+
+## Runnable 객체 실행하기
+
+- 지금까지 핸들러를 사용해서 메시지를 전송하고 순서대로 이를 실행하는 방법을 살펴보았습니다. 이 방법은 가장 일반적이지만 개발자 입장에서는 코드가 복잡하게 보이는 단점이 있습니다. 좀 더 간단한 방법으로 메인 스레드에서 실행시킬 수 있습니다. 핸들러 클래스는 메시지 전송 방법 이외에 Runnable 객체를 실행시킬 수 있는 방법을 제공합니다. 즉, 새로 만든 Runnable 객체를 핸들러의 post 메서드로 전달해주면 이 객체에 정의된 run 메서드 안의 코드들은 메인 스레드에서 실행됩니다.
+
+- 앞 단락에서 만든 코드를 메시지 전송 방식에서 Runnable 객체 실행 방식으로 바꿔보겠습니다. 파일 탐색기에서 SampleThread2 프로젝트를 복사해 SampleThread3 프로젝트를 만듭니다. 이번에도 app 폴더의 build 폴더를 삭제하세요. 안드로이드 스튜디오에서 새로 복사한 SampleThread3 프로젝트를 엽니다. 프로젝트 창이 열리면 MainActivity.java 파일을 열고 소스 코드를 수정합니다.
+
+#### ﻿Sample Thread3>/app/java/org.koreait.thread/MainActivity.java
+
+```java
+package org.koreait.thread;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+
+    TextView textView;
+
+    Handler handler = new Handler(); // API의 기본 핸들러 객체 생성하기
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textView = findViewById(R.id.textView);
+
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 스레드 객체 생성하고 시작하기
+                BackgroundThread thread = new BackgroundThread();
+                thread.start();
+            }
+        });
+    }
+
+    class BackgroundThread extends Thread {
+        int value = 0;
+
+        public void run() {
+            for (int i = 0; i < 100; i++) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {}
+
+                value += 1;
+                Log.d("Thread", "value : " + value);
+
+               // 핸들러의 post 메서드 호출하기
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        textView.setText("value 값: " + value);
+                    }
+                });
+            }
+        }
+    }
+}
+```
+
+- ﻿코드가 전체적으로 변경되었습니다. 메시지 처리를 위해 새로 정의했던 MainHandler 클래스는 이제 더 이상 필요가 없으므로 일반적으로 사용하는 Handler 클래스로 객체를 생성합니다. Handler 객체를 만들어 변수에 할당해두면 이 객체의 post 메서드를 호출할 수 있습니다. 스레드 안에서 결과를 텍스트뷰에 표시하려면 post 메서드를 호출하면서 Runnable 객체를 만들어줍니다. 그리고 그 안에 텍스트뷰를 접근하는 코드를 넣어줍니다. 이렇게 하면 결과를 텍스트뷰에 보여주는 코드가 스레드 안에 있을 수 있으므로 좀 더 코드를 이해하기 쉽습니다.
+
+- 이 코드에서 보는 것처럼 post 메서드로 전달되는 Runnable 객체는 스레드의 작업 결과물로 만들어지는 데이터를 처리해야 합니다. 따라서 결과물을 화면에 보여주어야 하는 부분이 있을 경우 new 연산자로 Runnable 인터페이스를 구현하는 새로운 객체를 만들어 사용하는 것이 일반적입니다.
+
+- 앱을 실행하면 SampleThread2 앱과 동일한 결과를 볼 수 있습니다. 이렇게 post 메서드를 호출하는 방법이 훨씬 간단해 보이므로 실제 앱을 만들 때 더 많이 사용하게 됩니다.
+
+> <b>runOnUiThread</b>는 핸들러 객체를 만들지 않고도 메인 스레드에서 동작하게 만드는 간단한 방법입니다. 따라서 다음 코드처럼 run 메서드 안에 뷰를 접근하는 코드를 넣으면 메인 스레드에서 동작하게 할 수 있습니다.
+
+```java
+runOnUiThread(new Runnable() {
+	@Override
+	public void run() {
+	
+	}
+});
+```
