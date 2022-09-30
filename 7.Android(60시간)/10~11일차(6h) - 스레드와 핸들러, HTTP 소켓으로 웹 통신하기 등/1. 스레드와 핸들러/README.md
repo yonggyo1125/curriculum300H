@@ -231,7 +231,6 @@ public class MainActivity extends AppCompatActivity {
 
 ![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/1.%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC/images/image6.png)
 
-
 ## Runnable 객체 실행하기
 
 - 지금까지 핸들러를 사용해서 메시지를 전송하고 순서대로 이를 실행하는 방법을 살펴보았습니다. 이 방법은 가장 일반적이지만 개발자 입장에서는 코드가 복잡하게 보이는 단점이 있습니다. 좀 더 간단한 방법으로 메인 스레드에서 실행시킬 수 있습니다. 핸들러 클래스는 메시지 전송 방법 이외에 Runnable 객체를 실행시킬 수 있는 방법을 제공합니다. 즉, 새로 만든 Runnable 객체를 핸들러의 post 메서드로 전달해주면 이 객체에 정의된 run 메서드 안의 코드들은 메인 스레드에서 실행됩니다.
@@ -319,3 +318,109 @@ runOnUiThread(new Runnable() {
 	}
 });
 ```
+
+* * * 
+# 일정 시간 후에 실행하기
+
+- 웹 서버와 같은 원격 서버에 접속한 후 웹페이지를 요청할 때 응답이 늦어지거나 응답이 없으면 앱이 대기하고 있는 상황이 지속되는 문제가 생깁니다. 이런 경우에는 기본적으로 별도의 스레드를 만들어 처리하게 됩니다. 하지만 버튼을 클릭해서 간단하게 접속 처리하는 경우에는 메인 스레드 내에서 지연시간을 주는 것만으로도 UI의 멈춤 현상을 방지할 수 있습니다. 단순히 Thread.sleep 메서드를 사용해서 잠깐 대기 상태로 있다가 다시 실행할 수도 있습니다. 하지만 핸들러로 지연 시간을 주었을 때 핸들러로 실행되는 코드는 메시지 큐를 통과하면서 순차적으로 실행되기 때문에 UI 객체들에 영향을 주지 않으면서 지연 시간을 두고 실행됩니다.
+
+- 일정 시간 후에 실행되는 예제를 실습하기 위해서 새로운 SampleDelayed 프로젝트를 만들고 패키지 이름은 org.techtown.delayed로 수정합니다. 그런 다음 activity_main.xml 파일 안에 글자를 보여줄 텍스트뷰 하나와 버튼 하나를 추가합니다. 버튼의 글자를 요청하기'로 수정하고 텍스트뷰에는 '결과'라는 글자로 수정합니다. 이때 텍스트뷰의 글자 크기는 30sp로 설정합니다. XML 레이아웃을 완성했다면 MainActivity.java 파일을 열고 다음 코드를 입력합니다.
+
+#### SampleDelayed>/app/java/org.koreait.delayed/MainActivity.java
+
+```java
+package org.koreait.delayed;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+    TextView textView;
+
+    Handler handler = new Handler();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textView = findViewById(R.id.textView);
+
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                request();
+            }
+        });
+    }
+
+    private void request() {
+        String title = "원격 요청";
+        String message = "데이터를 요청하시겠습니까?";
+        String titleButtonYes = "예";
+        String titleButtonNo = "아니오";
+        AlertDialog dialog = makeRequestDialog(title, message, titleButtonYes, titleButtonNo);
+        dialog.show();
+
+        textView.setText("대화상자 표시중...");
+    }
+
+    private AlertDialog makeRequestDialog(CharSequence title, CharSequence message, CharSequence titleButtonYes, CharSequence titleButtonNo) {
+        AlertDialog.Builder requestDialog = new AlertDialog.Builder(this);
+        requestDialog.setTitle(title);
+        requestDialog.setMessage(message);
+        requestDialog.setPositiveButton(titleButtonYes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                textView.setText("5초 후에 결과 표시됨.");
+
+                // 핸들러의 postDelayed 메서드 호출하기
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        textView.setText("요청 완료됨.");
+                    }
+                }, 5000);
+            }
+        });
+
+        requestDialog.setNegativeButton(titleButtonNo, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        return requestDialog.create();
+    }
+}
+```
+
+- 코드를 입력할 때 Handler는 android.os 패키지의 것을 선택하고 AlertDialog는 androidx.appcompat.app 패키지의 것을 선택합니다. 화면에 추가한 [요청하기] 버튼을 누르면 새로 정의한 request 메서드가 호출되는데 이 메서드는 AlertDialog를 이용하여 대화상치를 보여줍니다. 대회 상치의 [예] 버﻿튼을 누르면 핸들러 객체의 postDelayed 메서드를 사용해서 약간의 시간이 지난 후 코드가 실행되게 만듭니다.
+
+- 핸들러는 메시지 큐를 사용하므로 메시지들을 순서대로 처리하지만 메시지를 넣을 때 시간을 지정하면 원하는 시간에 메시지를 처리하게 만들 수 있습니다. 따라서 일정 시간 후에 실행시킬 때 유용하게 사용됩니다. 시간을 지정할 때는 핸들러의 sendMessage 메서드와 유사한 이름을 가진 다음과 같은 두가지 메서드를 사용할 수 있습니다.
+
+
+```java
+public boolean sendMessageAtTime(Message msg, long uptimeMillis)
+public boolean sendMessageDelayed(Message msg, long delayMillis)
+```
+
+- 첫 번째 메서드는 메시지를 보낼 때 시간을 지정할 수 있으며, 두 번째 메서드는 메시지가 일정 시간이 지난 후 실행되도록 설정할 수 있습니다. Runnable 객체를 실행하는 post 메서드도 postAtTime과 postDelayed 메서드가 있어 같은 기능을 수행합니다.
+
+- 앱을 실행하고 [요청하기] 버튼을 누르면 대화상자가 표시됩니다. 대화상자의 [예] 버튼을 누르면 5초 뒤에 텍스트뷰에 다른 글자를 표시합니다. 이렇게 일정 시간이 지난 후에 특정 코드를 실행시킬 때 핸들러 객체의 postDelayed 메서드를 호출할 수 있습니다.
+
+![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/1.%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC/images/image7.png)
+
+![image8](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/1.%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC/images/image8.png)
+
+![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/1.%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC/images/image9.png)
+
