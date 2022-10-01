@@ -38,6 +38,514 @@
 
 > 원격지에 데이터를 요청하고 응답을 기다리는 네트워킹 기능은 네트워크의 상태에 따라 응답 시간이 길어질 수 있을뿐더러 최근 플랫폼에서는 스레드 사용을 강제하고 있기 때문에 이런 경우에는 UI 업데이트를 위해 핸들러를 사용합니다.
 
+- 네트워킹 실습을 위해 먼저 클라이언트와 서버 소켓을 만들어 보겠습니다. SampleSocket 프로젝트를 만들고 패키지 이름은 org.koreait.socket으로 수정합니다. activity_main.xml 파일을 열어서 최상위 레이아웃은 LinearLayout으로 변경하고 orientation 속성 값은 vertical로 설정합니다. 메인 화면은 위쪽과 아래쪽을 분할하여 위쪽은 클라이언트, 아래쪽은 서버 쪽 영역으로 사용하려고 합니다. 리니어레이아웃을 두 개 추가하고 위쪽과 아래쪽 공간을 나눠 가질 수 있도록 layout_height 속성 값은 0dp, layout_weight 속성 값은 1dp로 각각 설정합니다. 그리고 위쪽 레이아웃에는 입력상자와 버튼을 하나씩 추가하고 스크롤뷰에 포함된 텍스트뷰를 배치합니다. 아래쪽 레이아웃에는 버튼 하나와 스크롤뷰에 포함된 텍스트뷰를 배치합니다. 위쪽 레이아웃의 버튼은 '전송'이라는 글자가 표시되도록 하고 아래쪽 레이아웃의 버튼에는 '서버 시작'이라는 글자를 넣습니다. 위쪽과 아래쪽 영역을 구분할 수 있도록 위쪽에 있는 리니어 레이아웃에는 배경색을 밝은 파랑으로 설정하고 아래쪽에 있는 리니어 레이아웃은 오렌지색으로 배경을 설정합니다. 각각의 레이아웃에 넣은 텍스트뷰의 textSize 속성 값은 모두20sp로 설정합니다.
 
+#### activity_main.xml
 
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@android:color/holo_blue_bright"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전송" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@android:color/holo_orange_light"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="서버 시작" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+        </ScrollView>
+    </LinearLayout>
+
+</LinearLayout>
+```
+
+- 완성된 레이아웃은 다음과 같은 모양이 됩니다.
+
+![image4](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/2.%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%EA%B3%BC%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0(HttpURLConnection)/images/image1.pnghttps://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/2.%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%EA%B3%BC%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0(HttpURLConnection)/images/image4.png)
+
+- 화면 레이아웃을 만들었다면 MainActivity.java 파일을 열고 다음 코드를 입력합니다. 텍스트뷰와 입력상자는 클래스 안에 변수를 선언하고 findViewById로 찾아 변수에 할당합니다. 첫 번째 버튼을 눌렀을 때는 새로 만들 send 메서드를 호출하도록 하고 두 번째 버튼을 눌렀을 때는 startServer 메서드를 호출하도록 합니다. 그런데 이 두 개의 메서드는 모두 네트워킹 기능을 사용할 것이므로 스레드로 만들어야 합니다. 따라서 버튼을 눌렀을 때 스레드 안에서 동작하게 만드는 게 중요합니다.
+
+#### SampleSocket>/app/java/org.koreait.socket/MainActivity.java
+
+```java
+package org.koreait.socket;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+    EditText editText;
+
+    TextView textView;
+    TextView textView2;
+
+    Handler handler = new Handler();
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editText = findViewById(R.id.editText);
+        textView = findViewById(R.id.textView);
+        textView2 = findViewById(R.id.textView2);
+
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String data = editText.getText().toString();
+                // 스레드 안에서 send 메서드 호출하기
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        send(data);
+                    }
+                }).start();
+            }
+        });
+
+        Button button2 = findViewById(R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 스레드 안에서 startServer 메서드 호출하기
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        startServer();
+                    }
+                }).start();
+            }
+        });
+    }
+}
+```
+
+- 두 개의 텍스트뷰는 결과를 화면에 출력하기 위한 것입니다. printClientLog 메서드는 화면 상단에 있는 텍스트뷰에 글자를 출력하도록 하고 printServerLog 메서드는 화면 하단에 있는 텍스트뷰에 글자를 출력하도록 합니다. 새로 만들어진 스레드에서 이 메서드들을 호출할 것이므로 핸들러 객체를 이용합니다.
+
+#### SampleSocket>/app/java/org.koreait.socket/MainActivity.java
+
+```java
+
+... 생략
+
+public class MainActivity extends AppCompatActivity {
+
+	... 생략 
+
+    public void printClientLog(final String data) {
+        Log.d("MainActivity", data);
+
+        // 클라이언트 쪽 로그를 화면에 있는 텍스트뷰에 출력하기 위해 핸들러 사용하기
+       handler.post(new Runnable() {
+            @Override
+            public void run() {
+                textView.append(data + "\n");
+            }
+        });
+    }
+
+    public void printServerLog(final String data) {
+        Log.d("MainActivity", data);
+
+        // 서버 쪽 로그를 화면에 있는 텍스트뷰에 출려하기 위해 핸들러 사용하기
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                textView2.append(data + "\n");
+            }
+        });
+    }
+}
+```
+
+- printClientLog printServerLog 메서드 안에서는 핸들러 객체를 사용하고 있으며 Runnable 객체의 run 메서드 안에서 텍스트뷰를 접근하고 있습니다. 텍스트뷰의 append 메서드로 전달될 파라미터는 printClientLog와 printServerLog 메서드로 전달되는 파라미터가 그대로 전달되어야 하므로 final로 정의했습니다.
+
+- 이제 클라이언트에서 데이터를 전송하는 send 메서드를 정의합니다. 여기에서는 서버와 클라이언트가 5001번 포트를 사용하도록 합니다.
+
+#### SampleSocket>/app/java/org.koreait.socket/MainActivity.java
+
+```java
+
+... 생략
+
+public class MainActivity extends AppCompatActivity {
+	
+	... 생략
+
+    public void send(String data) {
+        try {
+            int portNumber = 5001;
+            // 소켓 객체 만들기
+            Socket sock = new Socket("localhost", portNumber);
+            printClientLog("소켓 연결함.");
+
+            //  소켓 객체로 데이터 보내기
+            ObjectOutputStream outstream = new ObjectOutputStream(sock.getOutputStream());
+            outstream.writeObject(data);
+            outstream.flush();
+            printClientLog("데이터 전송함.");
+
+            ObjectInputStream instream = new ObjectInputStream(sock.getInputStream());
+            printClientLog("서버로부터 받음: " + instream.readObject());
+            sock.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+```
+
+- 코드는 표준 자바의 소켓 클라이언트 코드와 거의 같습니다. 로그를 화면에 출력하기 위해 사용한 printClientLog 메서드만 다릅니다. 접속할 IP 주소는 "localhost", 포트는 5001번을 사용하고 있습니다. new 연산자로 만드는 소켓은 이 IP 주소와 포트 번호를 파라미터로 전달받으며, 새로 만들어진 소켓을 통해 데이터를 보내거나 받고 싶을 때는 getOutputStream과 getInputStream 메서드로 입출력 스트림 객체를 참조합니다. 여기서는 문자열을 객체 그대로 보내기 위해 ObjectOutputStream과 ObjectInputStream 클래스를 사용하였습니다.
+
+- 이 클라이언트가 접속할 서버는 startServer 메서드 안에 다음과 같이 구성합니다.
+
+#### SampleSocket>/app/java/org.koreait.socket/MainActivity.Java
+
+```java
+
+... 생략 
+
+public class MainActivity extends AppCompatActivity {
+	
+	... 생략
+
+    public void startServer() {
+        try {
+            int portNumber = 5001;
+
+            // 소켓 서버 객체 만들기
+            ServerSocket server = new ServerSocket(portNumber);
+            printServerLog("서버 시작함: " + portNumber);
+
+            while(true) {
+                // 클라이언트가 접속했을 때 만들어지는 소켓 객체 참조하기
+                Socket sock = server.accept();
+                InetAddress clientHost = sock.getLocalAddress();
+                int clientPort = sock.getPort();
+                printServerLog("클라이언트 연결됨: " + clientHost + " : " + clientPort);
+
+                ObjectInputStream instream = new ObjectInputStream(sock.getInputStream());
+                Object obj = instream.readObject();
+                printServerLog("데이터 받음: " + obj);
+
+                ObjectOutputStream outstream = new ObjectOutputStream(sock.getOutputStream());
+                outstream.writeObject(obj + " from Server.");
+                outstream.flush();
+                printServerLog("데이터 보냄.");
+
+                sock.close();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+```
+
+- 소켓 서버는 ServerSocket 클래스로 만든 후, 클라이언트로부터의 요청을 처리할 수 있는데 포트 번호는 클라이언트에서 접속할 5001번을 그대로 사용합니다. while 구문을 사용해서 클라이언트의 접속을 기다리다가 클라이언트의 접속 요청이 왔을 때 accept 메서드를 통해 소켓 객체가 반환되므로 클라이언트 소켓의 연결 정보를 확인할 수 있습니다. 여기서는 클라이언트에서 접속한 포트 번호를 확인한 후 보내온 문자열에 " from Server."라는 문자열을 붙여서 클라이언트로 다시 보내게 됩니다.
+
+- 이제 마지막으로 /app/manifests 폴더 안에 있는 AndroidManifest.xml 파일을 열고 INTERNET 권한을 추가합니다.
+
+#### SampleSocket>/app/manifests/AndroidManifest.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.koreait.socket">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    
+   ... 생략
+
+</manifest>
+```
+
+- ﻿앱을 실행하고 화면 아래쪽의 [서버 시작] 버튼을 누르면 서버가 시작되었다는 로그가 화면 하단에 출력됩니다. 화면 상단에 있는 입력상자에 글자를 입력하고 [전송] 버튼을 누르면 그 글자가 서버로 전송되었다가 다시 클라이언트 쪽으로 전달되었다는 것을 알 수 있습니다.
+
+![image5](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/2.%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%EA%B3%BC%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0(HttpURLConnection)/images/image1.pnghttps://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/2.%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%EA%B3%BC%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0(HttpURLConnection)/images/image5.png)
+
+> 실제 앱에서 네트워킹 관련 코드를 만들 때는 ObjectInputStream과 ObjectOutputStream은 잘 사용하지 않습니다. 이 두 클래스는 자바의 객체(Object) 정보를 편리하게 주고받을 수 있도록 만들어진 것이지만 자바가 아닌 다른 언어로 만들어진 서버와 통신할 경우에는 데이터 송수신이 정상적으로 이루어지지 않을 수 있습니다. 따라서 일반적으로는 DatalnputStream과 DataOutputStream을 많이 사용합니다.
+
+* * * 
+# 웹으로 요청하기
+
+- 비연결성(Stateless)인 HTTP 프로토콜은 페이지 정보를 요청할 때마다 소켓을 새로 연결하고 응답을 받은 다음에는 소켓의 연결을 끊는 것이 일반적입니다. 그리고 그 소켓 연결 위에서 HTTP 프로토콜에 맞는 요청을 보내고 응답을 받아 처리합니다.
+
+- HTTP로 웹 서버에 접속하는 것도 소켓의 경우와 마찬가지로 표준 자바의 방식을 그대로 사용할 수 있습니다. 자바에서 HTTP 클라이언트를 만드는 가장 간단한 방법은 URL 객체를 만들고 openConnection 메서드를 호출하여 HttpURLConnection 객체를 만드는 것입니다.
+
+```java
+public URLConnection openConnection()
+```
+
+- URL 객체에 들어 있는 문자열이 "http://"를 포함하면 HTTP 연결을 위한 객체를 만들게 되므로 openConnection 메서드가 반환하는 URLConnection 객체를 HttpURLConnection으로 형변환하여 사용할 수 있습니다. HttpURLConnection 객체로 연결할 경우에는 GET이나 POST와 같은 요청 방식과 함께 요청을 위한 파라미터들을 설정할 수 있습니다.
+
+```java
+public void setRequestMethod(String method)
+public void setRequestProperty(String field, String newValue)
+```
+
+- 요청 방식을 지정하는 메서드는 setRequestMethod로 GET이나 POST 문자열을 파라미터로 전달합니다. setRequestProperty 메서드는 요청할 때 헤더에 들어가는 필드 값을 지정할 수 있도록 합니다. 웹페이지를 가져오는 기능은 간단하게 만들 수 있는데 이번에는 GET 방식을 사용하여 웹페이지 주소를 입력하면 해당 페이지의 내용을 가져오는 앱을 만들어 보겠습니다.
+
+- 새로운 SampleHttp 프로젝트를 만들고 패키지 이름은 org.koreait.http로 수정합니다. activity_main.xml 파일을 열고 디자인 화면에서 최상위 레이아웃을 리니어 레이아웃을 리니어 레이아웃으로 변경합니다. 리니어 레이아웃의 orientation 속성 값은 vertical로 설정하고 그 안에 있던 텍스트뷰는 삭제합니다. 팔레트에서 입력상자와 버튼을 하나씩 넣고 스트롤뷰를 추가한 후 그 안에 텍스트뷰를 하나를 끌어다 추가합니다. 입력상자에는 사이트 주소를 입력할 것이며 버튼을 누르면 그 사이트로﻿부터 응답 데이터를 가져와 아래쪽의 텍스트뷰에 보여줄 것입니다. 버튼에는 '요청하기' 글자가 보이게 하고, 입력상자에는 '사이트 주소 입력'이라는 글자가 안내 글로 나타나도록 hint 속성을 설정합니다.
+
+#### activity_main.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="사이트 주소 입력"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="요청하기" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp" />
+        </LinearLayout>
+    </ScrollView>
+	
+</LinearLayout>
+```
+
+![image6](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/2.%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%EA%B3%BC%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0(HttpURLConnection)/images/image1.pnghttps://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/2.%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%EA%B3%BC%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0(HttpURLConnection)/images/image6.png)
+
+- 이제 MainActivity.java 파일을 열고 버튼을 클릭했을 때 웹으로 요청하는 코드를 추가합니다.
+ 
+####  SampleHttp>/app/java/org.koreait.http/MainActivity.java
+
+```java
+package org.koreait.http;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+    EditText editText;
+    TextView textView;
+
+    Handler handler = new Handler();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editText = findViewById(R.id.editText);
+        textView = findViewById(R.id.textView);
+
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String urlStr = editText.getText().toString();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 스레드 안에서 request 메서드 호출하기
+                        request(urlStr);
+                    }
+                }).start();
+            }
+        });
+    }
+}
+```
+
+- 버튼을 누르면 사용자가 입력한 사이트 주소를 이용해 request 메서드를 호출합니다. request 메서드 안에서는 인터넷을 사용할 것이므로 스레드 안에서 동작하도록 스레드 객체를 하나 생성하고 그 안에서 request 메서드를 호출하도록 합니다. 스레드에서 처리한 결과물을 화면에 표시할 때 사용하도록 핸들러 객체도 만들어 변수에 할당해 둡니다. request 메서드의 코드는 다음과 같습니다.
+
+####  SampleHttp>/app/java/org.koreait.http/MainActivity.java
+
+```java
+
+... 생략
+
+public class MainActivity extends AppCompatActivity {
+
+	... 생략 
+
+    public void request(String urlStr) {
+        StringBuilder output = new StringBuilder();
+        try {
+            URL url = new URL(urlStr);
+
+            // HttpURLConnection 객체 만들기
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            if (conn != null) {
+                conn.setConnectTimeout(10000);
+                conn.setRequestMethod("GET");
+                conn.setDoInput(true);
+
+                int resCode = conn.getResponseCode();
+                // 입력 데이터를 받기 위한 Reader 객체 생성하기
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line = null;
+                while(true) {
+                    line = reader.readLine();
+                    if (line == null) {
+                        break;
+                    }
+
+                    output.append(line + "\n");
+                }
+                reader.close();
+                conn.disconnect();
+            }
+        } catch (Exception ex) {
+            println("예외 발생함: " + ex.toString());
+        }
+
+        println("응답 -> " + output.toString());
+    }
+
+    public void println(final String data) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                textView.append(data + "\n");
+            }
+        });
+    }
+}
+```
+
+- ﻿request 메서드에서는 응답 결과물을 모아 화면에 출력합니다. 화면에 출력할 때 사용하는 println메서드는 핸들러를 사용하면서 화면에 들어있는 텍스트뷰의 append 메서드를 호출하도록 합니다. request 메서드 안에 정의된 웹페이지 요청 부분을 보면 가장 먼저 URL 객체를 만들고 있습니다. 파라미터로 전달된 URL 문자열을 이용해 만들어진 객체의 openConnection 메서드를 호출하면 HttpURLConnection 객체가 반환됩니다.
+
+- 이 객체에 GET 방식으로 요청한다는 내용을 setRequestMethod로 설정하고 getResponseCode 메서드를 호출하면 이 시점에 내부적으로 웹 서버에 페이지를 요청하는 과정을 수행하게 됩니다. setConnectionTimeout 메서드는 연결 대기 시간을 설정하는 것으로 10초 동안 연결되기를 기다린다는 의미이며, setDoInput 메서드는 이 객체의 입력이 가능하도록 만들어 줍니다. 응답 코드가 HTTP_OK인 경우에는 정상적으로 응답이 온 경우이므로 응답으로 들어온 스트림을 문자열로 변환하여 반환합니다. 만약 요청한 주소의 페이지가 없는 경우에는 HTTP_NOT_FOUND 코드가 반환되며, 이외에도 다양한 응답 코드가 정의되어 있습니다. 스트림에서 한 줄씩 읽어 들이는 메서드인 readLine은 BufferedReader 클래스에 정의되어 있으므로 HttpURLConnection 객체의 스트림을 이 클래스의 객체로 만든 후에 처리합니다.
+
+- 이 앱이 인터넷 권한을 사용하므로 매니페스트 파일을 열고 다음 권한을 추가합니다. 그리고 <application> 태그에 속성을 하나 더 추가합니다.
+
+#### SampleHttp>/app/manifests/AndroidManifest.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.koreait.http">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+	... 생략
+
+</manifest>
+
+```
+
+앱을 실행하고 입력창에 다음 주소를 입력한 후 버튼을 누르면 다음과 같은 결과 화면을 볼 수 있습니다. 
+
+```
+https://jsonplaceholder.typicode.com/todos
+```
+
+![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/2.%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%EA%B3%BC%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0(HttpURLConnection)/images/image1.pnghttps://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/10~11%EC%9D%BC%EC%B0%A8(6h)%20-%20%EC%8A%A4%EB%A0%88%EB%93%9C%EC%99%80%20%ED%95%B8%EB%93%A4%EB%9F%AC%2C%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0%20%EB%93%B1/2.%20HTTP%20%EC%86%8C%EC%BC%93%EC%9C%BC%EB%A1%9C%20%EC%9B%B9%EA%B3%BC%20%ED%86%B5%EC%8B%A0%ED%95%98%EA%B8%B0(HttpURLConnection)/images/image7.png)
 
