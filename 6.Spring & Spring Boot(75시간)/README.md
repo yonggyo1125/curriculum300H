@@ -103,7 +103,7 @@
 		- 기본 설정하기
 		- Spring Data JPA
 		
-* 18~20일차(18h)
+* 18~20일차(9h)
 	- 스프링부트
 		- Spring Data JPA
 		
