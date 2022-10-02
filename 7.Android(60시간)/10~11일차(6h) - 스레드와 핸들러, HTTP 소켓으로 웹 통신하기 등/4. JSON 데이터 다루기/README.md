@@ -28,6 +28,95 @@ dependencies {
 
 - Gson은 JSON 문자열을 자바 객체로 바꿔주는데 자바는 객체를 만들 때 클래스를 먼저 정의하는 과정을 거치므로 JSON 문자열을 자바 객체로 바꿀 때도 클래스를 먼저 정의해야 합니다.
 
- JSON 응답의 포맷에 맞추어 새로운 자바 클래스를 정의합니다. 왼쪽 프로젝트 창에서 /app/java/org.koreait.request 폴더를 선택한 상태에서 마우스 오른쪽 버튼을 눌러 새로운 자바 클래스를 만듭니다. 클래스의 이름은 DodoList 로 합니다. 
+ JSON 응답의 포맷에 맞추어 새로운 자바 클래스를 정의합니다. 왼쪽 프로젝트 창에서 /app/java/org.koreait.request 폴더를 선택한 상태에서 마우스 오른쪽 버튼을 눌러 새로운 자바 클래스를 만듭니다. 클래스의 이름은 TodoList 로 합니다. 
  
- - 응답 데이터 가장 바깥이 중괄호이므로 이 객체를 반환할 클래스로 DodoList 라는 이름의 클래스를 정의했습니다. 이 클래스 안에는 dodoResult 라는 이름의 변수를 추가합니다. 여기에서 변수의 이름은 JSON 문자열에서 속성의 이름과 같아야 합니다. 그리고 변수의 자료형은 JSON 문자열에서 속성 값의 자료형과 같아야 합니다. 
+ - 응답 데이터 가장 바깥이 중괄호이므로 이 객체를 반환할 클래스로 Todo 라는 이름의 클래스를 정의했습니다.  여기에서 변수의 이름은 JSON 문자열에서 속성의 이름과 같아야 합니다. 그리고 변수의 자료형은 JSON 문자열에서 속성 값의 자료형과 같아야 합니다. 
+ 
+#### SampleRequest2>/app/java/org.koreait.request/Todo.java
+
+```java
+ package org.koreait.request;
+
+public class Todo {
+    Long userId;
+    Long id;
+    String title;
+    boolean completed;
+	
+	@Override
+    public String toString() {
+        return "Todo{" +
+                "userId=" + userId +
+                ", id=" + id +
+                ", title='" + title + '\'' +
+                ", completed=" + completed +
+                '}';
+    }
+}
+```
+- 클래스들을 정의했다면 Gson을 이용해 JSON을 변환할 수 있습니다.
+
+#### SampleRequest2>/app/java/org.koreait.request/MainActivity.java
+
+```java
+
+... 생략
+
+public class MainActivity extends AppCompatActivity {
+	
+	... 생략
+
+    public void makeRequest() {
+        String url = editText.getText().toString();
+
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        println("응답 -> " + response);
+
+                        processResponse(response);
+                    }
+
+                    public void processResponse(String response) {
+                        // JSON 문자열을 객체로 변환하기
+                        Gson gson = new Gson();
+                        List<String> list = gson.fromJson(response, ArrayList.class);
+                        System.out.println("--------------- 변환된 데이터 ----------------------");
+                        for (String s : list) {
+                            Todo todo = gson.fromJson(s, Todo.class);
+                            System.out.println(todo);
+                        }
+
+                        System.out.println("--------------- 변환된 데이터 ----------------------");
+                        println("할일의 개수 : " + list.size());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        println("에러 -> " + error.getMessage());
+                    }
+                }
+        ) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+
+                return params;
+            }
+        };
+
+        request.setShouldCache(false);
+        requestQueue.add(request);
+        println("요청 보냄.");
+    }
+
+    public void println(String data) {
+        textView.append(data + "\n");
+    }
+}
+```
