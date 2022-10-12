@@ -92,7 +92,7 @@
 ![image19](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image19.png)
 
 - 같은 방법으로 [Blueprint] 항목을 선택합니다. 그러면 오른쪽에 있던 청사진(남색) 화면만 나타날 것입니다. 
-- 청사진 화면은 화면안의 요소가 서로 겹쳐 있을 때 요소를 투명하게 보여주어 어떤 것들이 어떤 모양으로 들어 있는지 알 수 있습니다.
+- 청사진 화면은 화면 안의 요소가 서로 겹쳐 있을 때 요소를 투명하게 보여주어 어떤 것들이 어떤 모양으로 들어 있는지 알 수 있습니다.
 - 예를 들면 버튼과 글자 요소가 서로 겹쳐져 있으면 디자인 화면에서는 가장 위에 있는 요소만 보입니다. 하지만 청사진 화면에서는 겹친 두 요소가 모두 보입니다. 
 
 ![image20](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image20.png)
@@ -167,7 +167,7 @@
 
 ## MainActivity.java 자세히 살펴보기
 
-- 안드로이드 스튜디오에서 [MainActivity.java] 탭을 열어 MainActivty.java에 입렫된 코드를 확인해봅니다.
+- 안드로이드 스튜디오에서 [MainActivity.java] 탭을 열어 MainActivty.java에 입력된 코드를 확인해봅니다.
 
 ```java
 package org.koreait.hello;
@@ -207,7 +207,7 @@ setContentView(R.layout.activity_main);
 
 ![image31](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image31.png)
 
-> 왼쪽 창 상단에는 프로젝트 구조를 보여주는 프로젝트 영역이 표시됩니다. 이 영역의 위쪽에 [Android] 탭이 보이는데, 이 탭에는 app 폴더의 Gradle Scripts 폴더 밑에 여러 개의 파일과 폴더들이 들어 있습니다. 그런데 이 [Android] 탭에서 보여주는 것은 프로젝트에 들어 있는 파일들을 잘 정리해서 보여주는 것이라 파일 탐색기에서 확인할 수 있는 구조와는 약간 다릅니다. 만약 파일 탐색이에서 보는 것 처럼 실제 파일들의 경로를 그대로 보고 싶다면 [Android] 탭을 클릭해서 [Project]로 바꿔줍니다. 그러면 파일들의 전체 경로가 보이게 됩니다.
+> 왼쪽 창 상단에는 프로젝트 구조를 보여주는 프로젝트 영역이 표시됩니다. 이 영역의 위쪽에 [Android] 탭이 보이는데, 이 탭에는 app 폴더의 Gradle Scripts 폴더 밑에 여러 개의 파일과 폴더들이 들어 있습니다. 그런데 이 [Android] 탭에서 보여주는 것은 프로젝트에 들어 있는 파일들을 잘 정리해서 보여주는 것이라 파일 탐색기에서 확인할 수 있는 구조와는 약간 다릅니다. 만약 파일 탐색기에서 보는 것 처럼 실제 파일들의 경로를 그대로 보고 싶다면 [Android] 탭을 클릭해서 [Project]로 바꿔줍니다. 그러면 파일들의 전체 경로가 보이게 됩니다.
 
 ![image32](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image32.png)
 
@@ -230,7 +230,7 @@ setContentView(R.layout.activity_main);
 ![image35](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image35.png)
 
 - 안드로이드 스튜디오 상단의 [Run] 아이콘을 눌러 실행하세요. 만약 이전에 실행한 앱이 있을 경우 빨간색의 [Stop] 아이콘을 눌러 중지한 다음 다시 [Run] 아이콘을 눌러 실행하세요.
-- 잠시 시다리면 다음과 같이 에뮬레이터 화면을 볼 수 있습니다(단축키 SHIFT + F10을 눌러 앱을 다시 실행할 수도 있습니다).
+- 잠시 기다리면 다음과 같이 에뮬레이터 화면을 볼 수 있습니다(단축키 SHIFT + F10을 눌러 앱을 다시 실행할 수도 있습니다).
 
 ![image36](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image36.png)
 
@@ -244,10 +244,13 @@ setContentView(R.layout.activity_main);
 <table>
 <tr>
 <td>
-![image37](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image37.png)
+
+<img src="https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image37.png" />
 </td>
 <td>
-![image38](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image38.png)
+
+<img src="https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image38.png" />
+
 </td>
 </tr>
 </table>
@@ -382,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
 ```
 
 - onButton2Clicked 메서드는 [네이버 접속하기] 버튼을 클릭했을 때 호출되는 함수이고, onButton3Clicked 메서드는 [전화 걸기] 버튼을 클릭했을 때 호출되는 함수입니다.
-- activity_main.xml을 열고 두 번째 버튼의 onClick 속성 값으로 onButton2Clicked를 선택합니다. 그리고 세 번째 버튼의 onClick 속성 값으로 onButton3Clickedc를 선택합니다.
+- activity_main.xml을 열고 두 번째 버튼의 onClick 속성 값으로 onButton2Clicked를 선택합니다. 그리고 세 번째 버튼의 onClick 속성 값으로 onButton3Clicked를 선택합니다.
 
 ![image48](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/image48.png)
 
