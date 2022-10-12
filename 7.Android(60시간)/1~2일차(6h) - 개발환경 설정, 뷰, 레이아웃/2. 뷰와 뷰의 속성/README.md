@@ -75,9 +75,9 @@ layout_width와 layout_height -> 뷰의 폭과 높이를 설정합니다.
 
 ## 버튼의 크기 속성 바꿔보기
 
-- 화면에 추가한 버튼의 layout_width, layout_heigh 속성을 변경해 봅니다. [Design] 아이콘을 눌러 디자인 화면으로 전환한 후 화면에 버튼 한개를 추가한 후 선택합니다. 
+- 화면에 추가한 버튼의 layout_width, layout_height 속성을 변경해 봅니다. [Design] 아이콘을 눌러 디자인 화면으로 전환한 후 화면에 버튼 한개를 추가한 후 선택합니다. 
 - 오른쪽 속성 창에서 layout_width와 layout_height 속성 값을 확인합니다. 두 개의 속성 값 모두 wrap_content로 되어 있는데, 이 값으로 설정하면 버튼의 내용물에 맞게 크기가 자동으로 결정됩니다.
--  버튼의 내용물은 글자, 즉 텍스트(Text)이므로 TextView에 있는 text 속성을 찾아 '안녕하세요, 반갑습니다!'로 변경합니다. 그러면 버튼의 가로크기가 자동으로 늘어나는 것을 확인할 수 있습니다.
+-  버튼의 내용물은 글자, 즉 텍스트(Text)이므로 TextView에 있는 text 속성을 찾아 '안녕하세요, 반갑습니다!'로 변경합니다. 그러면 버튼의 가로 크기가 자동으로 늘어나는 것을 확인할 수 있습니다.
 
 ![image7](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/views/image7.png)
 
@@ -93,7 +93,7 @@ layout_width와 layout_height -> 뷰의 폭과 높이를 설정합니다.
 ![image9](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/views/image9.png)
 
 - 레이아웃을 리니어 레이아웃으로 변경해 보겠습니다.
-- 왼쪽 아래의 Component Tree 창에서 가장 위에 있는 ConstraintLayout 항목을 선택한 후 마우스 오른쪽 버튼을 누릅니다. 나타난 메뷰에서 [Convert view ...] 메뉴를 선택합니다.
+- 왼쪽 아래의 Component Tree 창에서 가장 위에 있는 ConstraintLayout 항목을 선택한 후 마우스 오른쪽 버튼을 누릅니다. 나타난 메뉴에서 [Convert view ...] 메뉴를 선택합니다.
 
 ![image10](https://raw.githubusercontent.com/yonggyo1125/curriculum300H/main/7.Android(60%EC%8B%9C%EA%B0%84)/1~2%EC%9D%BC%EC%B0%A8(6h)%20-%20%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD%20%EC%84%A4%EC%A0%95%2C%20%EB%B7%B0%2C%20%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83/images/views/image10.png)
 
