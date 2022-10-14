@@ -177,11 +177,12 @@ public class MenuActivity extends AppCompatActivity {
 
 ... 생략 
 
- <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+		<activity android:name=".MenuActivity"
+				android:label="메뉴 액티비티"
+				android:theme="@style/Theme.AppCompat.Dialog">
+		</activity>
         <activity
-            android:name=".MenuActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
