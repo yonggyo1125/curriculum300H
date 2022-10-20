@@ -66,6 +66,7 @@ SubMenu addSubMenu (int titleRes)
 - 다음은 showAsAction 속성에 설정할 수 있는 값을 정리한 것입니다.
 
 |showAsAction속성 값|설명|
+|-----|--------|
 |always|항상 액션바에 아이템을 추가하여 표시합니다.|
 |never|액션바에 아이템을 추가하여 표시하지 않습니다(디폴트 값).|
 |ifRoom|액션바에 여유 공간이 있을 때만 아이템을 표시합니다.|
