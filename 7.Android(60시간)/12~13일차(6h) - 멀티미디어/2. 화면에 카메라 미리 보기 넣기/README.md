@@ -75,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
 
         FrameLayout previewFrame = findViewById(R.id.previewFrame);
         cameraView = new CameraSurfaceView(this);
-
+		previewFrame.addView(cameraView);
+		
         Button button = findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
