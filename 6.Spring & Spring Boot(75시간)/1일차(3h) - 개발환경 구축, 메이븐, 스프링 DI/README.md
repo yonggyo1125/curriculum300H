@@ -330,7 +330,7 @@ public class Main {
 
 - ApplicationContext 인터페이스는 메시지, 프로필/환경 변수 등을 처리할 수 있는 기능을 추가로 정의한다.
 
-- 앞서 예제에서 사용한 AnnotationConfigApplicationContext를 비롯해 계층도의 가장 하단에 위치한 세 계의 클래스는 BeanFactory와 ApplicationContext에 정의된 기능의 구현을 제공한다. 각 클래스의 차이점은 다음과 같다.
+- 앞서 예제에서 사용한 AnnotationConfigApplicationContext를 비롯해 계층도의 가장 하단에 위치한 세의 클래스는 BeanFactory와 ApplicationContext에 정의된 기능의 구현을 제공한다. 각 클래스의 차이점은 다음과 같다.
 	- AnnotationConfigApplicationContext : 자바 애노테이션을 이용한 클래스로부터 객체 설정 정보를 가져온다.
 	- GenericXmlApplicationContext : XML로 부터 객체 정보를 가져온다.
 	- GenericGroovyApplicationContext : 그루비 코드를 이용해 설정 정보를 가져온다.
