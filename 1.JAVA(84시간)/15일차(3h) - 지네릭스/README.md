@@ -79,13 +79,13 @@ b.setItem(new Object()); // 경고 발생 안함
 
 ### 지네릭스의 용어
 
-Class Box<T> {}
-- **Box<T>** : 지네릭 클래스, 'T의 Box' 또는 'T Box'라고 읽는다.
+Class Box\<T\> {}
+- **Box\<T\>** : 지네릭 클래스, 'T의 Box' 또는 'T Box'라고 읽는다.
 - **T** : 타입 변수 또는 타입 매개변수.(T는 타입문자)
 - **Box** : 원시 타입(raw type)
 
 
-Box<String> b = new Box<String>();
+Box\<String\> b = new Box\<String\>();
 - 타입 매개변수에 타입을 지정하는 것을 **지네릭타입 호출**이라 한다.
 - 지정된 타입 'String'을 **매개변수화된 타입(parameterized type)** 또는 **대입된 타입**이라고 한다.
 - 컴파일 후에는 Box<String>과 Box<Integer>는 이들의 '원시타입'인 Box로 바뀐다.(즉, 지네릭 타입이 제거된다)
