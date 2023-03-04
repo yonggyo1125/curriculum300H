@@ -524,7 +524,7 @@ Apple Apple Juice
 - 메서드의 선언부에 지네릭 타입이 선언된 메서드를 지네릭 메서드라 한다.
 - 선언 위치는 반환 타입 바로 앞이다.
 ```
-static <T> void sort(List<T> list, Cimparator<? super T> c)
+static <T> void sort(List<T> list, Comparator<? super T> c)
 ```
 
 - 지네릭 클래스에 정의된 타입 매개변수와 지네릭 메서드에 정의된 타입 매개변수는 전혀 별개의 것이다. 같은 타입 문자 T를 사용해도 같은 것이 아니다.
