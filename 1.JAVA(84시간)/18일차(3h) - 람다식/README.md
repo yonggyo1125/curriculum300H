@@ -424,7 +424,7 @@ Supplier<MyClass> s = () -> new MyClass(); // 람다식
 Supplier<MyClass> s = MyClass::new; // 메서드 참조
 ```
 ```
-Function<Integer, MyClass> f = (i) --> new MyClass(i); // 람다식
+Function<Integer, MyClass> f = (i) -> new MyClass(i); // 람다식
 Function<Integer, MyClass> f2 = MyClass::new;  // 메서드 참조
 
 BiFunction<Integer, String, MyClass> bf = (i, s) -> new MyClass(i, s);
