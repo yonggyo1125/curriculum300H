@@ -4,6 +4,7 @@
 - B 자동차는 최초 40km의 속도로 이동하다가 한시간마다 15km/h씩 속력을 높이고 있습니다. 
 - A 자동차와 B 자동차가 최초로 만나는 지점(km)를 구하시오.
 
+<!--
 ## 답안
 ```
 public class CommonMultiple {
@@ -28,3 +29,4 @@ public class CommonMultiple {
 	}
 }
 ```
+-->
