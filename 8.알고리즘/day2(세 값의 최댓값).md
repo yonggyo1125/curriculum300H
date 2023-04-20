@@ -2,6 +2,7 @@
 - 세 값을 입력 받아 그 3개 값 중 최대값을 구하시오.
 - 세 값을 입력 받기 위해서는 java.util.Scanner 클래스를 활용할 것
 
+<!--
 ```
 
 import java.util.Scanner;
@@ -27,3 +28,4 @@ class Max3 {
 }
 
 ```
+-->
