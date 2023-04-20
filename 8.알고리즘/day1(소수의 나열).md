@@ -6,7 +6,7 @@
 ```
 - 만약 나누어 떨어지는 정수가 하나이상 존재하면 그 수는 합성수(composite number)입니다. 
 
-### 문항 : 1000 이하의 소수를 나열하는 프로그램을 작성하시오
+---### 문항 : 1000 이하의 소수를 나열하는 프로그램을 작성하시오
 ```
 class PrimeNumber {
 	public static void main(String[] args) {
@@ -29,3 +29,4 @@ class PrimeNumber {
 	}
 }
 ```
+---
