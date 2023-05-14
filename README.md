@@ -5,7 +5,7 @@
 - [코리아IT인천 - 웹&앱 개발자 과정(저녁반)](https://open.kakao.com/o/gtBtlQjf)
 
 <br>
-<img src='https://raw.githubusercontent.com/yonggyo1125/yonggyo1125/main/openchat.png'>
+<img src='https://raw.githubusercontent.com/yonggyo1125/yonggyo1125/main/openchat.png' width="300">
 
 ## 학습시 질문사항
 - 학습시 문의 사항은 Issues에 올려 주시면 확인 후 답변 드립니다.
