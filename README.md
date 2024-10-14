@@ -21,6 +21,8 @@
 ## 수업 소스 공유 폴더
 - [공유 폴더](https://drive.google.com/drive/folders/1vsHsmWJoW_agBsSScJMyK261OCGc-146?usp=sharing)
 -->
+## [강의 자료](https://drive.google.com/drive/folders/1UQKEc8w0lY0Rw1p8VDkrG-_l8jfWN8hh?usp=drive_link)
+
 * * * 
 # JAVA 과정(84시간)
 * 1일차(3h)
