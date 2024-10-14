@@ -1,3 +1,4 @@
+<!--
 # 안내
 
 ## 카카오 오픈채팅
@@ -19,7 +20,7 @@
 
 ## 수업 소스 공유 폴더
 - [공유 폴더](https://drive.google.com/drive/folders/1vsHsmWJoW_agBsSScJMyK261OCGc-146?usp=sharing)
-
+-->
 * * * 
 # JAVA 과정(84시간)
 * 1일차(3h)
