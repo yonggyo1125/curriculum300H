@@ -22,6 +22,7 @@
 - [공유 폴더](https://drive.google.com/drive/folders/1vsHsmWJoW_agBsSScJMyK261OCGc-146?usp=sharing)
 -->
 ## [강의 자료](https://drive.google.com/drive/folders/1UQKEc8w0lY0Rw1p8VDkrG-_l8jfWN8hh?usp=drive_link)
+## [수업 소스](https://github.com/yonggyo1125/koreait_web_20241015)
 
 * * * 
 # JAVA 과정(84시간)
