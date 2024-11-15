@@ -1065,7 +1065,7 @@ Bean Validation 1.1에서 제공하는 주요 애노테이션은 다음과과 �
 |@Max<br>@Min|long value|지정한 값보다 작거나 같은지 또는 크거나 같은지 검사한다. null은 유효하다고 판단한다.|BigDecimal<br>BigInteger<br>정수타입|
 |@Digits|int integer<br>- 최대 정수 자릿수<br>int fraction<br>- 최대 소수점 자릿수|자릿수가 지정한 크기를 넘지않는지 검사한다.<br>null은 유효하다고 판단한다.|BigDecimal<br>BigInteger<br>CharSequence<br>정수타입|
 |@Size|int min<br>- 최소 크기<br>- 기본값 : 0<br>int max<br>- 최대 크기<br>- 기본값 : 정수 최대값|길이나 크기가 지정한 값 범위에 있는지 검사한다.<br>null은 유효하다고 판단한다.|CharSequence<br>Collection<br>Map<br>배열|
-|@Null<br>@NonNull||값이 null인지 또는 null이 아닌지 검사한다.||
+|@Null<br>@NotNull||값이 null인지 또는 null이 아닌지 검사한다.||
 |@Pattern|String regexp<br>- 정규표현식|값이 정규표현식에 일치하는지 검사한다.<br>null은 유효하다고 판단한다.|CharSequence|
 
 > 정수타입 : bute, short, int, long 및 관련 래퍼 타입
