@@ -247,6 +247,7 @@ BEGIN
 			SET myInterest = myInterest + Price * 0.1;
 		ELSE 
 			SET myInterest = myInterest + Price * 0.05;
+		END IF;
 	END LOOP cursor_loop;
 	CLOSE InterestCursor;
 	SELECT CONCAT(' 전체 이익 금액 = ', myInterest);
