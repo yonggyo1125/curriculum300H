@@ -222,7 +222,7 @@ JSP 생명 주기를 완료합니다. JSP 컨터에너는 실행되고 있는 JS
 |속성|설명|기본값|
 |----|---------------|----|
 |language|현재 JSP 페이지가 사용할 프로그래밍 언어를 설정합니다.<br><% page language=“java” %>|java|
-|contentType|현재 JSP 페이지가 생성할 문서의 콘텐츠 유형을 설정합니다.<br>(text/html, text/xml , text/plain)<br><%@ page contentType=“text/html%><br>constentType은 문자열 세트를 설정 할 수 있음<br><%@ page contentType=“text/html; charset=utf-8” %>|text/html|
+|contentType|현재 JSP 페이지가 생성할 문서의 콘텐츠 유형을 설정합니다.<br>(text/html, text/xml , text/plain)<br><%@ page contentType=“text/html"%><br>constentType은 문자열 세트를 설정 할 수 있음<br><%@ page contentType=“text/html; charset=utf-8” %>|text/html|
 |pageEncoding|현재 JSP 페이지의 문자 인코딩을 설정합니다.<br><%@ page pageEncoding=“ISO-8859-1” %><br>contentType 속성의 문자열 세트로도 설정 할 수 있음<br><%@ page contentType=“text/html; charset=ISO-8859-1” %>|ISO-8859-1|
 |import|현재 JSP 페이지가 사용할 자바 클래스를 설정합니다.<br><%@ page import=“java.io.*” %><br><%@ page import=“java.io.*, java.lang.*” %><br><%@ page import=“java.io.*” %><br><%@ page import=“java.lang.*” %>||
 |session|현재 JSP 페이지의 세션 사용여부를 설정합니다.<br><%@ page session=“true” %>|true|
